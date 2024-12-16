@@ -1,0 +1,33 @@
+Record team work done here.
+
+Kavintha
+
+- gem register screens (ongoing)
+- nav bar (ongoing)
+
+Dulith
+
+- register and login screens (ongoing)
+
+Isum
+
+- Tracker 
+- Gems on display
+- My gems
+
+Thulani
+
+- splash screen + selection screen (ongoing)
+
+Mehara
+
+- Alerts
+- Connect
+- Financial Record
+- Connect
+
+Tilmi
+
+- Home 
+- Mygems 
+- Market

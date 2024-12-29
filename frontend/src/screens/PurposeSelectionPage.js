@@ -1,23 +1,46 @@
-import React, {useState} from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity, Modal } from 'react-native';
+import React, {useEffect, useState, useRef} from 'react';
+import { View, Text, StyleSheet, Image, TouchableOpacity, Modal, Animated } from 'react-native';
 
-const PurposeSelectionPage = () => {
+const PurposeSelectionPage = ({ navigation }) => {
     const[modalVisible, setModalVisible] = useState(false);
+    
+    const scaleValue = useRef(new Animated.Value(1)).current;
+  
+
+    useEffect(() => {
+      Animated.sequence([
+        Animated.timing(scaleValue, {
+          toValue: 1.3,
+          duration: 880,
+          useNativeDriver: true,
+        }),
+        Animated.timing(scaleValue, {
+          toValue: 1,
+          duration: 800,
+          useNativeDriver: true,
+        }),
+      ]).start();
+    }, []);
+    
     return (
         <View style={styles.Container}>
+                <Animated.Image
+                source={require('../assets/logo-gem.png')}
+                style={[styles.logo, {transform: [{scale: scaleValue}]}]} />
                 <Image
-                source={require('../assets/logo.png')}
-                style={styles.logo} 
-            />
+                source={require('../assets/logo-letter.png')}
+                style={styles.logoLetter}
+                />
             <Text style={styles.title}>I'm here to,</Text>
-
             <View style={styles.card}>
                 <TouchableOpacity style={styles.button}>
                     <Text style= {styles.buttonText}>Manage my business</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.button}>
+                <TouchableOpacity style = {styles.button}
+                  onPress={() => navigation.navigate('RegisterSelectionPage')} >
                     <Text style= {styles.buttonText}>Look for gems</Text>
                 </TouchableOpacity>
+              
 
                 <View style={styles.dividerContainer}>
                     <View style={styles.divider} />
@@ -83,11 +106,20 @@ const styles = StyleSheet.create({
     },
 
     logo: {
-        width: 280,
-        height: 144,
+        width: 190,
+        height: 90,
         alignSelf: 'center',
         resizeMode: 'contain',
-        marginTop: 130,
+        marginTop: 100,
+    },
+    logoLetter: {
+        width: '60%',
+        aspectRatio: 2,
+        height: 128,
+        alignSelf: 'center',
+        resizeMode: 'contain',
+        marginTop: -20,
+        marginBottom: 20,
     },
 
     title: {
@@ -95,8 +127,8 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         color: '#000',
         marginLeft: 120,
-        marginBottom: 55,
-        marginBlockStart: 80,
+        marginBottom: 48,
+        marginBlockStart: 30,
     },
 
     subtitle: {
@@ -107,7 +139,7 @@ const styles = StyleSheet.create({
 
     card: {
         backgroundColor: '#C2E9FF',
-        marginTop: -30,
+        marginTop: -36,
         padding: 30,
         borderRadius: 20,
         width: '90%',
@@ -125,6 +157,7 @@ const styles = StyleSheet.create({
         width: '100%',
         marginVertical: 5,
     },
+    
     buttonText: {
         color: '#FFF',
         fontSize: 16,
@@ -169,9 +202,9 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
-        marginTop: 60,
+        marginTop: 88,
+        marginBottom: 60,
       },
-    
       languageSelector: {
         flexDirection: 'row',
         alignItems: 'center',
@@ -189,7 +222,6 @@ const styles = StyleSheet.create({
       },
       logoContainer: {
         flex:1,
-    
       },
       modalOverlay: {
         flex: 1,

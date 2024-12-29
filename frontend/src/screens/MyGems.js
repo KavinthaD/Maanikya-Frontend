@@ -1,56 +1,74 @@
-import React, {useEffect, useState} from 'react';
-import { View, Text, FlatList, StyleSheet, Image, ScrollView } from 'react-native';
+import React from 'react';
+import { View, Text, FlatList, StyleSheet, Image } from 'react-native';
 
-  
 const MyGems = () => {
+  const gemDetails = [
+    {
+      dateAdded: '9/12/2023',
+      identification: 'Natural Blue Sapphire',
+      weight: '1.96 carats',
+      measurements: '8.59 x 6.36 x 4.97 mm',
+      shape: 'Cushion',
+      color: 'Vivid Blue',
+    },
+  ];
+
+  const financialDetails = [
+    {
+      purchasePrice: 'LKR 60,000',
+      cost: 'LKR 20,000',
+      soldPrice: 'LKR 100,000',
+    },
+  ];
+
+  return (
+    <View style={styles.container}>
+
+      <Image
+        source={{ uri: 'https://via.placeholder.com/600x200' }} 
+        style={styles.image}
+      />
 
     
-    return(
-        <ScrollView>
-            <Image
-        source={{ uri: 'https://www.google.com/url?sa=i&url=https%3A%2F%2Fgecdesigns.com%2Fvisiting-card-templates%2Ffree%2Felegant-visiting-card-design-for-creative-professionals-10042403&psig=AOvVaw2QoG4T7O0dT0R_sJb47CT6&ust=1734164707909000&source=images&cd=vfe&opi=89978449&ved=0CBEQjRxqFwoTCJCKwYyppIoDFQAAAAAdAAAAABAE' }} // Replace with your image URL
-        style={styles.image}
-        />
-        <FlatList
-        renderItems ={({items}) => (
-            <view>
-            <Text> Date added to system - 9/12/2023</Text>
-            <Text> Identification - Natural Blue Sapphire</Text>
-            <Text> Weight - 1.96 carets</Text>
-            <Text> Measurements - 8.59 x 6.36 x 4.97 mm</Text>
-            <Text> Shape - Cushion</Text>
-            <Text> Colour - Vivid Blue</Text>
-            <Text>Additional Information- </Text>
-        </view>
-      
-          )} 
-        />
-        <FlatList 
-        renderItems= {({items}) => (
-            <view>
-                <Text>Purchase Price - LKR 60 000</Text>
-                <Text>Cost - LKE 20 000</Text>
-                <Texr>Sold Price - LKR 100 000</Texr>
-            </view>
+      <FlatList
+        data={gemDetails}
+        keyExtractor={(item, index) => `gem-${index}`}
+        renderItem={({ item }) => (
+          <View style={styles.detailCard}>
+            <Text>Date added to system: {item.dateAdded}</Text>
+            <Text>Identification: {item.identification}</Text>
+            <Text>Weight: {item.weight}</Text>
+            <Text>Measurements: {item.measurements}</Text>
+            <Text>Shape: {item.shape}</Text>
+            <Text>Color: {item.color}</Text>
+          </View>
         )}
-        />
-        <Image
-        source={{ uri: 'https://www.google.com/url?sa=i&url=https%3A%2F%2Fgecdesigns.com%2Fvisiting-card-templates%2Ffree%2Felegant-visiting-card-design-for-creative-professionals-10042403&psig=AOvVaw2QoG4T7O0dT0R_sJb47CT6&ust=1734164707909000&source=images&cd=vfe&opi=89978449&ved=0CBEQjRxqFwoTCJCKwYyppIoDFQAAAAAdAAAAABAE' }} // Replace with your image URL
-        style={styles.image}
-        />
-    
+      />
 
-    </ScrollView>
-      
-    
-    );
+      <FlatList
+        data={financialDetails}
+        keyExtractor={(item, index) => `financial-${index}`}
+        renderItem={({ item }) => (
+          <View style={styles.detailCard}>
+            <Text>Purchase Price: {item.purchasePrice}</Text>
+            <Text>Cost: {item.cost}</Text>
+            <Text>Sold Price: {item.soldPrice}</Text>
+          </View>
+        )}
+      />
+
+      <Image
+        source={{ uri: 'https://via.placeholder.com/600x200' }} 
+        style={styles.image}
+      />
+    </View>
+  );
 };
+
 const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: '#fff' },
-    heading: { fontSize: 20, fontWeight: 'bold', marginVertical: 15, textAlign: 'center' },
-    sectionHeading: { fontSize: 18, fontWeight: 'bold', marginVertical: 10, color: '#333' },
-    detailCard: { padding: 10, borderWidth: 1, borderRadius: 5, marginBottom: 10, backgroundColor: '#f9f9f9', marginHorizontal: 10 },
-    image: { width: '100%', height: 200, resizeMode: 'cover', marginVertical: 10 },
+  container: { flex: 1, backgroundColor: '#fff', padding: 10 },
+  image: { width: '50%', height: '50%', resizeMode: 'cover', marginVertical: 10 },
+  detailCard: { padding: 10, borderWidth: 1, borderRadius: 5, marginBottom: 10, backgroundColor: '#f9f9f9' },
 });
 
 export default MyGems;

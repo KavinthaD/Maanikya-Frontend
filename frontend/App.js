@@ -5,9 +5,11 @@ import Gem_lot_register from './src/screens/Gem_lot_register';
 import PurposeSelectionPage from './src/screens/PurposeSelectionPage';
 import NavigationBar from './src/components/BS_NavBar';
 import BS_NavBar from './src/components/BS_NavBar';
+import MyGems from './src/screens/MyGems';
+import GemOnDisplay from './src/screens/GemOnDisplay';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import SplashScreen1 from './src/screens/SplashScreen1';
+import WelcomePage from './src/screens/WelcomePage';
 
 const Stack = createStackNavigator();
 
@@ -18,9 +20,11 @@ export default function App() {
       //<PurposeSelectionPage/>
     //</View>
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="SplashScreen" screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="SplashScreen1" component={SplashScreen1} />
+      <Stack.Navigator initialRouteName="WelcomePage" screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="WelcomePage" component={WelcomePage} />
         <Stack.Screen name="PurposeSelectionPage" component={PurposeSelectionPage} />
+        <Stack.Screen name=" PurposeSelectionPage" component={PurposeSelectionPage} options={{ headerShown: false}}/>
+        <Stack.Screen name="RegisterSelectionPage" component={RegisterSelectionPage} options={{ title: 'Register'}} />
       </Stack.Navigator>
     </NavigationContainer>
   );

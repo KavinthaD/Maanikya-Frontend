@@ -1,10 +1,11 @@
-import { StyleSheet, Text, View, Image, TouchableOpacity, SafeAreaView } from 'react-native'
-import React from 'react';
+import { StyleSheet, Text, View, Image, TouchableOpacity, SafeAreaView, Modal } from 'react-native'
+import React, {useState} from 'react';
 
 const RegisterSelectionPage = () => {
+  const [modalVisible, setModalVisible] = useState(false);
   return (
     <SafeAreaView style={styles.container}>
-      {/* Logo Section */}
+      
       <View style={styles.logoContainer}>
         <Image
         source={require('../assets/logo.png')}
@@ -22,12 +23,47 @@ const RegisterSelectionPage = () => {
         </View>
 
         <View style={styles.footerContainer}>
+          <TouchableOpacity
+          style={styles.languageSelector}
+          onPress={() => setModalVisible(true)}
+          >
         <Text style={styles.languageText}>ENG ▼</Text>
         <Image 
           source={require('../assets/globe.png')}
           style={styles.globeIcon}
         />
+        </TouchableOpacity>
         </View>
+
+        <Modal
+          transparent={true}
+          animationType='fade'
+          visible={modalVisible}
+          onRequestClose={()=> setModalVisible(false)}
+        >
+          <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <TouchableOpacity
+              style={styles.languageOption}
+              onPress={() => {
+                console.log('Sinhala selected');
+                setModalVisible(false); // Close modal after selecting
+              }}
+            >
+              <Text style={styles.languageOptionText}>සිංහල</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.languageOption}
+              onPress={() => {
+                console.log('English selected');
+                setModalVisible(false); // Close modal after selecting
+              }}
+            >
+              <Text style={styles.languageOptionText}>English</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+        </Modal>
     </SafeAreaView>
   );
 };
@@ -42,8 +78,9 @@ const styles = StyleSheet.create({
   },
 
   logo: {
-    width: 80,
-    height: 80,
+    marginTop: 100,
+    width: 250,
+    height: 194,
     resizeMode: 'contain',
   },
 
@@ -57,7 +94,7 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     width: '100%',
     borderRadius: 8,
-    marginBottom: 15,
+    marginBottom: 20,
   },
   createAccountText: {
     color: '#FFF',
@@ -71,6 +108,7 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     width: '100%',
     borderRadius: 8,
+    marginBottom: 250,
   },
   guestText: {
     color: '#FFF',
@@ -85,21 +123,49 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginBottom: 20,
   },
+
+  languageSelector: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+
   languageText: {
     fontSize: 14,
     color: '#000',
     marginRight: 8,
   },
   globeIcon: {
-    width: 18,
-    height: 18,
+    width: 28,
+    height: 28,
     tintColor: '#000',
   },
-
   logoContainer: {
     flex:1,
 
-  }
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.4)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalContent: {
+    backgroundColor: '#FFF',
+    width: 200,
+    borderRadius: 10,
+    padding: 20,
+    alignItems: 'center',
+  },
+  languageOption: {
+    paddingVertical: 10,
+    width: '100%',
+    alignItems: 'center',
+  },
+  languageOptionText: {
+    fontSize: 16,
+    color: '#000',
+    fontWeight: '500',
+  },
 
 })
 

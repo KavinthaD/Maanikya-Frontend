@@ -11,7 +11,7 @@ import GemOnDisplay from './src/screens/GemOnDisplay';
 export default function App() {
   return (
     <View style={styles.container}>
-      <GemOnDisplay />
+      <MyGems />
     </View>
   );
 }

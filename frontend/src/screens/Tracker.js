@@ -2,46 +2,51 @@ import React, { useState } from "react";
 import { View, Text, FlatList, StyleSheet, Image, TextInput, SafeAreaView } from "react-native";
 
 const Tracker = () => {
+  //manage the search option
   const [search, setSearch] = useState("");
 
+  //images in the progress gems
   const imageProgress = [
     {
-      id: "1",
+      id: "img1",
       uri: "https://via.placeholder.com/100.png?text=Gem1",
       description: "Beautiful Pink Gem",
     },
     {
-      id: "2",
+      id: "img2",
       uri: "https://via.placeholder.com/100.png?text=Gem2",
       description: "Sparkling Blue Gem",
     },
     {
-      id: "3",
+      id: "img3",
       uri: "https://via.placeholder.com/100.png?text=Gem3",
       description: "Radiant Green Gem",
     },
   ];
 
+  //images in the completed images
   const imageCompleted = [
     {
-      id: "4",
+      id: "img4",
       uri: "https://via.placeholder.com/100.png?text=Gem4",
       description: "Shiny Red Gem",
     },
     {
-      id: "5",
+      id: "img5",
       uri: "https://via.placeholder.com/100.png?text=Gem5",
       description: "Elegant Yellow Gem",
     },
     {
-      id: "6",
+      id: "img6",
       uri: "https://via.placeholder.com/100.png?text=Gem6",
       description: "Majestic Purple Gem",
     },
   ];
 
+  //Give rows of images
   const renderImageRow = (images) => (
     <FlatList
+      //Datasource
       data={images}
       keyExtractor={(item) => item.id}
       renderItem={({ item }) => (
@@ -50,26 +55,31 @@ const Tracker = () => {
           <Text style={styles.description}>{item.description}</Text>
         </View>
       )}
+      //no. of columns that id displays
       numColumns={3}
+      //Styles the row
       columnWrapperStyle={styles.row}
     />
   );
 
   return (
     <SafeAreaView style={styles.container}>
+      {/*Heading */}
       <Text style={styles.heading}>Tracker</Text>
 
-      {/* Custom Search Bar */}
+      {/*Search Bar */}
       <TextInput
         style={styles.searchBar}
         placeholder="Gem code"
-        value={search}
+        value={search} //Control input values
         onChangeText={setSearch}
       />
 
+      {/*In progress gems*/}
       <Text style={styles.heading}>In Progress</Text>
       {renderImageRow(imageProgress)}
 
+      {/*Completed gems*/}
       <Text style={styles.heading}>Completed</Text>
       {renderImageRow(imageCompleted)}
     </SafeAreaView>

@@ -1,9 +1,10 @@
 import React from 'react';
 import { View, Text, FlatList, StyleSheet, Image } from 'react-native';
-import QRCode from 'react-native-qrcode-svg';
+import QRCode from 'react-native-qrcode-svg'; //import QR library
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 const MyGems = () => {
+  //Details about gems
   const gemDetails = [
     {
       gemId: 'GEM123456',
@@ -16,6 +17,7 @@ const MyGems = () => {
     },
   ];
 
+  //financial details about gems
   const financialDetails = [
     {
       purchasePrice: 'LKR 60,000',
@@ -31,7 +33,7 @@ const MyGems = () => {
     color: gemDetails[0].color,
   });
 
-  // Function to render gem details
+  // Function gives gem details
   const renderGemDetails = ({ item }) => (
     <View style={styles.detailCard}>
       <Text>Date added to system: {item.dateAdded}</Text>
@@ -43,7 +45,7 @@ const MyGems = () => {
     </View>
   );
 
-  // Function to render financial details
+  // Function gives financial details
   const renderFinancialDetails = ({ item }) => (
     <View style={styles.detailCard}>
       <Text>Purchase Price: {item.purchasePrice}</Text>
@@ -55,36 +57,37 @@ const MyGems = () => {
   return (
     <SafeAreaView style={styles.container}>
       <Text style={styles.heading}>My Gems</Text>
-      {/* QR Code in the top-right corner */}
+      {/* QR Code */}
       <View style={styles.qrContainer}>
         <QRCode value={qrValue} size={100} />
       </View>
 
-      {/* Top Image with Gem ID description */}
+      {/* Image of gems */}
       <Image
         source={{ uri: 'https://via.placeholder.com/600x200' }}
-        style={styles.topImage}
+        style={styles.gemPhoto}
       />
+      {/* displays the gem id of that image*/}
       <Text style={styles.gemId}>Gem ID: {gemDetails[0].gemId}</Text>
 
       {/* Gem Details */}
       <FlatList
         data={gemDetails}
-        keyExtractor={(item, index) => `gem-${index}`}
-        renderItem={renderGemDetails}
+        keyExtractor={(item, index) => `gem-${index}`} //unique key for gem details
+        renderItem={renderGemDetails} //funtion of gem details
       />
 
       {/* Financial Details */}
       <FlatList
         data={financialDetails}
-        keyExtractor={(item, index) => `financial-${index}`}
-        renderItem={renderFinancialDetails}
+        keyExtractor={(item, index) => `financial-${index}`} //unique key for financial details
+        renderItem={renderFinancialDetails} //function of financial details
       />
 
-      {/* Bottom Image */}
+      {/*Image of the gem certificate */}
       <Image
         source={{ uri: 'https://via.placeholder.com/600x200' }}
-        style={styles.bottomImage}
+        style={styles.gemCert}
       />
     </SafeAreaView>
   );
@@ -110,13 +113,13 @@ const styles = StyleSheet.create({
     elevation: 2,
     zIndex: 1, // Ensure QR code appears on top
   },
-  topImage: {
+  gemPhoto: {
     width: '100%',
     height: 200,
     resizeMode: 'cover',
     marginVertical: 10,
   },
-  bottomImage: {
+  gemCert: {
     width: '50%',
     height: 150,
     left:10,

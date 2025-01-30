@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, Button, StyleSheet, TouchableOpacity } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
+import { baseScreenStyles } from '../styles/baseStyles'; // Import base styles
 
 export default function Gem_lot_register() {
   const [form, setForm] = useState({
@@ -23,8 +24,8 @@ export default function Gem_lot_register() {
   };
 
   return (
-    <View style={styles.outerContainer}>
-      <Text style={styles.title}>Enter Details</Text>
+    <View style={[baseScreenStyles.container, styles.container]}>
+      
     
       <View style={styles.innerContainer}>
         <TextInput
@@ -120,23 +121,9 @@ export default function Gem_lot_register() {
 }
 
 const styles = StyleSheet.create({
-  outerContainer: {
-    flex: 1,
-    backgroundColor: '#9CCDDB',
-    padding: 0,
-  },
+  
   innerContainer: {
     padding: 20,
-  },
-  title: {
-    marginTop: 70,
-    fontSize: 24,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    marginBottom: 20,
-    backgroundColor: '#072D44',
-    color: 'white',
-    padding: 10,
   },
   label: {
     fontSize: 16,

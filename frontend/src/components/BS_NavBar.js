@@ -4,8 +4,11 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { NavigationContainer } from "@react-navigation/native";
 import { View, Text, StyleSheet } from "react-native";
 import Icon from "react-native-vector-icons/Ionicons";
-import Gem_lot_register from "../screens/Gem_lot_register";
+import Gem_lot_register_2 from "../screens/GemLotRegister2";
+import AddGems from "../screens/AddGems";
 
+// Create Bottom Tab Navigator
+const Tab = createBottomTabNavigator();
 // Dummy Screens
 const HomeScreen = () => (
   <View style={styles.screen}>
@@ -36,27 +39,27 @@ const Alerts = () => (
     <Text>Alerts Screen</Text>
   </View>
 );
-
-// Create Bottom Tab Navigator
-const Tab = createBottomTabNavigator();
-
-const BS_NavBar = () => {
+export default function BS_NavBar({navigation}){
   return (
-    <NavigationContainer>
+    // <NavigationContainer>
       <Tab.Navigator
         screenOptions={({ route }) => ({
-          tabBarIcon: ({ color, size}) => {
+          tabBarIcon: ({ color, size }) => {
             let iconName;
             let iconSource;
+            let iconWidth = 30; // Default icon width
+            let iconHeight = size; // Default icon height (using size prop)
             if (route.name === "Home") {
               iconSource = require("../assets/navbar-icons/home.png");
             } else if (route.name === "Market") {
               iconSource = require("../assets/navbar-icons/market.png");
-            } else if (route.name === "AddGem") {
+            } else if (route.name === "Add") {
               iconSource = require("../assets/navbar-icons/addgem.png");
+              iconWidth = 35; // Make AddGem icon wider (adjust as needed)
+              iconHeight = 35; // Make AddGem icon taller (adjust as needed)
             } else if (route.name === "Alerts") {
               iconSource = require("../assets/navbar-icons/alerts.png");
-            }else if (route.name === "Profile") {
+            } else if (route.name === "Profile") {
               iconSource = require("../assets/navbar-icons/profile.png");
             }
             // Return Image component with the correct source and styling
@@ -64,8 +67,8 @@ const BS_NavBar = () => {
               <Image
                 source={iconSource}
                 style={{
-                  width: 30,
-                  height: size,
+                  width: iconWidth, // Use the conditionally set width
+                  height: iconHeight, // Use the conditionally set height
                   tintColor: color, // This allows you to change the icon color
                 }}
               />
@@ -78,7 +81,7 @@ const BS_NavBar = () => {
       >
         <Tab.Screen
           name="Home"
-          component={Gem_lot_register}
+          component={HomeScreen}
           options={{
             headerShown: false, // This hides the header for the Home screen
           }}
@@ -91,8 +94,8 @@ const BS_NavBar = () => {
           }}
         />
         <Tab.Screen
-          name="AddGem"
-          component={ProfileScreen}
+          name="Add"
+          component={AddGems}
           options={{
             headerShown: false, // Optional: to hide header for Profile screen as well
           }}
@@ -112,7 +115,7 @@ const BS_NavBar = () => {
           }}
         />
       </Tab.Navigator>
-    </NavigationContainer>
+    // </NavigationContainer>
   );
 };
 
@@ -129,11 +132,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   tabBar: {
-    backgroundColor: "#003366",
-    height: 60,
+    backgroundColor: "#072D44",
+    height: 80,
     position: "absolute",
     overflow: "hidden",
+    paddingTop: 5,
   },
 });
 
-export default BS_NavBar;

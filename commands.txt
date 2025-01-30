@@ -1,0 +1,3 @@
+npm install (install packages)
+npm update (update pacakges)
+npx expo start (start react)

@@ -7,11 +7,12 @@ import NavigationBar from './src/components/BS_NavBar';
 import BS_NavBar from './src/components/BS_NavBar';
 import MyGems from './src/screens/MyGems';
 import GemOnDisplay from './src/screens/GemOnDisplay';
+import BusinessOwnerProfilePhoto from './src/screens/BusinessOwnerProfilePhoto';
 
 export default function App() {
   return (
     <View style={styles.container}>
-      <GemOnDisplay />
+      <BusinessOwnerProfilePhoto />
     </View>
   );
 }

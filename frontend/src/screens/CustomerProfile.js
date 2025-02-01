@@ -1,14 +1,13 @@
 import React from "react";
 import { SafeAreaView, Text, StyleSheet, Image, View } from "react-native";
 
-const BusinessOwnerProfile = ({ route }) => {
+const CustomerProfile = ({ route }) => {
   //Provide default values, if details or route.params is not defined and access the defaullt object
   const details = route?.params?.details || {
     name: "N/A",
     email: "N/A",
     contact: "N/A",
     address: "N/A",
-    title: "N/A",
   };
 
   return (
@@ -51,10 +50,7 @@ const BusinessOwnerProfile = ({ route }) => {
         <Text style={styles.cardContent}>{details.address}</Text>
       </View>
 
-      <View style={styles.card}>
-        <Text style={styles.cardTitle}>Title</Text>
-        <Text style={styles.cardContent}>{details.title}</Text>
-      </View>
+      
     </SafeAreaView>
   );
 };
@@ -111,4 +107,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default BusinessOwnerProfile;
+export default CustomerProfile;

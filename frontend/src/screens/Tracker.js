@@ -1,77 +1,105 @@
 import React, { useState } from "react";
-import { View, Text, FlatList, StyleSheet, Image, TextInput, SafeAreaView } from "react-native";
+import { View, Text, FlatList, StyleSheet, Image, TextInput, SafeAreaView, TouchableOpacity } from "react-native";
+import Icon from "react-native-vector-icons/FontAwesome";
+
 
 const Tracker = () => {
   const [search, setSearch] = useState("");
 
-  const imageProgress = [
+  const [progressGem, setprogressGem] = useState([
     {
-      id: "1",
-      uri: "https://via.placeholder.com/100.png?text=Gem1",
-      description: "Beautiful Pink Gem",
+      id: "gem1",
+      code: "AA101",
+      image: require("../assets/logo.png"),
     },
     {
-      id: "2",
-      uri: "https://via.placeholder.com/100.png?text=Gem2",
-      description: "Sparkling Blue Gem",
+      id: "gem2",
+      code: "AA101",
+      image: require("../assets/logo.png"),
     },
     {
-      id: "3",
-      uri: "https://via.placeholder.com/100.png?text=Gem3",
-      description: "Radiant Green Gem",
+      id: "gem3",
+      code: "AA101",
+      image: require("../assets/logo.png"),
     },
-  ];
+  ]); 
+    
 
-  const imageCompleted = [
-    {
-      id: "4",
-      uri: "https://via.placeholder.com/100.png?text=Gem4",
-      description: "Shiny Red Gem",
-    },
-    {
-      id: "5",
-      uri: "https://via.placeholder.com/100.png?text=Gem5",
-      description: "Elegant Yellow Gem",
-    },
-    {
-      id: "6",
-      uri: "https://via.placeholder.com/100.png?text=Gem6",
-      description: "Majestic Purple Gem",
-    },
-  ];
 
-  const renderImageRow = (images) => (
-    <FlatList
-      data={images}
-      keyExtractor={(item) => item.id}
-      renderItem={({ item }) => (
-        <View style={styles.imageContainer}>
-          <Image source={{ uri: item.uri }} style={styles.image} />
-          <Text style={styles.description}>{item.description}</Text>
-        </View>
-      )}
-      numColumns={3}
-      columnWrapperStyle={styles.row}
-    />
+  const [completeGem, setcompleteGem] = useState([
+    {
+      id: "gem4",
+      code: "AA101",
+      image: require("../assets/logo.png"),
+    },
+    {
+      id: "gem5",
+      code: "AA101",
+      image: require("../assets/logo.png"),
+    },
+    {
+      id: "gem6",
+      code: "AA101",
+      image: require("../assets/logo.png"),
+    },
+  ]);
+    
+  const selectedGems = progressGem.filter((gem) =>
+    gem.code.toLowerCase().includes(search.toLowerCase())
   );
+
+  const markedComplete = (gem) =>{
+    setprogressGem(progressGem.filter((item) => item.id !== gem.id));
+    setcompleteGem([...completeGem, gem]);
+  };
+
+  const renderGem = ({item, action}) => (
+    <TouchableOpacity style={styles.gemItem} onPress={() => action(item)} >
+      <Image source={item.image} style={styles.gemImage} />
+      <Text style={styles.gemCode}>{item.code}</Text>
+    </TouchableOpacity>
+  );
+
+  
 
   return (
     <SafeAreaView style={styles.container}>
-      <Text style={styles.heading}>Tracker</Text>
+
+      <View style={styles.topic}>
+      <Icon name="arrow-left" size={20} color="white" />
+        <Text style={styles.topicName}>Tracker</Text>
+      </View>
+      
 
       {/* Custom Search Bar */}
-      <TextInput
-        style={styles.searchBar}
-        placeholder="Gem code"
-        value={search}
-        onChangeText={setSearch}
+      <View style={styles.searchBar}>
+        <Icon name= "search" size={18} color="#888" style={styles.searchIcon}/>
+        <TextInput
+          style={styles.searchData}
+          placeholder="Gem code"
+          value={search}
+          onChangeText={(text) => setSearch(text)}
+        />
+      </View>
+      
+
+      <Text style={styles.subTopic}>In Progress</Text>
+      <FlatList
+        data={selectedGems}
+        horizontal
+        keyExtractor={(item) => item.id}
+        renderItem={({item}) => renderGem({item, action: markedComplete})}
       />
 
-      <Text style={styles.heading}>In Progress</Text>
-      {renderImageRow(imageProgress)}
 
-      <Text style={styles.heading}>Completed</Text>
-      {renderImageRow(imageCompleted)}
+      <Text style={styles.subTopic}>Completed</Text>
+      <FlatList
+        data={completeGem}
+        horizontal
+        keyExtractor={(item) => item.id}
+        renderItem={({item}) => renderGem({item, action: () => {} })}
+      />
+   
     </SafeAreaView>
   );
 };
@@ -79,42 +107,56 @@ const Tracker = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
-    padding: 10,
+    backgroundColor: "#a9c9d3",
   },
-  heading: {
+  topic: {
     fontSize: 20,
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#082f4f",
+    padding: 15,
+  },
+  topicName: {
+    color: "#fff",
+    fontSize: 18,
     fontWeight: "bold",
-    textAlign: "center",
-    marginVertical: 15,
+    marginLeft: 10,
+    alignItems: "center",
   },
   searchBar: {
-    height: 40,
-    borderColor: "#ccc",
-    borderWidth: 1,
-    borderRadius: 5,
-    paddingHorizontal: 10,
-    marginBottom: 15,
+    flexDirection: "row",
+    backgroundColor: "#fff",
+    padding: 8, 
+    margin: 10,
+    borderRadius: 8
   },
-  row: {
-    justifyContent: "space-between",
+  searchIcon: {
+    marginRight: 8,
+    alignSelf: "center"
   },
-  imageContainer: {
+  searchData: {
     flex: 1,
+    fontSize: 16
+  },
+  subTopic: {
+    fontSize: 18,
+    fontWeight: "bold",
+    marginLeft: 10,
+    marginVertical: 8
+  },
+  gemItem: {
     alignItems: "center",
-    margin: 5,
+    margin: 10
   },
-  image: {
-    width: 100,
-    height: 100,
-    borderRadius: 10,
+  gemImage: {
+    width: 80,
+    height: 80,
+    borderRadius: 10
   },
-  description: {
+  gemCode: {
     marginTop: 5,
-    fontSize: 14,
-    color: "#333",
-    textAlign: "center",
-  },
+    fontsize: 14
+  }
 });
 
 export default Tracker;

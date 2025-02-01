@@ -8,11 +8,13 @@ import BS_NavBar from './src/components/BS_NavBar';
 import MyGems from './src/screens/MyGems';
 import GemOnDisplay from './src/screens/GemOnDisplay';
 import BusinessOwnerProfilePhoto from './src/screens/BusinessOwnerProfilePhoto';
+import Tracker from './src/screens/Tracker';
+
 
 export default function App() {
   return (
     <View style={styles.container}>
-      <BusinessOwnerProfilePhoto />
+      <Tracker />
     </View>
   );
 }

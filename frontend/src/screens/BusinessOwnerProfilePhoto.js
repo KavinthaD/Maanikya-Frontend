@@ -3,8 +3,10 @@ import { StyleSheet } from "react-native";
 import { Alert, TouchableOpacity } from "react-native";
 
 const BusinessOwnerProfilePhoto = ({navigation}) =>{
+    //select or take the gem image
     const [photo, setPhoto] = useState(null);
 
+    //select photo from gallery
     const selectPhoto = () =>{
         launchImage(
             {
@@ -17,12 +19,13 @@ const BusinessOwnerProfilePhoto = ({navigation}) =>{
                 }else if(response.errorCode){
                     Alert.alert("Error occured",response.errorMessage);
                 }else{
-                    setPhoto(response.assests[0].uri);
+                    setPhoto(response.assests[0].uri);       //store selected photo uri
                 }
             }
         );
     };
 
+    //take a new photo 
     const takePhoto =() =>{
         launchCamera(
             {
@@ -35,17 +38,20 @@ const BusinessOwnerProfilePhoto = ({navigation}) =>{
                 }else if(response.errorCode){
                     Alert.alert("Error", response.errorMessage);
                 }else{
-                    setPhoto(response.assests[0].uri);
+                    setPhoto(response.assests[0].uri);  //take image uri
                 }
             }
         );
     };
     return(
         <View style= {styles.container}>
+            {/* Heading*/ }
             <View style ={styles.topic}>
+                <Icon name="arrow-left" size={20} color="white" />
                 <Text style={styles.topicName}>Scan</Text>
             </View>
 
+            {/* select or take photo */}
             <View style={styles.photo}>
                 {photo ?(
                     <Image source = {{uri:photo}} style={styles.profilePhoto} />
@@ -55,6 +61,7 @@ const BusinessOwnerProfilePhoto = ({navigation}) =>{
                 
             </View>
 
+            {/* button that open the gallery and selects image */ }
             <TouchableOpacity  style={styles.button} onPress = {selectPhoto} >
                 <Text style={styles.buttonText} >Open gallery</Text>
             </TouchableOpacity>
@@ -62,6 +69,7 @@ const BusinessOwnerProfilePhoto = ({navigation}) =>{
         </View>
     );
 };
+
 
 const styles = StyleSheet.create({
     container:{

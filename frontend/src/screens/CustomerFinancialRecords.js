@@ -3,10 +3,10 @@ import { View, Text, TextInput, TouchableOpacity, FlatList, Image, StyleSheet } 
 import { Ionicons } from "@expo/vector-icons";
 
 const sellers = [
-  { name: "Sunil Gamalath", business: "Gamage Gems", rating: 3, image: require("./assets/seller1.jpg") },
-  { name: "Subash Hettiarachchi", business: "Pixe; Gems", rating: 2, image: require("./assets/seller2.jpg") },
-  { name: "Rashantha Gamage", business: "Zodiac Gems", rating: 3, image: require("./assets/seller3.jpg") },
-  { name: "Wimalasiri Siriwardana", business: "Janatha Gems", rating: 4, image: require("./assets/seller4.jpg") },
+  { name: "Sunil Gamalath", business: "Gamage Gems", rating: 3, image: require("../assets/seller.png") },
+  { name: "Subash Hettiarachchi", business: "Pixe; Gems", rating: 2, image: require("../assets/seller.png") },
+  { name: "Rashantha Gamage", business: "Zodiac Gems", rating: 3, image: require("../assets/seller.png") },
+  { name: "Wimalasiri Siriwardana", business: "Janatha Gems", rating: 4, image: require("../assets/seller.png") },
 ];
 
 export default function MySellersScreen() {

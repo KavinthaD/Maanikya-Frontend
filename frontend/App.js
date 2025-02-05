@@ -9,12 +9,15 @@ import MyGems from './src/screens/MyGems';
 import GemOnDisplay from './src/screens/GemOnDisplay';
 import BusinessOwnerProfilePhoto from './src/screens/BusinessOwnerProfilePhoto';
 import Tracker from './src/screens/Tracker';
+import CustomerProfile from './src/screens/CustomerProfile';
+import CustomerProfilePhoto from './src/screens/CustomerProfilePhoto';
+import BusinessOwnerProfile from './src/screens/BusinessOwnerProfile';
 
 
 export default function App() {
   return (
     <View style={styles.container}>
-      <Tracker />
+      <BusinessOwnerProfilePhoto />
     </View>
   );
 }

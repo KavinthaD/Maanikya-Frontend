@@ -66,7 +66,7 @@ const Tracker = () => {
     <SafeAreaView style={styles.container}>
 
       <View style={styles.topic}>
-      <Icon name="arrow-left" size={20} color="white" />
+        <Icon name="arrow-left" size={20} color="white" />
         <Text style={styles.topicName}>Tracker</Text>
       </View>
       

@@ -1,162 +1,153 @@
 import React, { useState } from "react";
-import { View, Text, Image, StyleSheet, FlatList, TouchableOpacity, Alert } from "react-native";
-import { Ionicons } from '@expo/vector-icons';
-import { useNavigation } from "@react-navigation/native";
+import { SafeAreaView, Text, TouchableOpacity, FlatList, Image, View, StyleSheet } from "react-native";
+import { Plus } from "lucide-react-native";
 
 const GemOnDisplay = () => {
+  const [onDisplay, setOnDisplay] = useState([
+    { id: "Gem001", image: require("../assets/logo.png") }
+  ]);
 
-    const navigation = useNavigation();
+  const [sold, setSold] = useState([]);
 
-    const [onDisplay, setonDisplay] = useState([
-        { id: "G001", image: require("../assets/logo.png"), sold: false  },
-        { id: "G002", image: require("../assets/logo.png"), sold: false  },
-    ]);
+  const markSold = (gem) => {
+    setOnDisplay(onDisplay.filter((item) => item.id !== gem.id));
+    setSold([...sold, { ...gem, buyer: "Unknown", price: Math.floor(Math.random() * 50000) + 50000 }]);
+  };
 
-    const [onSold, setonSold] = useState([
-        { id: "G003", image: require("../assets/logo.png"), buyer: "Kamal", price: "60000"  },
-        { id: "G004", image: require("../assets/logo.png"), buyer: "Amal", price: "20000"  },
-    ]);
-
-    const soldGem = (id) => {
-        Alert.alert("Confirm","Want to make this gem as sold?",[
-            {text: "Cancel", style: "cancel"},
-            {
-                text: "Yes",
-                onPress: () =>{
-                    const soldGem = onDisplay.find((gem) => gem.id ==id);
-                    setonSold([...soldGem, {...soldGem, buyer: "Unknown" , price: "0"}]);
-                    setonDisplay(onDisplay.filter((gem) => gem.id !==id));
-                },
-            },
-        ]);
+  const addGem = () => {
+    const newGem = {
+      id: `Gem00${onDisplay.length + sold.length + 1}`,
+      image: require("../assets/logo.png"),
     };
+    setOnDisplay([...onDisplay, newGem]);
+  };
 
-    
+  return (
+    <SafeAreaView style={styles.container}>
+      {/* Title */}
+      <View style={styles.title}>
+        <Text style={styles.titleName}>Gem On Display</Text>
+      </View>
 
-    return (
-        <View style={styles.container}>
-            <View style={styles.topic}>
-                <Text style={styles.topicName}>Gem On Display</Text>
-            </View>
-            
-            <TouchableOpacity style={styles.addButton} onPress= {() => naviagation.navigate("AddGem")}>
-                <Ionicons name="add-circle" size={40} color="#007AFF" />
+      {/* Add Gem Button */}
+      <TouchableOpacity onPress={addGem} style={styles.addButton}>
+        <Plus size={24} color="black" />
+      </TouchableOpacity>
+
+      {/* On Display Gems */}
+      <Text style={styles.subtopic}>On Display</Text>
+      <FlatList
+        data={onDisplay}
+        keyExtractor={(item) => item.id}
+        renderItem={({ item }) => (
+          <View style={styles.gemDisplay}>
+            <Image source={item.image} style={styles.gemImg} />
+            <Text style={styles.gemId}>{item.id}</Text>
+            <TouchableOpacity onPress={() => markSold(item)} style={styles.soldBtn}>
+              <Text style={styles.soldBtnText}>Mark As Sold</Text>
             </TouchableOpacity>
-            
-            <Text style={styles.subTopic}>On Display </Text>
-            <FlatList
-                data={onDisplay}
-                keyExtractor={(item) => item.id}
-                renderItem={({item}) => (
-                    <View style={styles.displayList}>
-                        <Image source={item.image} style={styles.gemImage}/>
-                        <Text style={styles.gemCode}>#{item.id}</Text>
+          </View>
+        )}
+      />
 
-                        <TouchableOpacity style={styles.soldButton} onPress={() => soldGem(item.id)}>
-                            <Text style={styles.soldButtonText}> Mark as sold</Text>
-                        </TouchableOpacity>
-                    </View>
-                )}
-              
-            />
-
-            <Text style={styles.subTopic}>Sold Out </Text>
-            <FlatList
-                data={onSold}
-                keyExtractor={(item) => item.id}
-                renderItem={({item}) => (
-                    <View style={styles.soldList}>
-                        <Image source={item.image} style={styles.gemImage} />
-                        <Text style={styles.gemCode}>#{item.id}</Text>
-                        <Text style={styles.buyerName}>{item.buyer}</Text>
-                        <Text style={price}>LKR {item.price}</Text>
-                    </View>
-                
-                )}
-
-            />
-        </View>
-    );
+      {/* Sold Gems */}
+      <Text style={styles.subtopic}>Sold out</Text>
+      <FlatList
+        data={sold}
+        keyExtractor={(item) => item.id}
+        renderItem={({ item }) => (
+          <View style={styles.soldGems}>
+            <Image source={item.image} style={styles.gemImg} />
+            <Text style={styles.soldText}>{item.id} - {item.buyer}</Text>
+            <Text style={styles.gemPrice}>LKR {item.price}</Text>
+          </View>
+        )}
+      />
+    </SafeAreaView>
+  );
 };
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: "#a9c9d3",
-        padding: 15,
-    },
-    topic:{
-        width: "100%",
-        backgroundColor: "#082f4f",
-        padding:15,
-        alignItems: "center",
-        position: "absolute",
-        top: 0,
-    },
-    topicName:{
-      color:"#fff",
-      fontSize: 18,
-      fontWeight: "bold",  
-    },
-    addButton:{
-        backgroundColor: "#fff",
-        padding: 15,
-        borderRadius: 10,
-        alignItems: "center",
-        marginBottom: 10,
-        flexDirection: "row",
-        justifyContent: "center",
-    },
-    subTopic: {
-        fontSize: 18, 
-        fontWeight: "bold" , 
-        marginTop:10, 
-        marginBottom: 5,
-    },
-    gemImage: {
-        width: 30,
-        height: 30,
-        borderRadius: 15,
-        marginRight: 10,
-    },
-    gemCode: {
-        flex: 1,
-        fontSize: 16,
-    },
-    soldButton: {
-        backgroundColor: "083b80",
-        padding: 5,
-        borderRadius: 5,
-    },
-    soldButtonText: {
-        color: "#fff",
-        fontSize: 14,
-    },
-    displayList: {
-        flexDirection: "row",
-        alignItems: "center",
-        backgroundColor: "#c7dffd",
-        padding: 10,
-        borderRadius: 10,
-        marginBottom: 5,
-    },
-    soldGem: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        backgroundColor: "#b5c9f3",
-        padding: 10,
-        borderRadius: 10,   
-        marginBottom: 5,
-    },
-    buyerName: {
-        flex: 1,
-        fontSize: 16
-    },
-    price: {
-        fontSize: 16,
-        fontWeight: "bold"
-    },
-    
+  container: {
+    flex: 1,
+    backgroundColor: "#A7D7E7",
+    padding: 16,
+  },
+  title: {
+    backgroundColor: "#003366",
+    padding: 16,
+    alignItems: "center",
+  },
+  titleName: {
+    color: "white",
+    fontSize: 18,
+    fontWeight: "bold",
+  },
+  addButton: {
+    backgroundColor: "white",
+    padding: 12,
+    borderRadius: 10,
+    borderCurve: 25,
+    alignItems: "center",
+    marginVertical: 10,
+    alignSelf: "center",
+    width: 50,
+    height: 50,
+    justifyContent: "center",
+  },
+  subtopic: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "#333",
+    marginTop: 10,
+  },
+  gemDisplay: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#87CEEB",
+    padding: 10,
+    borderRadius: 10,
+    marginVertical: 5,
+  },
+  gemImg: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+  },
+  gemId: {
+    flex: 1,
+    marginLeft: 10,
+    fontSize: 14,
+    color: "black",
+  },
+  soldBtn: {
+    backgroundColor: "#003366",
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+    borderRadius: 10,
+  },
+  soldBtnText: {
+    color: "white",
+    fontSize: 12,
+  },
+  soldGems: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#5D9CEC",
+    padding: 10,
+    borderRadius: 10,
+    marginVertical: 5,
+  },
+  soldText: {
+    flex: 1,
+    marginLeft: 10,
+    fontSize: 14,
+    color: "black"
+  },
+  gemPrice: {
+    fontSize: 14,
+    color: "#003366",
+  },
 });
 
 export default GemOnDisplay;

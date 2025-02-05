@@ -1,114 +1,114 @@
 import React from "react";
-import { SafeAreaView, Text, StyleSheet, Image, View } from "react-native";
+import { SafeAreaView,View, Text, Image, TouchableOpacity, StyleSheet } from "react-native";
+import { Home, ShoppingBag, PlusCircle, Bell, User } from "lucide-react-native";
 
-const BusinessOwnerProfile = ({ route }) => {
-  //Provide default values, if details or route.params is not defined and access the defaullt object
-  const details = route?.params?.details || {
-    name: "N/A",
-    email: "N/A",
-    contact: "N/A",
-    address: "N/A",
-    title: "N/A",
+const BusinessOwnerProfile = () => {
+  const user = {
+    image: "https://static.wikia.nocookie.net/garfield/images/6/60/Garfield_New_Look.jpg/revision/latest/scale-to-width/360?cb=20240328075614", 
+    name: "abc",
+    email: "rathnasiri.n@hotmail.com",
+    phone: "+94 987 654 321",
+    title: "Owner of Navarathna Gems",
+    address: "602, Kalawana Rd, Nivitigala, Rathnapura, Sri Lanka",
   };
 
   return (
     <SafeAreaView style={styles.container}>
-      {/*Heading*/ }  
-      <View style = {styles.topic}>
-        <Icon name="arrow-left" size={20} color="white" />
+      
+      <View style={styles.topic}>
         <Text style={styles.topicName}>Profile</Text>
       </View>
+
+      <View style={styles.profileContainer}>
+        <Image source={{ uri: user.image }} style={styles.profilePic} />
+        <TouchableOpacity style={styles.editBtn}>
+          <Text style={styles.editBtnText}>Edit Profile</Text>
+        </TouchableOpacity>
+      </View>
+
+      <View style={styles.infoContainer}>
+        <Text style={styles.label}>NAME</Text>
+        <Text style={styles.info}>{user.name}</Text>
+      </View>
+      <View style={styles.infoContainer}>
+        <Text style={styles.label}>EMAIL</Text>
+        <Text style={styles.info}>{user.email}</Text>
+      </View>
+      <View style={styles.infoContainer}>
+        <Text style={styles.label}>Contact No</Text>
+        <Text style={styles.info}>{user.phone}</Text>
+      </View>
+      <View style={styles.infoContainer}>
+        <Text style={styles.label}>TITLE</Text>
+        <Text style={styles.info}>{user.title}</Text>
+      </View>
+      <View style={styles.infoContainer}>
+        <Text style={styles.label}>Address</Text>
+        <Text style={styles.info}>{user.address}</Text>
+      </View>
+
       
-
-      {/* Profile Image */}
-      <View style={styles.card}>
-        <Image
-          source={{
-            uri: "https://static.wikia.nocookie.net/garfield/images/9/9f/GarfieldCharacter.jpg/revision/latest?cb=20180421131132",
-          }}
-          style={styles.profilePic}
-        />
-      </View>
-
-      {/* Profile Details */}
-      <View style={styles.card}>
-        <Text style={styles.cardTitle}>Name</Text>
-        <Text style={styles.cardContent}>{details.name}</Text>
-      </View>
-
-      <View style={styles.card}>
-        <Text style={styles.cardTitle}>Email</Text>
-        <Text style={styles.cardContent}>{details.email}</Text>
-      </View>
-
-      <View style={styles.card}>
-        <Text style={styles.cardTitle}>Contact</Text>
-        <Text style={styles.cardContent}>{details.contact}</Text>
-      </View>
-
-      <View style={styles.card}>
-        <Text style={styles.cardTitle}>Address</Text>
-        <Text style={styles.cardContent}>{details.address}</Text>
-      </View>
-
-      <View style={styles.card}>
-        <Text style={styles.cardTitle}>Title</Text>
-        <Text style={styles.cardContent}>{details.title}</Text>
-      </View>
     </SafeAreaView>
   );
 };
 
+
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
-    backgroundColor: "#9CCDDB",
+    backgroundColor: "#A7D7E7",
+  },
+  topic: {
+    backgroundColor: "#003366",
+    padding: 16,
     alignItems: "center",
   },
-  topic:{
-    width: "100%",
-    backgroundColor: "#082f4f",
-    padding:15,
-    alignItems: "center",
-    position: "absolute",
-    top: 0,
+  topicName: {
+    color: "white",
+    fontSize: 18,
+    fontWeight: "bold",
   },
-  topicName:{
-  color:"#fff",
-  fontSize: 18,
-  fontWeight: "bold",  
+  profileContainer: {
+    alignItems: "center",
+    padding: 16,
+    backgroundColor: "#C5F0EE",
   },
   profilePic: {
-    width: 120,
-    height: 120,
-    borderRadius: 60,
-    borderWidth: 2,
-    borderColor: "#ccc",
+    width: 100,
+    height: 100,
+    borderRadius: 50,
   },
-  card: {
-    width: "90%",
-    backgroundColor: "#fff",
-    borderRadius: 10,
-    padding: 15,
-    marginBottom: 15,
-    alignItems: "center",
-    shadowColor: "#000",
-    shadowOpacity: 0.1,
-    shadowOffset: { width: 0, height: 3 },
-    shadowRadius: 5,
-    elevation: 3, // For Android shadow
+  editBtn: {
+    backgroundColor: "#007AFF",
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    borderRadius: 6,
+    marginTop: 20,
   },
-  cardTitle: {
-    fontSize: 18,
-    fontWeight: "600",
-    color: "#555",
-    marginBottom: 5,
+  editBtnText: {
+    color: "black",
+    fontSize: 14,
+    fontWeight: "bold",
   },
-  cardContent: {
+  infoContainer: {
+    padding: 16,
+    backgroundColor: "white"
+  },
+  label: {
+    fontSize: 14,
+    fontWeight: "bold",
+    color: "#003366",
+    marginTop: 25,
+    borderColor: "black",
+    
+  },
+  info: {
     fontSize: 16,
     color: "#333",
+    marginBottom: 5,
   },
+  
 });
 
 export default BusinessOwnerProfile;

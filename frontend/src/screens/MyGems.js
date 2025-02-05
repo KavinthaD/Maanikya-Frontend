@@ -1,74 +1,174 @@
 import React from 'react';
-import { View, Text, FlatList, StyleSheet, Image } from 'react-native';
+import { View, Text, FlatList, StyleSheet, Image, TouchableOpacity } from 'react-native';
+import QRCode from 'react-native-qrcode-svg'; // Import QR library
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { Ionicons, FontAwesome5 } from '@expo/vector-icons'; // Import icons
 
 const MyGems = () => {
-  const gemDetails = [
-    {
-      dateAdded: '9/12/2023',
-      identification: 'Natural Blue Sapphire',
-      weight: '1.96 carats',
-      measurements: '8.59 x 6.36 x 4.97 mm',
-      shape: 'Cushion',
-      color: 'Vivid Blue',
-    },
-  ];
 
-  const financialDetails = [
-    {
-      purchasePrice: 'LKR 60,000',
-      cost: 'LKR 20,000',
-      soldPrice: 'LKR 100,000',
-    },
-  ];
+  const gemDetails = {
+    gemId: 'BS001',
+    dateAdded: '9/12/2023',
+    identification: 'Natural Blue Sapphire',
+    weight: '1.96 carats',
+    measurements: '6.59 x 6.36 x 4.97 mm',
+    shape: 'Cushion',
+    color: 'Vivid Blue',
+    purchasePrice: 'LKR 60,000',
+    cost: 'LKR 20,000 (for cutting)',
+    soldPrice: 'LKR 100,000',
+  };
+
+  const qrCode = JSON.stringify({
+    gem: gemDetails.identification,
+    weight: gemDetails.weight,
+    color: gemDetails.color,
+  });
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
+      {/* Header */}
+      <View style={styles.topic}>
+        <TouchableOpacity>
+          <Ionicons name="chevron-back" size={24} color="white" />
+        </TouchableOpacity>
+        <Text style={styles.topicName}>My Gems</Text>
+        <View style={{ width: 24 }} />
+      </View>
 
+      <View style={styles.imageContainer}>
+        <Image
+          source={{ uri: 'https://cdn.britannica.com/80/151380-050-2ABD86F2/diamond.jpg' }}
+          style={styles.gemPhoto}
+        />
+        <TouchableOpacity style={styles.editBtn}>
+          <FontAwesome5 name="pen" size={16} color="white" />
+        </TouchableOpacity>
+        <View style={styles.qrContainer}>
+          <QRCode value={qrCode} size={50} />
+        </View>
+      </View>
+
+      {/* Gem ID */}
+      <Text style={styles.gemId}>Gem ID - {gemDetails.gemId}</Text>
+
+      <View style={styles.detailCard}>
+        <Text style={styles.detailTitle}>Date added to system - {gemDetails.dateAdded}</Text>
+        <Text style={styles.detailText}>Identification - {gemDetails.identification}</Text>
+        <Text style={styles.detailText}>Weight - {gemDetails.weight}</Text>
+        <Text style={styles.detailText}>Measurements - {gemDetails.measurements}</Text>
+        <Text style={styles.detailText}>Shape - {gemDetails.shape}</Text>
+        <Text style={styles.detailText}>Color - {gemDetails.color}</Text>
+        <Text style={styles.detailText}>Additional Information - </Text>
+      </View>
+
+      <View style={styles.detailCard}>
+        <Text style={styles.detailText}>Purchase Price - {gemDetails.purchasePrice}</Text>
+        <Text style={styles.detailText}>Cost - {gemDetails.cost}</Text>
+        <Text style={styles.detailText}>Sold Price - {gemDetails.soldPrice}</Text>
+      </View>
+
+      {/* Certificate Image */}
       <Image
-        source={{ uri: 'https://via.placeholder.com/600x200' }} 
-        style={styles.image}
+        source={{ uri: 'https://cdn.britannica.com/80/151380-050-2ABD86F2/diamond.jpg' }}
+        style={styles.gemCert}
       />
-
     
-      <FlatList
-        data={gemDetails}
-        keyExtractor={(item, index) => `gem-${index}`}
-        renderItem={({ item }) => (
-          <View style={styles.detailCard}>
-            <Text>Date added to system: {item.dateAdded}</Text>
-            <Text>Identification: {item.identification}</Text>
-            <Text>Weight: {item.weight}</Text>
-            <Text>Measurements: {item.measurements}</Text>
-            <Text>Shape: {item.shape}</Text>
-            <Text>Color: {item.color}</Text>
-          </View>
-        )}
-      />
 
-      <FlatList
-        data={financialDetails}
-        keyExtractor={(item, index) => `financial-${index}`}
-        renderItem={({ item }) => (
-          <View style={styles.detailCard}>
-            <Text>Purchase Price: {item.purchasePrice}</Text>
-            <Text>Cost: {item.cost}</Text>
-            <Text>Sold Price: {item.soldPrice}</Text>
-          </View>
-        )}
-      />
-
-      <Image
-        source={{ uri: 'https://via.placeholder.com/600x200' }} 
-        style={styles.image}
-      />
-    </View>
+      
+    </SafeAreaView>
   );
 };
 
+// Styles
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#fff', padding: 10 },
-  image: { width: '50%', height: '50%', resizeMode: 'cover', marginVertical: 10 },
-  detailCard: { padding: 10, borderWidth: 1, borderRadius: 5, marginBottom: 10, backgroundColor: '#f9f9f9' },
+  container: {
+    flex: 1,
+    backgroundColor: '#9CCDDB',
+  },
+  topic: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#082f4f',
+    padding: 15,
+    justifyContent: 'space-between',
+  },
+  topicName: {
+    color: 'white',
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  imageContainer: {
+    alignItems: 'center',
+    marginVertical: 15,
+    position: 'relative',
+  },
+  gemPhoto: {
+    width: 120,
+    height: 120,
+    borderRadius: 10,
+    borderWidth: 2,
+    borderColor: '#ccc',
+  },
+  editBtn: {
+    position: 'absolute',
+    top: 5,
+    right: 5,
+    backgroundColor: '#007BFF',
+    padding: 5,
+    borderRadius: 5,
+  },
+  qrContainer: {
+    position: 'absolute',
+    top: 5,
+    left: 5,
+    backgroundColor: '#fff',
+    padding: 5,
+    borderRadius: 5,
+  },
+  gemId: {
+    textAlign: 'center',
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginBottom: 10,
+  },
+  detailCard: {
+    backgroundColor: '#f9f9f9',
+    padding: 15,
+    borderRadius: 10,
+    marginHorizontal: 20,
+    marginBottom: 10,
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  detailTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginBottom: 5,
+  },
+  detailText: {
+    fontSize: 14,
+    marginBottom: 3,
+  },
+  gemCert: {
+    width: 120,
+    height: 80,
+    marginLeft: 20,
+    borderRadius: 5,
+  },
+  navBar: {
+    position: 'absolute',
+    bottom: 0,
+    flexDirection: 'row',
+    backgroundColor: '#082f4f',
+    width: '100%',
+    height: 60,
+    justifyContent: 'space-around',
+    alignItems: 'center',
+  },
 });
 
 export default MyGems;

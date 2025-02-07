@@ -1,5 +1,9 @@
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
+import { NavigationContainer } from "@react-navigation/native";
+import { createStackNavigator } from "@react-navigation/stack";
+
+
 import RegisterSelectionPage from './src/screens/RegisterSelectionPage';
 import Gem_lot_register from './src/screens/Gem_lot_register';
 import PurposeSelectionPage from './src/screens/PurposeSelectionPage';
@@ -12,18 +16,30 @@ import Tracker from './src/screens/Tracker';
 import CustomerProfile from './src/screens/CustomerProfile';
 import CustomerProfilePhoto from './src/screens/CustomerProfilePhoto';
 import BusinessOwnerProfile from './src/screens/BusinessOwnerProfile';
+import BusinessOwnerEditProfile from './src/screens/BusinessOwnerEditProfile';
+import GemCertificateAdd from './src/screens/GemCertificateAdd';
 
 
-export default function App() {
+
+const Stack = createStackNavigator();
+
+const App = () => {
   return (
-    <View style={styles.container}>
-      <BusinessOwnerProfilePhoto />
-    </View>
+    <NavigationContainer>
+      <Stack.Navigator screenOptions={{ headerShown: false }}>
+        {/*<Stack.Screen name="BusinessOwnerEditProfile" component={BusinessOwnerEditProfile} />
+        <Stack.Screen name="BusinessOWnerProfile" component={BusinessOwnerProfile} />
+        <Stack.Screen name="BusinessOwnerProfilePhoto" component={BusinessOwnerProfilePhoto} />
+        <Stack.Screen name="GemONDisplay" component={GemOnDisplay} />*/}
+        {/*<Stack.Screen name="Tracker" component={Tracker} />*/}
+        <Stack.Screen name="MyGems" component={MyGems} />
+        <Stack.Screen name = "GemCertificateAdd" component={GemCertificateAdd} />
+        
+      </Stack.Navigator>
+    </NavigationContainer>
   );
-}
+};
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-});
+export default App;
+
+

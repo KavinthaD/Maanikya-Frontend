@@ -3,8 +3,9 @@ import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
 import { launchImageLibrary, launchCamera } from "react-native-image-picker";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Icon from "react-native-vector-icons/FontAwesome";
+import { Ionicons, FontAwesome5 } from '@expo/vector-icons'; 
 
-const BusinessOwnerProfilePhoto = () => {
+const BusinessOwnerProfilePhoto = ({ navigation }) => {
   const [photo, setPhoto] = useState(null);
 
   // Function to open gallery
@@ -29,6 +30,9 @@ const BusinessOwnerProfilePhoto = () => {
     <SafeAreaView style={styles.container}>
       {/* Header */}
       <View style={styles.topic}>
+        <TouchableOpacity  onPress={() => navigation.goBack()}>
+          <Ionicons name="chevron-back" size={24} color="white" />
+        </TouchableOpacity>
         <Text style={styles.topicName}>Scan</Text>
       </View>
 
@@ -65,18 +69,16 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   topic: {
-    width: "100%",
-    backgroundColor: "#082f4f",
-    padding: 15,
-    position: "absolute",
-    top: 0,
+    flexDirection: "row",
     alignItems: "center",
-    marginTop: 50
+    padding: 15,
+    backgroundColor: "#0a3a5d",
   },
   topicName: {
-    color: "#fff",
+    color: "white",
     fontSize: 18,
     fontWeight: "bold",
+    alignItems: "center",
   },
   imageContainer: {
     backgroundColor: "#e3f1fc",
@@ -106,6 +108,9 @@ const styles = StyleSheet.create({
   photoBtnText: {
     color: "#fff",
     fontSize: 16,
+  },
+  backBtn: {
+    marginLeft: 15, 
   },
 });
 

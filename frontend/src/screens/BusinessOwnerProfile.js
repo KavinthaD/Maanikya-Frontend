@@ -1,8 +1,9 @@
 import React from "react";
-import { SafeAreaView,View, Text, Image, TouchableOpacity, StyleSheet } from "react-native";
+import { SafeAreaView,View, Text, Image, TouchableOpacity, StyleSheet, Button } from "react-native";
 import { Home, ShoppingBag, PlusCircle, Bell, User } from "lucide-react-native";
+import { Ionicons, FontAwesome5 } from '@expo/vector-icons'; 
 
-const BusinessOwnerProfile = () => {
+const BusinessOwnerProfile = ({ navigation }) => {
   const user = {
     image: "https://static.wikia.nocookie.net/garfield/images/6/60/Garfield_New_Look.jpg/revision/latest/scale-to-width/360?cb=20240328075614", 
     name: "abc",
@@ -16,14 +17,18 @@ const BusinessOwnerProfile = () => {
     <SafeAreaView style={styles.container}>
       
       <View style={styles.topic}>
+         <TouchableOpacity onPress={() => navigation.goBack()}>
+            <Ionicons name="chevron-back" size={24} color="white" />
+          </TouchableOpacity>
         <Text style={styles.topicName}>Profile</Text>
+        
       </View>
 
       <View style={styles.profileContainer}>
         <Image source={{ uri: user.image }} style={styles.profilePic} />
-        <TouchableOpacity style={styles.editBtn}>
-          <Text style={styles.editBtnText}>Edit Profile</Text>
-        </TouchableOpacity>
+        
+        <Button title="Edit Profile" onPress={() => navigation.navigate("BusinessOwnerEditProfile")} />
+        
       </View>
 
       <View style={styles.infoContainer}>
@@ -60,14 +65,16 @@ const styles = StyleSheet.create({
     backgroundColor: "#A7D7E7",
   },
   topic: {
-    backgroundColor: "#003366",
-    padding: 16,
+    flexDirection: "row",
     alignItems: "center",
+    padding: 15,
+    backgroundColor: "#0a3a5d",
   },
   topicName: {
     color: "white",
     fontSize: 18,
     fontWeight: "bold",
+    alignItems: "center",
   },
   profileContainer: {
     alignItems: "center",

@@ -4,9 +4,9 @@ import QRCode from 'react-native-qrcode-svg'; // Import QR library
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons, FontAwesome5 } from '@expo/vector-icons'; // Import icons
 
-const MyGems = () => {
+const MyGems = ({route, navigation}) => {
 
-  const gemDetails = {
+  const sampleDetails = {
     gemId: 'BS001',
     dateAdded: '9/12/2023',
     identification: 'Natural Blue Sapphire',
@@ -17,7 +17,17 @@ const MyGems = () => {
     purchasePrice: 'LKR 60,000',
     cost: 'LKR 20,000 (for cutting)',
     soldPrice: 'LKR 100,000',
-  };
+  };  
+
+  const { gemDetails =  sampleDetails } = route.params || {};
+  
+  if (!gemDetails) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <Text style={{ textAlign: "center", marginTop: 20 }}>No Gem Data Available</Text>
+      </SafeAreaView>
+    );
+  }
 
   const qrCode = JSON.stringify({
     gem: gemDetails.identification,
@@ -29,11 +39,11 @@ const MyGems = () => {
     <SafeAreaView style={styles.container}>
       {/* Header */}
       <View style={styles.topic}>
-        <TouchableOpacity>
-          <Ionicons name="chevron-back" size={24} color="white" />
-        </TouchableOpacity>
+          <TouchableOpacity onPress={() => navigation.goBack()}>
+            <Ionicons name="chevron-back" size={24} color="white" />
+          </TouchableOpacity>
         <Text style={styles.topicName}>My Gems</Text>
-        <View style={{ width: 24 }} />
+              
       </View>
 
       <View style={styles.imageContainer}>
@@ -41,10 +51,8 @@ const MyGems = () => {
           source={{ uri: 'https://cdn.britannica.com/80/151380-050-2ABD86F2/diamond.jpg' }}
           style={styles.gemPhoto}
         />
-        <TouchableOpacity style={styles.editBtn}>
-          <FontAwesome5 name="pen" size={16} color="white" />
-        </TouchableOpacity>
-        <View style={styles.qrContainer}>
+        
+        <View style={styles.qrContainer} >
           <QRCode value={qrCode} size={50} />
         </View>
       </View>
@@ -73,6 +81,9 @@ const MyGems = () => {
         source={{ uri: 'https://cdn.britannica.com/80/151380-050-2ABD86F2/diamond.jpg' }}
         style={styles.gemCert}
       />
+      <TouchableOpacity onPress={() => navigation.navigate("GemCertificateAdd")} style={styles.editBtn}>
+        <FontAwesome5 name="pen" size={16} color="white" />
+      </TouchableOpacity>
     
 
       
@@ -91,7 +102,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#082f4f',
     padding: 15,
-    justifyContent: 'space-between',
+    //justifyContent: 'space-between',
   },
   topicName: {
     color: 'white',
@@ -112,8 +123,8 @@ const styles = StyleSheet.create({
   },
   editBtn: {
     position: 'absolute',
-    top: 5,
-    right: 5,
+    top: 620,
+    left: 150,
     backgroundColor: '#007BFF',
     padding: 5,
     borderRadius: 5,

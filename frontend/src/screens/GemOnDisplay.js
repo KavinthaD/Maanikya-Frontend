@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import { SafeAreaView, Text, TouchableOpacity, FlatList, Image, View, StyleSheet } from "react-native";
 import { Plus } from "lucide-react-native";
+import { Ionicons, FontAwesome5 } from '@expo/vector-icons'; 
 
-const GemOnDisplay = () => {
+const GemOnDisplay = ({}) => {
   const [onDisplay, setOnDisplay] = useState([
     { id: "Gem001", image: require("../assets/logo.png") }
   ]);
@@ -26,11 +27,16 @@ const GemOnDisplay = () => {
     <SafeAreaView style={styles.container}>
       {/* Title */}
       <View style={styles.title}>
+         <TouchableOpacity onPress={() => navigation.goBack()}>
+            <Ionicons name="chevron-back" size={24} color="white" />
+          </TouchableOpacity>
         <Text style={styles.titleName}>Gem On Display</Text>
+        
       </View>
 
+
       {/* Add Gem Button */}
-      <TouchableOpacity onPress={addGem} style={styles.addButton}>
+      <TouchableOpacity onPress={() => navigation.navigate("BusinessOwnerEditProfile")} style={styles.addButton}>
         <Plus size={24} color="black" />
       </TouchableOpacity>
 
@@ -74,14 +80,16 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   title: {
-    backgroundColor: "#003366",
-    padding: 16,
+    flexDirection: "row",
     alignItems: "center",
+    padding: 15,
+    backgroundColor: "#0a3a5d",
   },
   titleName: {
     color: "white",
     fontSize: 18,
     fontWeight: "bold",
+    alignItems: "center",
   },
   addButton: {
     backgroundColor: "white",

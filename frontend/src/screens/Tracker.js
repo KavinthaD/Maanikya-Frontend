@@ -3,7 +3,7 @@ import { View, Text, FlatList, StyleSheet, Image, TextInput, SafeAreaView, Touch
 import Icon from "react-native-vector-icons/FontAwesome";
 
 
-const Tracker = () => {
+const Tracker = ({navigation}) => {
   const [search, setSearch] = useState("");
 
   const [progressGem, setprogressGem] = useState([
@@ -66,7 +66,10 @@ const Tracker = () => {
     <SafeAreaView style={styles.container}>
 
       <View style={styles.topic}>
-        <Icon name="arrow-left" size={20} color="white" />
+        <TouchableOpacity  onPress={() => navigation.goBack()} style={styles.backBtn}>
+          <Ionicons name="chevron-back" size={24} color="white" />
+        </TouchableOpacity>
+       
         <Text style={styles.topicName}>Tracker</Text>
       </View>
       

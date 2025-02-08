@@ -1,22 +1,14 @@
 import React, {useState} from "react";
 import {View, Text, Image, StyleSheet, TouchableOpacity} from "react-native";
-import {useNavigation} from "@react-navigation/native";
-import { Ionicons} from "@expo/vector-icons";
 import {FontAwesome} from "@expo/vector-icons";
 
-const OrderTrackDetails = () => {
-    const navigation = useNavigation();
-    const [orderConfirmed, setOrderConfirmed] = useState(false);
+const WorkerOrderTrackDetails = () => {
+    const [orderCompleted, setOrderCompleted] = useState(false);
+    const [orderPayment, setOrderPayment] = useState(false);
     const [rating, setRating] = useState(0);
 
     return (
         <View style={styles.container}>
-            <TouchableOpacity style={styles.backButton} onPress={ () => navigation.goBack()}>
-                <Ionicons name="arrow-back" size={24} color={"#fff"} />
-            </TouchableOpacity>
-            <View style = {styles.header}>
-                <Text style= {styles.orderNumber}> Order# : NB01130 </Text>
-            </View> 
             <View style= {styles.orderDetails}> 
                 <View style= {styles.row}>
                     <View>
@@ -49,25 +41,51 @@ const OrderTrackDetails = () => {
                     </View>
                 </View>
                 <View style={styles.statusBoxAccept}>
-                <Image source={require("../assets/owner-icons/order-accept.png")} style={styles.statusIcon}/>
-                <View> 
+                    <Image source={require("../assets/owner-icons/order-accept.png")} style={styles.statusIcon}/>
+                    <View>
                     <Text style={styles.statusText}>Order Accepted </Text>
-                    <Text style={styles.dateText}> Order accepted on 20-12-2014 </Text>
-                </View>
-                </View>
-                {orderConfirmed && (
-                    <View style={styles.statusBoxConfirm}>
-                        <Image source={require("../assets/owner-icons/order-confirm.png")} style={styles.statusIcon}/>
-                        <View>
-                        <Text style={styles.statusText}>Order Confirmed</Text>
-                        <Text style={styles.dateText}>Order confirmed on 20-12-2024</Text>
+                    <Text style={styles.dateText}> Order accepted on 20-12-2024 </Text>
                     </View>
+                </View>
+                <View style={styles.statusBoxConfirm}>
+                <Image source={require("../assets/owner-icons/order-confirm.png")} style={styles.statusIcon}/>
+                <View> 
+                    <Text style={styles.statusText}>Order Confirmed </Text>
+                    <Text style={styles.dateText}> Order confirmed on 20-12-2014 </Text>
+                </View>
+                </View>
+                {orderCompleted && (
+                    <View style={styles.statusBoxComplete}>
+                        <Image source={require("../assets/owner-icons/order-complete.png")} style={styles.statusIcon} />
+                        <View>
+                            <Text style={styles.statusText}>Order Completed</Text>
+                            <Text style={styles.dateText}>Order completed on 20-12-2024</Text>
+                        </View>
+                    </View>
+                )}
+
+            
+                {orderPayment && (
+                    <View style={styles.statusBoxPayment}>
+                        <Image source={require("../assets/owner-icons/order-paid.png")} style={styles.statusIcon} />
+                        <View>
+                            <Text style={styles.statusText}>Payment Received</Text>
+                            <Text style={styles.dateText}>Received and paid on 20-12-2024</Text>
+                        </View>
                     </View>
                 )}
             </View>
-            {!orderConfirmed && (
-                <TouchableOpacity style={styles.confirmButton} onPress={() => setOrderConfirmed(true)}>
-                <Text style={styles.confirmButtonText}>Confirm Your Order</Text>
+
+        
+            {!orderCompleted && (
+                <TouchableOpacity style={styles.completeButton} onPress={() => setOrderCompleted(true)}>
+                    <Text style={styles.completeButtonText}>Mark as Completed</Text>
+                </TouchableOpacity>
+            )}
+
+            {orderCompleted && !orderPayment && (
+                <TouchableOpacity style={styles.paidButton} onPress={() => setOrderPayment(true)}>
+                    <Text style={styles.completeButtonText}>Confirm Payment and Close the Order</Text>
                 </TouchableOpacity>
             )}
         </View>
@@ -148,7 +166,7 @@ const styles = StyleSheet.create ({
         fontSize: 18,
         fontWeight: "bold",
         color: "#444",
-        marginBottom: 24,
+        marginBottom: 14,
         marginLeft: 10,
     },
 
@@ -177,8 +195,31 @@ const styles = StyleSheet.create ({
         marginLeft: 40,
         marginRight: 30
     },
+
     statusBoxConfirm: {
         backgroundColor: "#5661FF",
+        flexDirection: "row",
+        alignItems: "center",
+        padding: 10,
+        borderRadius: 8,
+        marginBottom: 10,
+        marginLeft: 40,
+        marginRight: 30
+    },
+
+    statusBoxComplete: {
+        backgroundColor: "#0616FF",
+        flexDirection: "row",
+        alignItems: "center",
+        padding: 10,
+        borderRadius: 8,
+        marginBottom: 10,
+        marginLeft: 40,
+        marginRight: 30
+    },
+
+    statusBoxPayment: {
+        backgroundColor: "#000CBB",
         flexDirection: "row",
         alignItems: "center",
         padding: 10,
@@ -207,26 +248,35 @@ const styles = StyleSheet.create ({
         marginTop: 5 
     },
 
-    confirmButton: {
+    completeButton: {
         backgroundColor: '#02457A',
         paddingVertical: 8,
         borderRadius: 70,
         width: '80%',
-        marginTop: 220,
+        marginTop: 14,
         marginLeft: 40
     },
 
-    confirmButtonText: {
+    completeButtonText: {
          color: "white", 
          fontSize: 16, 
          fontWeight: "bold",
          textAlign: "center"
     },
 
+    paidButton: {
+        backgroundColor: '#02457A',
+        paddingVertical: 8,
+        borderRadius: 70,
+        width: '80%',
+        marginTop: 14,
+        marginLeft: 40
+    },
+
     dividerContainer: {
         flexDirection: 'row',
         alignItems: 'center',
-        marginVertical: 10,
+        marginVertical: 1,
     },
     divider: {
         flex: 1,
@@ -236,4 +286,4 @@ const styles = StyleSheet.create ({
 
 });
 
-export default OrderTrackDetails;
+export default WorkerOrderTrackDetails;

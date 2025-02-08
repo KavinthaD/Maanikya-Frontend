@@ -2,7 +2,7 @@ import { View, Text, StyleSheet } from "react-native";
 import { baseScreenStyles } from "../styles/baseStyles";
 export default function Header_1({title}) {
 return (
-      <View style={[styles.container, baseScreenStyles.container]}>
+      <View style={[styles.container, baseScreenStyles.backgroundColor]}>
         <Text style={styles.title}>{title}</Text>
       </View>
     );
@@ -10,17 +10,17 @@ return (
   const styles = StyleSheet.create({
     container: {
              // Default horizontal padding
-        paddingVertical: 30,       // Default vertical padding
+        paddingVertical: 30,      
     },
     titleText: {
         fontFamily: "arial",
         fontSize: 24,
         fontWeight: 'bold',
-        color: '#333',             // Default title text color
+        color: '#333',             
         marginBottom: 20,
     },
     title: {
-        paddingHorizontal: 0,     // Default horizontal padding for titles
+        paddingHorizontal: 0,     
         marginTop: 30,
         fontSize: 24,
         fontWeight: 'bold',

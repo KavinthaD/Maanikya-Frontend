@@ -6,41 +6,99 @@ import {
   TouchableOpacity,
   Image,
   TextInput,
+  Alert,
 } from "react-native";
+import { launchCamera, launchImageLibrary } from "react-native-image-picker";
 import { baseScreenStyles } from "../styles/baseStyles";
+import { useNavigation } from "@react-navigation/native"; 
 
-export default function Gem_lot_register_2() {
+export default function Gem_lot_register_1() {
+  const navigation = useNavigation(); 
   const [form, setForm] = useState({
     color: "",
     description: "",
+    photos: [],
   });
   const handleInputChange = (key, value) => {
     setForm({ ...form, [key]: value });
   };
-  const handleFinalize = () => {
+  const handleContinue = () => {
     console.log("Form Submitted:", form);
+    navigation.navigate("GemRegister2", { formData: form }); 
   };
-  const handleBackPress = () => {
-    return <GemLotRegister1 />;
+
+  const handleCameraPress = () => {
+    Alert.alert("Add Photo", "Choose an option", [
+      {
+        text: "Take Photo",
+        onPress: async () => {
+          const result = await launchCamera({
+            mediaType: "photo",
+            cameraType: "back",
+            quality: 1,
+          });
+          if (result.assets) {
+            setForm((prev) => ({
+              ...prev,
+              photos: [...prev.photos, result.assets[0].uri],
+            }));
+          }
+        },
+      },
+      {
+        text: "Choose from Gallery",
+        onPress: async () => {
+          const result = await launchImageLibrary({
+            mediaType: "photo",
+            quality: 1,
+            selectionLimit: 0,
+          });
+          if (result.assets) {
+            setForm((prev) => ({
+              ...prev,
+              photos: [
+                ...prev.photos,
+                ...result.assets.map((asset) => asset.uri),
+              ],
+            }));
+          }
+        },
+      },
+      {
+        text: "Cancel",
+        style: "cancel",
+      },
+    ]);
   };
+
   return (
-    <View style={[baseScreenStyles.container, styles.container]}>
+    <View style={baseScreenStyles.container}>
       <View style={styles.innerContainer}>
         <View style={styles.buttonContent}>
           <TouchableOpacity
             style={styles.buttonContainer}
-            onPress={() => {
-              /* Handle button press here */
-            }}
+            onPress={handleCameraPress}
           >
             <Image
               source={require("../assets/camera.png")}
               style={styles.iconImage}
-              resizeMode="contain" // Or 'cover', 'stretch', 'repeat', 'center' as needed
+              resizeMode="contain"
             />
           </TouchableOpacity>
-
           <Text style={styles.addPhotoButtonText}>Add photos</Text>
+
+          {/* Display selected photos */}
+          {form.photos.length > 0 && (
+            <View style={styles.photoGrid}>
+              {form.photos.map((photo, index) => (
+                <Image
+                  key={index}
+                  source={{ uri: photo }}
+                  style={styles.thumbnail}
+                />
+              ))}
+            </View>
+          )}
         </View>
         <TextInput
           style={styles.input}
@@ -63,12 +121,9 @@ export default function Gem_lot_register_2() {
           keyboardType="phone-pad"
         />
         <TouchableOpacity
-          style={styles.finalizeButton}
-          onPress={handleFinalize}
+          style={baseScreenStyles.blueButton}
+          onPress={handleContinue}
         >
-          <TouchableOpacity style={styles.finalizeButton} onPress={handleFinalize}>
-                      <Text style={styles.buttonText}>Finalize</Text>
-                    </TouchableOpacity>
           <Text style={styles.buttonText}>Continue</Text>
         </TouchableOpacity>
       </View>
@@ -89,8 +144,7 @@ const styles = StyleSheet.create({
   },
   innerContainer: {
     padding: 20,
-    paddingVertical: 90,
-    flex: 1,
+    paddingVertical: 60,
   },
   input: {
     backgroundColor: "#E8F0FE",
@@ -111,5 +165,16 @@ const styles = StyleSheet.create({
   buttonContent: {
     marginBottom: 80,
     alignItems: "center",
+  },
+  photoGrid: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 10,
+    marginTop: 20,
+  },
+  thumbnail: {
+    width: 80,
+    height: 80,
+    borderRadius: 5,
   },
 });

@@ -1,14 +1,21 @@
 import { Image } from "react-native";
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { NavigationContainer } from "@react-navigation/native";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { View, Text, StyleSheet } from "react-native";
-import Icon from "react-native-vector-icons/Ionicons";
-import Gem_lot_register_2 from "../screens/GemLotRegister2";
-import AddGems from "../screens/AddGems";
+
+import Gem_register_1 from "../screens/GemRegister1";
+import Gem_register_2 from "../screens/GemRegister2";
+
+import Gem_register_3 from "../screens/GemRegister3";
+import Header_1 from "../components/Header_1";
+import Header_2 from "../components/Header_2";
 
 // Create Bottom Tab Navigator
 const Tab = createBottomTabNavigator();
+const Stack = createNativeStackNavigator();
+
 // Dummy Screens
 const HomeScreen = () => (
   <View style={styles.screen}>
@@ -39,9 +46,41 @@ const Alerts = () => (
     <Text>Alerts Screen</Text>
   </View>
 );
-export default function BS_NavBar({navigation}){
+
+// Create a stack navigator for Add Gem flow
+function AddGemsStack() {
   return (
-    // <NavigationContainer>
+    <Stack.Navigator screenOptions={{ headerShown: true }}>
+      <Stack.Screen
+        name="GemRegister1"
+        component={Gem_register_1}
+        options={{
+          header: () => <Header_1 title="Add Gem" />,
+        }}
+      />
+      <Stack.Screen
+        name="GemRegister2"
+        component={Gem_register_2}
+        options={{
+          header: () => <Header_2 title="Gem Register" />,
+        }}
+      />
+      <Stack.Screen
+        name="GemRegister3"
+        component={Gem_register_3}
+        options={{
+          header: () => <Header_2 title="QR Code" />,
+        }}
+      />
+    </Stack.Navigator>
+  );
+}
+
+export default function BS_NavBar({ navigation }) {
+  const [headerTitle, setHeaderTitle] = useState("Home"); // Default title is "Home"
+
+  return (
+    <NavigationContainer>
       <Tab.Navigator
         screenOptions={({ route }) => ({
           tabBarIcon: ({ color, size }) => {
@@ -83,41 +122,41 @@ export default function BS_NavBar({navigation}){
           name="Home"
           component={HomeScreen}
           options={{
-            headerShown: false, // This hides the header for the Home screen
+            header: () => <Header_1 title="Home" />, // Use Header_1 for Home and set title
           }}
         />
         <Tab.Screen
           name="Market"
           component={MarketScreen}
           options={{
-            headerShown: false, // Optional: to hide header for Market screen as well
+            header: () => <Header_1 title="Market" />, // Use Header_1 for Home and set title
           }}
         />
         <Tab.Screen
           name="Add"
-          component={AddGems}
+          component={AddGemsStack}
           options={{
-            headerShown: false, // Optional: to hide header for Profile screen as well
+            headerShown: false,
           }}
         />
         <Tab.Screen
           name="Alerts"
           component={Alerts}
           options={{
-            headerShown: false, // Optional: to hide header for Profile screen as well
+            header: () => <Header_1 title="Alerts" />, // Use Header_1 for Home and set title
           }}
         />
         <Tab.Screen
           name="Profile"
-          component={AddGem}
+          component={ProfileScreen}
           options={{
-            headerShown: false, // Optional: to hide header for Profile screen as well
+            header: () => <Header_1 title="Profile" />, // Use Header_1 for Home and set title
           }}
         />
       </Tab.Navigator>
-    // </NavigationContainer>
+    </NavigationContainer>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -139,4 +178,3 @@ const styles = StyleSheet.create({
     paddingTop: 5,
   },
 });
-

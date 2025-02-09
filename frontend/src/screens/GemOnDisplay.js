@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { SafeAreaView, Text, TouchableOpacity, FlatList, Image, View, StyleSheet } from "react-native";
+import { SafeAreaView, Text, TouchableOpacity, FlatList, Image, View, StyleSheet, Modal, TextInput } from "react-native";
 import { Plus } from "lucide-react-native";
 import { Ionicons, FontAwesome5 } from '@expo/vector-icons'; 
 
@@ -7,20 +7,29 @@ const GemOnDisplay = ({}) => {
   const [onDisplay, setOnDisplay] = useState([
     { id: "Gem001", image: require("../assets/logo.png") }
   ]);
-
   const [sold, setSold] = useState([]);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [selectedGem, setSelectedGem] = useState(null);
+  const [buyerName, setBuyerName] = useState("");
+  const [price, setPrice] = useState("");
 
-  const markSold = (gem) => {
-    setOnDisplay(onDisplay.filter((item) => item.id !== gem.id));
-    setSold([...sold, { ...gem, buyer: "Unknown", price: Math.floor(Math.random() * 50000) + 50000 }]);
+  const openModal = (gem) => {
+    setSelectedGem(gem);
+    setModalVisible(true);
   };
 
-  const addGem = () => {
-    const newGem = {
-      id: `Gem00${onDisplay.length + sold.length + 1}`,
-      image: require("../assets/logo.png"),
-    };
-    setOnDisplay([...onDisplay, newGem]);
+  
+
+  const markSold = () => {
+    if (selectedGem && buyerName && gemPrice) {
+      setOnDisplay(onDisplay.filter((item) => item.id !== selectedGem.id));
+      setSold([...sold, { ...selectedGem, buyer: buyerName, price: price }]);
+      setModalVisible(false);
+      setBuyerName("");
+      setPrice("");
+    } else {
+      alert("Please enter buyer's name and gem price.");
+    }
   };
 
   return (
@@ -35,10 +44,7 @@ const GemOnDisplay = ({}) => {
       </View>
 
 
-      {/* Add Gem Button */}
-      <TouchableOpacity onPress={() => navigation.navigate("BusinessOwnerEditProfile")} style={styles.addButton}>
-        <Plus size={24} color="black" />
-      </TouchableOpacity>
+     
 
       {/* On Display Gems */}
       <Text style={styles.subtopic}>On Display</Text>
@@ -49,7 +55,7 @@ const GemOnDisplay = ({}) => {
           <View style={styles.gemDisplay}>
             <Image source={item.image} style={styles.gemImg} />
             <Text style={styles.gemId}>{item.id}</Text>
-            <TouchableOpacity onPress={() => markSold(item)} style={styles.soldBtn}>
+            <TouchableOpacity onPress={() => openModal(item)} style={styles.soldBtn}>
               <Text style={styles.soldBtnText}>Mark As Sold</Text>
             </TouchableOpacity>
           </View>
@@ -69,6 +75,35 @@ const GemOnDisplay = ({}) => {
           </View>
         )}
       />
+      <Modal animationType="slide" transparent={true} visible={modalVisible}>
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>Confirm Sale</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Enter Buyer's Name"
+              value={buyerName}
+              onChangeText={setBuyerName}
+            />
+            <TextInput
+              style={styles.input}
+              placeholder="Enter Gem Price (LKR)"
+              keyboardType="numeric"
+              value={price}
+              onChangeText={setPrice}
+            />
+            <View style={styles.modalBtn}>
+              <TouchableOpacity onPress={() => setModalVisible(false)} style={styles.cancelBtn}>
+                <Text style={styles.btnText}>Cancel</Text>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={markSold} style={styles.confirmBtn}>
+                <Text style={styles.btnText}>Confirm</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
+
     </SafeAreaView>
   );
 };
@@ -91,18 +126,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     alignItems: "center",
   },
-  addButton: {
-    backgroundColor: "white",
-    padding: 12,
-    borderRadius: 10,
-    borderCurve: 25,
-    alignItems: "center",
-    marginVertical: 10,
-    alignSelf: "center",
-    width: 50,
-    height: 50,
-    justifyContent: "center",
-  },
+  
   subtopic: {
     fontSize: 16,
     fontWeight: "bold",
@@ -155,6 +179,59 @@ const styles = StyleSheet.create({
   gemPrice: {
     fontSize: 14,
     color: "#003366",
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0,0,0,0.5)",
+  },
+  modalContent: {
+    width: 300,
+    backgroundColor: "white",
+    padding: 20,
+    borderRadius: 10,
+    alignItems: "center",
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    marginBottom: 10,
+  },
+  input: {
+    width: "100%",
+    height: 40,
+    borderWidth: 1,
+    borderColor: "#ccc",
+    borderRadius: 5,
+    paddingHorizontal: 10,
+    marginVertical: 5,
+  },
+  modalBtn: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginTop: 10,
+    width: "100%",
+  },
+  cancelBtn: {
+    backgroundColor: "gray",
+    padding: 10,
+    borderRadius: 5,
+    flex: 1,
+    marginRight: 5,
+    alignItems: "center",
+  },
+  confirmBtn: {
+    backgroundColor: "#007BFF",
+    padding: 10,
+    borderRadius: 5,
+    flex: 1,
+    marginLeft: 5,
+    alignItems: "center",
+  },
+  btnText: {
+    color: "white",
+    fontWeight: "bold",
   },
 });
 

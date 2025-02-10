@@ -11,12 +11,15 @@ import Login1 from './src/screens/Login1';
 import Login2 from './src/screens/Login2';
 import SignUpScreen from './src/screens/SignUpScreen';
 import Login3 from './src/screens/Login3';
+import CompletedTracker from './src/screens/CompletedTracker';
+import InProgressTracker from './src/screens/InProgressTracker';
+import OngoingTracker from './src/screens/OngoingTracker';
 
 
 export default function App() {
   return (
     <View style={styles.container}>
-      <Login3/>
+      <OngoingTracker/>
     </View>
   );
 }

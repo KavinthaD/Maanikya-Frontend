@@ -1,23 +1,30 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, FlatList, Image, StyleSheet } from "react-native";
+import {
+  View,
+  Text,
+  TextInput,
+  FlatList,
+  Image,
+  StyleSheet,
+} from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
 const person = {
   name: "Dulith Wanigarathne",
   role: "Cutter",
   rating: 3,
-  image: require("./assets/person1.jpg"),
+  image: require("../assets/seller.png"),
   title: "Wanigarathna Cutters & Co.",
   contact: "+94 765 468 795",
   email: "dulith.wanige@manikhora.com",
   location: "Nivitigala, Rathnapura",
   pastWork: [
-    require("./assets/gem1.jpg"),
-    require("./assets/gem2.jpg"),
-    require("./assets/gem3.jpg"),
-    require("./assets/gem4.jpg"),
-    require("./assets/gem5.jpg"),
-    require("./assets/gem6.jpg"),
+    require("../assets/Gem1.png"),
+    require("../assets/Gem2.png"),
+    require("../assets/Gem3.png"),
+    require("../assets/Gem4.png"),
+    require("../assets/Gem5.png"),
+    require("../assets/Gem6.png"),
   ],
 };
 
@@ -40,41 +47,73 @@ export default function ProfileScreen() {
           <Text style={styles.role}>{person.role}</Text>
           <View style={styles.rating}>
             {[...Array(5)].map((_, i) => (
-              <Ionicons key={i} name={i < person.rating ? "star" : "star-outline"} size={16} color={i < person.rating ? "#FFD700" : "#CCCCCC"} />
+              <Ionicons
+                key={i}
+                name={i < person.rating ? "star" : "star-outline"}
+                size={16}
+                color={i < person.rating ? "#FFD700" : "black"}
+              />
             ))}
           </View>
         </View>
-        <Ionicons name="diamond" size={24} color="green" style={styles.icon} />
+        <Ionicons name="heart" size={24} color="green" style={styles.icon} />
       </View>
       <View style={styles.detailsContainer}>
-        <Text style={styles.detail}><Text style={styles.bold}>TITLE :</Text> {person.title}</Text>
-        <Text style={styles.detail}><Text style={styles.bold}>CONTACT NO :</Text> {person.contact}</Text>
-        <Text style={styles.detail}><Text style={styles.bold}>E-MAIL :</Text> {person.email}</Text>
-        <Text style={styles.detail}><Text style={styles.bold}>LOCATION :</Text> {person.location}</Text>
+        <Text style={styles.detail}>
+          <Text style={styles.bold}>TITLE :</Text> {person.title}
+        </Text>
+        <Text style={styles.detail}>
+          <Text style={styles.bold}>CONTACT NO :</Text> {person.contact}
+        </Text>
+        <Text style={styles.detail}>
+          <Text style={styles.bold}>E-MAIL :</Text> {person.email}
+        </Text>
+        <Text style={styles.detail}>
+          <Text style={styles.bold}>LOCATION :</Text> {person.location}
+        </Text>
       </View>
       <Text style={styles.sectionTitle}>PAST WORK</Text>
       <FlatList
         data={person.pastWork}
         numColumns={3}
         keyExtractor={(_, index) => index.toString()}
-        renderItem={({ item }) => <Image source={item} style={styles.pastWorkImage} />}
+        renderItem={({ item }) => (
+          <Image source={item} style={styles.pastWorkImage} />
+        )}
       />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#E3F2FD", padding: 16 },
+  container: { flex: 1, backgroundColor: "#9CCDDB", padding: 16 },
   header: { fontSize: 18, fontWeight: "bold", marginBottom: 10 },
-  input: { backgroundColor: "white", padding: 10, borderRadius: 8, marginBottom: 10 },
-  profileCard: { flexDirection: "row", backgroundColor: "white", borderRadius: 8, padding: 10, alignItems: "center", marginBottom: 10 },
+  input: {
+    backgroundColor: "white",
+    padding: 10,
+    borderRadius: 8,
+    marginBottom: 10,
+  },
+  profileCard: {
+    flexDirection: "row",
+    backgroundColor: "#CDE3F9",
+    borderRadius: 8,
+    padding: 10,
+    alignItems: "center",
+    marginBottom: 10,
+  },
   profileImage: { width: 50, height: 50, borderRadius: 25, marginRight: 10 },
   profileInfo: { flex: 1 },
   name: { fontSize: 16, fontWeight: "bold" },
-  role: { fontSize: 14, color: "gray" },
+  role: { fontSize: 14, color: "black" },
   rating: { flexDirection: "row", marginTop: 5 },
   icon: { marginLeft: 10 },
-  detailsContainer: { backgroundColor: "#BBDEFB", padding: 10, borderRadius: 8, marginBottom: 10 },
+  detailsContainer: {
+    backgroundColor: "#CDE3F9",
+    padding: 10,
+    borderRadius: 8,
+    marginBottom: 10,
+  },
   detail: { fontSize: 14, marginBottom: 5 },
   bold: { fontWeight: "bold" },
   sectionTitle: { fontSize: 16, fontWeight: "bold", marginBottom: 10 },

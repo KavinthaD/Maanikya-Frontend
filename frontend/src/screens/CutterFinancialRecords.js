@@ -1,33 +1,37 @@
 import React from "react";
 
-const FinancialRecords = () => {
+const CutterFinancialRecords = () => {
   const styles = {
     container: {
       fontFamily: "Arial, sans-serif",
-      padding: "20px",
-      backgroundColor: "#e0f7fa",
+      padding: "30px",
+      backgroundColor: "#9CCDDB",
+      minHeight: "100vh", // Ensures full height
+      display: "flex",
+      flexDirection: "column",
     },
-    header: {
-      textAlign: "center",
-      marginBottom: "20px",
-    },
+    // header: {
+    //   textAlign: "center",
+    //   marginBottom: "20px",
+    // },
     totalProfit: {
       textAlign: "center",
       backgroundColor: "#000",
       color: "#0f0",
-      padding: "10px",
+      padding: "30px",
       marginBottom: "20px",
     },
     recordList: {
       backgroundColor: "#fff",
       borderRadius: "8px",
       boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
+      marginBottom: "10px",
     },
     recordItem: {
       display: "flex",
       justifyContent: "space-between",
-      padding: "10px 20px",
-      borderBottom: "1px solid #ddd",
+      padding: "20px 60px",
+      borderBottom: "30px",
     },
     lastRecordItem: {
       borderBottom: "none",
@@ -35,8 +39,8 @@ const FinancialRecords = () => {
     bottomNav: {
       display: "flex",
       justifyContent: "space-around",
-      marginTop: "20px",
-      backgroundColor: "#00796b",
+      marginTop: "auto", // Pushes the footer to the bottom
+      backgroundColor: "#9CCDDB",
       color: "white",
       padding: "10px 0",
       borderRadius: "8px",
@@ -44,7 +48,7 @@ const FinancialRecords = () => {
     navButton: {
       background: "none",
       border: "none",
-      color: "white",
+      color: "#9CCDDB",
       fontSize: "14px",
       cursor: "pointer",
     },
@@ -55,44 +59,45 @@ const FinancialRecords = () => {
 
   return (
     <div style={styles.container}>
-      <header style={styles.header}>
+      {/* <header style={styles.header}>
         <h1>Financial Records</h1>
-      </header>
+      </header> */}
       <div style={styles.totalProfit}>
         <span>Total profit</span>
         <h2>LKR. 780 000</h2>
       </div>
       <div style={styles.recordList}>
         <div style={styles.recordItem}>
-          <span>Buying cost</span>
+          <span>Cutting cs001</span>
           <span>LKR. 100 000</span>
         </div>
+      </div>
+      <div style={styles.recordList}>
         <div style={styles.recordItem}>
-          <span>Cutting cost</span>
+          <span>Cutting cs002</span>
           <span>LKR. 20 000</span>
         </div>
+      </div>
+      <div style={styles.recordList}>
         <div style={styles.recordItem}>
-          <span>Burning cost</span>
+          <span>Cutting PJ004</span>
           <span>LKR. 60 000</span>
         </div>
+      </div>
+      <div style={styles.recordList}>
         <div style={styles.recordItem}>
-          <span>Sold price</span>
+          <span>Cutting IHP006</span>
           <span>LKR. 600 000</span>
         </div>
+      </div>
+      <div style={styles.recordList}>
         <div style={{ ...styles.recordItem, ...styles.lastRecordItem }}>
           <span>Total</span>
           <span>LKR. 780 000</span>
         </div>
       </div>
-      <nav style={styles.bottomNav}>
-        <button style={styles.navButton}>Home</button>
-        <button style={styles.navButton}>Market</button>
-        <button style={styles.navButton}>Add</button>
-        <button style={styles.navButton}>Alerts</button>
-        <button style={styles.navButton}>Profi</button>
-      </nav>
     </div>
   );
 };
 
-export default FinancialRecords;
+export default CutterFinancialRecords;

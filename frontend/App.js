@@ -1,14 +1,24 @@
-import React from 'react';
-import { StyleSheet, View } from 'react-native';
-import FinancialRecords from './src/screens/FinancialRecords';
-import MySellersScreen from './src/screens/CustomerFinancialRecords';
+import React from "react";
+import { StyleSheet } from "react-native";
+import { NavigationContainer } from "@react-navigation/native";
+import { createStackNavigator } from "@react-navigation/stack";
+import ConnectScreen from "./src/screens/ConnectScreen";
+import ProfileScreen from "./src/screens/ConnectedUsers";
+import CutterFinancialRecords from "./src/screens/CutterFinancialRecords";
+import OwnerFinancialRecords from "./src/screens/ownerFinancialRecords";
+import BurnerFinancialRecords from "./src/screens/BurnerFinancialRecords";
+const Stack = createStackNavigator();
 
 export default function App() {
   return (
-    <View style={styles.container}>
-      {/* <FinancialRecords /> */}
-      <MySellersScreen/>
-    </View>
+    <NavigationContainer>
+      <Stack.Navigator screenOptions={{ headerShown: false }}>
+        <Stack.Screen
+          name="BurnerFinancialRecords"
+          component={BurnerFinancialRecords}
+        />
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 }
 

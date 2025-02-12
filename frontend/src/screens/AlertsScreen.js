@@ -9,6 +9,7 @@ const alerts = [
     gem: 'BS001 gem',
     image: 'https://via.placeholder.com/50', // Replace with actual image URL
   },
+
   {
     id: '2',
     name: 'Tilmi',
@@ -16,6 +17,7 @@ const alerts = [
     gem: 'BS002 gem lot',
     image: 'https://via.placeholder.com/50', // Replace with actual image URL
   },
+
   {
     id: '3',
     name: 'Thulani',
@@ -23,6 +25,7 @@ const alerts = [
     gem: '',
     image: 'https://via.placeholder.com/50', // Replace with actual image URL
   },
+
   {
     id: '4',
     name: 'Kavintha',
@@ -30,6 +33,7 @@ const alerts = [
     gem: 'YS101 gem',
     image: 'https://via.placeholder.com/50', // Replace with actual image URL
   },
+
   {
     id: '5',
     name: 'Isum',
@@ -37,6 +41,7 @@ const alerts = [
     gem: 'ER2004 gem lot',
     image: 'https://via.placeholder.com/50', // Replace with actual image URL
   },
+
   {
     id: '6',
     name: 'Sansidu',
@@ -44,6 +49,7 @@ const alerts = [
     gem: 'ED304 gem lot',
     image: 'https://via.placeholder.com/50', // Replace with actual image URL
   },
+
   {
     id: '7',
     name: 'Dulith',
@@ -52,6 +58,7 @@ const alerts = [
     image: 'https://via.placeholder.com/50', // Replace with actual image URL
   },
 ];
+
 
 const AlertsScreen = () => {
   const renderItem = ({ item }) => (
@@ -79,7 +86,7 @@ const AlertsScreen = () => {
   );
 };
 
-export default AlertsScreen;
+
 
 const styles = StyleSheet.create({
   container: {
@@ -120,4 +127,7 @@ const styles = StyleSheet.create({
   bold: {
     fontWeight: 'bold',
   },
+  
 });
+
+export default AlertsScreen;

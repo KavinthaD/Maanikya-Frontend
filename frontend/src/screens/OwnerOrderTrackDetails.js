@@ -4,6 +4,7 @@ import {FontAwesome} from "@expo/vector-icons";
 
 const OwnerOrderTrackDetails = () => {
     const [orderConfirmed, setOrderConfirmed] = useState(false);
+    const [orderCanceled, setOrderCanceled]= useState(false);
     const [rating, setRating] = useState(0);
 
     return (
@@ -46,34 +47,64 @@ const OwnerOrderTrackDetails = () => {
                     <Text style={styles.dateText}> Order accepted on 20-12-2014 </Text>
                 </View>
                 </View>
+
                 {orderConfirmed && (
                     <View style={styles.statusBoxConfirm}>
-                        <Image source={require("../assets/owner-icons/order-confirm.png")} style={styles.statusIcon}/>
+                        <Image source={require("../assets/owner-icons/order-confirm.png")} style={styles.statusIcon} />
                         <View>
-                        <Text style={styles.statusText}>Order Confirmed</Text>
-                        <Text style={styles.dateText}>Order confirmed on 20-12-2024</Text>
+                            <Text style={styles.statusText}>Order Confirmed</Text>
+                            <Text style={styles.dateText}>Order confirmed on 20-12-2024</Text>
+                        </View>
                     </View>
+                )}
+
+                {orderCanceled && (
+                    <View style={styles.statusBoxCancel}>
+                        <Image source={require("../assets/owner-icons/order-decline.png")} style={styles.statusIcon} />
+                        <View>
+                            <Text style={styles.statusText}>Order Canceled</Text>
+                            <Text style={styles.dateText}>Order canceled on 20-12-2024</Text>
+                        </View>
                     </View>
                 )}
             </View>
-            {!orderConfirmed && (
-                <TouchableOpacity style={styles.confirmButton} onPress={() => setOrderConfirmed(true)}>
-                <Text style={styles.confirmButtonText}>Confirm Your Order</Text>
-                </TouchableOpacity>
+
+            {/* Hide buttons after one is clicked */}
+            {!orderConfirmed && !orderCanceled && (
+                <View style={styles.buttonContainer}>
+                    <TouchableOpacity
+                        style={styles.confirmButton}
+                        onPress={() => {
+                            setOrderConfirmed(true);
+                            setOrderCanceled(false); // Ensure only one status is shown
+                        }}
+                    >
+                        <Text style={styles.confirmButtonText}>Confirm Order</Text>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity
+                        style={styles.cancelButton}
+                        onPress={() => {
+                            setOrderCanceled(true);
+                            setOrderConfirmed(false); // Ensure only one status is shown
+                        }}
+                    >
+                        <Text style={styles.cancelButtonText}>Cancel Order</Text>
+                    </TouchableOpacity>
+                </View>
             )}
         </View>
     );
 };
 
-
 const styles = StyleSheet.create ({
     container: {
         flex:1,
         backgroundColor: "#A9D3E8",
-        paddingTop: 40
+        paddingTop: 40,
+        
     },
 
-    
 
     orderNumber: {
         color: "white",
@@ -168,6 +199,17 @@ const styles = StyleSheet.create ({
         marginRight: 30
     },
 
+    statusBoxCancel: {
+        backgroundColor: "#4A0304",
+        flexDirection: "row",
+        alignItems: "center",
+        padding: 10,
+        borderRadius: 8,
+        marginBottom: 10,
+        marginLeft: 40,
+        marginRight: 30
+    },
+
     statusIcon: {
         width: 50,
         height: 50,
@@ -188,12 +230,12 @@ const styles = StyleSheet.create ({
     },
 
     confirmButton: {
-        backgroundColor: '#02457A',
-        paddingVertical: 8,
-        borderRadius: 70,
-        width: '80%',
-        marginTop: 220,
-        marginLeft: 40
+        backgroundColor: "#02457A",
+        paddingVertical: 10,
+        borderRadius: 20,
+        width: "44%",
+        marginTop: "40%",
+        marginLeft: "30%",
     },
 
     confirmButtonText: {
@@ -201,6 +243,22 @@ const styles = StyleSheet.create ({
          fontSize: 16, 
          fontWeight: "bold",
          textAlign: "center"
+    },
+
+    cancelButton: {
+        backgroundColor: "#690909",
+        paddingVertical: 10,
+        borderRadius: 20,
+        width: "44%",
+        marginLeft: "30%",
+        marginTop: "5%",
+    },
+
+    cancelButtonText: {
+        color: "white", 
+        fontSize: 16, 
+        fontWeight: "bold",
+        textAlign: "center"
     },
 
     dividerContainer: {

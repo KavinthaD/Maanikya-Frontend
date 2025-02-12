@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Button, Alert } from 'react-native';
 // Import the logo image 
-import logo from './assets/logo.png';
+import logo from '../assets/logo.png';
 const App = () => {
   return (
     <View style={styles.container}>

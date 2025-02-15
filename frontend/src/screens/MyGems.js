@@ -1,10 +1,11 @@
-import React from 'react';
-import { View, Text, FlatList, StyleSheet, Image, TouchableOpacity } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, Image, TouchableOpacity, Modal, Button, StyleSheet } from 'react-native';
 import QRCode from 'react-native-qrcode-svg'; // Import QR library
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons, FontAwesome5 } from '@expo/vector-icons'; // Import icons
 
-const MyGems = ({route, navigation}) => {
+const MyGems = ({ route, navigation }) => {
+  const [popQRCode, setPopQRCode] = useState(false);
 
   const sampleDetails = {
     gemId: 'BS001',
@@ -17,14 +18,14 @@ const MyGems = ({route, navigation}) => {
     purchasePrice: 'LKR 60,000',
     cost: 'LKR 20,000 (for cutting)',
     soldPrice: 'LKR 100,000',
-  };  
+  };
 
-  const { gemDetails =  sampleDetails } = route.params || {};
-  
+  const { gemDetails = sampleDetails } = route.params || {};
+
   if (!gemDetails) {
     return (
       <SafeAreaView style={styles.container}>
-        <Text style={{ textAlign: "center", marginTop: 20 }}>No Gem Data Available</Text>
+        <Text style={{ textAlign: 'center', marginTop: 20 }}>No Gem Data Available</Text>
       </SafeAreaView>
     );
   }
@@ -39,11 +40,10 @@ const MyGems = ({route, navigation}) => {
     <SafeAreaView style={styles.container}>
       {/* Header */}
       <View style={styles.topic}>
-          <TouchableOpacity onPress={() => navigation.goBack()}>
-            <Ionicons name="chevron-back" size={24} color="white" />
-          </TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+          <Ionicons name="chevron-back" size={24} color="white" />
+        </TouchableOpacity>
         <Text style={styles.topicName}>My Gems</Text>
-              
       </View>
 
       <View style={styles.imageContainer}>
@@ -51,10 +51,10 @@ const MyGems = ({route, navigation}) => {
           source={{ uri: 'https://cdn.britannica.com/80/151380-050-2ABD86F2/diamond.jpg' }}
           style={styles.gemPhoto}
         />
-        
-        <View style={styles.qrContainer} >
+
+        <TouchableOpacity style={styles.qrContainer} onPress={() => setPopQRCode(true)}>
           <QRCode value={qrCode} size={50} />
-        </View>
+        </TouchableOpacity>
       </View>
 
       {/* Gem ID */}
@@ -81,12 +81,20 @@ const MyGems = ({route, navigation}) => {
         source={{ uri: 'https://cdn.britannica.com/80/151380-050-2ABD86F2/diamond.jpg' }}
         style={styles.gemCert}
       />
-      <TouchableOpacity onPress={() => navigation.navigate("GemCertificateAdd")} style={styles.editBtn}>
+      <TouchableOpacity onPress={() => navigation.navigate('BusinessOwnerProfilePhoto')} style={styles.editBtn}>
         <FontAwesome5 name="pen" size={16} color="white" />
       </TouchableOpacity>
-    
 
       
+      <Modal transparent visible={popQRCode} animationType="fade">
+        <View style={styles.popUpContainer}>
+          <View style={styles.popUpContent}>
+            <Text style={styles.modalTopic}>QR Code</Text>
+            <QRCode value={qrCode} size={200} />
+            <Button title="Close" onPress={() => setPopQRCode(false)} />
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 };
@@ -102,7 +110,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#082f4f',
     padding: 15,
-    //justifyContent: 'space-between',
   },
   topicName: {
     color: 'white',
@@ -170,15 +177,22 @@ const styles = StyleSheet.create({
     marginLeft: 20,
     borderRadius: 5,
   },
-  navBar: {
-    position: 'absolute',
-    bottom: 0,
-    flexDirection: 'row',
-    backgroundColor: '#082f4f',
-    width: '100%',
-    height: 60,
-    justifyContent: 'space-around',
+  popUpContainer: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: 'center',
     alignItems: 'center',
+  },
+  popUpContent: {
+    backgroundColor: 'white',
+    padding: 20,
+    borderRadius: 10,
+    alignItems: 'center',
+  },
+  modalTopic: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 10,
   },
 });
 

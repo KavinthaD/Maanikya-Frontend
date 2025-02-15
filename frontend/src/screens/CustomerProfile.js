@@ -3,7 +3,7 @@ import { SafeAreaView,View, Text, Image, TouchableOpacity, StyleSheet, Button } 
 import { Home, ShoppingBag, PlusCircle, Bell, User } from "lucide-react-native";
 import { Ionicons, FontAwesome5 } from '@expo/vector-icons'; 
 
-const cutomerProfile = ({ navigation }) => {
+const CutomerProfile = ({ navigation }) => {
   const user = {
     image: "https://static.wikia.nocookie.net/garfield/images/6/60/Garfield_New_Look.jpg/revision/latest/scale-to-width/360?cb=20240328075614", 
     name: "abc",
@@ -118,4 +118,4 @@ const styles = StyleSheet.create({
   
 });
 
-export default cutomerProfile;
+export default CutomerProfile;

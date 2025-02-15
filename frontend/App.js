@@ -14,11 +14,10 @@ import GemOnDisplay from './src/screens/GemOnDisplay';
 import BusinessOwnerProfilePhoto from './src/screens/BusinessOwnerProfilePhoto';
 import Tracker from './src/screens/Tracker';
 import CustomerProfile from './src/screens/CustomerProfile';
-import CustomerProfilePhoto from './src/screens/CustomerProfilePhoto';
+
 import BusinessOwnerProfile from './src/screens/BusinessOwnerProfile';
 import BusinessOwnerEditProfile from './src/screens/BusinessOwnerEditProfile';
 import GemCertificateAdd from './src/screens/GemCertificateAdd';
-import cutomerProfile from './src/screens/CustomerProfile';
 
 
 
@@ -33,9 +32,9 @@ const App = () => {
         <Stack.Screen name="BusinessOwnerProfilePhoto" component={BusinessOwnerProfilePhoto} />*/}
         {/*<Stack.Screen name="GemONDisplay" component={GemOnDisplay} />
         <Stack.Screen name="Tracker" component={Tracker} />*/}
-        {/*<Stack.Screen name="MyGems" component={MyGems} />
-        <Stack.Screen name = "GemCertificateAdd" component={GemCertificateAdd} />*/}
-        <Stack.Screen name="CustomerProfile" component={cutomerProfile} />
+       {/*<Stack.Screen name="MyGems" component={MyGems} />
+         <Stack.Screen name = "GemCertificateAdd" component={GemCertificateAdd} />*/}
+        <Stack.Screen name="CustomerProfile" component={CustomerProfile} />
         
      
       </Stack.Navigator>

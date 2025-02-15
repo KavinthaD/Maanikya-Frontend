@@ -1,3 +1,5 @@
+//Screen creator: Thulani
+
 import React, { useEffect, useRef} from "react";
 import { View, StyleSheet, Image, Animated } from "react-native";
 

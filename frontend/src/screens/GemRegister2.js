@@ -12,8 +12,35 @@ import {
 import { Picker } from "@react-native-picker/picker";
 import { baseScreenStyles } from "../styles/baseStyles"; // Import base styles
 import { useNavigation } from "@react-navigation/native";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import Header_1 from "../components/Header_1";
+import Header_2 from "../components/Header_2";
+import Gem_register_3 from "./GemRegister3"; // Import GemRegister3
 
-export default function Gem_lot_register_2() {
+const Stack = createNativeStackNavigator();
+
+export default function GemRegister2() {
+  return (
+    <Stack.Navigator screenOptions={{ headerShown: true }}>
+      <Stack.Screen
+        name="GemRegister2Main"
+        component={GemRegister2Main}
+        options={{
+          header: () => <Header_1 title="Gem Register" />,
+        }}
+      />
+      <Stack.Screen
+        name="GemRegister3"
+        component={Gem_register_3}
+        options={{
+          header: () => <Header_2 title="Finalize" />,
+        }}
+      />
+    </Stack.Navigator>
+  );
+}
+
+function GemRegister2Main() {
   const navigation = useNavigation();
   const [form, setForm] = useState({
     ownerName: "",
@@ -32,7 +59,7 @@ export default function Gem_lot_register_2() {
 
   const handleFinalize = () => {
     console.log("Form Submitted:", form);
-    navigation.navigate("GemRegister3", { formData: form });
+    navigation.navigate("GemRegister3", { formData: form }); // Navigate to GemRegister3
   };
 
   const handleBack = () => {
@@ -139,6 +166,8 @@ export default function Gem_lot_register_2() {
     </View>
   );
 }
+
+
 
 const styles = StyleSheet.create({
   innerContainer: {

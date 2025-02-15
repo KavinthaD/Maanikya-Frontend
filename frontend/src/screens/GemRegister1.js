@@ -12,10 +12,37 @@ import {
 } from "react-native";
 import { launchCamera, launchImageLibrary } from "react-native-image-picker";
 import { baseScreenStyles } from "../styles/baseStyles";
-import { useNavigation } from "@react-navigation/native"; 
+import { useNavigation } from "@react-navigation/native";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import Header_1 from "../components/Header_1";
+import Header_2 from "../components/Header_2";
+import Gem_register_2 from "./GemRegister2"; // Import GemRegister2
 
-export default function Gem_lot_register_1() {
-  const navigation = useNavigation(); 
+const Stack = createNativeStackNavigator();
+
+export default function GemRegister1() {
+  return (
+    <Stack.Navigator screenOptions={{ headerShown: true }}>
+      <Stack.Screen
+        name="GemRegister1Main"
+        component={GemRegister1Main}
+        options={{
+          header: () => <Header_1 title="Add Gem" />,
+        }}
+      />
+      <Stack.Screen
+        name="GemRegister2"
+        component={Gem_register_2}
+        options={{
+          headerShown: false,
+        }}
+      />
+    </Stack.Navigator>
+  );
+}
+
+function GemRegister1Main() {
+  const navigation = useNavigation();
   const [form, setForm] = useState({
     color: "",
     description: "",
@@ -26,7 +53,7 @@ export default function Gem_lot_register_1() {
   };
   const handleContinue = () => {
     console.log("Form Submitted:", form);
-    navigation.navigate("GemRegister2", { formData: form }); 
+    navigation.navigate("GemRegister2", { formData: form }); // Navigate to GemRegister2
   };
 
   const handleCameraPress = () => {
@@ -124,7 +151,7 @@ export default function Gem_lot_register_1() {
         />
         <TouchableOpacity
           style={baseScreenStyles.blueButton}
-          onPress={handleContinue}
+          onPress={handleContinue} // Navigate on button press
         >
           <Text style={styles.buttonText}>Continue</Text>
         </TouchableOpacity>
@@ -132,6 +159,8 @@ export default function Gem_lot_register_1() {
     </View>
   );
 }
+
+
 
 const styles = StyleSheet.create({
   buttonText: {

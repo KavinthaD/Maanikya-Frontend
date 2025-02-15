@@ -33,21 +33,21 @@ const App = () => {
       <Text style={styles.greeting}>Hello Rathnasiri,</Text>
       <View style={styles.row}>
         <TouchableOpacity style={styles.button}>
-          <Image source={require('./assets/add_gem.png')} style={styles.icon} />
+          <Image source={require('../assets/add_gem.png')} style={styles.icon} />
           <Text style={styles.label}>Add Gem</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.button}>
-          <Image source={require('./assets/my_gems.png')} style={styles.icon} />
+          <Image source={require('../assets/my_gems.png')} style={styles.icon} />
           <Text style={styles.label}>My Gems</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.button}>
-          <Image source={require('./assets/scan.png')} style={styles.icon} />
+          <Image source={require('../assets/scan.png')} style={styles.icon} />
           <Text style={styles.label}>Scan</Text>
         </TouchableOpacity>
       </View>
       <View style={styles.row}>
         <TouchableOpacity style={styles.button}>
-          <Image source={require('./assets/financial_records.png')} style={styles.icon} />
+          <Image source={require('../assets/financial_records.png')} style={styles.icon} />
           <Text style={styles.label}>Financial Records</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.button}>

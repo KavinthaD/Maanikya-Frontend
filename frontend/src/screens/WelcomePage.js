@@ -9,7 +9,7 @@ const WelcomePage = ({ navigation}) => {
     useEffect(() => {
         Animated.timing(scaleValue, {
             toValue: 0.4,
-            duration: 6000,
+            duration: 4000,
             useNativeDriver: true,
         }).start(() => {
                 Animated.parallel([

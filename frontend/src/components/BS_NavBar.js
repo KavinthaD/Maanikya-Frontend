@@ -11,6 +11,7 @@ import Gem_register_2 from "../screens/GemRegister2";
 import Gem_register_3 from "../screens/GemRegister3";
 import Header_1 from "../components/Header_1";
 import Header_2 from "../components/Header_2";
+import Alerts from "../screens/AlertsScreen";
 
 // Create Bottom Tab Navigator
 const Tab = createBottomTabNavigator();
@@ -35,17 +36,6 @@ const ProfileScreen = () => (
   </View>
 );
 
-const AddGem = () => (
-  <View style={styles.screen}>
-    <Text>Addgem Screen</Text>
-  </View>
-);
-
-const Alerts = () => (
-  <View style={styles.screen}>
-    <Text>Alerts Screen</Text>
-  </View>
-);
 
 // Create a stack navigator for Add Gem flow
 function AddGemsStack() {

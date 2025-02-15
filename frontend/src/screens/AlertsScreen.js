@@ -68,7 +68,7 @@ const AlertsScreen = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>Alerts</Text>
+      
       <FlatList
         data={alerts}
         keyExtractor={(item) => item.id}

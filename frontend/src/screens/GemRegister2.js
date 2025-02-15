@@ -26,7 +26,7 @@ export default function GemRegister2() {
         name="GemRegister2Main"
         component={GemRegister2Main}
         options={{
-          header: () => <Header_1 title="Gem Register" />,
+          header: () => <Header_2 title="Gem Register" />,
         }}
       />
       <Stack.Screen

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { View, Text, FlatList, StyleSheet, Image, TextInput, SafeAreaView, TouchableOpacity } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
+import Ionicons from "react-native-vector-icons/Ionicons";
 
 
 const Tracker = ({navigation}) => {
@@ -14,7 +15,7 @@ const Tracker = ({navigation}) => {
     },
     {
       id: "gem2",
-      code: "AA101",
+      code: "B02",
       image: require("../assets/logo.png"),
     },
     {

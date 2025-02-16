@@ -28,13 +28,13 @@ const App = () => {
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         {/*<Stack.Screen name="BusinessOwnerEditProfile" component={BusinessOwnerEditProfile} />
-        <Stack.Screen name="BusinessOWnerProfile" component={BusinessOwnerProfile} />
-        <Stack.Screen name="BusinessOwnerProfilePhoto" component={BusinessOwnerProfilePhoto} />*/}
-        {/*<Stack.Screen name="GemONDisplay" component={GemOnDisplay} />
-        <Stack.Screen name="Tracker" component={Tracker} />*/}
-       {/*<Stack.Screen name="MyGems" component={MyGems} />
-         <Stack.Screen name = "GemCertificateAdd" component={GemCertificateAdd} />*/}
-        <Stack.Screen name="CustomerProfile" component={CustomerProfile} />
+        <Stack.Screen name="BusinessOWnerProfile" component={BusinessOwnerProfile} />*/}
+        <Stack.Screen name="BusinessOwnerProfilePhoto" component={BusinessOwnerProfilePhoto} />
+      {/*}  <Stack.Screen name="GemONDisplay" component={GemOnDisplay} />*/}
+        <Stack.Screen name="Tracker" component={Tracker} />
+      {/*} <Stack.Screen name="MyGems" component={MyGems} />
+         <Stack.Screen name = "GemCertificateAdd" component={GemCertificateAdd} />
+        <Stack.Screen name="CustomerProfile" component={CustomerProfile} /> */}
         
      
       </Stack.Navigator>

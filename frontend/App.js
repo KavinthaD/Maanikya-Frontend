@@ -10,13 +10,24 @@ import RegisterSelectionPage from "./src/screens/RegisterSelectionPage";
 import WelcomePage from "./src/screens/WelcomePage";
 import WorkerOrderTrackDetails from "./src/screens/WorkerOrderTrackDetails";
 
-export default function App() {
+import BusinessOwnerProfile from './src/screens/BusinessOwnerProfile';
+import BusinessOwnerEditProfile from './src/screens/BusinessOwnerEditProfile';
+import GemCertificateAdd from './src/screens/GemCertificateAdd';
+
+
+
+const Stack = createStackNavigator();
+
+const App = () => {
   return (
     <View style={styles.container}>
       <BS_NavBar />
     </View>
   );
-}
+};
+
+export default App;
+
 
 const styles = StyleSheet.create({
   container: {

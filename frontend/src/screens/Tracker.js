@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { View, Text, FlatList, StyleSheet, Image, TextInput, SafeAreaView } from "react-native";
+import { View, Text, FlatList, StyleSheet, Image, TextInput, SafeAreaView, TouchableOpacity } from "react-native";
+import Icon from "react-native-vector-icons/FontAwesome";
 
 const Tracker = () => {
   //manage the search option
@@ -23,6 +24,7 @@ const Tracker = () => {
       description: "Radiant Green Gem",
     },
   ];
+    
 
   //images in the completed images
   const imageCompleted = [
@@ -62,6 +64,20 @@ const Tracker = () => {
     />
   );
 
+  const markedComplete = (gem) =>{
+    setprogressGem(progressGem.filter((item) => item.id !== gem.id));
+    setcompleteGem([...completeGem, gem]);
+  };
+
+  const renderGem = ({item, action}) => (
+    <TouchableOpacity style={styles.gemItem} onPress={() => action(item)} >
+      <Image source={item.image} style={styles.gemImage} />
+      <Text style={styles.gemCode}>{item.code}</Text>
+    </TouchableOpacity>
+  );
+
+  
+
   return (
     <SafeAreaView style={styles.container}>
       {/*Heading */}
@@ -92,39 +108,54 @@ const styles = StyleSheet.create({
     backgroundColor: "#9CCDDB",
     padding: 10,
   },
-  heading: {
+  topic: {
     fontSize: 20,
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#082f4f",
+    padding: 15,
+  },
+  topicName: {
+    color: "#fff",
+    fontSize: 18,
     fontWeight: "bold",
-    textAlign: "center",
-    marginVertical: 15,
+    marginLeft: 10,
+    alignItems: "center",
   },
   searchBar: {
-    height: 40,
-    borderColor: "#ccc",
-    borderWidth: 1,
-    borderRadius: 5,
-    paddingHorizontal: 10,
-    marginBottom: 15,
+    flexDirection: "row",
+    backgroundColor: "#fff",
+    padding: 8, 
+    margin: 10,
+    borderRadius: 8
   },
-  row: {
-    justifyContent: "space-between",
+  searchIcon: {
+    marginRight: 8,
+    alignSelf: "center"
   },
-  imageContainer: {
+  searchData: {
     flex: 1,
+    fontSize: 16
+  },
+  subTopic: {
+    fontSize: 18,
+    fontWeight: "bold",
+    marginLeft: 10,
+    marginVertical: 8
+  },
+  gemItem: {
     alignItems: "center",
-    margin: 5,
+    margin: 10
   },
-  image: {
-    width: 100,
-    height: 100,
-    borderRadius: 10,
+  gemImage: {
+    width: 80,
+    height: 80,
+    borderRadius: 10
   },
-  description: {
+  gemCode: {
     marginTop: 5,
-    fontSize: 14,
-    color: "#333",
-    textAlign: "center",
-  },
+    fontsize: 14
+  }
 });
 
 export default Tracker;

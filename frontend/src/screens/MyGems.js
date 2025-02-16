@@ -1,30 +1,40 @@
-import React from 'react';
-import { View, Text, FlatList, StyleSheet, Image } from 'react-native';
-import QRCode from 'react-native-qrcode-svg'; //import QR library
+import React, { useState } from 'react';
+import { View, Text, Image, TouchableOpacity, Modal, Button, StyleSheet } from 'react-native';
+import QRCode from 'react-native-qrcode-svg'; // Import QR library
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { Ionicons, FontAwesome5 } from '@expo/vector-icons'; // Import icons
 
-const MyGems = () => {
-  //Details about gems
-  const gemDetails = [
-    {
-      gemId: 'GEM123456',
-      dateAdded: '9/12/2023',
-      identification: 'Natural Blue Sapphire',
-      weight: '1.96 carats',
-      measurements: '8.59 x 6.36 x 4.97 mm',
-      shape: 'Cushion',
-      color: 'Vivid Blue',
-    },
-  ];
+const MyGems = ({ route, navigation }) => {
+  const [popQRCode, setPopQRCode] = useState(false);
 
-  //financial details about gems
-  const financialDetails = [
-    {
-      purchasePrice: 'LKR 60,000',
-      cost: 'LKR 20,000',
-      soldPrice: 'LKR 100,000',
-    },
-  ];
+  const sampleDetails = {
+    gemId: 'BS001',
+    dateAdded: '9/12/2023',
+    identification: 'Natural Blue Sapphire',
+    weight: '1.96 carats',
+    measurements: '6.59 x 6.36 x 4.97 mm',
+    shape: 'Cushion',
+    color: 'Vivid Blue',
+    purchasePrice: 'LKR 60,000',
+    cost: 'LKR 20,000 (for cutting)',
+    soldPrice: 'LKR 100,000',
+  };
+
+  const { gemDetails = sampleDetails } = route.params || {};
+
+  if (!gemDetails) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <Text style={{ textAlign: 'center', marginTop: 20 }}>No Gem Data Available</Text>
+      </SafeAreaView>
+    );
+  }
+
+  const qrCode = JSON.stringify({
+    gem: gemDetails.identification,
+    weight: gemDetails.weight,
+    color: gemDetails.color,
+  });
 
   // QR code value as a stringified JSON object
   const qrValue = JSON.stringify({
@@ -56,83 +66,112 @@ const MyGems = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Text style={styles.heading}>My Gems</Text>
-      {/* QR Code */}
-      <View style={styles.qrContainer}>
-        <QRCode value={qrValue} size={100} />
+      {/* Header */}
+      <View style={styles.topic}>
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+          <Ionicons name="chevron-back" size={24} color="white" />
+        </TouchableOpacity>
+        <Text style={styles.topicName}>My Gems</Text>
       </View>
 
-      {/* Image of gems */}
+      <View style={styles.imageContainer}>
+        <Image
+          source={{ uri: 'https://cdn.britannica.com/80/151380-050-2ABD86F2/diamond.jpg' }}
+          style={styles.gemPhoto}
+        />
+
+        <TouchableOpacity style={styles.qrContainer} onPress={() => setPopQRCode(true)}>
+          <QRCode value={qrCode} size={50} />
+        </TouchableOpacity>
+      </View>
+
+      {/* Gem ID */}
+      <Text style={styles.gemId}>Gem ID - {gemDetails.gemId}</Text>
+
+      <View style={styles.detailCard}>
+        <Text style={styles.detailTitle}>Date added to system - {gemDetails.dateAdded}</Text>
+        <Text style={styles.detailText}>Identification - {gemDetails.identification}</Text>
+        <Text style={styles.detailText}>Weight - {gemDetails.weight}</Text>
+        <Text style={styles.detailText}>Measurements - {gemDetails.measurements}</Text>
+        <Text style={styles.detailText}>Shape - {gemDetails.shape}</Text>
+        <Text style={styles.detailText}>Color - {gemDetails.color}</Text>
+        <Text style={styles.detailText}>Additional Information - </Text>
+      </View>
+
+      <View style={styles.detailCard}>
+        <Text style={styles.detailText}>Purchase Price - {gemDetails.purchasePrice}</Text>
+        <Text style={styles.detailText}>Cost - {gemDetails.cost}</Text>
+        <Text style={styles.detailText}>Sold Price - {gemDetails.soldPrice}</Text>
+      </View>
+
+      {/* Certificate Image */}
       <Image
-        source={{ uri: 'https://via.placeholder.com/600x200' }}
-        style={styles.gemPhoto}
-      />
-      {/* displays the gem id of that image*/}
-      <Text style={styles.gemId}>Gem ID: {gemDetails[0].gemId}</Text>
-
-      {/* Gem Details */}
-      <FlatList
-        data={gemDetails}
-        keyExtractor={(item, index) => `gem-${index}`} //unique key for gem details
-        renderItem={renderGemDetails} //funtion of gem details
-      />
-
-      {/* Financial Details */}
-      <FlatList
-        data={financialDetails}
-        keyExtractor={(item, index) => `financial-${index}`} //unique key for financial details
-        renderItem={renderFinancialDetails} //function of financial details
-      />
-
-      {/*Image of the gem certificate */}
-      <Image
-        source={{ uri: 'https://via.placeholder.com/600x200' }}
+        source={{ uri: 'https://cdn.britannica.com/80/151380-050-2ABD86F2/diamond.jpg' }}
         style={styles.gemCert}
       />
+      <TouchableOpacity onPress={() => navigation.navigate('BusinessOwnerProfilePhoto')} style={styles.editBtn}>
+        <FontAwesome5 name="pen" size={16} color="white" />
+      </TouchableOpacity>
+
+      
+      <Modal transparent visible={popQRCode} animationType="fade">
+        <View style={styles.popUpContainer}>
+          <View style={styles.popUpContent}>
+            <Text style={styles.modalTopic}>QR Code</Text>
+            <QRCode value={qrCode} size={200} />
+            <Button title="Close" onPress={() => setPopQRCode(false)} />
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 };
 
+// Styles
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#9CCDDB',
-    padding: 10,
+  },
+  topic: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#082f4f',
+    padding: 15,
+  },
+  topicName: {
+    color: 'white',
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  imageContainer: {
+    alignItems: 'center',
+    marginVertical: 15,
+    position: 'relative',
+  },
+  gemPhoto: {
+    width: 120,
+    height: 120,
+    borderRadius: 10,
+    borderWidth: 2,
+    borderColor: '#ccc',
+  },
+  editBtn: {
+    position: 'absolute',
+    top: 620,
+    left: 150,
+    backgroundColor: '#007BFF',
+    padding: 5,
+    borderRadius: 5,
   },
   qrContainer: {
     position: 'absolute',
-    top: 150,
-    right: 10,
+    top: 5,
+    left: 5,
     backgroundColor: '#fff',
-    borderRadius: 5,
     padding: 5,
-    shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 4,
-    elevation: 2,
-    zIndex: 1, // Ensure QR code appears on top
+    borderRadius: 5,
   },
-  gemPhoto: {
-    width: '100%',
-    height: 200,
-    resizeMode: 'cover',
-    marginVertical: 10,
-  },
-  gemCert: {
-    width: '50%',
-    height: 150,
-    left:10,
-    resizeMode: 'cover',
-    alignSelf: 'flex-start',
-    marginVertical: 10,
-  },
-  heading: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    marginVertical: 70,
-  },  
   gemId: {
     textAlign: 'center',
     fontSize: 16,
@@ -140,17 +179,48 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   detailCard: {
-    padding: 10,
-    borderWidth: 1,
-    borderColor: '#ddd',
-    borderRadius: 5,
-    marginBottom: 10,
     backgroundColor: '#f9f9f9',
+    padding: 15,
+    borderRadius: 10,
+    marginHorizontal: 20,
+    marginBottom: 10,
     shadowColor: '#000',
     shadowOpacity: 0.1,
     shadowOffset: { width: 0, height: 2 },
     shadowRadius: 4,
     elevation: 2,
+  },
+  detailTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginBottom: 5,
+  },
+  detailText: {
+    fontSize: 14,
+    marginBottom: 3,
+  },
+  gemCert: {
+    width: 120,
+    height: 80,
+    marginLeft: 20,
+    borderRadius: 5,
+  },
+  popUpContainer: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  popUpContent: {
+    backgroundColor: 'white',
+    padding: 20,
+    borderRadius: 10,
+    alignItems: 'center',
+  },
+  modalTopic: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 10,
   },
 });
 

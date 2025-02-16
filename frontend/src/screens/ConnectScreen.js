@@ -140,7 +140,7 @@ const ConnectScreen = ({ navigation }) => {
   );
 };
 
-export default ConnectScreen;
+export default ConnectScreens;
 
 const styles = StyleSheet.create({
   container: {

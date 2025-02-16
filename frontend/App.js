@@ -6,17 +6,15 @@ import ConnectScreen from "./src/screens/ConnectScreen";
 import ProfileScreen from "./src/screens/ConnectedUsers";
 import CutterFinancialRecords from "./src/screens/CutterFinancialRecords";
 import OwnerFinancialRecords from "./src/screens/ownerFinancialRecords";
-import BurnerFinancialRecords from "./src/screens/BurnerFinancialRecords";
+import ConnectScreens from "./src/screens/ConnectScreen";
+
 const Stack = createStackNavigator();
 
 export default function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
-        <Stack.Screen
-          name="BurnerFinancialRecords"
-          component={BurnerFinancialRecords}
-        />
+        <Stack.Screen name="ConnectScreen" component={ConnectScreens} />
       </Stack.Navigator>
     </NavigationContainer>
   );

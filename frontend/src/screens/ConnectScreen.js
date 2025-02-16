@@ -46,6 +46,11 @@ const people = [
 
 const ConnectScreen = ({ navigation }) => {
   const [selectedCategory, setSelectedCategory] = useState("Cutter");
+  const [favorites, setFavorites] = useState({});
+
+  const toggleFavorite = (id) => {
+    setFavorites((prev) => ({ ...prev, [id]: !prev[id] }));
+  };
 
   const renderItem = ({ item }) => (
     <TouchableOpacity
@@ -67,8 +72,12 @@ const ConnectScreen = ({ navigation }) => {
             ))}
           </View>
         </View>
-        <TouchableOpacity>
-          <FontAwesome name="heart-o" size={26} color="#6646ee" />
+        <TouchableOpacity onPress={() => toggleFavorite(item.id)}>
+          <FontAwesome
+            name={favorites[item.id] ? "heart" : "heart-o"}
+            size={26}
+            color="#6646ee"
+          />
         </TouchableOpacity>
       </View>
     </TouchableOpacity>
@@ -103,14 +112,14 @@ const ConnectScreen = ({ navigation }) => {
               key={category}
               style={[
                 styles.tab,
-                selectedCategory === category && styles.activeTab, // Apply underline effect
+                selectedCategory === category && styles.activeTab,
               ]}
               onPress={() => setSelectedCategory(category)}
             >
               <Text
                 style={[
                   styles.tabText,
-                  selectedCategory === category && styles.activeTabText, // Change text color
+                  selectedCategory === category && styles.activeTabText,
                 ]}
               >
                 {category}
@@ -159,19 +168,18 @@ const styles = StyleSheet.create({
     marginVertical: 10,
   },
   addPersonButtonContainer: {
-    width: 50, // Slightly larger than the button to create a margin effect
+    width: 50,
     height: 50,
     borderRadius: 29,
-    backgroundColor: "#C1E8FF", // Outer margin color
+    backgroundColor: "#C1E8FF",
     justifyContent: "center",
     alignItems: "center",
   },
-
   addPersonButton: {
     width: 27,
     height: 27,
     borderRadius: 25,
-    backgroundColor: "black", // Button background
+    backgroundColor: "black",
     justifyContent: "center",
     alignItems: "center",
   },
@@ -196,11 +204,11 @@ const styles = StyleSheet.create({
     marginRight: 8,
   },
   activeTab: {
-    borderBottomWidth: 2, // Add underline effect
-    borderBottomColor: "#6646ee", // Underline color
+    borderBottomWidth: 2,
+    borderBottomColor: "#6646ee",
   },
   activeTabText: {
-    color: "#6646ee", // Change text color to match the underline
+    color: "#6646ee",
     fontWeight: "bold",
   },
   card: {

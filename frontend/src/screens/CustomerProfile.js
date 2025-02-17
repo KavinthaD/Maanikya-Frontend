@@ -1,3 +1,5 @@
+//Screen creator: Isum
+
 import React from "react";
 import { SafeAreaView,View, Text, Image, TouchableOpacity, StyleSheet, Button } from "react-native";
 import { Home, ShoppingBag, PlusCircle, Bell, User } from "lucide-react-native";

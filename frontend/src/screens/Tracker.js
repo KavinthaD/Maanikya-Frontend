@@ -1,3 +1,5 @@
+//Screen creator: Isum
+
 import React, { useState } from "react";
 import { View, Text, FlatList, StyleSheet, Image, TextInput, SafeAreaView, TouchableOpacity } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";

@@ -1,3 +1,5 @@
+//Screen creator: Isum
+
 import React, { useState } from 'react';
 import { View, Text, Image, TouchableOpacity, Modal, Button, StyleSheet } from 'react-native';
 import QRCode from 'react-native-qrcode-svg'; // Import QR library

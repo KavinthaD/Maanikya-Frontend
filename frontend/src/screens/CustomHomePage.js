@@ -1,3 +1,5 @@
+//Screen Creator Tilmi
+
 import React from 'react';
 import { View, Text, Image, TouchableOpacity, SafeAreaView, StyleSheet, StatusBar } from 'react-native';
 

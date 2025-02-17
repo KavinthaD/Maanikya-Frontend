@@ -10,28 +10,39 @@ import RegisterSelectionPage from "./src/screens/RegisterSelectionPage";
 import WelcomePage from "./src/screens/WelcomePage";
 import WorkerOrderTrackDetails from "./src/screens/WorkerOrderTrackDetails";
 
-import BusinessOwnerProfile from './src/screens/BusinessOwnerProfile';
-import BusinessOwnerEditProfile from './src/screens/BusinessOwnerEditProfile';
-import GemCertificateAdd from './src/screens/GemCertificateAdd';
+import BusinessOwnerProfile from "./src/screens/BusinessOwnerProfile";
+import BusinessOwnerEditProfile from "./src/screens/BusinessOwnerEditProfile";
+import GemCertificateAdd from "./src/screens/GemCertificateAdd";
 
+import { NavigationContainer } from "@react-navigation/native";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
-
-const Stack = createStackNavigator();
+const Stack = createNativeStackNavigator();
 
 const App = () => {
   return (
-    <View style={styles.container}>
-      <BS_NavBar />
-    </View>
+    <NavigationContainer>
+      <Stack.Navigator initialRouteName="WelcomePage">
+        <Stack.Screen
+          name="WelcomePage"
+          component={WelcomePage}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="PurposeSelectionPage"
+          component={PurposeSelectionPage}
+          options={{ headerShown: false }}
+        />
+        {/* Need to add other screens */}
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 };
 
 export default App;
-
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
 });
-

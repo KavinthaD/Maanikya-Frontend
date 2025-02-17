@@ -2,6 +2,7 @@
 
 import React, {useEffect, useState, useRef} from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, Modal, Animated } from 'react-native';
+import { baseScreenStyles } from '../styles/baseStyles';
 
 const PurposeSelectionPage = ({ navigation }) => {
     const[modalVisible, setModalVisible] = useState(false);
@@ -25,7 +26,7 @@ const PurposeSelectionPage = ({ navigation }) => {
     }, []);
     
     return (
-        <View style={styles.Container}>
+        <View style={baseScreenStyles.container}>
                 <Animated.Image
                 source={require('../assets/logo-gem.png')}
                 style={[styles.logo, {transform: [{scale: scaleValue}]}]} />

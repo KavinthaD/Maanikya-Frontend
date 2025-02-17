@@ -1,3 +1,5 @@
+//Screen creator: Isum
+
 import React, { useState } from "react";
 import {View, Text, TextInput,Image,TouchableOpacity,StyleSheet, Button} from "react-native";
 import { launchImageLibrary } from "react-native-image-picker";

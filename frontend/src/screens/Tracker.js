@@ -1,6 +1,9 @@
+//Screen creator: Isum
+
 import React, { useState } from "react";
 import { View, Text, FlatList, StyleSheet, Image, TextInput, SafeAreaView, TouchableOpacity } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
+import Ionicons from "react-native-vector-icons/Ionicons";
 
 const Tracker = () => {
   //manage the search option
@@ -14,9 +17,9 @@ const Tracker = () => {
       description: "Beautiful Pink Gem",
     },
     {
-      id: "img2",
-      uri: "https://via.placeholder.com/100.png?text=Gem2",
-      description: "Sparkling Blue Gem",
+      id: "gem2",
+      code: "B02",
+      image: require("../assets/logo.png"),
     },
     {
       id: "img3",

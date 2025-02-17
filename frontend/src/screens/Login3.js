@@ -1,5 +1,8 @@
+//Screen creator: Dulith
+
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Picker, Image } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from 'react-native';
+import { Picker } from '@react-native-picker/picker';
 
 const Login3 = () => {
   const [email, setEmail] = useState('');

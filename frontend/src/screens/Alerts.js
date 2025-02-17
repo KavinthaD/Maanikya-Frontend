@@ -1,3 +1,5 @@
+//Screen creator: Dulith
+
 import React from 'react';
 import { View, Text, StyleSheet, FlatList, Image } from 'react-native';
 

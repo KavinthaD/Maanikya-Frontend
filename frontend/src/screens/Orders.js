@@ -1,3 +1,5 @@
+//Screen creator: Dulith
+
 import React, { useState } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, StyleSheet, Image } from 'react-native';
 

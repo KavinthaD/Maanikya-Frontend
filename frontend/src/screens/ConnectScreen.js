@@ -1,5 +1,3 @@
-//Screen Creator : Mehara
-
 import React, { useState } from "react";
 import {
   View,
@@ -142,7 +140,7 @@ const ConnectScreen = ({ navigation }) => {
   );
 };
 
-export default ConnectScreens;
+export default ConnectScreen;
 
 const styles = StyleSheet.create({
   container: {

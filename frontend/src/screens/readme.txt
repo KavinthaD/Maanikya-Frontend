@@ -1,1 +1,0 @@
-for different pages/screens like Home, Login, profile, etc.

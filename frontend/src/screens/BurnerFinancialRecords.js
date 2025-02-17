@@ -1,105 +1,93 @@
-//Screen Creator : Mehara
-
 import React from "react";
+import { View, Text, StyleSheet } from "react-native";
 
 const BurnerFinancialRecords = () => {
-  const styles = {
-    container: {
-      fontFamily: "Arial, sans-serif",
-      padding: "30px",
-      backgroundColor: "#9CCDDB",
-      minHeight: "100vh", // Ensures full height
-      display: "flex",
-      flexDirection: "column",
-    },
-    // header: {
-    //   textAlign: "center",
-    //   marginBottom: "20px",
-    // },
-    totalProfit: {
-      textAlign: "center",
-      backgroundColor: "#000",
-      color: "#0f0",
-      padding: "30px",
-      marginBottom: "20px",
-    },
-    recordList: {
-      backgroundColor: "#fff",
-      borderRadius: "8px",
-      boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
-      marginBottom: "10px",
-    },
-    recordItem: {
-      display: "flex",
-      justifyContent: "space-between",
-      padding: "20px 60px",
-      borderBottom: "30px",
-    },
-    lastRecordItem: {
-      borderBottom: "none",
-    },
-    bottomNav: {
-      display: "flex",
-      justifyContent: "space-around",
-      marginTop: "auto", // Pushes the footer to the bottom
-      backgroundColor: "#9CCDDB",
-      color: "white",
-      padding: "10px 0",
-      borderRadius: "8px",
-    },
-    navButton: {
-      background: "none",
-      border: "none",
-      color: "#9CCDDB",
-      fontSize: "14px",
-      cursor: "pointer",
-    },
-    navButtonHover: {
-      textDecoration: "underline",
-    },
-  };
-
   return (
-    <div style={styles.container}>
-      {/* <header style={styles.header}>
-        <h1>Financial Records</h1>
-      </header> */}
-      <div style={styles.totalProfit}>
-        <span>Total profit</span>
-        <h2>LKR. 780 000</h2>
-      </div>
-      <div style={styles.recordList}>
-        <div style={styles.recordItem}>
-          <span>Burner cs001</span>
-          <span>LKR. 100 000</span>
-        </div>
-      </div>
-      <div style={styles.recordList}>
-        <div style={styles.recordItem}>
-          <span>Burner cs002</span>
-          <span>LKR. 20 000</span>
-        </div>
-      </div>
-      <div style={styles.recordList}>
-        <div style={styles.recordItem}>
-          <span>Burner PJ004</span>
-          <span>LKR. 60 000</span>
-        </div>
-      </div>
-      <div style={styles.recordList}>
-        <div style={styles.recordItem}>
-          <span>Burner IHP006</span>
-          <span>LKR. 600 000</span>
-        </div>
-      </div>
-      <div style={styles.recordList}>
-        <div style={{ ...styles.recordItem, ...styles.lastRecordItem }}>
-          <span>Total</span>
-          <span>LKR. 780 000</span>
-        </div>
-      </div>
-    </div>
+    <View style={styles.container}>
+      <View style={styles.totalProfitContainer}>
+        <Text style={styles.totalProfitTitle}>Total profit</Text>
+        <Text style={styles.totalProfitAmount}>LKR. 780 000</Text>
+      </View>
+
+      <View style={styles.recordList}>
+        <View style={styles.recordItem}>
+          <Text>Burner cs001</Text>
+          <Text>LKR. 100 000</Text>
+        </View>
+      </View>
+
+      <View style={styles.recordList}>
+        <View style={styles.recordItem}>
+          <Text>Burner cs002</Text>
+          <Text>LKR. 20 000</Text>
+        </View>
+      </View>
+
+      <View style={styles.recordList}>
+        <View style={styles.recordItem}>
+          <Text>Burner PJ004</Text>
+          <Text>LKR. 60 000</Text>
+        </View>
+      </View>
+
+      <View style={styles.recordList}>
+        <View style={styles.recordItem}>
+          <Text>Burner IHP006</Text>
+          <Text>LKR. 600 000</Text>
+        </View>
+      </View>
+
+      <View style={styles.recordList}>
+        <View style={[styles.recordItem, styles.lastRecordItem]}>
+          <Text>Total</Text>
+          <Text>LKR. 780 000</Text>
+        </View>
+      </View>
+    </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    padding: 30,
+    backgroundColor: "#9CCDDB",
+    flex: 1,
+  },
+  totalProfitContainer: {
+    backgroundColor: "#000",
+    padding: 30,
+    marginBottom: 20,
+    alignItems: "center", // Center text horizontally
+  },
+  totalProfitTitle: {
+    fontSize: 18,
+    color: "#0f0",
+  },
+  totalProfitAmount: {
+    fontSize: 24,
+    fontWeight: "bold",
+    color: "#0f0",
+  },
+  recordList: {
+    backgroundColor: "#fff",
+    borderRadius: 8,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    marginBottom: 10,
+  },
+  recordItem: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    paddingHorizontal: 60,
+    paddingVertical: 20,
+    borderBottomWidth: 1,
+    borderBottomColor: "#ccc",
+  },
+  lastRecordItem: {
+    borderBottomWidth: 0,
+  },
+});
 
 export default BurnerFinancialRecords;

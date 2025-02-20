@@ -1,5 +1,4 @@
 //Screen Creator Tilmi
-
 import React, { useState } from 'react';
 import {
   View,
@@ -19,6 +18,12 @@ const OrderRequestModal = ({ visible, onClose, selectedPerson }) => {
   
   if (!selectedPerson) return null;
   
+  const gemImages = [
+    { id: 'EM001', source: require('../assets/gems/EM001.png') },
+    { id: 'RR001', source: require('../assets/gems/RR001.png') },
+    { id: 'YS001', source: require('../assets/gems/YS001.png') },
+  ];
+  
   return (
     <Modal
       visible={visible}
@@ -30,15 +35,16 @@ const OrderRequestModal = ({ visible, onClose, selectedPerson }) => {
         <View style={styles.modalContent}>
           <Text style={styles.orderId}>Order#: NB01130</Text>
           
-          <View style={styles.gemInfoContainer}>
-            <Image 
-              source={selectedPerson.image}
-              style={styles.gemImage}
-            />
-            <View style={styles.gemDetails}>
-              <Text style={styles.personName}>{selectedPerson.name}</Text>
-              <Text style={styles.gemId}>Gem #: IHP164</Text>
-            </View>
+          <Text style={styles.personName}>{selectedPerson.name}</Text>
+          
+          <View style={styles.gemImagesContainer}>
+            {gemImages.map((gem) => (
+              <Image 
+                key={gem.id}
+                source={gem.source}
+                style={styles.gemImage}
+              />
+            ))}
           </View>
           
           <TextInput
@@ -55,13 +61,13 @@ const OrderRequestModal = ({ visible, onClose, selectedPerson }) => {
               style={[styles.button, styles.cancelButton]} 
               onPress={onClose}
             >
-              <Text style={styles.cancelButtonText}>Cancel</Text>
+              <Text style={styles.buttonText}>Cancel</Text>
             </TouchableOpacity>
             <TouchableOpacity 
               style={[styles.button, styles.sendButton]}
               onPress={onClose}
             >
-              <Text style={styles.sendButtonText}>Send Request</Text>
+              <Text style={styles.buttonText}>Send Request</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -107,20 +113,6 @@ const FavoritesScreen = () => {
       image: require('../assets/gems/BS001.png'),
       type: 'Cutter'
     },
-    {
-      id: '5',
-      name: 'John Burner',
-      role: 'Burner',
-      image: require('../assets/gems/BS001.png'),
-      type: 'Burner'
-    },
-    {
-      id: '6',
-      name: 'Sarah Electric',
-      role: 'Elec. Burner/Cutter',
-      image: require('../assets/gems/BS001.png'),
-      type: 'Elec. Burner/Cutter'
-    },
   ];
 
   const filteredFavorites = allFavorites.filter(item => {
@@ -135,7 +127,12 @@ const FavoritesScreen = () => {
 
   const handleFavoriteSelect = (person) => {
     setSelectedPerson(person);
-    setModalVisible(true);
+  };
+
+  const handleConfirm = () => {
+    if (selectedPerson) {
+      setModalVisible(true);
+    }
   };
 
   const renderFavoriteItem = ({ item }) => (
@@ -196,6 +193,13 @@ const FavoritesScreen = () => {
         style={styles.list}
       />
 
+      <TouchableOpacity
+        style={styles.confirmButton}
+        onPress={handleConfirm}
+      >
+        <Text style={styles.confirmButtonText}>Confirm</Text>
+      </TouchableOpacity>
+
       <OrderRequestModal
         visible={modalVisible}
         onClose={() => {
@@ -211,7 +215,7 @@ const FavoritesScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#E5F3F8',
+    backgroundColor: '#9CCDDB',
   },
   searchContainer: {
     flexDirection: 'row',
@@ -300,6 +304,18 @@ const styles = StyleSheet.create({
     backgroundColor: '#004B64',
     borderColor: '#004B64',
   },
+  confirmButton: {
+    backgroundColor: '#072D44',
+    margin: 16,
+    padding: 16,
+    borderRadius: 8,
+    alignItems: 'center',
+  },
+  confirmButtonText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: '600',
+  },
   modalOverlay: {
     flex: 1,
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
@@ -318,30 +334,23 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 18,
     fontWeight: '600',
-    marginBottom: 20,
-  },
-  gemInfoContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 20,
-  },
-  gemImage: {
-    width: 60,
-    height: 60,
-    borderRadius: 8,
-    backgroundColor: '#fff',
-  },
-  gemDetails: {
-    marginLeft: 12,
+    marginBottom: 12,
   },
   personName: {
     color: 'white',
     fontSize: 16,
-    fontWeight: '500',
+    marginBottom: 16,
   },
-  gemId: {
-    color: '#ccc',
-    marginTop: 4,
+  gemImagesContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 16,
+  },
+  gemImage: {
+    width: 80,
+    height: 80,
+    borderRadius: 8,
+    backgroundColor: '#fff',
   },
   messageInput: {
     backgroundColor: 'white',
@@ -369,11 +378,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#34C759',
     marginLeft: 8,
   },
-  cancelButtonText: {
-    color: 'white',
-    fontWeight: '600',
-  },
-  sendButtonText: {
+  buttonText: {
     color: 'white',
     fontWeight: '600',
   },

@@ -1,72 +1,202 @@
-//Screen Creator : Mehara
+import React, { useState } from 'react';
+import {
+  StyleSheet,
+  Text,
+  View,
+  SafeAreaView,
+  TextInput,
+  TouchableOpacity,
+  Image,
+  ScrollView,
+} from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 
-import React, { useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, FlatList, Image, StyleSheet } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
+const App = () => {
+  const [data, setData] = useState([
+    {
+      id: 1,
+      name: 'Sunil Gamalath',
+      company: 'Gamage Gems',
+      rating: 4,
+      image: require('../assets/seller.png'), // Replace with your actual image path
+    },
+    {
+      id: 2,
+      name: 'Subash Hettiarachchi',
+      company: 'Pixe; Gems',
+      rating: 3,
+      image: require('../assets/seller.png'), // Replace with your actual image path
+    },
+    {
+      id: 3,
+      name: 'Rashantha Gamage',
+      company: 'Zodiac Gems',
+      rating: 2,
+      image: require('../assets/seller.png'), // Replace with your actual image path
+    },
+    {
+      id: 4,
+      name: 'Wimalasiri Siriwardana',
+      company: 'Janatha Gems',
+      rating: 1,
+      image: require('../assets/seller.png'), // Replace with your actual image path
+    },
+  ]);
 
-const sellers = [
-  { name: "Sunil Gamalath", business: "Gamage Gems", rating: 3, image: require("../assets/seller.png") },
-  { name: "Subash Hettiarachchi", business: "Pixe; Gems", rating: 2, image: require("../assets/seller.png") },
-  { name: "Rashantha Gamage", business: "Zodiac Gems", rating: 3, image: require("../assets/seller.png") },
-  { name: "Wimalasiri Siriwardana", business: "Janatha Gems", rating: 4, image: require("../assets/seller.png") },
-];
+  const handleStarPress = (itemId, starIndex) => {
+    setData(prevData =>
+      prevData.map(item =>
+        item.id === itemId ? { ...item, rating: starIndex + 1 } : item
+      )
+    );
+  };
 
-export default function MySellersScreen() {
-  const [search, setSearch] = useState("");
+  const renderStars = (itemId, rating) => {
+    const stars = [];
+    for (let i = 0; i < 5; i++) {
+      stars.push(
+        <TouchableOpacity key={i} onPress={() => handleStarPress(itemId, i)}>
+          <Ionicons
+            name={i < rating ? 'star' : 'star-outline'}
+            size={18}
+            color="#3b82f6"
+          />
+        </TouchableOpacity>
+      );
+    }
+    return <View style={styles.starContainer}>{stars}</View>;
+  };
 
-  return (
-    <View style={styles.container}>
-      <Text style={styles.header}>My sellers</Text>
-      <TextInput
-        placeholder="Search person"
-        value={search}
-        onChangeText={setSearch}
-        style={styles.input}
-      />
-      <TouchableOpacity style={styles.filterButton}>
-        <Text>Filter</Text>
+  const renderItem = (item) => (
+    <View style={styles.itemContainer}>
+      <Image source={item.image} style={styles.itemImage} />
+      <View style={styles.itemDetails}>
+        <Text style={styles.itemName}>{item.name}</Text>
+        <Text style={styles.itemCompany}>{item.company}</Text>
+        {renderStars(item.id, item.rating)}
+      </View>
+      <TouchableOpacity style={styles.viewGemsButton}>
+        <Text style={styles.viewGemsText}>View gems</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.addButton}>
-        <Text style={styles.addButtonText}>+</Text>
-      </TouchableOpacity>
-      <FlatList
-        data={sellers.filter(seller => seller.name.toLowerCase().includes(search.toLowerCase()))}
-        keyExtractor={(item, index) => index.toString()}
-        renderItem={({ item }) => (
-          <View style={styles.card}>
-            <Image source={item.image} style={styles.image} />
-            <View style={styles.cardContent}>
-              <Text style={styles.name}>{item.name}</Text>
-              <Text style={styles.business}>{item.business}</Text>
-              <View style={styles.rating}>
-                {[...Array(5)].map((_, i) => (
-                  <Ionicons key={i} name={i < item.rating ? "star" : "star-outline"} size={16} color={i < item.rating ? "#FFD700" : "#CCCCCC"} />
-                ))}
-              </View>
-            </View>
-            <TouchableOpacity style={styles.viewButton}>
-              <Text style={styles.viewButtonText}>View gems</Text>
-            </TouchableOpacity>
-          </View>
-        )}
-      />
     </View>
   );
-}
+
+  return (
+    <SafeAreaView style={styles.container}>
+      <View style={styles.header}>
+        <TextInput
+          style={styles.searchBar}
+          placeholder="Search person"
+          placeholderTextColor="#888"
+        />
+        <TouchableOpacity style={styles.filterButton}>
+          <Text style={styles.filterText}>Filter</Text>
+        </TouchableOpacity>
+      </View>
+
+      <TouchableOpacity style={styles.addButton}>
+        <Ionicons name="add" size={24} color="black" />
+      </TouchableOpacity>
+      <Text style={styles.addPersonText}>Add person</Text>
+
+      <ScrollView>
+        {data.map(item => (
+          <React.Fragment key={item.id}>
+            {renderItem(item)}
+          </React.Fragment>
+        ))}
+      </ScrollView>
+    </SafeAreaView>
+  );
+};
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#E3F2FD", padding: 16 },
-  header: { fontSize: 18, fontWeight: "bold", marginBottom: 10 },
-  input: { backgroundColor: "white", padding: 10, borderRadius: 8, marginBottom: 10 },
-  filterButton: { padding: 10, backgroundColor: "#BBDEFB", borderRadius: 8, alignItems: "center", marginBottom: 10 },
-  addButton: { alignSelf: "center", backgroundColor: "#90CAF9", padding: 10, borderRadius: 25, width: 50, height: 50, justifyContent: "center", alignItems: "center", marginBottom: 10 },
-  addButtonText: { fontSize: 20, fontWeight: "bold", color: "white" },
-  card: { flexDirection: "row", backgroundColor: "white", borderRadius: 8, padding: 10, marginBottom: 10, alignItems: "center" },
-  image: { width: 40, height: 40, borderRadius: 20, marginRight: 10 },
-  cardContent: { flex: 1 },
-  name: { fontSize: 14, fontWeight: "bold" },
-  business: { fontSize: 12, color: "gray" },
-  rating: { flexDirection: "row", marginTop: 5 },
-  viewButton: { padding: 8, borderRadius: 20, backgroundColor: "#ECEFF1" },
-  viewButtonText: { color: "black", fontSize: 12, fontWeight: "bold" },
+  container: {
+    flex: 1,
+    backgroundColor: '#9CCDDB',
+    padding: 16,
+  },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  searchBar: {
+    flex: 1,
+    height: 40,
+    backgroundColor: 'white',
+    borderRadius: 20,
+    paddingHorizontal: 16,
+    marginRight: 10,
+    color: '#333',
+  },
+  filterButton: {
+    backgroundColor: 'white',
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 20,
+  },
+  filterText: {
+    color: '#333',
+    fontWeight: 'bold',
+  },
+  addButton: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    backgroundColor: 'white',
+    justifyContent: 'center',
+    alignItems: 'center',
+    alignSelf: 'center',
+    marginBottom: 5,
+  },
+  addPersonText: {
+    textAlign: 'center',
+    marginBottom: 20,
+    color: '#333',
+  },
+  itemContainer: {
+    backgroundColor: 'white',
+    borderRadius: 25,
+    padding: 16,
+    marginBottom: 16,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  itemImage: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    marginRight: 16,
+  },
+  itemDetails: {
+    flex: 1,
+  },
+  itemName: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#333',
+  },
+  itemCompany: {
+    fontSize: 14,
+    color: '#666',
+  },
+  viewGemsButton: {
+    backgroundColor: '#938FEC',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 20,
+  },
+  viewGemsText: {
+    color: '#64748b',
+    fontWeight: 'bold',
+    fontSize: 12,
+  },
+  starContainer: {
+    flexDirection: 'row',
+    marginTop: 4,
+  },
 });
+
+export default App;

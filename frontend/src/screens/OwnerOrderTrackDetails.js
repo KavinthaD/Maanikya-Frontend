@@ -3,6 +3,7 @@
 import React, {useState} from "react";
 import {View, Text, Image, StyleSheet, TouchableOpacity} from "react-native";
 import {FontAwesome} from "@expo/vector-icons";
+import { baseScreenStyles } from "../styles/baseStyles";
 
 const OwnerOrderTrackDetails = () => {
     const [orderConfirmed, setOrderConfirmed] = useState(false);
@@ -10,7 +11,7 @@ const OwnerOrderTrackDetails = () => {
     const [rating, setRating] = useState(0);
 
     return (
-        <View style={styles.container}> 
+        <View style={[baseScreenStyles.container,styles.container]}>
             <View style= {styles.orderDetails}> 
                 <View style= {styles.row}>
                     <View>
@@ -101,8 +102,7 @@ const OwnerOrderTrackDetails = () => {
 
 const styles = StyleSheet.create ({
     container: {
-        flex:1,
-        backgroundColor: "#A9D3E8",
+        
         paddingTop: 40,
         
     },

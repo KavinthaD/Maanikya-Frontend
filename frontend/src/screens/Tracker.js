@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { View, Text, FlatList, StyleSheet, Image, TextInput, SafeAreaView, TouchableOpacity } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
 import Ionicons from "react-native-vector-icons/Ionicons";
+import { baseScreenStyles } from "../styles/baseStyles";
 
 const Tracker = () => {
   //manage the search option
@@ -82,7 +83,7 @@ const Tracker = () => {
   
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={[baseScreenStyles.container,styles.container]}>
       {/*Heading */}
       <Text style={styles.heading}>Tracker</Text>
 
@@ -107,8 +108,6 @@ const Tracker = () => {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: "#9CCDDB",
     padding: 10,
   },
   topic: {

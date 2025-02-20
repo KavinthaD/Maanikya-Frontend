@@ -6,6 +6,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";  
 import * as ImagePicker from 'expo-image-picker';
 import * as Camera from 'expo-camera';
+import { baseScreenStyles } from "../styles/baseStyles";
 
 const BusinessOwnerProfilePhoto = ({ navigation }) => {
   const [photo, setPhoto] = useState(null);
@@ -68,7 +69,7 @@ const BusinessOwnerProfilePhoto = ({ navigation }) => {
   }, []);
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={[baseScreenStyles.container,styles.container]}>
       {/* Header */}
       <View style={styles.topic}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn}>
@@ -100,8 +101,7 @@ const BusinessOwnerProfilePhoto = ({ navigation }) => {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: "#a9c9d3",
+    
     alignItems: "center",
   },
   topic: {

@@ -167,8 +167,6 @@ function GemRegister2Main() {
   );
 }
 
-
-
 const styles = StyleSheet.create({
   innerContainer: {
     padding: 20,

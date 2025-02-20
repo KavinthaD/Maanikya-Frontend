@@ -10,6 +10,7 @@ import {
   StyleSheet,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { baseScreenStyles } from "../styles/baseStyles";
 
 const person = {
   name: "Dulith Wanigarathne",
@@ -34,7 +35,7 @@ export default function ProfileScreen() {
   const [search, setSearch] = useState("");
 
   return (
-    <View style={styles.container}>
+    <View style={[baseScreenStyles.container,styles.container]}>
       <Text style={styles.header}>Connect</Text>
       <TextInput
         placeholder="Search person"
@@ -88,7 +89,7 @@ export default function ProfileScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#9CCDDB", padding: 16 },
+  container: { padding: 16 },
   header: { fontSize: 18, fontWeight: "bold", marginBottom: 10 },
   input: {
     backgroundColor: "white",

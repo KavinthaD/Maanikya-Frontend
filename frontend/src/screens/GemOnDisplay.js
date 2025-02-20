@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { SafeAreaView, Text, TouchableOpacity, FlatList, Image, View, StyleSheet, Modal, TextInput } from "react-native";
 import { Plus } from "lucide-react-native";
 import { Ionicons, FontAwesome5 } from '@expo/vector-icons'; 
+import { baseScreenStyles } from "../styles/baseStyles";
 
 const GemOnDisplay = ({}) => {
   const [onDisplay, setOnDisplay] = useState([
@@ -35,7 +36,7 @@ const GemOnDisplay = ({}) => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={[baseScreenStyles.container,styles.container]}>
       {/* Title */}
       <View style={styles.title}>
          <TouchableOpacity onPress={() => navigation.goBack()}>
@@ -112,8 +113,7 @@ const GemOnDisplay = ({}) => {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: "#A7D7E7",
+    
     padding: 16,
   },
   title: {

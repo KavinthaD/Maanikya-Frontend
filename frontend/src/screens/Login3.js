@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
+import { baseScreenStyles } from "../styles/baseStyles";
 
 const Login3 = () => {
   const [email, setEmail] = useState('');
@@ -10,7 +11,7 @@ const Login3 = () => {
   const [accountType, setAccountType] = useState('business account');
 
   return (
-    <View style={styles.container}>
+    <View style={[baseScreenStyles.container,styles.container]}>
       <Image source={require('../assets/logo-gem.png')} style={styles.logo} />
       <Text style={styles.title}>Maanikya</Text>
       <Text style={styles.loginText}>Login</Text>
@@ -46,8 +47,6 @@ const Login3 = () => {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: '#b3e5fc',
     alignItems: 'center',
     justifyContent: 'center',
     padding: 20,

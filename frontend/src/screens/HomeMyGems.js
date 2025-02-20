@@ -328,6 +328,7 @@ import {
   StatusBar,
   Modal,
 } from 'react-native';
+import { baseScreenStyles } from "../styles/baseStyles";
 
 const searchIcon = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAABmJLR0QA/wD/AP+gvaeTAAAAqklEQVRYhe2UQQ6AIAwEWeL/v6wHY0QK3W0JiYns0VB2h1YUiDQD2oABGdAFaW+AAawR+ybXPQBJupO0SPq6FylBLyeXx56klSkqgCRJc+YARxvQzg1oxwW0E3+PMue8/BR/+wqSZ0B6CpLvgHYKktfAkT+h1eb1i3B1BrRjAO1fB2g/TNqJv0eZc15+ir99BckzID0FyXdAOwXJa+DIn9Bq83oAVx0DTyemB+GeqEUAAAAASUVORK5CYII=';
 
@@ -440,7 +441,7 @@ const GemCollectionScreen = ({ navigation }) => {
   );
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={baseScreenStyles.container}>
       <StatusBar barStyle="light-content" />
       
       <View style={styles.searchContainer}>
@@ -535,10 +536,7 @@ const GemCollectionScreen = ({ navigation }) => {
 };
 
 const styles = StyleSheet.create({  
-container: {
-    flex: 1,
-    backgroundColor: '#B2E6F0',
-  },
+
   searchContainer: {
     flexDirection: 'row',
     padding: 16,

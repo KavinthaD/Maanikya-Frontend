@@ -5,6 +5,7 @@ import { View, Text, Image, TouchableOpacity, Modal, Button, StyleSheet } from '
 import QRCode from 'react-native-qrcode-svg'; // Import QR library
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons, FontAwesome5 } from '@expo/vector-icons'; // Import icons
+import { baseScreenStyles } from "../styles/baseStyles";
 
 const MyGems = ({ route, navigation }) => {
   const [popQRCode, setPopQRCode] = useState(false);
@@ -26,7 +27,7 @@ const MyGems = ({ route, navigation }) => {
 
   if (!gemDetails) {
     return (
-      <SafeAreaView style={styles.container}>
+      <SafeAreaView style={baseScreenStyles.container}>
         <Text style={{ textAlign: 'center', marginTop: 20 }}>No Gem Data Available</Text>
       </SafeAreaView>
     );
@@ -131,10 +132,7 @@ const MyGems = ({ route, navigation }) => {
 
 // Styles
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#9CCDDB',
-  },
+  
   topic: {
     flexDirection: 'row',
     alignItems: 'center',

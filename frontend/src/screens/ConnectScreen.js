@@ -12,6 +12,7 @@ import {
   ScrollView,
 } from "react-native";
 import { FontAwesome, MaterialIcons } from "@expo/vector-icons";
+import { baseScreenStyles } from "../styles/baseStyles";
 
 const categories = ["Cutter", "Burner", "Elec. Burner/Cutter", "Owner"];
 
@@ -86,7 +87,7 @@ const ConnectScreen = ({ navigation }) => {
   );
 
   return (
-    <View style={styles.container}>
+    <View style={[baseScreenStyles.container,styles.container]}>
       {/* Search Bar */}
       <View style={styles.searchContainer}>
         <TextInput style={styles.searchInput} placeholder="Search person" />
@@ -148,7 +149,6 @@ const styles = StyleSheet.create({
   container: {
     width: "100%",
     height: "100%",
-    backgroundColor: "#9CCDDB",
     paddingTop: 10,
   },
   searchContainer: {

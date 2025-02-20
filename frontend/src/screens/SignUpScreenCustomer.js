@@ -2,10 +2,11 @@
 
 import React from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from 'react-native';
+import { baseScreenStyles } from "../styles/baseStyles";
 
-const SignUpScreenCustomer = () => {
+const SignUpScreenCustomer = ({ navigation }) => {
   return (
-    <View style={styles.container}>
+    <View style={[baseScreenStyles.container,styles.container]}>
       <Image source={require('../assets/logo-gem.png')} style={styles.logo} />
       <Text style={styles.title}>Maanikya</Text>
       <Text style={styles.subtitle}>Create your customer account</Text>
@@ -19,7 +20,8 @@ const SignUpScreenCustomer = () => {
       <TextInput style={styles.input} placeholder="User Name" />
       <TextInput style={styles.input} placeholder="Password" secureTextEntry />
       <TextInput style={styles.input} placeholder="Re-enter password" secureTextEntry />
-      <TouchableOpacity style={styles.button}>
+      <TouchableOpacity style={styles.button}
+      onPress={() => navigation.navigate('CustomHomePage')} >
         <Text style={styles.buttonText}>Create account</Text>
       </TouchableOpacity>
     </View>
@@ -28,8 +30,6 @@ const SignUpScreenCustomer = () => {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: '#b3e5fc',
     alignItems: 'center',
     justifyContent: 'center',
     padding: 20,

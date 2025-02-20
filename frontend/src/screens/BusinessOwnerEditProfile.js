@@ -6,6 +6,7 @@ import { launchImageLibrary } from "react-native-image-picker";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons, FontAwesome } from "@expo/vector-icons";
 import BusinessOwnerProfile from "./BusinessOwnerProfile";
+import { baseScreenStyles } from "../styles/baseStyles";
 
 const BusinessOwnerEditProfile = ({ navigation }) => {
   // Profile state
@@ -27,7 +28,7 @@ const BusinessOwnerEditProfile = ({ navigation }) => {
   };*/
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={baseScreenStyles.container}>
       {/* Header */}
       <View style={styles.topic}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
@@ -77,10 +78,7 @@ const BusinessOwnerEditProfile = ({ navigation }) => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#b0d4e3",
-  },
+  
   topic: {
     flexDirection: "row",
     alignItems: "center",

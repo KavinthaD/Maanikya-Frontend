@@ -1,12 +1,41 @@
 //Screen creator: Dulith
 
-import React, { useState } from 'react';
-import { View, Text, TextInput, FlatList, StyleSheet, Image } from 'react-native';
+import React, { useState } from "react";
+import {
+  View,
+  Text,
+  TextInput,
+  FlatList,
+  StyleSheet,
+  Image,
+} from "react-native";
+import { baseScreenStyles } from "../styles/baseStyles";
 
 const InProgressTracker = [
-  { id: 'IHP164', dateTime: '20-12-2024, 3:00 PM', type: 'Burn', estimatedDate: '22/05/2025', person: 'Mehara', gemImage: require('../assets/gemimg/gem1.jpg') },
-  { id: 'KDD437', dateTime: '12-01-2025, 7:00 PM', type: 'Cut', estimatedDate: '23/02/2025', person: 'Tilmi', gemImage: require('../assets/gemimg/gem2.jpg') },
-  { id: 'DCW030', dateTime: '06-11-2024, 9:00 AM', type: 'Cut', estimatedDate: '13/03/2025', person: 'Kavintha', gemImage: require('../assets/gemimg/gem3.jpg') },
+  {
+    id: "IHP164",
+    dateTime: "20-12-2024, 3:00 PM",
+    type: "Burn",
+    estimatedDate: "22/05/2025",
+    person: "Mehara",
+    gemImage: require("../assets/gemimg/gem1.jpg"),
+  },
+  {
+    id: "KDD437",
+    dateTime: "12-01-2025, 7:00 PM",
+    type: "Cut",
+    estimatedDate: "23/02/2025",
+    person: "Tilmi",
+    gemImage: require("../assets/gemimg/gem2.jpg"),
+  },
+  {
+    id: "DCW030",
+    dateTime: "06-11-2024, 9:00 AM",
+    type: "Cut",
+    estimatedDate: "13/03/2025",
+    person: "Kavintha",
+    gemImage: require("../assets/gemimg/gem3.jpg"),
+  },
 ];
 
 const NotificationItem = ({ item }) => (
@@ -15,7 +44,9 @@ const NotificationItem = ({ item }) => (
       <Text style={styles.text}>ID: {item.id}</Text>
       <Text style={styles.text}>Date and Time: {item.dateTime}</Text>
       <Text style={styles.text}>Type: {item.type}</Text>
-      <Text style={[styles.text, { color: '#22C232' }]}>Estimated Completion Date: {item.estimatedDate}</Text>
+      <Text style={[styles.text, { color: "#22C232" }]}>
+        Estimated Completion Date: {item.estimatedDate}
+      </Text>
     </View>
     <View style={styles.imageContainer}>
       <Image source={item.gemImage} style={styles.gemImage} />
@@ -25,13 +56,13 @@ const NotificationItem = ({ item }) => (
 );
 
 const NotificationScreen = () => {
-  const [searchQuery, setSearchQuery] = useState('');
-  const filteredOrders = InProgressTracker.filter(order =>
+  const [searchQuery, setSearchQuery] = useState("");
+  const filteredOrders = InProgressTracker.filter((order) =>
     order.id.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   return (
-    <View style={styles.container}>
+    <View style={[baseScreenStyles.container,styles.container]}>
       <View style={styles.header}>
         <Text style={styles.headerText}>In Progress</Text>
       </View>
@@ -44,7 +75,7 @@ const NotificationScreen = () => {
       <FlatList
         data={filteredOrders}
         renderItem={({ item }) => <NotificationItem item={item} />}
-        keyExtractor={item => item.id}
+        keyExtractor={(item) => item.id}
       />
     </View>
   );
@@ -52,53 +83,52 @@ const NotificationScreen = () => {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: '#e0f7fa',
+    
     padding: 16,
   },
   header: {
-    backgroundColor: '#072D44',
+    backgroundColor: "#072D44",
     padding: 16,
-    alignItems: 'center',
-    width: '100%', // Extend header width
-    marginBottom: 20, 
+    alignItems: "center",
+    width: "100%", // Extend header width
+    marginBottom: 20,
   },
   headerText: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   searchBar: {
     height: 40,
-    borderColor: '#ccc',
+    borderColor: "#ccc",
     borderWidth: 1,
     borderRadius: 12,
     paddingHorizontal: 10,
     marginBottom: 20,
-    backgroundColor: 'rgba(255, 255, 255, 0.8)',
-    width: '95%', // Slightly reduce search bar width
-    alignSelf: 'center',
+    backgroundColor: "rgba(255, 255, 255, 0.8)",
+    width: "95%", // Slightly reduce search bar width
+    alignSelf: "center",
   },
   notificationItem: {
-    flexDirection: 'row',
-    backgroundColor: '#fff',
+    flexDirection: "row",
+    backgroundColor: "#fff",
     padding: 15,
     marginBottom: 35,
     borderRadius: 12,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 5,
     elevation: 2,
-    width: '95%', // Slightly reduce notification item width
-    alignSelf: 'center',
+    width: "95%", // Slightly reduce notification item width
+    alignSelf: "center",
   },
   textContainer: {
     flex: 1,
   },
   imageContainer: {
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   gemImage: {
     width: 50,
@@ -107,7 +137,7 @@ const styles = StyleSheet.create({
   },
   personName: {
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   text: {
     fontSize: 14,

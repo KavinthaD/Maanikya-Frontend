@@ -1,19 +1,38 @@
 //Screen creator: Dulith
 
-import React from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from 'react-native';
+import React from "react";
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
+  Image,
+} from "react-native";
+import { baseScreenStyles } from "../styles/baseStyles";
 
-const SignUpScreen = () => {
+const SignUpScreen = ({ navigation }) => {
   return (
-    <View style={styles.container}>
-      <Image source={require('../assets/logo-gem.png')} style={styles.logo} />
+    <View style={[baseScreenStyles.container,styles.container]}>
+      <Image source={require("../assets/logo-gem.png")} style={styles.logo} />
       <Text style={styles.title}>Maanikya</Text>
       <Text style={styles.subtitle}>Create your business account</Text>
-      <Text style={styles.instructions}>Enter your email to sign up for this app</Text>
+      <Text style={styles.instructions}>
+        Enter your email to sign up for this app
+      </Text>
       <TextInput style={styles.input} placeholder="User Name" />
-      <TextInput style={styles.input} placeholder="Password" secureTextEntry={true} />
-      <TextInput style={styles.input} placeholder="Re-enter password" secureTextEntry={true} />
-      <TouchableOpacity style={styles.button}>
+      <TextInput
+        style={styles.input}
+        placeholder="Password"
+        secureTextEntry={true}
+      />
+      <TextInput
+        style={styles.input}
+        placeholder="Re-enter password"
+        secureTextEntry={true}
+      />
+      <TouchableOpacity style={styles.button}
+      onPress={() => navigation.navigate('HomeScreen')} >
         <Text style={styles.buttonText}>Create account</Text>
       </TouchableOpacity>
     </View>
@@ -22,10 +41,8 @@ const SignUpScreen = () => {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: '#b3e5fc',
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     padding: 20,
   },
   logo: {
@@ -35,7 +52,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 24,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 10,
   },
   subtitle: {
@@ -47,24 +64,24 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   input: {
-    width: '100%',
+    width: "100%",
     height: 40,
-    borderColor: '#ccc',
+    borderColor: "#ccc",
     borderWidth: 1,
     borderRadius: 5,
     paddingHorizontal: 10,
     marginBottom: 10,
   },
   button: {
-    width: '100%',
+    width: "100%",
     height: 40,
-    backgroundColor: '#1a237e',
+    backgroundColor: "#1a237e",
     borderRadius: 5,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   buttonText: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 16,
   },
 });

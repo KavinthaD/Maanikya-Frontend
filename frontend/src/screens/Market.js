@@ -10,6 +10,7 @@ import {
   TouchableOpacity,
   ScrollView,
 } from 'react-native';
+import { baseScreenStyles } from "../styles/baseStyles";
 
 const GemstoneMarketplace = () => {
   const gemstones = [
@@ -25,7 +26,7 @@ const GemstoneMarketplace = () => {
   ];
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView style={baseScreenStyles.container}>
       <View style={styles.searchContainer}>
         <View style={styles.searchBar}>
           <TextInput
@@ -62,10 +63,7 @@ const GemstoneMarketplace = () => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#E6F3F5',
-  },
+ 
   searchContainer: {
     padding: 16,
   },

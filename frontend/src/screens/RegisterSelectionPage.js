@@ -2,11 +2,12 @@
 
 import { StyleSheet, Text, View, Image, TouchableOpacity, SafeAreaView, Modal } from 'react-native'
 import React, {useState} from 'react';
+import { baseScreenStyles } from "../styles/baseStyles";
 
-const RegisterSelectionPage = () => {
+const RegisterSelectionPage = ({ navigation }) => {
   const [modalVisible, setModalVisible] = useState(false);
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={[baseScreenStyles.container,styles.container]}>
       
       <View style={styles.logoContainer}>
         <Image
@@ -15,7 +16,8 @@ const RegisterSelectionPage = () => {
         </View>
 
         <View style={styles.buttonContainer}>
-          <TouchableOpacity style={styles.createAccountButton}>
+          <TouchableOpacity style={styles.createAccountButton}
+          onPress={() => navigation.navigate('SignUpScreenCustomer')} >
             <Text style={styles.createAccountText}>Create an account</Text>
           </TouchableOpacity>
 
@@ -72,8 +74,7 @@ const RegisterSelectionPage = () => {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: '#97CADB',
+    
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingVertical: 50,

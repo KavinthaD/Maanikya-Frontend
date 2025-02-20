@@ -37,7 +37,7 @@ const PurposeSelectionPage = ({ navigation }) => {
             <Text style={styles.title}>I'm here to,</Text>
             <View style={styles.card}>
                 <TouchableOpacity style={styles.button}
-                onPress={() => navigation.navigate('SignUpScreen')} >
+                onPress={() => navigation.navigate('Login2')} >
                     <Text style= {styles.buttonText}>Manage my business</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style = {styles.button}

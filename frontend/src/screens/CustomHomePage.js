@@ -11,6 +11,7 @@ import {
   StatusBar,
 } from "react-native";
 import { baseScreenStyles } from "../styles/baseStyles";
+import { useNavigation } from '@react-navigation/native';
 
 const MenuItem = ({ image, title, onPress }) => (
   <TouchableOpacity style={styles.menuItem} onPress={onPress}>
@@ -21,7 +22,7 @@ const MenuItem = ({ image, title, onPress }) => (
   </TouchableOpacity>
 );
 
-const HomeScreen = () => {
+const HomeScreen = ({navigation}) => {
   const menuItems = [
     {
       image: require("../assets/menu-icons/financialRecords.png"),
@@ -30,6 +31,7 @@ const HomeScreen = () => {
     {
       image: require("../assets/menu-icons/myGems.png"),
       title: "Gems",
+      screen: ""
     },
     {
       image: require("../assets/menu-icons/scan.png"),
@@ -41,6 +43,15 @@ const HomeScreen = () => {
     },
   ];
 
+  const handleMenuItemPress = (screenName) => {
+    if (screenName) {
+      navigation.navigate(screenName); // Navigate to the specified screen
+    } else {
+      console.log(`No screen defined for this item`);  // Optional: Handle cases where no screen is specified
+    }
+  };
+
+
   return (
     <SafeAreaView style={baseScreenStyles.container}>
       <View style={styles.content}>
@@ -51,7 +62,7 @@ const HomeScreen = () => {
               key={index}
               image={item.image}
               title={item.title}
-              onPress={() => console.log(`Pressed ${item.title}`)}
+              onPress={() => handleMenuItemPress(item.screen)}
             />
           ))}
         </View>

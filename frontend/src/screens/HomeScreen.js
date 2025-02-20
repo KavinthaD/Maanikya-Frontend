@@ -112,6 +112,8 @@
 // };
 
 // export default App;
+
+
 import React from "react";
 import {
   View,
@@ -123,6 +125,7 @@ import {
   StatusBar,
 } from "react-native";
 import { baseScreenStyles } from "../styles/baseStyles";
+import { useNavigation } from '@react-navigation/native';
 
 const MenuItem = ({ image, title, onPress }) => (
   <TouchableOpacity style={styles.menuItem} onPress={onPress}>
@@ -134,6 +137,7 @@ const MenuItem = ({ image, title, onPress }) => (
 );
 
 const HomeScreen = () => {
+  const navigation = useNavigation();
   const menuItems = [
     {
       image: require("../assets/menu-icons/addGem.png"),
@@ -142,6 +146,7 @@ const HomeScreen = () => {
     {
       image: require("../assets/menu-icons/myGems.png"),
       title: "My Gems",
+      screen: "HomeMyGems"
     },
     {
       image: require("../assets/menu-icons/scan.png"),
@@ -150,20 +155,32 @@ const HomeScreen = () => {
     {
       image: require("../assets/menu-icons/financialRecords.png"),
       title: "Financial\nRecords",
+      screen: "OwnerFinancialRecords"
     },
     {
       image: require("../assets/menu-icons/addGem.png"),
       title: "Tracker",
+      
     },
     {
       image: require("../assets/menu-icons/connect.png"),
       title: "Connect",
+      screen: "ConnectScreen"
     },
     {
       image: require("../assets/menu-icons/addGem.png"),
       title: "Gems on\ndisplay",
+      screen: "GemOnDisplay"
     },
   ];
+
+  const handleMenuItemPress = (screenName) => {
+    if (screenName) {
+      navigation.navigate(screenName); // Navigate to the specified screen
+    } else {
+      console.log(`No screen defined for this item`);  // Optional: Handle cases where no screen is specified
+    }
+  };
 
   return (
     <SafeAreaView style={[baseScreenStyles.container,styles.container]}>
@@ -175,7 +192,7 @@ const HomeScreen = () => {
               key={index}
               image={item.image}
               title={item.title}
-              onPress={() => console.log(`Pressed ${item.title}`)}
+              onPress={() => handleMenuItemPress(item.screen)}
             />
           ))}
         </View>

@@ -5,7 +5,8 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from 'reac
 import { Picker } from '@react-native-picker/picker';
 import { baseScreenStyles } from "../styles/baseStyles";
 
-const Login2 = () => {
+
+const Login2 = ({navigation}) => {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
@@ -59,7 +60,8 @@ const Login2 = () => {
           <Picker.Item label="Cutter/Burner" value="cutter_burner" />
         </Picker>
       </View>
-      <TouchableOpacity style={styles.continueButton} onPress={() => { /* Handle continue action */ }}>
+      <TouchableOpacity style={styles.continueButton} 
+      onPress={() => navigation.navigate("SignUpScreen")}>
         <Text style={styles.continueButtonText}>Continue</Text>
       </TouchableOpacity>
     </View>

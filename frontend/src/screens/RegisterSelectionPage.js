@@ -21,9 +21,10 @@ const RegisterSelectionPage = ({ navigation }) => {
             <Text style={styles.createAccountText}>Create an account</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.guestButton}>
+          <TouchableOpacity style={styles.guestButton} 
+          onPress={() => navigation.navigate('Market')}>
             <Text style={styles.guestText}>Continue as a guest</Text>
-            </TouchableOpacity>  
+          </TouchableOpacity>  
         </View>
 
         <View style={styles.footerContainer}>

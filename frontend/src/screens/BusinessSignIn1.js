@@ -4,30 +4,31 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 
-const Login2 = () => {
+const BusinessSignIn1 = () => {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
-  const [email, setEmail] = useState('');
+  const [userName, setUserName] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [role, setRole] = useState('');
 
   return (
-    <View style={styles.container}>
-      <Image source={require('../assets/logo-gem.png')} style={styles.logo} />
-      <Text style={styles.title}>Maanikya</Text>
+    
+    <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.container}>
+      <Image source={require('../assets/logo.png')} style={styles.logo} />
       <Text style={styles.subtitle}>Create your business account</Text>
-      <Text style={styles.prompt}>Enter your details to sign up for this app</Text>
-      
+      <Text style={styles.prompt}>Enter your details to sign up for this app</Text> 
       <View style={styles.row}>
         <TextInput
           style={[styles.input, styles.inputHalf]}
           placeholder="First Name"
+          placeholderTextColor="#888"
           value={firstName}
           onChangeText={setFirstName}
         />
         <TextInput
           style={[styles.input, styles.inputHalf]}
           placeholder="Last Name"
+          placeholderTextColor="#888"
           value={lastName}
           onChangeText={setLastName}
         />
@@ -35,14 +36,15 @@ const Login2 = () => {
 
       <TextInput
         style={styles.input}
-        placeholder="email@domain.com"
-        value={email}
-        onChangeText={setEmail}
-        keyboardType="email-address"
+        placeholder="Username"
+        placeholderTextColor="#888"
+        value={userName}
+        onChangeText={setUserName}
       />
       <TextInput
         style={styles.input}
         placeholder="Phone number"
+        placeholderTextColor="#888"
         value={phoneNumber}
         onChangeText={setPhoneNumber}
         keyboardType="phone-pad"
@@ -52,6 +54,7 @@ const Login2 = () => {
           selectedValue={role}
           style={styles.picker}
           onValueChange={(itemValue) => setRole(itemValue)}
+          itemStyle={styles.pickerItem}
         >
           <Picker.Item label="Choose your role" value="" />
           <Picker.Item label="Gem business owner" value="gem_business_owner" />
@@ -61,7 +64,7 @@ const Login2 = () => {
       <TouchableOpacity style={styles.continueButton} onPress={() => { /* Handle continue action */ }}>
         <Text style={styles.continueButtonText}>Continue</Text>
       </TouchableOpacity>
-    </View>
+    </KeyboardAvoidingView>
   );
 };
 
@@ -74,8 +77,8 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   logo: {
-    width: 100,
-    height: 100,
+    width: 150,
+    height: 80,
     marginBottom: 20,
   },
   title: {
@@ -105,7 +108,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     paddingHorizontal: 10,
     marginBottom: 10,
-    backgroundColor: 'rgba(255, 255, 255, 0.8)', // White color with 80% opacity
+    backgroundColor: 'rgba(255, 255, 255, 0.8)', 
   },
   inputHalf: {
     width: '48%',
@@ -121,8 +124,11 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255, 255, 255, 0.8)', 
   },
   picker: {
-    height: '115%',
+    height: '100%',
     width: '100%',
+  },
+  pickerItem: {
+    color: '#888',
   },
   continueButton: {
     backgroundColor: '#000080',
@@ -130,6 +136,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 180,
     borderRadius: 8,
     marginTop: 20,
+    width: '100%',
+    height: 50,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   continueButtonText: {
     color: '#fff',
@@ -137,4 +147,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Login2;
+export default BusinessSignIn1;

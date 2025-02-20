@@ -1,7 +1,8 @@
+//Screen creator: Dulith
 import React from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from 'react-native';
 
-const Login1 = () => {
+const Login = () => {
   return (
     <View style={styles.container}>
       <Image source={require('../assets/logo.png')} style={styles.logo} />
@@ -64,7 +65,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   inputWithOpacity: {
-    backgroundColor: 'rgba(255, 255, 255, 0.8)', // White color with 80% opacity
+    backgroundColor: 'rgba(255, 255, 255, 0.8)', 
   },
   forgotPasswordContainer: {
     alignSelf: 'flex-start',
@@ -89,4 +90,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Login1;
+export default Login;

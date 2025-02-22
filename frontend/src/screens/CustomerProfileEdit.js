@@ -7,13 +7,12 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons, FontAwesome } from "@expo/vector-icons";
 import BusinessOwnerProfile from "./BusinessOwnerProfile";
 
-const BusinessOwnerEditProfile = ({ navigation }) => {
+const CustomerProfileEdit = ({ navigation }) => {
   // Profile state
   const [profilePhoto, setProfilePhoto] = useState(null);
   const [name, setName] = useState("M.D Rathnasiri Navasinghe");
   const [email, setEmail] = useState("rathnasiri.n@hotmail.com");
   const [contact, setContact] = useState("+94 987 654 321");
-  const [title, setTitle] = useState("Owner of Navarathna Gems");
   const [address, setAddress] = useState(
     "602, Kalawana Rd, Nivitigala, Rathnapura, Sri Lanka"
   );
@@ -44,9 +43,6 @@ const BusinessOwnerEditProfile = ({ navigation }) => {
 
         <Text style={styles.label}>Contact No</Text>
         <TextInput style={styles.input} value={contact} onChangeText={setContact} keyboardType="phone-pad" placeholderTextColor="#777"/>
-
-        <Text style={styles.label}>TITLE</Text>
-        <TextInput style={styles.input} value={title} onChangeText={setTitle} />
 
         <Text style={styles.label}>Address</Text>
         <TextInput
@@ -134,4 +130,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default BusinessOwnerEditProfile;
+export default CustomerProfileEdit;

@@ -12,6 +12,7 @@ import WorkerOrderTrackDetails from "./src/screens/WorkerOrderTrackDetails";
 
 import BusinessOwnerProfile from "./src/screens/BusinessOwnerProfile";
 import BusinessOwnerEditProfile from "./src/screens/BusinessOwnerEditProfile";
+import BusinessOwnerProfilePhoto from "./src/screens/BusinessOwnerProfilePhoto";
 import GemCertificateAdd from "./src/screens/GemCertificateAdd";
 
 import { NavigationContainer } from "@react-navigation/native";
@@ -25,7 +26,7 @@ const App = () => {
       <Stack.Navigator initialRouteName="WelcomePage">
         <Stack.Screen
           name="WelcomePage"
-          component={WelcomePage}
+          component={BusinessOwnerProfilePhoto}
           options={{ headerShown: false }}
         />
         <Stack.Screen

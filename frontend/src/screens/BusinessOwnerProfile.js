@@ -18,41 +18,39 @@ const BusinessOwnerProfile = ({ navigation }) => {
   return (
     <SafeAreaView style={styles.container}>
       
-      <View style={styles.topic}>
-         <TouchableOpacity onPress={() => navigation.goBack()}>
-            <Ionicons name="chevron-back" size={24} color="white" />
-          </TouchableOpacity>
-        <Text style={styles.topicName}>Profile</Text>
-        
-      </View>
+      
 
       <View style={styles.profileContainer}>
         <Image source={{ uri: user.image }} style={styles.profilePic} />
+        <TouchableOpacity style={styles.editProfileButton} onPress={() => navigation.navigate("BusinessOwnerEditProfile")}>
+          <Text style={styles.editProfileButtonText}>Edit Profile</Text>
+        </TouchableOpacity>
         
-        <Button title="Edit Profile" onPress={() => navigation.navigate("BusinessOwnerEditProfile")} />
         
       </View>
-
-      <View style={styles.infoContainer}>
-        <Text style={styles.label}>NAME</Text>
-        <Text style={styles.info}>{user.name}</Text>
+      <View style={style.info}>
+        <View style={styles.infoContainer}>
+          <Text style={styles.label}>NAME</Text>
+          <Text style={styles.infoText}>{user.name}</Text>
+        </View>
+        <View style={styles.infoContainer}>
+          <Text style={styles.label}>EMAIL</Text>
+          <Text style={styles.infoText}>{user.email}</Text>
+        </View>
+        <View style={styles.infoContainer}>
+          <Text style={styles.label}>Contact No</Text>
+          <Text style={styles.infoText}>{user.phone}</Text>
+        </View>
+        <View style={styles.infoContainer}>
+          <Text style={styles.label}>TITLE</Text>
+          <Text style={styles.infoText}>{user.title}</Text>
+        </View>
+        <View style={styles.infoContainer}>
+          <Text style={styles.label}>Address</Text>
+          <Text style={styles.infoText}>{user.address}</Text>
+        </View>
       </View>
-      <View style={styles.infoContainer}>
-        <Text style={styles.label}>EMAIL</Text>
-        <Text style={styles.info}>{user.email}</Text>
-      </View>
-      <View style={styles.infoContainer}>
-        <Text style={styles.label}>Contact No</Text>
-        <Text style={styles.info}>{user.phone}</Text>
-      </View>
-      <View style={styles.infoContainer}>
-        <Text style={styles.label}>TITLE</Text>
-        <Text style={styles.info}>{user.title}</Text>
-      </View>
-      <View style={styles.infoContainer}>
-        <Text style={styles.label}>Address</Text>
-        <Text style={styles.info}>{user.address}</Text>
-      </View>
+      
 
       
     </SafeAreaView>
@@ -66,56 +64,63 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#A7D7E7",
   },
-  topic: {
-    flexDirection: "row",
-    alignItems: "center",
-    padding: 15,
-    backgroundColor: "#0a3a5d",
-  },
-  topicName: {
-    color: "white",
-    fontSize: 18,
-    fontWeight: "bold",
-    alignItems: "center",
-  },
   profileContainer: {
-    alignItems: "center",
-    padding: 16,
-    backgroundColor: "#C5F0EE",
+    backgroundColor: '#ffffff', // White Section
+    padding: 20,
+    alignItems: 'center',
+    borderBottomWidth: 1,
+    borderBottomColor: '#e0e0e0',
+    marginTop: 20,
+    marginHorizontal: 16,
+    borderRadius: 12,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   profilePic: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
+    width: 120,
+    height: 120,
+    borderRadius: 60, 
+    marginBottom: 15,
   },
   editBtn: {
-    backgroundColor: "#007AFF",
-    paddingVertical: 6,
-    paddingHorizontal: 12,
-    borderRadius: 6,
-    marginTop: 20,
+    backgroundColor: "#29abe2",
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 8,
   },
   editBtnText: {
-    color: "black",
-    fontSize: 14,
-    fontWeight: "bold",
+    color: "white",
+    fontSize: 16,
+    fontWeight: "500",
+  },
+  info:{
+    marginTop: 20,
+    marginHorizontal: 16,
   },
   infoContainer: {
-    padding: 16,
-    backgroundColor: "white"
+    backgroundColor: '#ffffff', // White Background
+    paddingVertical: 15,
+    paddingHorizontal: 20,
+    borderRadius: 12,
+    marginBottom: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3
   },
   label: {
     fontSize: 14,
-    fontWeight: "bold",
-    color: "#003366",
-    marginTop: 25,
-    borderColor: "black",
-    
-  },
-  info: {
-    fontSize: 16,
-    color: "#333",
+    fontWeight: '600',
+    color: '#777',
     marginBottom: 5,
+  },
+  infoText: {
+    ffontSize: 16,
+    color: '#333',
   },
   
 });

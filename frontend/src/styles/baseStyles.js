@@ -1,4 +1,3 @@
-// src/styles/baseStyles.js
 import { StyleSheet } from "react-native";
 
 export const baseScreenStyles = StyleSheet.create({
@@ -10,15 +9,20 @@ export const baseScreenStyles = StyleSheet.create({
     backgroundColor: "#9CCDDB", // Default background color for all screens
   },
 
-
+  buttonText: {
+    color: "white",
+    fontWeight: "bold",
+    textAlign: "center",
+    fontSize: 16,
+  },
   blueButton: {
     backgroundColor: "#170969",
-    padding: 10,
+    padding: 15,
     borderRadius: 8,
     position: "absolute", // Position absolutely
     bottom: -50, // Distance from bottom
     left: 30, // Distance from left
-    right: 30, // Distance from right //testttttt
+    right: 30, // Distance from right
   },
 });
 

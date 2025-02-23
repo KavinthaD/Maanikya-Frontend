@@ -1,6 +1,6 @@
 //Screen creator: Kavintha
 
-import React, { useState } from "react"; // **Import useState**
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -8,15 +8,21 @@ import {
   TouchableOpacity,
   Image,
   TextInput,
+  Modal,
   Alert,
 } from "react-native";
-import { launchCamera, launchImageLibrary } from "react-native-image-picker";
+import { launchImageLibrary } from "react-native-image-picker";
 import { baseScreenStyles } from "../styles/baseStyles";
 import { useNavigation } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Header_1 from "../components/Header_1";
 import Header_2 from "../components/Header_2";
-import Gem_register_2 from "./GemRegister2"; // Import GemRegister2
+import Gem_register_2 from "./GemRegister2";
+import Icon from "react-native-vector-icons/MaterialIcons";
+import CustomCamera from "../components/CustomCamera";
+import { Camera } from "expo-camera";
+import DropDownPicker from "react-native-dropdown-picker";
+import { FormFieldStyles } from "../styles/FormFields";
 
 const Stack = createNativeStackNavigator();
 
@@ -43,78 +49,114 @@ export default function GemRegister1() {
 
 function GemRegister1Main() {
   const navigation = useNavigation();
+
+  // For gem shape dropdown
+  const [openShape, setOpenShape] = useState(false);
+  const [shapeItems, setShapeItems] = useState([
+    { label: "Round", value: "round" },
+    { label: "Baguette Cut", value: "baguette" },
+    { label: "Cabochon", value: "cabochon" },
+    { label: "Cushion", value: "cushion" },
+    { label: "Emerald Cut", value: "emerald" },
+    { label: "Heart Shape", value: "heart" },
+    { label: "Hexagonal Cut", value: "hexagonal" },
+    { label: "Marquise", value: "marquise" },
+    { label: "Oval", value: "oval" },
+    { label: "Pear", value: "pear" },
+    { label: "Princess Cut", value: "princess" },
+    { label: "Radiant Cut", value: "radiant" },
+    { label: "Rose Cut", value: "rose" },
+    { label: "Trillion Cut", value: "trillion" },
+  ]);
+
   const [form, setForm] = useState({
     color: "",
+    gemShape: "",
     description: "",
     photos: [],
   });
+  const [modalVisible, setModalVisible] = useState(false);
+  const [cameraVisible, setCameraVisible] = useState(false);
+
+  useEffect(() => {
+    (async () => {
+      const { status } = await Camera.requestPermissionsAsync();
+      if (status !== "granted") {
+        Alert.alert(
+          "Permission Required",
+          "Camera permission is required to use this feature",
+          [{ text: "OK" }]
+        );
+      }
+    })();
+  }, []);
+
   const handleInputChange = (key, value) => {
     setForm({ ...form, [key]: value });
   };
+
   const handleContinue = () => {
-    console.log("Form Submitted:", form);
-    navigation.navigate("GemRegister2", { formData: form }); // Navigate to GemRegister2
+    if (!form.color || !form.gemShape) {
+      Alert.alert(
+        "Fill Required Details",
+        "Please fill in the required details marked by '*'."
+      );
+      return;
+    }
+    console.log("Data passed to GemRegister1:", form);
+    navigation.navigate("GemRegister2", { formData: form }); // Pass the entire form object
   };
 
   const handleCameraPress = () => {
-    Alert.alert("Add Photo", "Choose an option", [
-      {
-        text: "Take Photo",
-        onPress: async () => {
-          const result = await launchCamera({
-            mediaType: "photo",
-            cameraType: "back",
-            quality: 1,
-          });
-          if (result.assets) {
-            setForm((prev) => ({
-              ...prev,
-              photos: [...prev.photos, result.assets[0].uri],
-            }));
-          }
-        },
-      },
-      {
-        text: "Choose from Gallery",
-        onPress: async () => {
-          const result = await launchImageLibrary({
-            mediaType: "photo",
-            quality: 1,
-            selectionLimit: 0,
-          });
-          if (result.assets) {
-            setForm((prev) => ({
-              ...prev,
-              photos: [
-                ...prev.photos,
-                ...result.assets.map((asset) => asset.uri),
-              ],
-            }));
-          }
-        },
-      },
-      {
-        text: "Cancel",
-        style: "cancel",
-      },
-    ]);
+    setCameraVisible(true); // Show the camera
+  };
+
+  const handlePhotoTaken = (uri) => {
+    setForm((prev) => ({
+      ...prev,
+      photos: [...prev.photos, uri],
+    }));
+    setCameraVisible(false); // Close the camera
+  };
+
+  const handleChooseFromGallery = async () => {
+    const result = await launchImageLibrary({
+      mediaType: "photo",
+      quality: 1,
+      selectionLimit: 0,
+    });
+    if (result.assets) {
+      setForm((prev) => ({
+        ...prev,
+        photos: [...prev.photos, ...result.assets.map((asset) => asset.uri)],
+      }));
+    }
+  };
+
+  // Add error handling for camera
+  const handleCameraError = (error) => {
+    Alert.alert(
+      "Camera Error",
+      "An error occurred while accessing the camera",
+      [{ text: "OK" }]
+    );
+    setCameraVisible(false);
   };
 
   return (
     <View style={baseScreenStyles.container}>
-      <View style={styles.innerContainer}>
+      <View style={FormFieldStyles.innerContainer}>
         <View style={styles.buttonContent}>
           <TouchableOpacity
             style={styles.buttonContainer}
             onPress={handleCameraPress}
           >
-            <Image
-              source={require("../assets/camera.png")}
-              style={styles.iconImage}
-              resizeMode="contain"
-            />
+            <Icon name="camera-alt" size={60} color="#000" />
           </TouchableOpacity>
-          <Text style={styles.addPhotoButtonText}>Add photos</Text>
+          <Text style={styles.addPhotoButtonText}>AI auto filler</Text>
+          <Text style={styles.helperText}>
+            Below details can be filled with image of the gem or by mannually
+          </Text>
 
           {/* Display selected photos */}
           {form.photos.length > 0 && (
@@ -130,59 +172,67 @@ function GemRegister1Main() {
           )}
         </View>
         <TextInput
-          style={styles.input}
-          placeholder="Gem lot name (optional)"
-          value={form.ownerName}
-          onChangeText={(value) => handleInputChange("ownerName", value)}
+          style={FormFieldStyles.input}
+          placeholder="Gem color *"
+          value={form.color}
+          onChangeText={(value) => handleInputChange("color", value)}
+        />
+        <DropDownPicker
+          open={openShape}
+          value={form.gemShape}
+          items={shapeItems}
+          setOpen={setOpenShape}
+          setValue={(value) => handleInputChange("gemShape", value())}
+          setItems={setShapeItems}
+          placeholder="Select Gem Shape *"
+          style={FormFieldStyles.dropdown}
+          dropDownContainerStyle={FormFieldStyles.dropdownContainer}
+          listItemContainerStyle={FormFieldStyles.listItemContainer}
+          listItemLabelStyle={FormFieldStyles.listItemLabel}
+          placeholderStyle={FormFieldStyles.placeholder}
+          textStyle={FormFieldStyles.dropdownText}
         />
         <TextInput
-          style={styles.input}
+          style={[FormFieldStyles.input, styles.descriptionInput]}
           placeholder="Description"
-          value={form.ownerName}
-          onChangeText={(value) => handleInputChange("ownerName", value)}
-        />
-
-        <TextInput
-          style={styles.input}
-          placeholder="Color"
-          value={form.contactNumber}
-          onChangeText={(value) => handleInputChange("contactNumber", value)}
-          keyboardType="phone-pad"
+          value={form.description}
+          onChangeText={(value) => handleInputChange("description", value)}
+          multiline={true}
+          numberOfLines={4}
+          textAlignVertical="top"
         />
         <TouchableOpacity
-          style={baseScreenStyles.blueButton}
-          onPress={handleContinue} // Navigate on button press
+          style={[
+            baseScreenStyles.blueButton,
+            { opacity: form.color && form.gemShape ? 1 : 0.5 },
+          ]}
+          onPress={handleContinue}
         >
-          <Text style={styles.buttonText}>Continue</Text>
+          <Text style={baseScreenStyles.buttonText}>Continue</Text>
         </TouchableOpacity>
       </View>
+
+      {/* Custom Camera Component */}
+      {cameraVisible && (
+        <CustomCamera
+          onPhotoTaken={handlePhotoTaken}
+          onClose={() => setCameraVisible(false)}
+          onError={handleCameraError}
+        />
+      )}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  buttonText: {
-    color: "white",
-    fontWeight: "bold",
-    textAlign: "center",
-  },
+
   finalizeButton: {
     backgroundColor: "#170969",
     padding: 10,
     borderRadius: 5,
   },
-  innerContainer: {
-    padding: 20,
-    paddingVertical: 60,
-  },
-  input: {
-    backgroundColor: "#E8F0FE",
-    color: "black",
-    padding: 13,
-    borderRadius: 10,
-    marginBottom: 15,
-    fontSize: 16,
-  },
+  
+  
   buttonContainer: {
     alignItems: "center",
     justifyContent: "center",
@@ -205,5 +255,24 @@ const styles = StyleSheet.create({
     width: 80,
     height: 80,
     borderRadius: 5,
+  },
+  helperText: {
+    color: "grey",
+    fontSize: 15,
+    marginTop: 5,
+    textAlign: "center",
+    fontStyle: "italic",
+    fontWeight: "bold",
+  },
+  addPhotoButtonText: {
+    fontSize: 20,
+    fontWeight: "bold",
+    marginBottom: 5,
+  },
+ 
+  descriptionInput: {
+    height: 100,
+    textAlignVertical: "top",
+    paddingTop: 13,
   },
 });

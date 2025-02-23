@@ -1,3 +1,12 @@
+#Base commands
+
 npm install (install packages)
 npm update (update pacakges)
 npx expo start (start react)
+
+#Clean run commands
+
+npm cache clean --force
+rm -rf node_modules package-lock.json
+npm install
+npx expo start --clear

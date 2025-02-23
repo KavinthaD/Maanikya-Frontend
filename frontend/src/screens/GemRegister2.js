@@ -1,6 +1,6 @@
 //Screen creator: Kavintha
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -8,23 +8,29 @@ import {
   Button,
   StyleSheet,
   TouchableOpacity,
+  Alert,
 } from "react-native";
-import { Picker } from "@react-native-picker/picker";
+import DropDownPicker from "react-native-dropdown-picker"; // Import DropDownPicker
 import { baseScreenStyles } from "../styles/baseStyles"; // Import base styles
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Header_1 from "../components/Header_1";
 import Header_2 from "../components/Header_2";
 import Gem_register_3 from "./GemRegister3"; // Import GemRegister3
+import axios from "axios"; // Import axios
+import { FormFieldStyles } from "../styles/FormFields";
 
 const Stack = createNativeStackNavigator();
 
-export default function GemRegister2() {
+export default function GemRegister2({ route }) {
+  const { formData } = route.params; // Destructure formData instead of name
+
   return (
     <Stack.Navigator screenOptions={{ headerShown: true }}>
       <Stack.Screen
         name="GemRegister2Main"
         component={GemRegister2Main}
+        initialParams={{ formData: formData }} // Pass formData to GemRegister2Main
         options={{
           header: () => <Header_2 title="Gem Register" />,
         }}
@@ -42,24 +48,72 @@ export default function GemRegister2() {
 
 function GemRegister2Main() {
   const navigation = useNavigation();
+  const route = useRoute();
+  const { formData } = route.params || {};
+
   const [form, setForm] = useState({
     ownerName: "",
     contactNumber: "",
-    numGems: "",
-    totalWeight: "",
+    dimensions: "",
+    weight: "",
     shape: "",
     gemType: "",
     purchasePrice: "",
     extraInfo: "",
   });
 
+  const [open, setOpen] = useState(false);
+  const [items, setItems] = useState([
+    { label: "Ruby", value: "ruby" },
+    { label: "Emerald", value: "emerald" },
+    { label: "Diamond", value: "diamond" },
+    { label: "Sapphire", value: "sapphire" },
+  ]);
+
   const handleInputChange = (key, value) => {
     setForm({ ...form, [key]: value });
   };
 
-  const handleFinalize = () => {
-    console.log("Form Submitted:", form);
-    navigation.navigate("GemRegister3", { formData: form }); // Navigate to GemRegister3
+  const handleFinalize = async () => {
+    if (!form.ownerName || !form.contactNumber || !form.purchasePrice) {
+      Alert.alert(
+        "Fill Required Details",
+        "Please fill in the required details marked by '*'."
+      );
+      return;
+    }
+
+    const combinedForm = {
+      ...formData, // Data from GemRegister1
+      ...form, // Data from GemRegister2
+    };
+
+    console.log("From Submitted combined with:", form);
+
+    try {
+      const response = await axios.post(
+        "http://192.168.1.2:5000/api/gems/register", // localhost url here
+        combinedForm
+      );
+
+      if (response.status === 201) {
+        Alert.alert("Success", "Gem registered successfully");
+        navigation.navigate("GemRegister3", { formData: combinedForm }); // Navigate to GemRegister3
+      } else {
+        Alert.alert("Error", "Failed to register gem");
+      }
+    } catch (error) {
+      console.error("Error registering gem:", error); // Log the error for debugging
+      if (error.response) {
+        console.error("Server responded with:", error.response.data); // Log server response
+        Alert.alert(
+          "Error",
+          `Failed to register gem: ${error.response.data.message}`
+        );
+      } else {
+        Alert.alert("Error", "Failed to register gem");
+      }
+    }
   };
 
   const handleBack = () => {
@@ -67,101 +121,100 @@ function GemRegister2Main() {
   };
 
   return (
-    <View style={[baseScreenStyles.container, styles.container]}>
+    <View style={[baseScreenStyles.container]}>
       <View style={styles.innerContainer}>
         <TextInput
-          style={styles.input}
-          placeholder="Gem Owner Name"
-          placeholderTextColor={styles.placeholder.color}
+          style={FormFieldStyles.input}
+          placeholder="Gem Owner Name *"
           value={form.ownerName}
           onChangeText={(value) => handleInputChange("ownerName", value)}
         />
 
         <TextInput
-          style={styles.input}
-          placeholder="Gem Owner Contact Number"
-          placeholderTextColor={styles.placeholder.color}
-          value={form.contactNumber}
-          onChangeText={(value) => handleInputChange("contactNumber", value)}
+          style={FormFieldStyles.input}
+          placeholder="Contact Number *"
+          value={form.contactNumber.toString()}
+          onChangeText={(value) => {
+            const numericValue = value.replace(/[^0-9]/g, "");
+            handleInputChange("contactNumber", numericValue);
+          }}
           keyboardType="phone-pad"
         />
 
         <TextInput
-          style={styles.input}
-          placeholder="Number of gems"
-          placeholderTextColor={styles.placeholder.color}
-          value={form.numGems}
-          onChangeText={(value) => handleInputChange("numGems", value)}
+          style={FormFieldStyles.input}
+          placeholder="Dimensions"
+          value={form.dimensions}
+          onChangeText={(value) => handleInputChange("dimensions", value)}
           keyboardType="numeric"
         />
 
         <TextInput
-          style={styles.input}
-          placeholder="Total weight"
-          placeholderTextColor={styles.placeholder.color}
-          value={form.totalWeight}
-          onChangeText={(value) => handleInputChange("totalWeight", value)}
+          style={FormFieldStyles.input}
+          placeholder="Weight (ct)"
+          value={form.weight}
+          onChangeText={(value) => handleInputChange("weight", value)}
           keyboardType="numeric"
         />
 
         <TextInput
-          style={styles.input}
-          placeholder="Shape (optional)"
-          placeholderTextColor={styles.placeholder.color}
+          style={FormFieldStyles.input}
+          placeholder="Shape"
           value={form.shape}
           onChangeText={(value) => handleInputChange("shape", value)}
         />
-        <View style={styles.pickerWrapper}>
-          <Picker
-            selectedValue={form.gemType}
-            onValueChange={(itemValue) =>
-              handleInputChange("gemType", itemValue)
-            }
-            style={form.gemType === "" ? styles.placeholder : styles.picker}
-          >
-            <Picker.Item
-              label="Gem Type"
-              value=""
-              style={
-                form.gemType.value === "" ? styles.placeholder : styles.picker
-              } // Apply special style only to placeholder
-            />
-            <Picker.Item label="Ruby" value="ruby" />
-            <Picker.Item label="Emerald" value="emerald" />
-            <Picker.Item label="Diamond" value="diamond" />
-            <Picker.Item label="Sapphire" value="sapphire" />
-          </Picker>
-        </View>
+
+        <DropDownPicker
+          open={open}
+          value={form.gemType}
+          items={items}
+          setOpen={setOpen}
+          setValue={(value) => handleInputChange("gemType", value())}
+          setItems={setItems}
+          placeholder="Select Gem Type"
+         style={FormFieldStyles.dropdown}
+                   dropDownContainerStyle={FormFieldStyles.dropdownContainer}
+                   listItemContainerStyle={FormFieldStyles.listItemContainer}
+                   listItemLabelStyle={FormFieldStyles.listItemLabel}
+                   placeholderStyle={FormFieldStyles.placeholder}
+                   textStyle={FormFieldStyles.dropdownText}
+        />
 
         <TextInput
-          style={styles.input}
-          placeholder="Purchase price"
-          placeholderTextColor={styles.placeholder.color}
+          style={FormFieldStyles.input}
+          placeholder="Purchase price *"
           value={form.purchasePrice}
           onChangeText={(value) => handleInputChange("purchasePrice", value)}
           keyboardType="numeric"
         />
 
         <TextInput
-          style={styles.input}
+          style={FormFieldStyles.input}
           placeholder="Extra Information"
-          placeholderTextColor={styles.placeholder.color}
           value={form.extraInfo}
           onChangeText={(value) => handleInputChange("extraInfo", value)}
           multiline
         />
 
-        <View style={styles.buttonContainer}>
+        
           <TouchableOpacity style={styles.backButton} onPress={handleBack}>
-            <Text style={styles.buttonText}>Back</Text>
+            <Text style={baseScreenStyles.buttonText}>Back</Text>
           </TouchableOpacity>
           <TouchableOpacity
-            style={styles.finalizeButton}
+            style={[
+              baseScreenStyles.blueButton,
+              {
+                opacity:
+                  form.ownerName && form.contactNumber && form.purchasePrice
+                    ? 1
+                    : 0.5,
+              },
+            ]}
             onPress={handleFinalize}
           >
-            <Text style={styles.buttonText}>Finalize</Text>
+            <Text style={baseScreenStyles.buttonText}>Finalize</Text>
           </TouchableOpacity>
-        </View>
+        
       </View>
     </View>
   );
@@ -171,52 +224,18 @@ const styles = StyleSheet.create({
   innerContainer: {
     padding: 20,
   },
-  label: {
-    fontSize: 16,
-    marginBottom: 8,
-  },
-  input: {
-    backgroundColor: "#E8F0FE",
-    color: "black",
-    padding: 13,
-    borderRadius: 10,
-    marginBottom: 15,
-    fontSize: 16,
-  },
-
-  pickerWrapper: {
-    borderRadius: 10,
-    overflow: "hidden", // Ensures content stays within the border radius
-    backgroundColor: "#E8F0FE",
-    marginBottom: 15,
-  },
-  picker: {
-    height: 55,
-    fontSize: 18,
-    color: "black",
-  },
-  placeholder: {
-    color: "grey", // Apply your desired color to the placeholder text
-  },
+  
   buttonContainer: {
-    flexDirection: "coloumn",
+    flexDirection: "column",
     justifyContent: "space-between",
     marginTop: 20,
   },
   backButton: {
-    marginBottom: 10,
+    marginTop: 10,
     backgroundColor: "#02457A",
-    padding: 10,
-    borderRadius: 5,
-  },
-  finalizeButton: {
-    backgroundColor: "#170969",
-    padding: 10,
-    borderRadius: 5,
-  },
-  buttonText: {
-    color: "white",
-    fontWeight: "bold",
-    textAlign: "center",
+    width: "95%",
+    padding: 15,
+    borderRadius: 8,
+    alignSelf: "center",
   },
 });

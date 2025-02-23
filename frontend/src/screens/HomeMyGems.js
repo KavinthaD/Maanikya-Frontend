@@ -386,6 +386,7 @@ const GemCollectionScreen = ({ navigation }) => {
     console.log('Sending order for gems:', selectedGems);
     setIsSelectMode(false);
     setSelectedGems([]);
+    navigation.navigate('FavoritesScreen')
   };
 
   const handleSellPress = () => {

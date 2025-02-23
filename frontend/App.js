@@ -17,6 +17,8 @@ import GemCollectionScreen from "./src/screens/HomeMyGems";
 import OwnerFinancialRecords from "./src/screens/ownerFinancialRecords";
 import ConnectScreen from "./src/screens/ConnectScreen";
 import GemOnDisplay from "./src/screens/GemOnDisplay";
+import ProfileScreen from "./src/screens/ConnectedUsers";
+import FavoritesScreen from "./src/screens/Favorites";
 
 const Stack = createNativeStackNavigator();
 
@@ -97,6 +99,16 @@ const App = () => {
         <Stack.Screen
           name="GemOnDisplay"
           component={ GemOnDisplay }
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="ProfileScreen"
+          component={ ProfileScreen }
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="FavoritesScreen"
+          component={ FavoritesScreen }
           options={{ headerShown: false }}
         />
       </Stack.Navigator>

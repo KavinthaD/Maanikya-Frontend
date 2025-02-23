@@ -57,7 +57,7 @@ const ConnectScreen = ({ navigation }) => {
 
   const renderItem = ({ item }) => (
     <TouchableOpacity
-      onPress={() => navigation.navigate("Profile", { person: item })}
+      onPress={() => navigation.navigate("ProfileScreen", { person: item })}
     >
       <View style={styles.card}>
         <Image source={item.avatar} style={styles.avatar} />

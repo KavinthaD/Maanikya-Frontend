@@ -1,5 +1,3 @@
-//Screen Creator : Mehara
-
 import React, { useState } from "react";
 import {
   View,
@@ -13,9 +11,10 @@ import {
 } from "react-native";
 import { FontAwesome, MaterialIcons } from "@expo/vector-icons";
 
-const categories = ["Cutter", "Burner", "Elec. Burner/Cutter", "Owner"];
+// Updated categories to match the image
+const categories = ["All", "Burner", "Elec. Burner", "Cutter", "Owner"];
 
-const people = [
+const initialPeople = [ // Renamed to initialPeople
   {
     id: "1",
     name: "Dulith Wanigarathne",
@@ -47,12 +46,36 @@ const people = [
 ];
 
 const ConnectScreen = ({ navigation }) => {
-  const [selectedCategory, setSelectedCategory] = useState("Cutter");
+  const [selectedCategory, setSelectedCategory] = useState("All"); // Default to 'All'
   const [favorites, setFavorites] = useState({});
+  const [people, setPeople] = useState(initialPeople); // State for people, initialized with initialPeople
+  const [personRatings, setPersonRatings] = useState(() => { // Initialize personRatings state
+    const ratings = {};
+    initialPeople.forEach(person => {
+      ratings[person.id] = person.rating;
+    });
+    return ratings;
+  });
+
 
   const toggleFavorite = (id) => {
     setFavorites((prev) => ({ ...prev, [id]: !prev[id] }));
   };
+
+  const handleStarRating = (personId, rating) => {
+    setPersonRatings(prevRatings => ({
+      ...prevRatings,
+      [personId]: rating,
+    }));
+
+    // Optionally update the people array if you want to persist rating in the people data
+    setPeople(prevPeople =>
+      prevPeople.map(person =>
+        person.id === personId ? { ...person, rating: rating } : person
+      )
+    );
+  };
+
 
   const renderItem = ({ item }) => (
     <TouchableOpacity
@@ -65,12 +88,13 @@ const ConnectScreen = ({ navigation }) => {
           <Text style={styles.role}>{item.role}</Text>
           <View style={styles.rating}>
             {[...Array(5)].map((_, index) => (
-              <FontAwesome
-                key={index}
-                name={index < item.rating ? "star" : "star-o"}
-                size={16}
-                color="#FFD700"
-              />
+              <TouchableOpacity key={index} onPress={() => handleStarRating(item.id, index + 1)}>
+                <FontAwesome
+                  name={index < personRatings[item.id] ? "star" : "star-o"} // Use personRatings for star display
+                  size={16}
+                  color="#FFD700"
+                />
+              </TouchableOpacity>
             ))}
           </View>
         </View>
@@ -90,7 +114,7 @@ const ConnectScreen = ({ navigation }) => {
       {/* Search Bar */}
       <View style={styles.searchContainer}>
         <TextInput style={styles.searchInput} placeholder="Search person" />
-        <MaterialIcons name="person" size={28} color="#6646ee" />
+        <MaterialIcons name="search" size={24} color="#6646ee" /> {/* Changed to search icon */}
       </View>
 
       <View style={styles.addPersonContainer}>
@@ -133,7 +157,7 @@ const ConnectScreen = ({ navigation }) => {
 
       {/* People List */}
       <FlatList
-        data={people.filter((p) => p.role.includes(selectedCategory))}
+        data={people.filter((p) => selectedCategory === "All" || p.role.includes(selectedCategory))} // Filter based on 'All' or selected category
         keyExtractor={(item) => item.id}
         renderItem={renderItem}
         showsVerticalScrollIndicator={false}

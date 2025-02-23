@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react"; // Import useEffect
 import {
   View,
   Text,
@@ -43,6 +43,20 @@ const initialPeople = [ // Renamed to initialPeople
     rating: 4,
     avatar: require("../assets/seller.png"),
   },
+  {
+    id: "5",
+    name: "Amal Perera", // Added a name starting with 'A' for testing search
+    role: "Burner",
+    rating: 3,
+    avatar: require("../assets/seller.png"),
+  },
+  {
+    id: "6",
+    name: "Buddika Silva", // Added a name starting with 'B' for testing search
+    role: "Owner",
+    rating: 5,
+    avatar: require("../assets/seller.png"),
+  },
 ];
 
 const ConnectScreen = ({ navigation }) => {
@@ -56,6 +70,30 @@ const ConnectScreen = ({ navigation }) => {
     });
     return ratings;
   });
+  const [searchText, setSearchText] = useState(""); // State for search text
+  const [filteredPeople, setFilteredPeople] = useState(people); // State for filtered people
+
+
+  useEffect(() => {
+    // Function to filter people based on search text and category
+    const filterData = () => {
+      let currentPeople = initialPeople; // Start with the initial list
+
+      if (selectedCategory !== "All") {
+        currentPeople = currentPeople.filter(p => p.role.includes(selectedCategory));
+      }
+
+      if (searchText) {
+        const lowerSearchText = searchText.toLowerCase();
+        currentPeople = currentPeople.filter(person =>
+          person.name.toLowerCase().startsWith(lowerSearchText)
+        );
+      }
+      setFilteredPeople(currentPeople);
+    };
+
+    filterData(); // Call filterData whenever searchText or selectedCategory changes
+  }, [searchText, selectedCategory]);
 
 
   const toggleFavorite = (id) => {
@@ -113,7 +151,12 @@ const ConnectScreen = ({ navigation }) => {
     <View style={styles.container}>
       {/* Search Bar */}
       <View style={styles.searchContainer}>
-        <TextInput style={styles.searchInput} placeholder="Search person" />
+        <TextInput
+          style={styles.searchInput}
+          placeholder="Search person"
+          value={searchText}
+          onChangeText={text => setSearchText(text)} // Update searchText state
+        />
         <MaterialIcons name="search" size={24} color="#6646ee" /> {/* Changed to search icon */}
       </View>
 
@@ -157,7 +200,7 @@ const ConnectScreen = ({ navigation }) => {
 
       {/* People List */}
       <FlatList
-        data={people.filter((p) => selectedCategory === "All" || p.role.includes(selectedCategory))} // Filter based on 'All' or selected category
+        data={filteredPeople} // Use filteredPeople for data
         keyExtractor={(item) => item.id}
         renderItem={renderItem}
         showsVerticalScrollIndicator={false}

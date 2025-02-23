@@ -28,7 +28,7 @@ const App = () => {
       <Stack.Navigator initialRouteName="WelcomePage">
         <Stack.Screen
           name="WelcomePage"
-          component={WelcomePage}
+          component={BusinessOwnerProfilePhoto}
           options={{ headerShown: false }}
         />
         <Stack.Screen

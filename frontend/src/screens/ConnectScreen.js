@@ -1,6 +1,4 @@
-//Screen Creator : Mehara
-
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react"; // Import useEffect
 import {
   View,
   Text,
@@ -14,9 +12,10 @@ import {
 import { FontAwesome, MaterialIcons } from "@expo/vector-icons";
 import { baseScreenStyles } from "../styles/baseStyles";
 
-const categories = ["Cutter", "Burner", "Elec. Burner/Cutter", "Owner"];
+// Updated categories to match the image
+const categories = ["All", "Burner", "Elec. Burner", "Cutter", "Owner"];
 
-const people = [
+const initialPeople = [ // Renamed to initialPeople
   {
     id: "1",
     name: "Dulith Wanigarathne",
@@ -45,15 +44,77 @@ const people = [
     rating: 4,
     avatar: require("../assets/seller.png"),
   },
+  {
+    id: "5",
+    name: "Amal Perera", // Added a name starting with 'A' for testing search
+    role: "Burner",
+    rating: 3,
+    avatar: require("../assets/seller.png"),
+  },
+  {
+    id: "6",
+    name: "Buddika Silva", // Added a name starting with 'B' for testing search
+    role: "Owner",
+    rating: 5,
+    avatar: require("../assets/seller.png"),
+  },
 ];
 
 const ConnectScreen = ({ navigation }) => {
-  const [selectedCategory, setSelectedCategory] = useState("Cutter");
+  const [selectedCategory, setSelectedCategory] = useState("All"); // Default to 'All'
   const [favorites, setFavorites] = useState({});
+  const [people, setPeople] = useState(initialPeople); // State for people, initialized with initialPeople
+  const [personRatings, setPersonRatings] = useState(() => { // Initialize personRatings state
+    const ratings = {};
+    initialPeople.forEach(person => {
+      ratings[person.id] = person.rating;
+    });
+    return ratings;
+  });
+  const [searchText, setSearchText] = useState(""); // State for search text
+  const [filteredPeople, setFilteredPeople] = useState(people); // State for filtered people
+
+
+  useEffect(() => {
+    // Function to filter people based on search text and category
+    const filterData = () => {
+      let currentPeople = initialPeople; // Start with the initial list
+
+      if (selectedCategory !== "All") {
+        currentPeople = currentPeople.filter(p => p.role.includes(selectedCategory));
+      }
+
+      if (searchText) {
+        const lowerSearchText = searchText.toLowerCase();
+        currentPeople = currentPeople.filter(person =>
+          person.name.toLowerCase().startsWith(lowerSearchText)
+        );
+      }
+      setFilteredPeople(currentPeople);
+    };
+
+    filterData(); // Call filterData whenever searchText or selectedCategory changes
+  }, [searchText, selectedCategory]);
+
 
   const toggleFavorite = (id) => {
     setFavorites((prev) => ({ ...prev, [id]: !prev[id] }));
   };
+
+  const handleStarRating = (personId, rating) => {
+    setPersonRatings(prevRatings => ({
+      ...prevRatings,
+      [personId]: rating,
+    }));
+
+    // Optionally update the people array if you want to persist rating in the people data
+    setPeople(prevPeople =>
+      prevPeople.map(person =>
+        person.id === personId ? { ...person, rating: rating } : person
+      )
+    );
+  };
+
 
   const renderItem = ({ item }) => (
     <TouchableOpacity
@@ -66,12 +127,13 @@ const ConnectScreen = ({ navigation }) => {
           <Text style={styles.role}>{item.role}</Text>
           <View style={styles.rating}>
             {[...Array(5)].map((_, index) => (
-              <FontAwesome
-                key={index}
-                name={index < item.rating ? "star" : "star-o"}
-                size={16}
-                color="#FFD700"
-              />
+              <TouchableOpacity key={index} onPress={() => handleStarRating(item.id, index + 1)}>
+                <FontAwesome
+                  name={index < personRatings[item.id] ? "star" : "star-o"} // Use personRatings for star display
+                  size={16}
+                  color="#FFD700"
+                />
+              </TouchableOpacity>
             ))}
           </View>
         </View>
@@ -90,8 +152,13 @@ const ConnectScreen = ({ navigation }) => {
     <View style={[baseScreenStyles.container,styles.container]}>
       {/* Search Bar */}
       <View style={styles.searchContainer}>
-        <TextInput style={styles.searchInput} placeholder="Search person" />
-        <MaterialIcons name="person" size={28} color="#6646ee" />
+        <TextInput
+          style={styles.searchInput}
+          placeholder="Search person"
+          value={searchText}
+          onChangeText={text => setSearchText(text)} // Update searchText state
+        />
+        <MaterialIcons name="search" size={24} color="#6646ee" /> {/* Changed to search icon */}
       </View>
 
       <View style={styles.addPersonContainer}>
@@ -134,7 +201,7 @@ const ConnectScreen = ({ navigation }) => {
 
       {/* People List */}
       <FlatList
-        data={people.filter((p) => p.role.includes(selectedCategory))}
+        data={filteredPeople} // Use filteredPeople for data
         keyExtractor={(item) => item.id}
         renderItem={renderItem}
         showsVerticalScrollIndicator={false}

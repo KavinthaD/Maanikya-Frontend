@@ -82,7 +82,7 @@ const FavoritesScreen = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedPerson, setSelectedPerson] = useState(null);
   
-  const categories = ['Cutter', 'Burner', 'Elec. Burner/Cutter'];
+  const categories = ['Cutter', 'Burner', 'Elec. Burner'];
   
   const allFavorites = [
     {
@@ -102,17 +102,31 @@ const FavoritesScreen = () => {
     {
       id: '3',
       name: 'Kavintha Dinushan',
-      role: 'Cutter',
+      role: 'Burner',
       image: require('../assets/gems/BS001.png'),
-      type: 'Cutter'
+      type: 'Burner'
     },
     {
       id: '4',
       name: 'Nihal Hewarthna',
-      role: 'Cutter',
+      role: 'Burner',
       image: require('../assets/gems/BS001.png'),
-      type: 'Cutter'
+      type: 'Burner'
     },
+    {
+      id: '5',
+      name: 'Samantha Silva',
+      role: 'Elec. Burner',
+      image: require('../assets/gems/BS001.png'),
+      type: 'Elec. Burner'
+    },
+    {
+      id: '6',
+      name: 'Rajitha Perera',
+      role: 'Elec. Burner',
+      image: require('../assets/gems/BS001.png'),
+      type: 'Elec. Burner'
+    }
   ];
 
   const filteredFavorites = allFavorites.filter(item => {
@@ -324,7 +338,7 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   modalContent: {
-    backgroundColor: '#004B64',
+    backgroundColor: '#457EA0',
     borderRadius: 12,
     padding: 20,
     width: '100%',

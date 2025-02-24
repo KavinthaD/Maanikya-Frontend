@@ -6,6 +6,7 @@ import { launchImageLibrary, launchCamera } from "react-native-image-picker";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { Ionicons, FontAwesome5 } from '@expo/vector-icons'; 
+import { baseScreenStyles } from "../styles/baseStyles";
 
 const GemCertificateAdd = ({ navigation }) => {
   const [photo, setPhoto] = useState(null);
@@ -29,7 +30,7 @@ const GemCertificateAdd = ({ navigation }) => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={[baseScreenStyles.container,styles.container]}>
       {/* Header */}
       <View style={styles.topic}>
         <TouchableOpacity  onPress={() => navigation.goBack()}>
@@ -65,8 +66,6 @@ const GemCertificateAdd = ({ navigation }) => {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: "#a9c9d3",
     alignItems: "center",
     justifyContent: "center",
   },

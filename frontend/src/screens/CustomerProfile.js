@@ -4,8 +4,9 @@ import React from "react";
 import { SafeAreaView,View, Text, Image, TouchableOpacity, StyleSheet, Button } from "react-native";
 import { Home, ShoppingBag, PlusCircle, Bell, User } from "lucide-react-native";
 import { Ionicons, FontAwesome5 } from '@expo/vector-icons'; 
+import { baseScreenStyles } from "../styles/baseStyles";
 
-const CutomerProfile = ({ navigation }) => {
+const CustomerProfile = ({ navigation }) => {
   const user = {
     image: "https://static.wikia.nocookie.net/garfield/images/6/60/Garfield_New_Look.jpg/revision/latest/scale-to-width/360?cb=20240328075614", 
     name: "abc",
@@ -16,15 +17,8 @@ const CutomerProfile = ({ navigation }) => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={baseScreenStyles.container}>
       
-      <View style={styles.topic}>
-         <TouchableOpacity onPress={() => navigation.goBack()}>
-            <Ionicons name="chevron-back" size={24} color="white" />
-          </TouchableOpacity>
-        <Text style={styles.topicName}>Profile</Text>
-        
-      </View>
 
       <View style={styles.profileContainer}>
         <Image source={{ uri: user.image }} style={styles.profilePic} />
@@ -46,10 +40,6 @@ const CutomerProfile = ({ navigation }) => {
         <Text style={styles.info}>{user.phone}</Text>
       </View>
       <View style={styles.infoContainer}>
-        <Text style={styles.label}>TITLE</Text>
-        <Text style={styles.info}>{user.title}</Text>
-      </View>
-      <View style={styles.infoContainer}>
         <Text style={styles.label}>Address</Text>
         <Text style={styles.info}>{user.address}</Text>
       </View>
@@ -62,10 +52,7 @@ const CutomerProfile = ({ navigation }) => {
 
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#A7D7E7",
-  },
+ 
   topic: {
     flexDirection: "row",
     alignItems: "center",
@@ -120,4 +107,4 @@ const styles = StyleSheet.create({
   
 });
 
-export default CutomerProfile;
+export default CustomerProfile;

@@ -9,6 +9,7 @@ import {
   TouchableOpacity, 
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { baseScreenStyles } from "../styles/baseStyles";
 
 const personData = { 
   name: "Dulith Wanigarathne",
@@ -43,7 +44,7 @@ export default function ProfileScreen() {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[baseScreenStyles.container,styles.container]}>
       <Text style={styles.header}>Connect</Text>
      
       <View style={styles.profileCard}>
@@ -101,7 +102,7 @@ export default function ProfileScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#9CCDDB", padding: 16 },
+  container: { padding: 16 },
   header: { fontSize: 18, fontWeight: "bold", marginBottom: 10 },
   input: { // Removed input style as TextInput is removed
 

@@ -6,6 +6,7 @@ import { launchImageLibrary } from "react-native-image-picker";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons, FontAwesome } from "@expo/vector-icons";
 import BusinessOwnerProfile from "./BusinessOwnerProfile";
+import { baseScreenStyles } from "../styles/baseStyles";
 
 const BusinessOwnerEditProfile = ({ navigation }) => {
   // Profile state
@@ -17,24 +18,10 @@ const BusinessOwnerEditProfile = ({ navigation }) => {
   const [address, setAddress] = useState(
     "602, Kalawana Rd, Nivitigala, Rathnapura, Sri Lanka"
   );
-/*
-  const selectProfilePhoto = () => {
-    launchImageLibrary({ mediaType: "photo", quality: 1 }, (response) => {
-      if (!response.didCancel && !response.errorCode) {
-        setProfilePhoto(response.assets[0].uri);
-      }
-    });
-  };*/
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* Header */}
-      <View style={styles.topic}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Ionicons name="chevron-back" size={24} color="white" />
-        </TouchableOpacity>
-        <Text style={styles.topicName}>Edit Profile</Text>
-      </View>
+      
 
       <View style={styles.profileContainer}>
         <Image
@@ -43,18 +30,21 @@ const BusinessOwnerEditProfile = ({ navigation }) => {
           }
           style={styles.profilePhoto}
         />
-         <Button title="Edit Profile" onPress={() => navigation.navigate("BusinessOwnerProfilePhoto")} />
+        <TouchableOpacity style={style.editPhotoBtn} >
+          <Ionicons name="pencil" size={20} color ="#0a3a5d" />
+        </TouchableOpacity>
+        
       </View>
 
       <View style={styles.inputContainer}>
         <Text style={styles.label}>NAME</Text>
-        <TextInput style={styles.input} value={name} onChangeText={setName} />
+        <TextInput style={styles.input} value={name} onChangeText={setName} placeholderTextColor="#777" />
 
         <Text style={styles.label}>EMAIL</Text>
-        <TextInput style={styles.input} value={email} onChangeText={setEmail} keyboardType="email-address" />
+        <TextInput style={styles.input} value={email} onChangeText={setEmail} keyboardType="email-address" placeholderTextColor="#777"/>
 
         <Text style={styles.label}>Contact No</Text>
-        <TextInput style={styles.input} value={contact} onChangeText={setContact} keyboardType="phone-pad" />
+        <TextInput style={styles.input} value={contact} onChangeText={setContact} keyboardType="phone-pad" placeholderTextColor="#777"/>
 
         <Text style={styles.label}>TITLE</Text>
         <TextInput style={styles.input} value={title} onChangeText={setTitle} />
@@ -65,11 +55,12 @@ const BusinessOwnerEditProfile = ({ navigation }) => {
           value={address}
           onChangeText={setAddress}
           multiline
+          placeholderTextColor="#777"
         />
       </View>
 
 
-      <TouchableOpacity style={styles.saveBtn}>
+      <TouchableOpacity style={styles.saveBtn} onPress={() => navigation.goBack()}>
         <Text style={styles.saveBtnText}>Save</Text>
       </TouchableOpacity>
     </SafeAreaView>
@@ -79,57 +70,54 @@ const BusinessOwnerEditProfile = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#b0d4e3",
+    backgroundColor: "#9CCDDB",
   },
-  topic: {
-    flexDirection: "row",
-    alignItems: "center",
-    padding: 15,
-    backgroundColor: "#0a3a5d",
-  },
-  topicName: {
-    color: "white",
-    fontSize: 18,
-    fontWeight: "bold",
-    marginLeft: 10,
-    alignItems:"center",
-  },
+  
   profileContainer: {
     alignItems: "center",
     marginTop: 20,
-    position: "relative",
   },
   profilePhoto: {
     width: 100,
     height: 100,
     borderRadius: 50,
+    marginBottom: 10,
   },
-  editPhotoButton: {
+  editPhotoBtn: {
     position: "absolute",
-    bottom: 0,
-    right: 0,
-    backgroundColor: "#0a3a5d",
-    borderRadius: 20,
+    bottom: 10,
+    right: 120,
+    backgroundColor: "#dbe9fa",
+    borderRadius: 15,
+    padding: 5,
+  },
+  icon:{
+    borderRadius: 15,
     padding: 5,
   },
   inputContainer: {
-    padding: 20,
+    paddingHorizontal: 20,
   },
   label: {
     fontSize: 14,
     fontWeight: "bold",
     color: "#333",
-    marginTop: 10,
+    marginTop: 15,
+    marginBottom: 3,
   },
   input: {
-    backgroundColor: "#f5f5f5",
-    padding: 10,
-    borderRadius: 5,
+    backgroundColor: "#ffffff",
+    paddingVertical: 10,
+    paddingHorizontal: 12,
+    borderRadius: 8,
     marginTop: 5,
     fontSize: 16,
+    color: "#333", 
+    borderColor: "#ccc",
   },
   textArea: {
-    height: 60,
+    height: 80,
+    textAlignVertical: "top",
   },
   saveBtn: {
     backgroundColor: "#0a3a5d",
@@ -138,6 +126,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginHorizontal: 20,
     marginTop: 20,
+    marginBottom:20
   },
   saveBtnText: {
     color: "white",

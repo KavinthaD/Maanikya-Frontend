@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, StyleSheet, Image } from 'react-native';
+import { baseScreenStyles } from "../styles/baseStyles";
 
 const Orders = [
   {
@@ -68,7 +69,7 @@ const OrderScreen = () => {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={baseScreenStyles.container}>
       <View style={styles.spacer} /> {/* Add this view for the space */}
       <Text style={styles.header}>Orders</Text>
       <View style={styles.tabContainer}>
@@ -88,10 +89,7 @@ const OrderScreen = () => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#b3e5fc',
-  },
+  
   spacer: {
     backgroundColor: '#b3e5fc',
     height: 20, // Adjust the height as needed for the desired space

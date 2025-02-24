@@ -2,6 +2,7 @@
 
 import React, { useEffect, useRef } from "react";
 import { View, StyleSheet, Image, Animated } from "react-native";
+import { baseScreenStyles } from "../styles/baseStyles";
 
 const WelcomePage = ({ navigation }) => {
   const scaleValue = useRef(new Animated.Value(50)).current;
@@ -26,11 +27,11 @@ const WelcomePage = ({ navigation }) => {
   }, [navigation]);
 
   return (
-    <View style={Styles.container}>
+    <View style={[baseScreenStyles.container,styles.container]}>
       <Animated.Image
         source={require("../assets/logo-gem.png")}
         style={[
-          Styles.logo,
+          styles.logo,
           {
             transform: [{ scale: scaleValue }, { translateY: gemTranslateY }],
           },
@@ -41,10 +42,8 @@ const WelcomePage = ({ navigation }) => {
   );
 };
 
-const Styles = StyleSheet.create({
+const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: "#9CCDDB",
     justifyContent: "center",
     alignItems: "center",
   },

@@ -40,9 +40,6 @@ export default function Gem_register_3() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
   innerContainer: {
     padding: 20,
     alignItems: "center",

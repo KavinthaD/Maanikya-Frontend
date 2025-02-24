@@ -6,11 +6,13 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";  
 import * as ImagePicker from 'expo-image-picker';
 import * as Camera from 'expo-camera';
+import { baseScreenStyles } from "../styles/baseStyles";
 
 const BusinessOwnerProfilePhoto = ({ navigation }) => {
   const [photo, setPhoto] = useState(null);
   const [cameraPermission, setCameraPermission] = useState(null);
   const [libraryPermission, setLibraryPermission] = useState(null);
+  const email = "rathnasiri.n@hotmail.com";
 
   // Request camera and media library permissions
   const requestPermissions = async () => {
@@ -58,8 +60,43 @@ const BusinessOwnerProfilePhoto = ({ navigation }) => {
       saveToPhotos: true,
     });
 
-    if (!result.cancelled) {
-      setPhoto(result.uri);
+    if (!result.cancelled) {  
+      setPhoto(result.assets[0].uri);  
+    }
+  };
+  const uploadPhoto = async () => {
+    if (!photo) {
+      Alert.alert("No photo selected", "Please select or take a photo first.");
+      return;
+    }
+
+    let formData = new FormData();
+    const filename = photo.split('/').pop();  // Extract filename from URI
+    const match = /\.(.+)$/.exec(filename);   // Extract file extension
+    const type = match ? `image/${match[1]}` : `image`;  // Set correct MIME type
+
+    formData.append("image", {
+      uri: Platform.OS === "android" ? photo : photo.replace("file://", ""),
+      type: type,  // Use the dynamically determined MIME type
+      name: filename,
+    });
+
+    try {
+      const response = await fetch(`http://localhost:5000/display/upload/${email}`, {
+        method: "PUT",
+        body: formData,
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+
+      if (response.ok) {
+        Alert.alert("Photo uploaded", "Your profile photo has been updated.");
+        navigation.goBack();  
+        const errorText = await response.text();  
+        Alert.alert("Upload failed", `Server responded with: ${response.status} ${errorText}`);
+      }
+    } catch (error) {
+      console.error("Error uploading photo:", error);
+      Alert.alert("Error", error.message);  
     }
   };
 
@@ -69,21 +106,17 @@ const BusinessOwnerProfilePhoto = ({ navigation }) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* Header */}
-      <View style={styles.topic}>
-        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn}>
-          <Ionicons name="chevron-back" size={24} color="white" />
-        </TouchableOpacity>
-        <Text style={styles.topicName}>Scan</Text>
-      </View>
 
       {/* Profile Picture Section */}
       <View style={styles.imageContainer}>
-        {photo ? (
-          <Image source={{ uri: photo }} style={styles.profilePic} />
-        ) : (
-          <Image source={require("../assets/camera.png")} style={styles.cameraIcon} />
-        )}
+        <TouchableOpacity onPress={openCamera} style={styles.cameraButton} >
+          {photo ? (
+            <Image source={{ uri: photo }} style={styles.profilePic} />
+          ) : (
+            <Ionicons name="camera" size={80} color="#888" />
+          )}
+        </TouchableOpacity>
+        
       </View>
 
       {/* Buttons to open Gallery or Camera */}
@@ -91,31 +124,20 @@ const BusinessOwnerProfilePhoto = ({ navigation }) => {
         <Text style={styles.photoBtnText}>Gallery</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity style={[styles.photoBtn, { marginTop: 10 }]} onPress={openCamera}>
-        <Text style={styles.photoBtnText}>Take a Photo</Text>
-      </TouchableOpacity>
+
+      {photo && (
+        <TouchableOpacity style={styles.uploadBtn} onPress={uploadPhoto}>
+          <Text style={styles.uploadBtnText}>Upload Photo</Text>
+        </TouchableOpacity>
+      )}
+
     </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: "#a9c9d3",
-    alignItems: "center",
-  },
-  topic: {
-    flexDirection: "row",
-    alignItems: "center",
-    padding: 15,
-    backgroundColor: "#0a3a5d",
-    width: "100%",
-  },
-  topicName: {
-    color: "white",
-    fontSize: 18,
-    fontWeight: "bold",
-    marginLeft: 10,
+    
     alignItems: "center",
   },
   imageContainer: {
@@ -141,8 +163,11 @@ const styles = StyleSheet.create({
   photoBtn: {
     backgroundColor: "#0c3c60",
     paddingVertical: 10,
-    paddingHorizontal: 25,
-    borderRadius: 5,
+    paddingHorizontal: 3,
+    borderRadius: 8,
+    fontSize: 18,
+    fontWeight: "bold",
+    marginTop: 20,
   },
   photoBtnText: {
     color: "#fff",
@@ -151,6 +176,21 @@ const styles = StyleSheet.create({
   backBtn: {
     marginLeft: 15,
   },
+  uploadBtn: {
+    backgroundColor: "#0c3c60",
+    paddingVertical: 10,
+    paddingHorizontal: 25,
+    borderRadius: 5,
+    marginTop: 20,
+  },
+  uploadBtnText: {
+    color: "#fff",
+    fontSize: 16,
+  },
+  backBtn:{
+      marginLeft: 15,
+  },
+
 });
 
 export default BusinessOwnerProfilePhoto;

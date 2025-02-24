@@ -160,8 +160,6 @@ function GemRegister1Main() {
   );
 }
 
-
-
 const styles = StyleSheet.create({
   buttonText: {
     color: "white",

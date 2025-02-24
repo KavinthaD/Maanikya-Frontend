@@ -2,10 +2,11 @@
 
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
+import { baseScreenStyles } from "../styles/baseStyles";
 
 const BurnerFinancialRecords = () => {
   return (
-    <View style={styles.container}>
+    <View style={[baseScreenStyles.container,styles.container]}>
       <View style={styles.totalProfitContainer}>
         <Text style={styles.totalProfitTitle}>Total profit</Text>
         <Text style={styles.totalProfitAmount}>LKR. 780 000</Text>
@@ -52,8 +53,7 @@ const BurnerFinancialRecords = () => {
 const styles = StyleSheet.create({
   container: {
     padding: 30,
-    backgroundColor: "#9CCDDB",
-    flex: 1,
+    
   },
   totalProfitContainer: {
     backgroundColor: "#000",

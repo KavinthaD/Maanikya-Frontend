@@ -19,6 +19,7 @@ import ConnectScreen from "./src/screens/ConnectScreen";
 import GemOnDisplay from "./src/screens/GemOnDisplay";
 import ProfileScreen from "./src/screens/ConnectedUsers";
 import FavoritesScreen from "./src/screens/Favorites";
+import InProgressTrackerScreen from "./src/screens/InProgressTracker";
 
 const Stack = createNativeStackNavigator();
 
@@ -28,7 +29,7 @@ const App = () => {
       <Stack.Navigator initialRouteName="WelcomePage">
         <Stack.Screen
           name="WelcomePage"
-          component={BusinessOwnerProfilePhoto}
+          component={WelcomePage}
           options={{ headerShown: false }}
         />
         <Stack.Screen
@@ -107,8 +108,8 @@ const App = () => {
           options={{ headerShown: false }}
         />
         <Stack.Screen
-          name="FavoritesScreen"
-          component={ FavoritesScreen }
+          name="InProgressTrackerScreen"
+          component={ InProgressTrackerScreen }
           options={{ headerShown: false }}
         />
       </Stack.Navigator>

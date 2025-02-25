@@ -11,6 +11,7 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { baseScreenStyles } from "../styles/baseStyles";
+import Header_2 from "../components/Header_2";
 
 const person = {
   name: "Dulith Wanigarathne",
@@ -36,7 +37,7 @@ export default function ProfileScreen() {
 
   return (
     <View style={[baseScreenStyles.container,styles.container]}>
-      <Text style={styles.header}>Connect</Text>
+      <Header_2 title="Connect"/>
       <TextInput
         placeholder="Search person"
         value={search}

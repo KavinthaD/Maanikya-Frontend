@@ -26,11 +26,11 @@ const styles = StyleSheet.create({
   },
   title: {
     paddingHorizontal: 0,
-    marginTop: 30,
+    marginTop: 5,
     fontSize: 24,
     fontWeight: "bold",
     textAlign: "center",
-    marginBottom: 20,
+    marginBottom: 1,
     backgroundColor: "#072D44",
     color: "white",
     padding: 10,
@@ -38,7 +38,7 @@ const styles = StyleSheet.create({
   backButton: {
     position: "absolute",
     left: 10,
-    top: 70,
+    top: 50,
     zIndex: 1,
   },
 });

@@ -10,6 +10,7 @@ import {
   Image,
 } from "react-native";
 import { baseScreenStyles } from "../styles/baseStyles";
+import Header_2 from "../components/Header_2";
 
 const InProgressTracker = [
   {
@@ -55,17 +56,16 @@ const NotificationItem = ({ item }) => (
   </View>
 );
 
-const NotificationScreen = () => {
+const InProgressTrackerScreen = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const filteredOrders = InProgressTracker.filter((order) =>
     order.id.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   return (
-    <View style={[baseScreenStyles.container,styles.container]}>
-      <View style={styles.header}>
-        <Text style={styles.headerText}>In Progress</Text>
-      </View>
+    <View style={[baseScreenStyles.container]}>
+      <Header_2 title="In Progress"/>
+      <View style={styles.container}>
       <TextInput
         style={styles.searchBar}
         placeholder="Search Order ID"
@@ -78,12 +78,12 @@ const NotificationScreen = () => {
         keyExtractor={(item) => item.id}
       />
     </View>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    
     padding: 16,
   },
   header: {
@@ -145,4 +145,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default NotificationScreen;
+export default InProgressTrackerScreen;

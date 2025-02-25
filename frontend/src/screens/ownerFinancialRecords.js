@@ -3,10 +3,14 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { baseScreenStyles } from "../styles/baseStyles";
+import Header_2 from "../components/Header_2";
 
 const OwnerFinancialRecords = () => {
   return (
-    <View style={[baseScreenStyles.container,styles.container]}>
+    
+    <View style={[baseScreenStyles.container]}>
+      <Header_2 title="Financial Records"/>
+      <View style={styles.container}>
       <View style={styles.totalProfitContainer}>
         <Text style={styles.totalProfitTitle}>Total profit</Text>
         <Text style={styles.totalProfitAmount}>LKR. 780 000</Text>
@@ -47,13 +51,13 @@ const OwnerFinancialRecords = () => {
         </View>
       </View>
     </View>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     padding: 30,
-    
   },
   totalProfitContainer: {
     backgroundColor: "#000",

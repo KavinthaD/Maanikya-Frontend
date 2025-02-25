@@ -3,7 +3,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, FlatList, Image } from 'react-native';
 import { baseScreenStyles } from '../styles/baseStyles';
-
+import Header_1 from '../components/Header_1';
 const Alerts = [
   {
     id: '1',
@@ -32,7 +32,7 @@ const AlertItem = ({ item }) => (
 const AlertsScreen = () => {
   return (
     <View style={baseScreenStyles.container}>
-      <Text style={styles.header}>Alerts</Text>
+      <Header_1 title="Alerts"/>
       <FlatList
         data={Alerts}
         renderItem={({ item }) => <AlertItem item={item} />}
@@ -44,14 +44,6 @@ const AlertsScreen = () => {
 
 const styles = StyleSheet.create({
   
-  header: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    padding: 16,
-    backgroundColor: '#072D44',
-    color: '#ffffff',
-    textAlign: 'center', 
-  },
   alertItem: {
     flexDirection: 'row',
     alignItems: 'center',

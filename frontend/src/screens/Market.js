@@ -11,6 +11,7 @@ import {
   ScrollView,
 } from 'react-native';
 import { baseScreenStyles } from "../styles/baseStyles";
+import Header_2 from '../components/Header_2';
 
 const GemstoneMarketplace = () => {
   const gemstones = [
@@ -27,6 +28,7 @@ const GemstoneMarketplace = () => {
 
   return (
     <ScrollView style={baseScreenStyles.container}>
+      <Header_2 title="Market"/>
       <View style={styles.searchContainer}>
         <View style={styles.searchBar}>
           <TextInput

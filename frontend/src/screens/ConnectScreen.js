@@ -11,6 +11,7 @@ import {
 } from "react-native";
 import { FontAwesome, MaterialIcons } from "@expo/vector-icons";
 import { baseScreenStyles } from "../styles/baseStyles";
+import Header_2 from "../components/Header_2";
 
 // Updated categories to match the image
 const categories = ["All", "Burner", "Elec. Burner", "Cutter", "Owner"];
@@ -150,6 +151,7 @@ const ConnectScreen = ({ navigation }) => {
 
   return (
     <View style={[baseScreenStyles.container,styles.container]}>
+      <Header_2 title="Connect"/>
       {/* Search Bar */}
       <View style={styles.searchContainer}>
         <TextInput

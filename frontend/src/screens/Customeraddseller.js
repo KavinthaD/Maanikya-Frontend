@@ -12,6 +12,7 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { baseScreenStyles } from "../styles/baseStyles";
+import Header_1 from "../components/Header_1";
 
 const sellers = [
   {
@@ -44,8 +45,9 @@ export default function MySellersScreen() {
   const [search, setSearch] = useState("");
 
   return (
-    <View style={[baseScreenStyles.container,styles.container]}>
-      <Text style={styles.header}>My sellers</Text>
+    <View style={[baseScreenStyles.container]}>
+      <Header_1 title="My Sellers"/>
+      <View style={styles.container}>
       <TextInput
         placeholder="Search person"
         value={search}
@@ -87,12 +89,13 @@ export default function MySellersScreen() {
         )}
       />
     </View>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: { padding: 16 },
-  header: { fontSize: 18, fontWeight: "bold", marginBottom: 10 },
+
   input: {
     backgroundColor: "white",
     padding: 10,

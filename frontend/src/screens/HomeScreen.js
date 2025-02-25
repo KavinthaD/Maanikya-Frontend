@@ -161,7 +161,7 @@ const HomeScreen = () => {
     {
       image: require("../assets/menu-icons/addGem.png"),
       title: "Tracker",
-      screen: "InProgressTrackerScreen"
+      screen: "OrderScreen"
       
     },
     {

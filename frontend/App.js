@@ -19,8 +19,7 @@ import ConnectScreen from "./src/screens/ConnectScreen";
 import GemOnDisplay from "./src/screens/GemOnDisplay";
 import ProfileScreen from "./src/screens/ConnectedUsers";
 import FavoritesScreen from "./src/screens/Favorites";
-import InProgressTrackerScreen from "./src/screens/InProgressTracker";
-
+import OrderScreen from "./src/screens/Orders";
 const Stack = createNativeStackNavigator();
 
 const App = () => {
@@ -108,8 +107,13 @@ const App = () => {
           options={{ headerShown: false }}
         />
         <Stack.Screen
-          name="InProgressTrackerScreen"
-          component={ InProgressTrackerScreen }
+          name="FavoritesScreen "
+          component={ FavoritesScreen }
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="OrderScreen"
+          component={ OrderScreen }
           options={{ headerShown: false }}
         />
       </Stack.Navigator>

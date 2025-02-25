@@ -1,23 +1,46 @@
 //Screen creator: Dulith
+
 import React from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from 'react-native';
-
+import { Picker } from '@react-native-picker/picker';
 const Login = () => {
+  const [email, setEmail] = useState(''); 
+  const [password, setPassword] = useState(''); 
+  const [role, setRole] = useState('');
+
   return (
     <View style={styles.container}>
-      <Image source={require('../assets/logo.png')} style={styles.logo} />
-      <Text style={styles.subtitle}>Login</Text>
-      <Text style={styles.prompt}>Enter your username to log in to this app</Text>
+      <Image source={require('../assets/logo-gem.png')} style={styles.logo} />
+      <Text style={styles.title}>Welcome Back</Text>
+      <Text style={styles.subtitle}>Login to your account</Text>
+
       <TextInput
-        style={[styles.input, styles.inputWithOpacity, { textAlign: 'left' }]}
-        placeholder="Username"
-        placeholderTextColor="#888" 
+        style={styles.input}
+        placeholder="email@domain.com"
+        placeholderTextColor="#888"
+        value={email}
+        onChangeText={setEmail}
+        keyboardType="email-address"
       />
+      <View style={styles.pickerContainer}>
+        <Picker
+          selectedValue={role}
+          style={styles.picker}
+          onValueChange={(itemValue) => setRole(itemValue)}
+          itemStyle={styles.pickerItem}
+        >
+          <Picker.Item label="Choose your role" value="" />
+          <Picker.Item label="Gem business owner" value="gem_business_owner" />
+          <Picker.Item label="Cutter/Burner" value="cutter_burner" />
+          <Picker.Item label="Customer" value="customer" />
+        </Picker>
+      </View>
       <TextInput
-        style={[styles.input, styles.inputWithOpacity, { textAlign: 'left' }]}
+        style={styles.input}
         placeholder="Password"
-        placeholderTextColor="#888" 
         secureTextEntry
+        value={password}
+        onChangeText={setPassword}
       />
       <TouchableOpacity style={styles.forgotPasswordContainer}>
         <Text style={styles.forgotPassword}>Forgot your password?</Text>
@@ -48,11 +71,12 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   subtitle: {
-    fontSize: 24,
+    fontSize: 33,
     marginBottom: 5,
+    fontWeight: 'bold',
   },
   prompt: {
-    fontSize: 16,
+    fontSize: 18,
     marginBottom: 20,
   },
   input: {
@@ -63,9 +87,27 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     paddingHorizontal: 10,
     marginBottom: 10,
+    backgroundColor: '#fff',
+  },
+  pickerContainer: {
+    width: '100%',
+    height: 54,
+    borderColor: 'gray',
+    borderWidth: 1,
+    borderRadius: 12,
+    marginBottom: 15,
+    overflow: 'hidden',
+    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+  },
+  picker: {
+    height: '100%',
+    width: '100%',
+  },
+  pickerItem: {
+    color: '#888',
   },
   inputWithOpacity: {
-    backgroundColor: 'rgba(255, 255, 255, 0.8)', 
+    backgroundColor: 'rgba(255, 255, 255, 0.8)', // White color with 80% opacity
   },
   forgotPasswordContainer: {
     alignSelf: 'flex-start',
@@ -76,12 +118,10 @@ const styles = StyleSheet.create({
   },
   loginButton: {
     backgroundColor: '#170969',
-    paddingVertical: 10,
-    paddingHorizontal: 195,
     borderRadius: 5,
     width: '100%',
     height: 50,
-    alignItems: 'center',   
+    alignItems: 'center',
     justifyContent: 'center',
   },
   loginButtonText: {

@@ -1,13 +1,13 @@
 //Screen creator: Dulith
 
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image,KeyboardAvoidingView, Platform } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 
 const BusinessSignIn1 = () => {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
-  const [userName, setUserName] = useState('');
+  const [email, setEmail] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [role, setRole] = useState('');
 
@@ -15,8 +15,8 @@ const BusinessSignIn1 = () => {
     
     <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.container}>
       <Image source={require('../assets/logo.png')} style={styles.logo} />
-      <Text style={styles.subtitle}>Create your business account</Text>
-      <Text style={styles.prompt}>Enter your details to sign up for this app</Text> 
+      <Text style={styles.subtitle}>Sign Up</Text>
+      <Text style={styles.prompt}>Create your business Account</Text> 
       <View style={styles.row}>
         <TextInput
           style={[styles.input, styles.inputHalf]}
@@ -36,10 +36,11 @@ const BusinessSignIn1 = () => {
 
       <TextInput
         style={styles.input}
-        placeholder="Username"
+        placeholder="email@domain.com"
         placeholderTextColor="#888"
-        value={userName}
-        onChangeText={setUserName}
+        value={email}
+        onChangeText={setEmail}
+        keyboardType="email-address"
       />
       <TextInput
         style={styles.input}
@@ -58,8 +59,10 @@ const BusinessSignIn1 = () => {
         >
           <Picker.Item label="Choose your role" value="" />
           <Picker.Item label="Gem business owner" value="gem_business_owner" />
-          <Picker.Item label="Cutter/Burner" value="cutter_burner" />
-        </Picker>
+          <Picker.Item label="Cutter" value="cutter" />
+          <Picker.Item label="Burner" value="burner" />
+          <Picker.Item label="Electric Burner" value="electric_burner" />
+          </Picker>
       </View>
       <TouchableOpacity style={styles.continueButton} onPress={() => { /* Handle continue action */ }}>
         <Text style={styles.continueButtonText}>Continue</Text>
@@ -87,12 +90,14 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   subtitle: {
-    fontSize: 18,
+    fontSize: 30,
     marginBottom: 10,
+    fontWeight: 'bold',
   },
   prompt: {
-    fontSize: 14,
+    fontSize: 16,
     marginBottom: 20,
+    fontWeight: 'bold',
   },
   row: {
     flexDirection: 'row',
@@ -132,12 +137,9 @@ const styles = StyleSheet.create({
   },
   continueButton: {
     backgroundColor: '#000080',
-    paddingVertical: 10,
-    paddingHorizontal: 180,
-    borderRadius: 8,
-    marginTop: 20,
+    borderRadius: 5,
     width: '100%',
-    height: 50,
+    height: 40,
     alignItems: 'center',
     justifyContent: 'center',
   },

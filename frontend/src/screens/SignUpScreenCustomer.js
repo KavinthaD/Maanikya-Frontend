@@ -7,8 +7,8 @@ const SignUpScreenCustomer = () => {
   return (
     <View style={styles.container}>
       <Image source={require('../assets/logo.png')} style={styles.logo} />
-      <Text style={styles.subtitle}>Create your customer account</Text>
-      <Text style={styles.instructions}>Enter your email to sign up for this app</Text>
+      <Text style={styles.subtitle}>Sign Up</Text>
+      <Text style={styles.instructions}>Create Your Customer Account</Text>
       <View style={styles.row}>
         <TextInput style={[styles.input, styles.halfInput]} placeholder="First Name"placeholderTextColor="#888" />
         <TextInput style={[styles.input, styles.halfInput]} placeholder="Last Name"placeholderTextColor="#888" />
@@ -44,13 +44,15 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   subtitle: {
-    fontSize: 18,
+    fontSize: 30,
     marginBottom: 5,
+    fontWeight:'bold'
   },
   instructions: {
     fontSize: 14,
     color: '#555',
     marginBottom: 20,
+    fontWeight:'bold'
   },
   row: {
     flexDirection: 'row',
@@ -74,11 +76,10 @@ const styles = StyleSheet.create({
   button: {
     width: '100%',
     height: 40,
-    backgroundColor: '#1a237e',
+    backgroundColor: '#000080',
     borderRadius: 5,
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: 20,
   },
   buttonText: {
     color: '#fff',

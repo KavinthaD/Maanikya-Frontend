@@ -7,9 +7,6 @@ const SignUpScreen = () => {
   return (
     <View style={styles.container}>
       <Image source={require('../assets/logo-gem.png')} style={styles.logo} />
-      <Text style={styles.title}>Maanikya</Text>
-      <Text style={styles.subtitle}>Create your business account</Text>
-      <Text style={styles.instructions}>Enter your email to sign up for this app</Text>
       <TextInput style={styles.input} placeholder="User Name" />
       <TextInput style={styles.input} placeholder="Password" secureTextEntry={true} />
       <TextInput style={styles.input} placeholder="Re-enter password" secureTextEntry={true} />
@@ -29,8 +26,8 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   logo: {
-    width: 100,
-    height: 100,
+    width: 150,
+    height: 80,
     marginBottom: 20,
   },
   title: {
@@ -53,7 +50,8 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 5,
     paddingHorizontal: 10,
-    marginBottom: 10,
+    marginBottom: 20,
+    backgroundColor: 'rgba(255, 255, 255, 0.8)',
   },
   button: {
     width: '100%',
@@ -62,6 +60,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     alignItems: 'center',
     justifyContent: 'center',
+    marginTop: 70,
   },
   buttonText: {
     color: '#fff',

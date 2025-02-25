@@ -23,9 +23,9 @@ const MenuItem = ({ image, title, onPress }) => (
 
 const HomeScreen = () => {
   const menuItems = [
-    {
-      image: require("../assets/menu-icons/financialRecords.png"),
-      title: "Orders",
+    { 
+      image: require('../assets/menu-icons/Orders.png'),
+      title: 'Orders' 
     },
     {
       image: require("../assets/menu-icons/financialRecords.png"),
@@ -57,6 +57,10 @@ const HomeScreen = () => {
 };
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#9CCDDB',
+  },
   
 
   content: {

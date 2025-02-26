@@ -2,7 +2,6 @@
 
 import React, { useEffect, useState, useRef } from "react";
 import {
-  Button,
   View,
   Text,
   StyleSheet,
@@ -10,6 +9,7 @@ import {
   Alert,
   Image,
   PermissionsAndroid,
+  Linking,
 } from "react-native";
 import * as MediaLibrary from "expo-media-library";
 import * as FileSystem from "expo-file-system";
@@ -23,43 +23,55 @@ export default function Gem_register_3() {
   const { gemId, createdAt } = route.params;
   const [gemData] = useState(null);
   const qrContainerRef = useRef(); // Change qrRef to qrContainerRef
-
-  const requestStoragePermission = async () => {
-    try {
-      const granted = await PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
-        {
-          title: 'Cool Photo App Camera Permission',
-          message:
-            'Cool Photo App needs access to your camera ' +
-            'so you can take awesome pictures.',
-          buttonNeutral: 'Ask Me Later',
-          buttonNegative: 'Cancel',
-          buttonPositive: 'OK',
-        },
-      );
-      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-        console.log('You can use the camera');
-      } else {
-        console.log('Camera permission denied');
-      }
-    } catch (err) {
-      console.warn(err);
-    }
-  };
-
-  const requestPermissions = async () => {
-    const { status } = await MediaLibrary.requestPermissionsAsync();
-    if (status !== "granted") {
-      alert("Sorry, we need media library permissions to make this work!");
-      return false;
-    }
-    return true;
-  };
-
+  const [hasPermission, setHasPermission] = useState(null);
 
   const handleSaveToDevice = async () => {
-    
+    try {
+      // Request permission
+
+      try {
+        const granted = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.READ_MEDIA_IMAGES,
+          {
+            title: 'Gallery permission',
+            message:
+              'Maanikya needs permission to save QR codes to your gallery',
+            buttonNeutral: 'Ask Me Later',
+            buttonNegative: 'Cancel',
+            buttonPositive: 'OK',
+          },
+        );
+        if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+          console.log('You can use the camera');
+        } else {
+          console.log('Camera permission denied');
+        }
+      } catch (err) {
+        console.warn(err);
+      }
+
+      // Capture the QR code container
+      const uri = await qrContainerRef.current.capture();
+
+      // Save to media library
+      const asset = await MediaLibrary.createAssetAsync(uri);
+
+      // Create album if it doesn't exist and save there
+      const album = await MediaLibrary.getAlbumAsync("Maanikya-QRcodes");
+      if (album === null) {
+        await MediaLibrary.createAlbumAsync("Maanikya-QRcodes", asset, false);
+      } else {
+        await MediaLibrary.addAssetsToAlbumAsync([asset], album, false);
+      }
+
+      Alert.alert(
+        "Success",
+        "QR Code saved to gallery in Maanikya-QRcodes album"
+      );
+    } catch (error) {
+      console.error("Error saving QR code:", error);
+      Alert.alert("Error", "Failed to save QR code");
+    }
   };
 
   const formatDate = (dateString) => {
@@ -122,7 +134,7 @@ export default function Gem_register_3() {
         </TouchableOpacity>
         <TouchableOpacity
           style={baseScreenStyles.blueButton}
-          onPress={requestStoragePermission}
+          onPress={handleSaveToDevice}
         >
           <Text style={baseScreenStyles.buttonText}>Save to device</Text>
         </TouchableOpacity>

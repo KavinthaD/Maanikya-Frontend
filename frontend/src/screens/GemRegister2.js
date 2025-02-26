@@ -174,21 +174,24 @@ function GemRegister2Main() {
 
         
 
-        <DropDownPicker
-          open={open}
-          value={form.gemType}
-          items={items}
-          setOpen={setOpen}
-          setValue={(value) => handleInputChange("gemType", value())}
-          setItems={setItems}
-          placeholder="Select Gem Type"
-          style={FormFieldStyles.dropdown}
-          dropDownContainerStyle={FormFieldStyles.dropdownContainer}
-          listItemContainerStyle={FormFieldStyles.listItemContainer}
-          listItemLabelStyle={FormFieldStyles.listItemLabel}
-          placeholderStyle={FormFieldStyles.placeholder}
-          textStyle={FormFieldStyles.dropdownText}
-        />
+<DropDownPicker
+  open={open}
+  value={form.gemType}
+  items={items}
+  setOpen={setOpen}
+  setValue={(value) => handleInputChange("gemType", value())}
+  setItems={setItems}
+  placeholder="Select Gem Type"
+  style={FormFieldStyles.dropdown}
+  dropDownContainerStyle={FormFieldStyles.dropdownContainer}
+  listItemContainerStyle={FormFieldStyles.listItemContainer}
+  listItemLabelStyle={FormFieldStyles.listItemLabel}
+  placeholderStyle={FormFieldStyles.placeholder}
+  textStyle={FormFieldStyles.dropdownText}
+  theme="LIGHT"
+  showArrowIcon={true}
+  showTickIcon={false}  // Add this line
+/>
 
         <TextInput
           style={FormFieldStyles.input}

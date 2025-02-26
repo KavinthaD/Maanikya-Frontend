@@ -2,6 +2,8 @@
 
 import React, { useState, useEffect } from "react";
 import {
+  Linking,
+  PermissionsAndroid,
   View,
   Text,
   StyleSheet,
@@ -23,6 +25,7 @@ import CustomCamera from "../components/CustomCamera";
 import { Camera } from "expo-camera";
 import DropDownPicker from "react-native-dropdown-picker";
 import { FormFieldStyles } from "../styles/FormFields";
+import * as ImagePicker from "expo-image-picker";
 
 const Stack = createNativeStackNavigator();
 
@@ -48,6 +51,69 @@ export default function GemRegister1() {
 }
 
 function GemRegister1Main() {
+  const handleCameraPress = async () => {
+    try {
+      Alert.alert("Select Image", "Choose an option", [
+        {
+          text: "Take Photo",
+          onPress: async () => {
+            const { status } =
+              await ImagePicker.requestCameraPermissionsAsync();
+            if (status !== "granted") {
+              Alert.alert("Permission needed", "Camera permission is required");
+              return;
+            }
+
+            const result = await ImagePicker.launchCameraAsync({
+              mediaTypes: ImagePicker.MediaTypeOptions.Images,
+              allowsEditing: true,
+              aspect: [4, 3],
+              quality: 1,
+            });
+
+            if (!result.canceled && result.assets[0]) {
+              const newPhotos = [...form.photos, result.assets[0].uri];
+              setForm((prev) => ({ ...prev, photos: newPhotos }));
+            }
+          },
+        },
+        {
+          text: "Choose from Gallery",
+          onPress: async () => {
+            const { status } =
+              await ImagePicker.requestMediaLibraryPermissionsAsync();
+            if (status !== "granted") {
+              Alert.alert(
+                "Permission needed",
+                "Gallery permission is required"
+              );
+              return;
+            }
+
+            const result = await ImagePicker.launchImageLibraryAsync({
+              mediaTypes: ImagePicker.MediaTypeOptions.Images,
+              allowsEditing: true,
+              aspect: [4, 3],
+              quality: 1,
+            });
+
+            if (!result.canceled && result.assets[0]) {
+              const newPhotos = [...form.photos, result.assets[0].uri];
+              setForm((prev) => ({ ...prev, photos: newPhotos }));
+            }
+          },
+        },
+        {
+          text: "Cancel",
+          style: "cancel",
+        },
+      ]);
+    } catch (error) {
+      console.error("Error handling image selection:", error);
+      Alert.alert("Error", "Failed to handle image selection");
+    }
+  };
+
   const navigation = useNavigation();
 
   // For gem shape dropdown
@@ -75,21 +141,7 @@ function GemRegister1Main() {
     description: "",
     photos: [],
   });
-  const [modalVisible, setModalVisible] = useState(false);
   const [cameraVisible, setCameraVisible] = useState(false);
-
-  useEffect(() => {
-    (async () => {
-      const { status } = await Camera.requestPermissionsAsync();
-      if (status !== "granted") {
-        Alert.alert(
-          "Permission Required",
-          "Camera permission is required to use this feature",
-          [{ text: "OK" }]
-        );
-      }
-    })();
-  }, []);
 
   const handleInputChange = (key, value) => {
     setForm({ ...form, [key]: value });
@@ -107,42 +159,6 @@ function GemRegister1Main() {
     navigation.navigate("GemRegister2", { formData: form }); // Pass the entire form object
   };
 
-  const handleCameraPress = () => {
-    setCameraVisible(true); // Show the camera
-  };
-
-  const handlePhotoTaken = (uri) => {
-    setForm((prev) => ({
-      ...prev,
-      photos: [...prev.photos, uri],
-    }));
-    setCameraVisible(false); // Close the camera
-  };
-
-  const handleChooseFromGallery = async () => {
-    const result = await launchImageLibrary({
-      mediaType: "photo",
-      quality: 1,
-      selectionLimit: 0,
-    });
-    if (result.assets) {
-      setForm((prev) => ({
-        ...prev,
-        photos: [...prev.photos, ...result.assets.map((asset) => asset.uri)],
-      }));
-    }
-  };
-
-  // Add error handling for camera
-  const handleCameraError = (error) => {
-    Alert.alert(
-      "Camera Error",
-      "An error occurred while accessing the camera",
-      [{ text: "OK" }]
-    );
-    setCameraVisible(false);
-  };
-
   return (
     <View style={baseScreenStyles.container}>
       <View style={FormFieldStyles.innerContainer}>
@@ -151,25 +167,19 @@ function GemRegister1Main() {
             style={styles.buttonContainer}
             onPress={handleCameraPress}
           >
-            <Icon name="camera-alt" size={60} color="#000" />
+            {form.photos.length > 0 ? (
+              <Image
+                source={{ uri: form.photos[0] }}
+                style={styles.selectedImage}
+              />
+            ) : (
+              <Icon name="camera-alt" size={60} color="#000" />
+            )}
           </TouchableOpacity>
           <Text style={styles.addPhotoButtonText}>AI auto filler</Text>
           <Text style={baseScreenStyles.helperText}>
             Below details can be filled with image of the gem or by mannually
           </Text>
-
-          {/* Display selected photos */}
-          {form.photos.length > 0 && (
-            <View style={styles.photoGrid}>
-              {form.photos.map((photo, index) => (
-                <Image
-                  key={index}
-                  source={{ uri: photo }}
-                  style={styles.thumbnail}
-                />
-              ))}
-            </View>
-          )}
         </View>
         <TextInput
           style={FormFieldStyles.input}
@@ -182,7 +192,7 @@ function GemRegister1Main() {
           value={form.gemShape}
           items={shapeItems}
           setOpen={setOpenShape}
-          setValue={(value) => handleInputChange("gemShape", value())}
+          setValue={(callback) => handleInputChange("gemShape", callback())}
           setItems={setShapeItems}
           placeholder="Select Gem Shape *"
           style={FormFieldStyles.dropdown}
@@ -191,6 +201,9 @@ function GemRegister1Main() {
           listItemLabelStyle={FormFieldStyles.listItemLabel}
           placeholderStyle={FormFieldStyles.placeholder}
           textStyle={FormFieldStyles.dropdownText}
+          theme="LIGHT"
+          showArrowIcon={true}
+          showTickIcon={false} // Add this line
         />
         <TextInput
           style={[FormFieldStyles.input, styles.descriptionInput]}
@@ -225,14 +238,12 @@ function GemRegister1Main() {
 }
 
 const styles = StyleSheet.create({
-
   finalizeButton: {
     backgroundColor: "#170969",
     padding: 10,
     borderRadius: 5,
   },
-  
-  
+
   buttonContainer: {
     alignItems: "center",
     justifyContent: "center",
@@ -240,6 +251,9 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     padding: 3,
     backgroundColor: "#E8F0FE",
+    width: 120,
+    height: 120,
+    overflow: "hidden",
   },
   buttonContent: {
     marginBottom: 80,
@@ -269,10 +283,15 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginBottom: 5,
   },
- 
+
   descriptionInput: {
     height: 100,
     textAlignVertical: "top",
     paddingTop: 13,
+  },
+  selectedImage: {
+    width: "100%",
+    height: "100%",
+    borderRadius: 10,
   },
 });

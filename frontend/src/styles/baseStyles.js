@@ -24,5 +24,13 @@ export const baseScreenStyles = StyleSheet.create({
     left: 30, // Distance from left
     right: 30, // Distance from right
   },
+  helperText: {
+    color: "grey",
+    fontSize: 15,
+    marginTop: 5,
+    textAlign: "center",
+    fontStyle: "italic",
+    fontWeight: "bold",
+  },
 });
 

@@ -154,7 +154,7 @@ function GemRegister1Main() {
             <Icon name="camera-alt" size={60} color="#000" />
           </TouchableOpacity>
           <Text style={styles.addPhotoButtonText}>AI auto filler</Text>
-          <Text style={styles.helperText}>
+          <Text style={baseScreenStyles.helperText}>
             Below details can be filled with image of the gem or by mannually
           </Text>
 

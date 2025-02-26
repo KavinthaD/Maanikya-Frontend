@@ -172,12 +172,7 @@ function GemRegister2Main() {
           keyboardType="decimal-pad"
         />
 
-        <TextInput
-          style={FormFieldStyles.input}
-          placeholder="Shape"
-          value={form.shape}
-          onChangeText={(value) => handleInputChange("shape", value)}
-        />
+        
 
         <DropDownPicker
           open={open}

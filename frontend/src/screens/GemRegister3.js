@@ -2,76 +2,64 @@
 
 import React, { useEffect, useState, useRef } from "react";
 import {
+  Button,
   View,
   Text,
   StyleSheet,
   TouchableOpacity,
   Alert,
   Image,
+  PermissionsAndroid,
 } from "react-native";
-import * as MediaLibrary from 'expo-media-library';
-import * as FileSystem from 'expo-file-system';
+import * as MediaLibrary from "expo-media-library";
+import * as FileSystem from "expo-file-system";
 import { baseScreenStyles } from "../styles/baseStyles";
 import QRCode from "react-native-qrcode-svg";
 import { useRoute } from "@react-navigation/native";
+import ViewShot from "react-native-view-shot"; // Add this import
 
 export default function Gem_register_3() {
   const route = useRoute();
   const { gemId, createdAt } = route.params;
   const [gemData] = useState(null);
-  const qrRef = useRef();
+  const qrContainerRef = useRef(); // Change qrRef to qrContainerRef
+
+  const requestStoragePermission = async () => {
+    try {
+      const granted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+        {
+          title: 'Cool Photo App Camera Permission',
+          message:
+            'Cool Photo App needs access to your camera ' +
+            'so you can take awesome pictures.',
+          buttonNeutral: 'Ask Me Later',
+          buttonNegative: 'Cancel',
+          buttonPositive: 'OK',
+        },
+      );
+      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+        console.log('You can use the camera');
+      } else {
+        console.log('Camera permission denied');
+      }
+    } catch (err) {
+      console.warn(err);
+    }
+  };
 
   const requestPermissions = async () => {
     const { status } = await MediaLibrary.requestPermissionsAsync();
-    if (status !== 'granted') {
-      alert('Sorry, we need media library permissions to make this work!');
+    if (status !== "granted") {
+      alert("Sorry, we need media library permissions to make this work!");
       return false;
     }
     return true;
   };
 
-  const fetchImageUriFromDB = async () => {
-    // Replace with your database fetching logic
-    const imageUri = await getImageUriFromDatabase();
-    return imageUri;
-  };
-
-
-  const downloadImage = async (uri) => {
-    try {
-      const fileUri = FileSystem.documentDirectory + uri.split('/').pop();
-      const { uri: localUri } = await FileSystem.downloadAsync(uri, fileUri);
-      return localUri;
-    } catch (error) {
-      console.error('Error downloading image:', error);
-      return null;
-    }
-  };
-
-  const saveImageToMediaLibrary = async (localUri) => {
-    try {
-      const asset = await MediaLibrary.createAssetAsync(localUri);
-      await MediaLibrary.createAlbumAsync('MyAppImages', asset, false);
-      console.log('Image saved to media library!');
-    } catch (error) {
-      console.error('Error saving image to media library:', error);
-    }
-  };
 
   const handleSaveToDevice = async () => {
-    const hasPermission = await requestPermissions();
-  if (!hasPermission) return;
-
-  const imageUri = await fetchImageUriFromDB();
-  if (!imageUri) {
-    console.error('No image URI found in the database.');
-    return;
-  }
-
-  const localUri = await downloadImage(imageUri);
-  if (localUri) {
-    await saveImageToMediaLibrary(localUri);
-  }
+    
   };
 
   const formatDate = (dateString) => {
@@ -83,27 +71,40 @@ export default function Gem_register_3() {
   return (
     <View style={[baseScreenStyles.container, styles.container]}>
       <View style={styles.innerContainer}>
-        <View style={styles.qrContainer}>
-          <View style={styles.qrPlaceholder}>
-            {gemData ? (
-              <QRCode
-                value={JSON.stringify({
-                  gemId: gemData.gemId,
-                  ownerName: gemData.ownerName,
-                  gemType: gemData.gemType,
-                  registeredDate: formatDate(gemData.createdAt),
-                })}
-                size={230}
-                ref={qrRef}
-              />
-            ) : (
-              <Image
-                source={require("../assets/qr_test.png")}
-                style={styles.testQRImage}
-              />
-            )}
-          </View>
+        <View>
+          <Text style={baseScreenStyles.helperText}>
+            Gem Registered Successfully! Qr code is generated below
+          </Text>
         </View>
+        {/* Wrap QR container with ViewShot */}
+        <ViewShot
+          ref={qrContainerRef}
+          options={{
+            format: "png",
+            quality: 0.9,
+          }}
+        >
+          <View style={styles.qrContainer}>
+            <View style={styles.qrPlaceholder}>
+              {gemData ? (
+                <QRCode
+                  value={JSON.stringify({
+                    gemId: gemData.gemId,
+                    ownerName: gemData.ownerName,
+                    gemType: gemData.gemType,
+                    registeredDate: formatDate(gemData.createdAt),
+                  })}
+                  size={230}
+                />
+              ) : (
+                <Image
+                  source={require("../assets/qr_test.png")}
+                  style={styles.testQRImage}
+                />
+              )}
+            </View>
+          </View>
+        </ViewShot>
 
         <View style={styles.infoContainer}>
           <View style={styles.infoBox}>
@@ -121,7 +122,7 @@ export default function Gem_register_3() {
         </TouchableOpacity>
         <TouchableOpacity
           style={baseScreenStyles.blueButton}
-          onPress={handleSaveToDevice}
+          onPress={requestStoragePermission}
         >
           <Text style={baseScreenStyles.buttonText}>Save to device</Text>
         </TouchableOpacity>

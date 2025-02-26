@@ -1,45 +1,6 @@
 {
   "expo": {
     "name": "Maanikya",
-    "slug": "Maanikya",
-    "version": "1.0.0",
-    "orientation": "portrait",
-    "icon": "./src/assets/logo.png",
-    "userInterfaceStyle": "light",
-    "newArchEnabled": true,
-    "splash": {
-      "image": "./src/assets/logo.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
-    },
-    "platforms": ["ios", "android"],
-    "ios": {
-      "supportsTablet": true,
-      "infoPlist":{
-        "NSCameraUsageDescription": "We need access to your camera to take a photo.",
-        "NSPhotoLibraryUsageDescription": "We need access to your photo library to select a photo.",
-        "NSPhotoLibraryAddUsageDescription": "We need access to add photos to your library."
-      }
-    },
-    "web": {
-      "favicon": "./src/assets/logo-gem.png"
-    },
-    "plugins": [
-      [
-        "expo-media-library",
-        {
-          "photosPermission": "Allow $(PRODUCT_NAME) to access your photos.",
-          "savePhotosPermission": "Allow $(PRODUCT_NAME) to save photos.",
-          "isAccessMediaLocationEnabled": true
-        }
-      ]
-    ],
-    "android": {
-      "permissions": [
-        "WRITE_EXTERNAL_STORAGE",
-        "READ_EXTERNAL_STORAGE",
-        "MEDIA_LIBRARY_WRITE_ONLY"
-      ]
-    }
+    "slug": "Maanikya"
   }
 }

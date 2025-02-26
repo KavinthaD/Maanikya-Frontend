@@ -37,3 +37,6 @@ yarn-error.*
 
 # typescript
 *.tsbuildinfo
+
+# Config files
+src/config/api-local.js

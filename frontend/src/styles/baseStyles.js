@@ -18,7 +18,7 @@ export const baseScreenStyles = StyleSheet.create({
   blueButton: {
     backgroundColor: "#170969",
     padding: 15,
-    borderRadius: 8,
+    borderRadius: 10,
     position: "absolute", // Position absolutely
     bottom: -50, // Distance from bottom
     left: 30, // Distance from left

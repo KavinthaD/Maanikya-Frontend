@@ -19,6 +19,7 @@ import Header_2 from "../components/Header_2";
 import Gem_register_3 from "./GemRegister3"; // Import GemRegister3
 import axios from "axios"; // Import axios
 import { FormFieldStyles } from "../styles/FormFields";
+import { API_URL, ENDPOINTS } from "../config/api-local"; //change api path here
 
 const Stack = createNativeStackNavigator();
 
@@ -39,7 +40,7 @@ export default function GemRegister2({ route }) {
         name="GemRegister3"
         component={Gem_register_3}
         options={{
-          header: () => <Header_2 title="Finalize" />,
+          header: () => <Header_2 title="QR code" />,
         }}
       />
     </Stack.Navigator>
@@ -92,13 +93,17 @@ function GemRegister2Main() {
 
     try {
       const response = await axios.post(
-        "http://192.168.1.2:5000/api/gems/register", // localhost url here
+        `${API_URL}${ENDPOINTS.REGISTER_GEM}`, //api url is from config file
         combinedForm
       );
 
       if (response.status === 201) {
-        Alert.alert("Success", "Gem registered successfully");
-        navigation.navigate("GemRegister3", { formData: combinedForm }); // Navigate to GemRegister3
+        console.log("Gem registered successfully:", response.data);
+// Pass the gemId and createdAt from the response to GemRegister3
+        navigation.navigate("GemRegister3", { 
+          gemId: response.data.gem.gemId,
+          createdAt: response.data.gem.createdAt
+        });
       } else {
         Alert.alert("Error", "Failed to register gem");
       }
@@ -145,16 +150,26 @@ function GemRegister2Main() {
           style={FormFieldStyles.input}
           placeholder="Dimensions"
           value={form.dimensions}
-          onChangeText={(value) => handleInputChange("dimensions", value)}
-          keyboardType="numeric"
+          onChangeText={(value) => {
+            const numericValue = value
+              .replace(/[^0-9.]/g, "")
+              .replace(/(\..*)\./g, "$1");
+            handleInputChange("dimensions", numericValue);
+          }}
+          keyboardType="decimal-pad"
         />
 
         <TextInput
           style={FormFieldStyles.input}
           placeholder="Weight (ct)"
           value={form.weight}
-          onChangeText={(value) => handleInputChange("weight", value)}
-          keyboardType="numeric"
+          onChangeText={(value) => {
+            const numericValue = value
+              .replace(/[^0-9.]/g, "")
+              .replace(/(\..*)\./g, "$1");
+            handleInputChange("weight", numericValue);
+          }}
+          keyboardType="decimal-pad"
         />
 
         <TextInput
@@ -172,20 +187,25 @@ function GemRegister2Main() {
           setValue={(value) => handleInputChange("gemType", value())}
           setItems={setItems}
           placeholder="Select Gem Type"
-         style={FormFieldStyles.dropdown}
-                   dropDownContainerStyle={FormFieldStyles.dropdownContainer}
-                   listItemContainerStyle={FormFieldStyles.listItemContainer}
-                   listItemLabelStyle={FormFieldStyles.listItemLabel}
-                   placeholderStyle={FormFieldStyles.placeholder}
-                   textStyle={FormFieldStyles.dropdownText}
+          style={FormFieldStyles.dropdown}
+          dropDownContainerStyle={FormFieldStyles.dropdownContainer}
+          listItemContainerStyle={FormFieldStyles.listItemContainer}
+          listItemLabelStyle={FormFieldStyles.listItemLabel}
+          placeholderStyle={FormFieldStyles.placeholder}
+          textStyle={FormFieldStyles.dropdownText}
         />
 
         <TextInput
           style={FormFieldStyles.input}
           placeholder="Purchase price *"
           value={form.purchasePrice}
-          onChangeText={(value) => handleInputChange("purchasePrice", value)}
-          keyboardType="numeric"
+          onChangeText={(value) => {
+            const numericValue = value
+              .replace(/[^0-9.]/g, "")
+              .replace(/(\..*)\./g, "$1");
+            handleInputChange("purchasePrice", numericValue);
+          }}
+          keyboardType="decimal-pad"
         />
 
         <TextInput
@@ -196,25 +216,23 @@ function GemRegister2Main() {
           multiline
         />
 
-        
-          <TouchableOpacity style={styles.backButton} onPress={handleBack}>
-            <Text style={baseScreenStyles.buttonText}>Back</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[
-              baseScreenStyles.blueButton,
-              {
-                opacity:
-                  form.ownerName && form.contactNumber && form.purchasePrice
-                    ? 1
-                    : 0.5,
-              },
-            ]}
-            onPress={handleFinalize}
-          >
-            <Text style={baseScreenStyles.buttonText}>Finalize</Text>
-          </TouchableOpacity>
-        
+        <TouchableOpacity style={styles.backButton} onPress={handleBack}>
+          <Text style={baseScreenStyles.buttonText}>Back</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[
+            baseScreenStyles.blueButton,
+            {
+              opacity:
+                form.ownerName && form.contactNumber && form.purchasePrice
+                  ? 1
+                  : 0.5,
+            },
+          ]}
+          onPress={handleFinalize}
+        >
+          <Text style={baseScreenStyles.buttonText}>Finalize</Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -224,7 +242,7 @@ const styles = StyleSheet.create({
   innerContainer: {
     padding: 20,
   },
-  
+
   buttonContainer: {
     flexDirection: "column",
     justifyContent: "space-between",
@@ -235,7 +253,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#02457A",
     width: "95%",
     padding: 15,
-    borderRadius: 8,
+    borderRadius: 10,
     alignSelf: "center",
   },
 });

@@ -6,6 +6,7 @@ import QRCode from 'react-native-qrcode-svg'; // Import QR library
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons, FontAwesome5 } from '@expo/vector-icons'; // Import icons
 import { baseScreenStyles } from "../styles/baseStyles";
+import Header_2 from '../components/Header_2';
 
 const MyGems = ({ route, navigation }) => {
   const [popQRCode, setPopQRCode] = useState(false);
@@ -69,7 +70,7 @@ const MyGems = ({ route, navigation }) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* Header */}
+      <Header_2 title="My Gems"/>
       <View style={styles.topic}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <Ionicons name="chevron-back" size={24} color="white" />

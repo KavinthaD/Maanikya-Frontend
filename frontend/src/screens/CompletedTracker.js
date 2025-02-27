@@ -10,6 +10,7 @@ import {
   Image,
 } from "react-native";
 import { baseScreenStyles } from "../styles/baseStyles";
+import Header_2 from "../components/Header_2";
 
 const CompletedTracker = [
   {
@@ -76,9 +77,8 @@ const NotificationScreen = () => {
 
   return (
     <View style={[baseScreenStyles.container,styles.container]}>
-      <View style={styles.header}>
-        <Text style={styles.headerText}>Completed</Text>
-      </View>
+      <Header_2 title="Completed "/>
+      <View style={styles.container}>
       <TextInput
         style={styles.searchBar}
         placeholder="Search Order ID"
@@ -90,6 +90,7 @@ const NotificationScreen = () => {
         renderItem={({ item }) => <NotificationItem item={item} />}
         keyExtractor={(item) => item.id}
       />
+    </View>
     </View>
   );
 };

@@ -14,6 +14,7 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { baseScreenStyles } from "../styles/baseStyles";
+import Header_1 from "../components/Header_1";
 
 const OrderRequestModal = ({ visible, onClose, selectedPerson }) => {
   const [additionalMessage, setAdditionalMessage] = useState("");
@@ -165,6 +166,7 @@ const FavoritesScreen = () => {
 
   return (
     <SafeAreaView style={baseScreenStyles.container}>
+      <Header_1 title="Favourites"/>
       <View style={styles.searchContainer}>
         <Ionicons
           name="search"

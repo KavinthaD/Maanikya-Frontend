@@ -32,9 +32,11 @@ const HomeScreen = () => {
       title: "Financial\nRecords",
       screen: "OwnerFinancialRecords"
     },
-    { 
-      image: require('../assets/menu-icons/Tracker.png'),
-      title: 'Tracker' 
+    {
+      image: require("../assets/menu-icons/addGem.png"),
+      title: "Tracker",
+      screen: "OrderScreen"
+      
     },
     {
       image: require("../assets/menu-icons/connect.png"),

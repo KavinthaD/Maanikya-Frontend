@@ -2,7 +2,6 @@
 
 import React from "react";
 import { View, Text, FlatList, Image, StyleSheet } from "react-native";
-import { baseScreenStyles } from "../styles/baseStyles";
 
 const alerts = [
   {
@@ -10,7 +9,7 @@ const alerts = [
     name: "Mehara",
     action: "just finished the burning process",
     gem: "BS001 gem",
-    image: "https://via.placeholder.com/50", // Replace with actual image URL
+    image: "../assets/seller.png",
   },
 
   {
@@ -18,7 +17,7 @@ const alerts = [
     name: "Tilmi",
     action: "just finished the cutting process",
     gem: "BS002 gem lot",
-    image: "https://via.placeholder.com/50", // Replace with actual image URL
+    image: "../assets/seller.png",
   },
 
   {
@@ -26,7 +25,7 @@ const alerts = [
     name: "Thulani",
     action: "was given your EM002 gem lot one month ago.",
     gem: "",
-    image: "https://via.placeholder.com/50", // Replace with actual image URL
+    image: "../assets/seller.png",
   },
 
   {
@@ -34,7 +33,7 @@ const alerts = [
     name: "Kavintha",
     action: "is interested in your",
     gem: "YS101 gem",
-    image: "https://via.placeholder.com/50", // Replace with actual image URL
+    image: "../assets/seller.png",
   },
 
   {
@@ -42,7 +41,7 @@ const alerts = [
     name: "Isum",
     action: "just sent you an update on your",
     gem: "ER2004 gem lot",
-    image: "https://via.placeholder.com/50", // Replace with actual image URL
+    image: "../assets/seller.png",
   },
 
   {
@@ -50,7 +49,7 @@ const alerts = [
     name: "Sansidu",
     action: "just finished the cutting and burning process of your",
     gem: "ED304 gem lot",
-    image: "https://via.placeholder.com/50", // Replace with actual image URL
+    image: "../assets/seller.png",
   },
 
   {
@@ -58,7 +57,7 @@ const alerts = [
     name: "Dulith",
     action: "just sent you an update on your",
     gem: "JRK185 gem lot",
-    image: "https://via.placeholder.com/50", // Replace with actual image URL
+    image: "../assets/seller.png",
   },
 ];
 
@@ -76,7 +75,7 @@ const AlertsScreen = () => {
   );
 
   return (
-    <View style={baseScreenStyles.container}>
+    <View style={styles.container}>
       <FlatList
         data={alerts}
         keyExtractor={(item) => item.id}
@@ -88,7 +87,10 @@ const AlertsScreen = () => {
 };
 
 const styles = StyleSheet.create({
-  
+  container: {
+    flex: 1,
+    backgroundColor: "#f0f4f8",
+  },
   header: {
     fontSize: 20,
     fontWeight: "bold",

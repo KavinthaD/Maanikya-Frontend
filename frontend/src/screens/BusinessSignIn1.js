@@ -3,9 +3,11 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image,KeyboardAvoidingView, Platform } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
+import { useNavigation } from '@react-navigation/native';
 import { baseScreenStyles } from "../styles/baseStyles";
 
 const BusinessSignIn1 = () => {
+  const navigation = useNavigation();
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
@@ -13,7 +15,7 @@ const BusinessSignIn1 = () => {
   const [role, setRole] = useState('');
 
   return (
-    
+    <View style={[baseScreenStyles.container]}>
     <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.container}>
       <Image source={require('../assets/logo.png')} style={styles.logo} />
       <Text style={styles.subtitle}>Sign Up</Text>
@@ -66,10 +68,11 @@ const BusinessSignIn1 = () => {
           </Picker>
       </View>
       <TouchableOpacity style={styles.continueButton} 
-      onPress={() => navigation.navigate("SignUpScreen")}>
+      onPress={() => navigation.navigate('SignUpScreen')}>
         <Text style={styles.continueButtonText}>Continue</Text>
       </TouchableOpacity>
     </KeyboardAvoidingView>
+    </View>
   );
 };
 

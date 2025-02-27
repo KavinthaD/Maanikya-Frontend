@@ -1,4 +1,4 @@
-package com.maanikya
+package com.maanikya.app
 
 import android.os.Build
 import android.os.Bundle

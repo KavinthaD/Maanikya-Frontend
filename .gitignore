@@ -51,3 +51,14 @@ coverage/
 
 # Optional stylelint cache
 .stylelintcache
+
+# Android build files
+frontend/android/app/build/
+frontend/android/build/
+frontend/android/.gradle/
+frontend/android/.idea/
+frontend/android/local.properties
+frontend/android/gradlew
+frontend/android/gradle-wrapper.properties
+frontend/android/settings.gradle
+frontend/android/app/build.gradle

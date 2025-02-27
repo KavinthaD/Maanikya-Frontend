@@ -1,3 +1,27 @@
+#Base expo commands
+
 npm install (install packages)
 npm update (update pacakges)
-npx expo start (start react)
+npx expo start (start react) (expo go)
+
+#Clean run commands
+
+npm cache clean --force
+rm -rf node_modules package-lock.json
+npm install
+npx expo start --clear
+npx react-native doctor
+
+#expo prebuild 
+
+npx react-native run android
+
+# Basic prebuild
+npx expo prebuild
+
+# Clean prebuild (removes existing native folders)
+npx expo prebuild --clean
+
+# Platform specific prebuild
+npx expo prebuild --platform android
+npx expo prebuild --platform ios

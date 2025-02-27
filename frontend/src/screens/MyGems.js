@@ -2,11 +2,9 @@
 
 import React, { useState } from 'react';
 import { View, Text, Image, TouchableOpacity, Modal, Button, StyleSheet } from 'react-native';
-import QRCode from 'react-native-qrcode-svg'; // Import QR library
+import QRCode from 'react-native-qrcode-svg'; 
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Ionicons, FontAwesome5 } from '@expo/vector-icons'; // Import icons
-import { baseScreenStyles } from "../styles/baseStyles";
-import Header_2 from '../components/Header_2';
+import { Ionicons, FontAwesome5 } from '@expo/vector-icons'; 
 
 const MyGems = ({ route, navigation }) => {
   const [popQRCode, setPopQRCode] = useState(false);
@@ -70,13 +68,6 @@ const MyGems = ({ route, navigation }) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Header_2 title="My Gems"/>
-      <View style={styles.topic}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Ionicons name="chevron-back" size={24} color="white" />
-        </TouchableOpacity>
-        <Text style={styles.topicName}>My Gems</Text>
-      </View>
 
       <View style={styles.imageContainer}>
         <Image
@@ -133,17 +124,9 @@ const MyGems = ({ route, navigation }) => {
 
 // Styles
 const styles = StyleSheet.create({
-  
-  topic: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#082f4f',
-    padding: 15,
-  },
-  topicName: {
-    color: 'white',
-    fontSize: 18,
-    fontWeight: 'bold',
+  container: {
+    flex: 1,
+    backgroundColor: '#9CCDDB',
   },
   imageContainer: {
     alignItems: 'center',

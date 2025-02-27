@@ -9,9 +9,11 @@ import {
   StyleSheet,
   Image,
 } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 import { baseScreenStyles } from "../styles/baseStyles";
 
-const SignUpScreen = ({ navigation }) => {
+const SignUpScreen = () => {
+  const navigation = useNavigation(); 
   return (
     <View style={[baseScreenStyles.container]}>
     <View style={styles.container}>
@@ -28,7 +30,7 @@ const SignUpScreen = ({ navigation }) => {
         secureTextEntry={true}
       />
       <TouchableOpacity style={styles.button}
-      onPress={() => navigation.navigate('HomeScreen')} >
+      onPress={() => navigation.navigate("HomeScreen")} >
         <Text style={styles.buttonText}>Create account</Text>
       </TouchableOpacity>
     </View>

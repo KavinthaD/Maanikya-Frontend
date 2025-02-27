@@ -111,7 +111,7 @@ const styles = StyleSheet.create({
   input: {
     width: '100%',
     height: 50,
-    borderColor: 'gray',
+    borderColor: "#E0E0E0",
     borderWidth: 1,
     borderRadius: 12,
     paddingHorizontal: 10,
@@ -124,7 +124,7 @@ const styles = StyleSheet.create({
   pickerContainer: {
     width: '100%',
     height: 50,
-    borderColor: 'gray',
+    borderColor: '#E0E0E0',
     borderWidth: 1,
     borderRadius: 12,
     marginBottom: 40,

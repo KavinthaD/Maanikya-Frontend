@@ -79,7 +79,6 @@ const App = () => {
         <Text style={styles.viewGemsText}>View gems</Text>
       </TouchableOpacity>
     </View>
-    </View>
   );
 
   return (

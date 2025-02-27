@@ -41,12 +41,13 @@ import BS_NavBar from "./src/components/BS_NavBar";
 // import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import FavoritesScreen from "./src/screens/Favorites";
+import HomeScreen from "./src/screens/HomeScreen";
 
 const Stack = createNativeStackNavigator();
 const App = () => {
   return (
     <View style={styles.container}>
-      <FavoritesScreen/>
+      <HomeScreen/>
     </View>
   );
 };

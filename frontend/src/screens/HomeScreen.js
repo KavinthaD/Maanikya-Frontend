@@ -2,6 +2,8 @@
 import React from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { View, Text, Image, TouchableOpacity, SafeAreaView, StyleSheet, StatusBar } from 'react-native';
+import { baseScreenStyles } from "../styles/baseStyles";
+import Header_1 from '../components/Header_1';
 
 const MenuItem = ({ image, title, onPress }) => (
   <TouchableOpacity style={styles.menuItem} onPress={onPress}>
@@ -59,7 +61,7 @@ const HomeScreen = () => {
   };
 
   return (
-    <SafeAreaView style={[baseScreenStyles.container,styles.container]}>
+    <View style={[baseScreenStyles.container,styles.container]}>
       <Header_1 title="Home"/>
       <View style={styles.content}>
         <Text style={styles.greeting}>Hello Rathnasiri,</Text>
@@ -74,7 +76,7 @@ const HomeScreen = () => {
           ))}
         </View>
       </View>
-    </SafeAreaView>
+    </View>
   );
 };
 

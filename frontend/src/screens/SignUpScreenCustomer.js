@@ -6,22 +6,20 @@ import { baseScreenStyles } from "../styles/baseStyles";
 
 const SignUpScreenCustomer = ({ navigation }) => {
   return (
-    <View style={[baseScreenStyles.container,styles.container]}>
-      <Image source={require('../assets/logo-gem.png')} style={styles.logo} />
-      <Text style={styles.title}>Maanikya</Text>
-      <Text style={styles.subtitle}>Create your customer account</Text>
-      <Text style={styles.instructions}>Enter your email to sign up for this app</Text>
+    <View style={styles.container}>
+      <Image source={require('../assets/logo.png')} style={styles.logo} />
+      <Text style={styles.subtitle}>Sign Up</Text>
+      <Text style={styles.instructions}>Create Your Customer Account</Text>
       <View style={styles.row}>
-        <TextInput style={[styles.input, styles.halfInput]} placeholder="First Name" />
-        <TextInput style={[styles.input, styles.halfInput]} placeholder="Last Name" />
+        <TextInput style={[styles.input, styles.halfInput]} placeholder="First Name"placeholderTextColor="#888" />
+        <TextInput style={[styles.input, styles.halfInput]} placeholder="Last Name"placeholderTextColor="#888" />
       </View>
-      <TextInput style={styles.input} placeholder="email@domain.com" keyboardType="email-address" />
-      <TextInput style={styles.input} placeholder="Phone number" keyboardType="phone-pad" />
-      <TextInput style={styles.input} placeholder="User Name" />
-      <TextInput style={styles.input} placeholder="Password" secureTextEntry />
-      <TextInput style={styles.input} placeholder="Re-enter password" secureTextEntry />
-      <TouchableOpacity style={styles.button}
-      onPress={() => navigation.navigate('CustomHomePage')} >
+      <TextInput style={styles.input} placeholder="email@domain.com" keyboardType="email-address"placeholderTextColor="#888" />
+      <TextInput style={styles.input} placeholder="Phone number" keyboardType="phone-pad"placeholderTextColor="#888" />
+      <TextInput style={styles.input} placeholder="User Name"placeholderTextColor="#888" />
+      <TextInput style={styles.input} placeholder="Password"placeholderTextColor="#888" secureTextEntry />
+      <TextInput style={styles.input} placeholder="Re-enter password"placeholderTextColor="#888" secureTextEntry />
+      <TouchableOpacity style={styles.button}>
         <Text style={styles.buttonText}>Create account</Text>
       </TouchableOpacity>
     </View>
@@ -35,8 +33,8 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   logo: {
-    width: 50,
-    height: 50,
+    width: 150,
+    height: 80,
     marginBottom: 20,
   },
   title: {
@@ -45,13 +43,15 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   subtitle: {
-    fontSize: 18,
+    fontSize: 30,
     marginBottom: 5,
+    fontWeight:'bold'
   },
   instructions: {
     fontSize: 14,
     color: '#555',
     marginBottom: 20,
+    fontWeight:'bold'
   },
   row: {
     flexDirection: 'row',
@@ -60,14 +60,14 @@ const styles = StyleSheet.create({
   },
   input: {
     width: '100%',
-    height: 40,
-    borderColor: '#ccc',
+    height: 50,
+    borderColor: 'gray',
     borderWidth: 1,
-    borderRadius: 5,
+    borderRadius: 12,
     paddingHorizontal: 10,
     marginBottom: 10,
-    backgroundColor: 'white', 
-    opacity: 0.7, // Adjust opacity 
+    backgroundColor: 'rgba(255, 255, 255, 0.8)', 
+    opacity: 0.8, 
   },
   halfInput: {
     width: '48%',
@@ -75,11 +75,10 @@ const styles = StyleSheet.create({
   button: {
     width: '100%',
     height: 40,
-    backgroundColor: '#1a237e',
+    backgroundColor: '#000080',
     borderRadius: 5,
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: 20,
   },
   buttonText: {
     color: '#fff',

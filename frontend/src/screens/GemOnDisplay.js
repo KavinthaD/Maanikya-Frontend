@@ -34,24 +34,25 @@ const GemOnDisplay = ({}) => {
       alert("Please enter buyer's name and gem price.");
     }
   };
+  const itemSeperator = ()=>(
+    <View style={{height: 1, backgroundColor: "e0e0e0", marginVertical: 5}} />
+  );
 
   return (
-    <SafeAreaView style={[baseScreenStyles.container,styles.container]}>
-      {/* Title */}
-      <View style={styles.title}>
-         <TouchableOpacity onPress={() => navigation.goBack()}>
-            <Ionicons name="chevron-back" size={24} color="white" />
-          </TouchableOpacity>
-        <Text style={styles.titleName}>Gem On Display</Text>
-        
-      </View>
+    <SafeAreaView style={styles.container}>
+      
 
-
-     
-
-      {/* On Display Gems */}
-      <Text style={styles.subtopic}>On Display</Text>
-      <FlatList
+      <View style = {styles.sectionContainer}>
+        <View style = {styles.sectionHeader}>
+          <View style={styles.headerLine} />
+          <Text style={styles.subtopic}>On Display</Text>
+          <View style={styles.headerLine} />
+        </View>
+        <View style={styles.tableHeader}>
+          <Text style={styles.columnHeader}>Code</Text>
+          <View style={{ flex: 1 }} />  {/* Spacer */}
+        </View>
+        <FlatList
         data={onDisplay}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
@@ -63,21 +64,39 @@ const GemOnDisplay = ({}) => {
             </TouchableOpacity>
           </View>
         )}
+        ItemSeparatorComponent={ItemSeparator}
       />
+      </View>
 
-      {/* Sold Gems */}
-      <Text style={styles.subtopic}>Sold out</Text>
-      <FlatList
-        data={sold}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => (
-          <View style={styles.soldGems}>
-            <Image source={item.image} style={styles.gemImg} />
-            <Text style={styles.soldText}>{item.id} - {item.buyer}</Text>
-            <Text style={styles.gemPrice}>LKR {item.price}</Text>
+      <View style={styles.sectionContainerSold}>
+        <View style={styles.sectionHeader}>
+          <View style={styles.headerLine} />
+            <Text style={styles.sectionTitle}>Sold out</Text>
+          <View style={styles.headerLine} /> 
+          <View style={styles.tableHeader}>
+            <Text style={styles.columnHeader}>Code</Text>
+            <Text style={styles.columnHeader}>To</Text>
+            <Text style={styles.columnHeader}>Price (LKR)</Text>
           </View>
-        )}
-      />
+          <FlatList
+            data={sold}
+            keyExtractor={(item) => item.id}
+            renderItem={({ item }) => (
+              <View style={styles.soldGems}>
+                <Image source={item.image} style={styles.gemImg} />
+                <Text style={styles.soldText}>{item.id} - {item.buyer}</Text>
+                <Text style={styles.gemPrice}>LKR {item.price}</Text>
+              </View>
+            )}
+            ItemSeparatorComponent={ItemSeparator}
+          />
+        </View>
+      </View>  
+      
+      
+
+      
+      
       <Modal animationType="slide" transparent={true} visible={modalVisible}>
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
@@ -87,6 +106,7 @@ const GemOnDisplay = ({}) => {
               placeholder="Enter Buyer's Name"
               value={buyerName}
               onChangeText={setBuyerName}
+              
             />
             <TextInput
               style={styles.input}
@@ -94,6 +114,7 @@ const GemOnDisplay = ({}) => {
               keyboardType="numeric"
               value={price}
               onChangeText={setPrice}
+              placeholderTextColor="#888"
             />
             <View style={styles.modalBtn}>
               <TouchableOpacity onPress={() => setModalVisible(false)} style={styles.cancelBtn}>
@@ -113,27 +134,62 @@ const GemOnDisplay = ({}) => {
 
 const styles = StyleSheet.create({
   container: {
-    
+    flex: 1,
+    backgroundColor: "#D9D9D9",
+  },
+
+  sectionContainer: {
+    marginHorizontal: 16,
+    marginTop: 20,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 12,
     padding: 16,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+    marginTop: 50,
   },
-  title: {
-    flexDirection: "row",
-    alignItems: "center",
-    padding: 15,
-    backgroundColor: "#0a3a5d",
+  sectionContainerSold: {
+    marginHorizontal: 16,
+    marginTop: 20,
+    backgroundColor: '#505050',
+    borderRadius: 12,
+    padding: 16,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
-  titleName: {
-    color: "white",
-    fontSize: 18,
-    fontWeight: "bold",
-    alignItems: "center",
+  sectionHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 15,
   },
-  
+  headerLine: {
+    flex: 1,
+    height: 1,
+    backgroundColor: '#ccc',
+  },
   subtopic: {
-    fontSize: 16,
-    fontWeight: "bold",
-    color: "#333",
-    marginTop: 10,
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#333',
+    marginHorizontal: 10,
+  },
+  tableHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingHorizontal: 5,
+    marginBottom: 8,
+  },
+  columnHeader: {
+    fontSize: 14,
+    fontWeight: '500',
+    color: '#777',
+    width: 100,
   },
   gemDisplay: {
     flexDirection: "row",
@@ -147,22 +203,29 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
+    marginRight: 10,
   },
   gemId: {
+    fontSize: 16,
+    color: '#333',
     flex: 1,
-    marginLeft: 10,
-    fontSize: 14,
-    color: "black",
+  },
+  soldGems:{
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 8,
+    paddingHorizontal: 5,
   },
   soldBtn: {
     backgroundColor: "#003366",
-    paddingVertical: 5,
-    paddingHorizontal: 10,
-    borderRadius: 10,
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    borderRadius: 8,
   },
   soldBtnText: {
     color: "white",
-    fontSize: 12,
+    fontSize: 14,
+    fontWeight: '500',
   },
   soldGems: {
     flexDirection: "row",
@@ -173,10 +236,9 @@ const styles = StyleSheet.create({
     marginVertical: 5,
   },
   soldText: {
-    flex: 1,
-    marginLeft: 10,
-    fontSize: 14,
-    color: "black"
+    fontSize: 16,
+    color: '#333',
+    width: 100,
   },
   gemPrice: {
     fontSize: 14,
@@ -189,25 +251,28 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0,0,0,0.5)",
   },
   modalContent: {
-    width: 300,
-    backgroundColor: "white",
-    padding: 20,
-    borderRadius: 10,
-    alignItems: "center",
+    backgroundColor: 'white',
+    borderRadius: 12,
+    padding: 24,
+    width: '80%',
+    maxWidth: 400,
   },
   modalTitle: {
-    fontSize: 18,
-    fontWeight: "bold",
-    marginBottom: 10,
+    fontSize: 20,
+    fontWeight: '600',
+    color: '#333',
+    marginBottom: 15,
+    textAlign: 'center',
   },
   input: {
-    width: "100%",
-    height: 40,
     borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 5,
-    paddingHorizontal: 10,
-    marginVertical: 5,
+    borderColor: '#ccc',
+    borderRadius: 8,
+    paddingVertical: 10,
+    paddingHorizontal: 12,
+    fontSize: 16,
+    color: '#333',
+    marginBottom: 15,
   },
   modalBtn: {
     flexDirection: "row",
@@ -216,24 +281,22 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   cancelBtn: {
-    backgroundColor: "gray",
-    padding: 10,
-    borderRadius: 5,
-    flex: 1,
-    marginRight: 5,
-    alignItems: "center",
+    backgroundColor: '#6c757d',
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    borderRadius: 8,
   },
   confirmBtn: {
-    backgroundColor: "#007BFF",
-    padding: 10,
-    borderRadius: 5,
-    flex: 1,
-    marginLeft: 5,
-    alignItems: "center",
+    backgroundColor: '#28a745',
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    borderRadius: 8,
   },
   btnText: {
-    color: "white",
-    fontWeight: "bold",
+    color: 'white',
+    fontSize: 16,
+    fontWeight: '500',
+    textAlign: 'center',
   },
 });
 

@@ -37,7 +37,7 @@ const PurposeSelectionPage = ({ navigation }) => {
             <Text style={styles.title}>I'm here to,</Text>
             <View style={styles.card}>
                 <TouchableOpacity style={styles.button}
-                onPress={() => navigation.navigate('Login2')} >
+                onPress={() => navigation.navigate('BusinessSignIn1')} >
                     <Text style= {styles.buttonText}>Manage my business</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style = {styles.button}
@@ -54,7 +54,7 @@ const PurposeSelectionPage = ({ navigation }) => {
 
                 <Text style={styles.loginText}>Already have an account?</Text>
                 <TouchableOpacity style={styles.loginButton}
-                onPress={() => navigation.navigate('Login1')} >
+                onPress={() => navigation.navigate('Login')} >
                     <Text style={styles.loginButtonText}>Log in</Text>
                 </TouchableOpacity>
             </View>

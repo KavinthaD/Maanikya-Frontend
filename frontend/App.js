@@ -5,10 +5,6 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import PurposeSelectionPage from "./src/screens/PurposeSelectionPage";
 import RegisterSelectionPage from "./src/screens/RegisterSelectionPage";
 import WelcomePage from "./src/screens/WelcomePage";
-import Login1 from "./src/screens/Login1";
-import Login2 from "./src/screens/Login2";
-import Login3 from "./src/screens/Login3";
-import SignUpScreen from "./src/screens/SignUpScreen";
 import HomeScreen from "./src/screens/HomeScreen";
 import SignUpScreenCustomer from "./src/screens/SignUpScreenCustomer";
 import CustomHomePage from "./src/screens/CustomHomePage";
@@ -20,6 +16,11 @@ import GemOnDisplay from "./src/screens/GemOnDisplay";
 import ProfileScreen from "./src/screens/ConnectedUsers";
 import FavoritesScreen from "./src/screens/Favorites";
 import OrderScreen from "./src/screens/Orders";
+import Login from "./src/screens/Login";
+import BusinessSignIn1 from "./src/screens/BusinessSignIn1";
+import SignUpScreen from "./src/screens/SignUpScreen";
+import MySellersScreen from "./src/screens/Customeraddseller";
+
 const Stack = createNativeStackNavigator();
 
 const App = () => {
@@ -41,29 +42,30 @@ const App = () => {
           component={RegisterSelectionPage}
           options={{ headerShown: false }}
         />
+    
         <Stack.Screen
-          name="Login1"
-          component={Login1}
+          name="Login"
+          component={Login}
           options={{ headerShown: false }}
         />
         <Stack.Screen
-          name="Login2"
-          component={Login2}
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen
-          name="Login3"
-          component={Login3}
+          name="BusinessSignIn1"
+          component={ BusinessSignIn1}
           options={{ headerShown: false }}
         />
         <Stack.Screen
           name="SignUpScreen"
-          component={SignUpScreen}
+          component={ SignUpScreen}
           options={{ headerShown: false }}
         />
         <Stack.Screen
           name="SignUpScreenCustomer"
           component={SignUpScreenCustomer}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="MySellersScreen"
+          component={MySellersScreen}
           options={{ headerShown: false }}
         />
         <Stack.Screen

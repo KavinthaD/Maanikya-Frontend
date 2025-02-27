@@ -13,9 +13,10 @@ import { baseScreenStyles } from "../styles/baseStyles";
 
 const SignUpScreen = ({ navigation }) => {
   return (
+    <View style={[baseScreenStyles.container]}>
     <View style={styles.container}>
-      <Image source={require('../assets/logo-gem.png')} style={styles.logo} />
-      <TextInput style={styles.input} placeholder="User Name" />
+      <Image source={require('../assets/logo.png')} style={styles.logo} />
+      <TextInput style={styles.input} placeholder="Username" />
       <TextInput
         style={styles.input}
         placeholder="Password"
@@ -31,14 +32,16 @@ const SignUpScreen = ({ navigation }) => {
         <Text style={styles.buttonText}>Create account</Text>
       </TouchableOpacity>
     </View>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
+    marginTop: 5,
     alignItems: "center",
     justifyContent: "center",
-    padding: 20,
+    padding: 60,
   },
   logo: {
     width: 150,
@@ -66,6 +69,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     paddingHorizontal: 10,
     marginBottom: 20,
+    color: "grey",
     backgroundColor: 'rgba(255, 255, 255, 0.8)',
   },
   button: {

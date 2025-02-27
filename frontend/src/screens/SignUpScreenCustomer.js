@@ -6,7 +6,7 @@ import { baseScreenStyles } from "../styles/baseStyles";
 
 const SignUpScreenCustomer = ({ navigation }) => {
   return (
-    <View style={styles.container}>
+    <View style={[baseScreenStyles.container,styles.container]}>
       <Image source={require('../assets/logo.png')} style={styles.logo} />
       <Text style={styles.subtitle}>Sign Up</Text>
       <Text style={styles.instructions}>Create Your Customer Account</Text>
@@ -19,7 +19,7 @@ const SignUpScreenCustomer = ({ navigation }) => {
       <TextInput style={styles.input} placeholder="User Name"placeholderTextColor="#888" />
       <TextInput style={styles.input} placeholder="Password"placeholderTextColor="#888" secureTextEntry />
       <TextInput style={styles.input} placeholder="Re-enter password"placeholderTextColor="#888" secureTextEntry />
-      <TouchableOpacity style={styles.button}>
+      <TouchableOpacity style={styles.button} onPress={() => navigation.navigate("MySellersScreen")}>
         <Text style={styles.buttonText}>Create account</Text>
       </TouchableOpacity>
     </View>

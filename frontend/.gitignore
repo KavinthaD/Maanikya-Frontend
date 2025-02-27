@@ -2,7 +2,6 @@
 
 #custom ignore files
 
-
 # dependencies
 node_modules/
 
@@ -37,3 +36,33 @@ yarn-error.*
 
 # typescript
 *.tsbuildinfo
+
+# Config files
+src/config/api-local.js
+
+# Android build files
+android/app/build/
+android/build/
+android/.gradle/
+android/.idea/
+android/*.iml
+android/app/*.iml
+android/app/build.gradle
+android/build.gradle
+android/gradle-wrapper.properties
+android/gradlew
+android/settings.gradle
+android/app/proguard-rules.pro
+
+# Gradle wrapper and properties (auto-generated)
+android/gradle/wrapper/
+android/gradle.properties
+
+# Local properties (contains system-specific settings)
+android/local.properties
+
+# Debug and release builds
+android/app/debug/
+android/app/release/
+
+# Expo-specific files (already included)

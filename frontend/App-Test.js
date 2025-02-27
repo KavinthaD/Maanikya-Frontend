@@ -41,14 +41,22 @@ import Tracker from "./src/screens/Tracker";
 import WelcomePage from "./src/screens/WelcomePage";
 import WorkerOrderTrackDetails from "./src/screens/WorkerOrderTrackDetails";
 import { NavigationContainer } from "@react-navigation/native";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
+const Stack = createNativeStackNavigator();
 const App = () => {
   return (
-    
-    <View style={styles.container}>
-      <SignUpScreenCustomer />
-    </View>
-    
+    <NavigationContainer>
+      <Stack.Navigator initialRouteName="GemRegister1">
+        <Stack.Screen 
+        name="GemRegister1" 
+        options={{
+          headerShown: false,
+        }} 
+        component={GemRegister1} />
+        <Stack.Screen name="GemRegister2" component={GemRegister2} />
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 };
 

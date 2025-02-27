@@ -1,16 +1,62 @@
 # OSX
-#
 .DS_Store
 
 # Android/IntelliJ
-#
 build/
-.idea
-.gradle
+.idea/
+.gradle/
 local.properties
 *.iml
 *.hprof
 .cxx/
+*.apk
+*.aab
+*.aar
+debug/
+release/
+
+# Gradle
+gradle-wrapper.jar
+.gradle/
+captures/
+gradlew
+gradlew.bat
+gradle/
+proguard/
+
+# Android Studio
+*.log
+.navigation/
+.externalNativeBuild/
+.cxx/
+*.keystore
+google-services.json
 
 # Bundle artifacts
 *.jsbundle
+*.bundle
+*.map
+
+# Generated files
+bin/
+gen/
+out/
+
+# Android Profiling
+*.trace
+*.hprof
+
+# VS Code Android extension
+.settings/
+.classpath
+.project
+
+# Keystore files
+*.jks
+*.keystore
+*.pepk
+
+# Build variants
+app/*/build/
+app/release/
+app/debug/

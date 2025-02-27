@@ -2,28 +2,49 @@
   "expo": {
     "name": "Maanikya",
     "slug": "Maanikya",
-    "version": "1.0.0",
-    "orientation": "portrait",
-    "icon": "./src/assets/logo.png",
-    "userInterfaceStyle": "light",
-    "newArchEnabled": true,
-    "splash": {
-      "image": "./src/assets/logo.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+    "plugins": [
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Allow Maanikya to access your camera to scan QR codes.",
+          "microphonePermission": false
+        }
+      ],
+      [
+        "expo-media-library",
+        {
+          "photosPermission": "Allow Maanikya to access your photos to save QR codes.",
+          "savePhotosPermission": "Allow Maanikya to save QR codes to your gallery.",
+          "isAccessMediaLocationEnabled": false
+        }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Allow Maanikya to access your photos for gem registration.",
+          "cameraPermission": "Allow Maanikya to use your camera for gem registration."
+        }
+      ]
+    ],
+    "android": {
+      "package": "com.maanikya.app",
+      "permissions": [
+        "CAMERA",
+        "READ_MEDIA_IMAGES",
+        "MEDIA_LIBRARY",
+        "READ_EXTERNAL_STORAGE",
+        "WRITE_EXTERNAL_STORAGE"
+      ]
     },
-    "plstforms": ["ios", "android"],
     "ios": {
+      "bundleIdentifier": "com.maanikya.app",
+      "buildNumber": "1.0.0",
       "supportsTablet": true,
-      "infoPlist":{
-        "NSCameraUsageDescription": "We need access to your camera to take a photo.",
-        "NSPhotoLibraryUsageDescription": "We need access to your photo library to select a photo.",
-        "NSPhotoLibraryAddUsageDescription": "We need access to add photos to your library."
+      "infoPlist": {
+        "NSCameraUsageDescription": "Allow Maanikya to access your camera to scan QR codes.",
+        "NSPhotoLibraryUsageDescription": "Allow Maanikya to access your photos to save QR codes.",
+        "NSPhotoLibraryAddUsageDescription": "Allow Maanikya to save QR codes to your gallery."
       }
-    },
-    "web": {
-      "favicon": "./src/assets/logo-gem.png"
     }
-  
   }
 }

@@ -2,7 +2,6 @@
 
 import React from "react";
 import { SafeAreaView,View, Text, Image, TouchableOpacity, StyleSheet, Button } from "react-native";
-import { Home, ShoppingBag, PlusCircle, Bell, User } from "lucide-react-native";
 import { Ionicons, FontAwesome5 } from '@expo/vector-icons'; 
 import { baseScreenStyles } from "../styles/baseStyles";
 

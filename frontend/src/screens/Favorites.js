@@ -1,5 +1,5 @@
 //Screen Creator Tilmi
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -14,18 +14,19 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import { baseScreenStyles } from "../styles/baseStyles";
 import Header_1 from "../components/Header_1";
+import BS_NavBar from "../components/BS_NavBar";
 
 const OrderRequestModal = ({ visible, onClose, selectedPerson }) => {
   const [additionalMessage, setAdditionalMessage] = useState("");
 
   if (!selectedPerson) return null;
-  
+
   const gemImages = [
-    { id: 'EM001', source: require('../assets/gems/EM001.png') },
-    { id: 'RR001', source: require('../assets/gems/RR001.png') },
-    { id: 'YS001', source: require('../assets/gems/YS001.png') },
+    { id: "EM001", source: require("../assets/gems/EM001.png") },
+    { id: "RR001", source: require("../assets/gems/RR001.png") },
+    { id: "YS001", source: require("../assets/gems/YS001.png") },
   ];
-  
+
   return (
     <Modal
       visible={visible}
@@ -36,16 +37,12 @@ const OrderRequestModal = ({ visible, onClose, selectedPerson }) => {
       <View style={styles.modalOverlay}>
         <View style={styles.modalContent}>
           <Text style={styles.orderId}>Order#: NB01130</Text>
-          
+
           <Text style={styles.personName}>{selectedPerson.name}</Text>
-          
+
           <View style={styles.gemImagesContainer}>
             {gemImages.map((gem) => (
-              <Image 
-                key={gem.id}
-                source={gem.source}
-                style={styles.gemImage}
-              />
+              <Image key={gem.id} source={gem.source} style={styles.gemImage} />
             ))}
           </View>
 
@@ -83,9 +80,9 @@ const FavoritesScreen = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedPerson, setSelectedPerson] = useState(null);
-  
-  const categories = ['Cutter', 'Burner', 'Elec. Burner'];
-  
+
+  const categories = ["Cutter", "Burner", "Elec. Burner"];
+
   const allFavorites = [
     {
       id: "1",
@@ -102,33 +99,33 @@ const FavoritesScreen = () => {
       type: "Cutter",
     },
     {
-      id: '3',
-      name: 'Kavintha Dinushan',
-      role: 'Burner',
-      image: require('../assets/gems/BS001.png'),
-      type: 'Burner'
+      id: "3",
+      name: "Kavintha Dinushan",
+      role: "Burner",
+      image: require("../assets/gems/BS001.png"),
+      type: "Burner",
     },
     {
-      id: '4',
-      name: 'Nihal Hewarthna',
-      role: 'Burner',
-      image: require('../assets/gems/BS001.png'),
-      type: 'Burner'
+      id: "4",
+      name: "Nihal Hewarthna",
+      role: "Burner",
+      image: require("../assets/gems/BS001.png"),
+      type: "Burner",
     },
     {
-      id: '5',
-      name: 'Samantha Silva',
-      role: 'Elec. Burner',
-      image: require('../assets/gems/BS001.png'),
-      type: 'Elec. Burner'
+      id: "5",
+      name: "Samantha Silva",
+      role: "Elec. Burner",
+      image: require("../assets/gems/BS001.png"),
+      type: "Elec. Burner",
     },
     {
-      id: '6',
-      name: 'Rajitha Perera',
-      role: 'Elec. Burner',
-      image: require('../assets/gems/BS001.png'),
-      type: 'Elec. Burner'
-    }
+      id: "6",
+      name: "Rajitha Perera",
+      role: "Elec. Burner",
+      image: require("../assets/gems/BS001.png"),
+      type: "Elec. Burner",
+    },
   ];
 
   const filteredFavorites = allFavorites.filter((item) => {
@@ -180,7 +177,7 @@ const FavoritesScreen = () => {
 
   return (
     <SafeAreaView style={baseScreenStyles.container}>
-      <Header_1 title="Favourites"/>
+      <Header_1 title="Favourites" />
       <View style={styles.searchContainer}>
         <Ionicons
           name="search"
@@ -226,10 +223,7 @@ const FavoritesScreen = () => {
         style={styles.list}
       />
 
-      <TouchableOpacity
-        style={styles.confirmButton}
-        onPress={handleConfirm}
-      >
+      <TouchableOpacity style={styles.confirmButton} onPress={handleConfirm}>
         <Text style={styles.confirmButtonText}>Confirm</Text>
       </TouchableOpacity>
 
@@ -241,6 +235,8 @@ const FavoritesScreen = () => {
         }}
         selectedPerson={selectedPerson}
       />
+
+      <BS_NavBar />
     </SafeAreaView>
   );
 };
@@ -248,7 +244,7 @@ const FavoritesScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#9CCDDB',
+    backgroundColor: "#9CCDDB",
   },
   searchContainer: {
     flexDirection: "row",
@@ -338,16 +334,16 @@ const styles = StyleSheet.create({
     borderColor: "#004B64",
   },
   confirmButton: {
-    backgroundColor: '#072D44',
+    backgroundColor: "#072D44",
     margin: 16,
     padding: 16,
     borderRadius: 8,
-    alignItems: 'center',
+    alignItems: "center",
   },
   confirmButtonText: {
-    color: 'white',
+    color: "white",
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   modalOverlay: {
     flex: 1,
@@ -357,7 +353,7 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   modalContent: {
-    backgroundColor: '#457EA0',
+    backgroundColor: "#457EA0",
     borderRadius: 12,
     padding: 20,
     width: "100%",
@@ -366,7 +362,7 @@ const styles = StyleSheet.create({
   orderId: {
     color: "white",
     fontSize: 18,
-    fontWeight: '600',
+    fontWeight: "600",
     marginBottom: 12,
   },
   personName: {
@@ -375,15 +371,15 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   gemImagesContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    justifyContent: "space-between",
     marginBottom: 16,
   },
   gemImage: {
     width: 80,
     height: 80,
     borderRadius: 8,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
   },
   messageInput: {
     backgroundColor: "white",
@@ -412,8 +408,8 @@ const styles = StyleSheet.create({
     marginLeft: 8,
   },
   buttonText: {
-    color: 'white',
-    fontWeight: '600',
+    color: "white",
+    fontWeight: "600",
   },
 });
 

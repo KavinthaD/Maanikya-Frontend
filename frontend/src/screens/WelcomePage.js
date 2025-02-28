@@ -27,7 +27,7 @@ const WelcomePage = ({ navigation }) => {
   }, [navigation]);
 
   return (
-    <View style={[baseScreenStyles.container,styles.container]}>
+    <View style={[baseScreenStyles.container, styles.container]}>
       <Animated.Image
         source={require("../assets/logo-gem.png")}
         style={[

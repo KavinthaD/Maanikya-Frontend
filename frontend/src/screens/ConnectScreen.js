@@ -16,7 +16,8 @@ import Header_2 from "../components/Header_2";
 // Updated categories to match the image
 const categories = ["All", "Burner", "Elec. Burner", "Cutter", "Owner"];
 
-const initialPeople = [ // Renamed to initialPeople
+const initialPeople = [
+  // Renamed to initialPeople
   {
     id: "1",
     name: "Dulith Wanigarathne",
@@ -65,9 +66,10 @@ const ConnectScreen = ({ navigation }) => {
   const [selectedCategory, setSelectedCategory] = useState("All"); // Default to 'All'
   const [favorites, setFavorites] = useState({});
   const [people, setPeople] = useState(initialPeople); // State for people, initialized with initialPeople
-  const [personRatings, setPersonRatings] = useState(() => { // Initialize personRatings state
+  const [personRatings, setPersonRatings] = useState(() => {
+    // Initialize personRatings state
     const ratings = {};
-    initialPeople.forEach(person => {
+    initialPeople.forEach((person) => {
       ratings[person.id] = person.rating;
     });
     return ratings;
@@ -75,19 +77,20 @@ const ConnectScreen = ({ navigation }) => {
   const [searchText, setSearchText] = useState(""); // State for search text
   const [filteredPeople, setFilteredPeople] = useState(people); // State for filtered people
 
-
   useEffect(() => {
     // Function to filter people based on search text and category
     const filterData = () => {
       let currentPeople = initialPeople; // Start with the initial list
 
       if (selectedCategory !== "All") {
-        currentPeople = currentPeople.filter(p => p.role.includes(selectedCategory));
+        currentPeople = currentPeople.filter((p) =>
+          p.role.includes(selectedCategory)
+        );
       }
 
       if (searchText) {
         const lowerSearchText = searchText.toLowerCase();
-        currentPeople = currentPeople.filter(person =>
+        currentPeople = currentPeople.filter((person) =>
           person.name.toLowerCase().startsWith(lowerSearchText)
         );
       }
@@ -97,25 +100,23 @@ const ConnectScreen = ({ navigation }) => {
     filterData(); // Call filterData whenever searchText or selectedCategory changes
   }, [searchText, selectedCategory]);
 
-
   const toggleFavorite = (id) => {
     setFavorites((prev) => ({ ...prev, [id]: !prev[id] }));
   };
 
   const handleStarRating = (personId, rating) => {
-    setPersonRatings(prevRatings => ({
+    setPersonRatings((prevRatings) => ({
       ...prevRatings,
       [personId]: rating,
     }));
 
     // Optionally update the people array if you want to persist rating in the people data
-    setPeople(prevPeople =>
-      prevPeople.map(person =>
+    setPeople((prevPeople) =>
+      prevPeople.map((person) =>
         person.id === personId ? { ...person, rating: rating } : person
       )
     );
   };
-
 
   const renderItem = ({ item }) => (
     <TouchableOpacity
@@ -128,7 +129,10 @@ const ConnectScreen = ({ navigation }) => {
           <Text style={styles.role}>{item.role}</Text>
           <View style={styles.rating}>
             {[...Array(5)].map((_, index) => (
-              <TouchableOpacity key={index} onPress={() => handleStarRating(item.id, index + 1)}>
+              <TouchableOpacity
+                key={index}
+                onPress={() => handleStarRating(item.id, index + 1)}
+              >
                 <FontAwesome
                   name={index < personRatings[item.id] ? "star" : "star-o"} // Use personRatings for star display
                   size={16}
@@ -150,17 +154,18 @@ const ConnectScreen = ({ navigation }) => {
   );
 
   return (
-    <View style={[baseScreenStyles.container,styles.container]}>
-      <Header_2 title="Connect"/>
+    <View style={[baseScreenStyles.container, styles.container]}>
+      <Header_2 title="Connect" />
       {/* Search Bar */}
       <View style={styles.searchContainer}>
         <TextInput
           style={styles.searchInput}
           placeholder="Search person"
           value={searchText}
-          onChangeText={text => setSearchText(text)} // Update searchText state
+          onChangeText={(text) => setSearchText(text)} // Update searchText state
         />
-        <MaterialIcons name="search" size={24} color="#6646ee" /> {/* Changed to search icon */}
+        <MaterialIcons name="search" size={24} color="#6646ee" />{" "}
+        {/* Changed to search icon */}
       </View>
 
       <View style={styles.addPersonContainer}>

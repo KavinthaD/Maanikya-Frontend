@@ -1,10 +1,9 @@
 // Purpose: Test individual components/screens of the app.
 
 import React from "react";
-import { StyleSheet, SafeAreaView, StatusBar, Platform } from "react-native";
-import { SafeAreaProvider } from 'react-native-safe-area-context';
-import BS_NavBar from "./src/components/BS_NavBar";
-
+import { SafeAreaView, StatusBar, Platform } from "react-native";
+import { SafeAreaProvider } from "react-native-safe-area-context";
+import { NavigationContainer } from "@react-navigation/native";
 // Import all screens
 // import Alerts from "./src/screens/Alerts";
 // import AlertsScreen from "./src/screens/AlertsScreen";
@@ -42,36 +41,40 @@ import BS_NavBar from "./src/components/BS_NavBar";
 // import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import FavoritesScreen from "./src/screens/Favorites";
-import HomeScreen from "./src/screens/HomeScreen";
+import HomeScreen from "./src/screens/Home/HomePageBusiness";
 import { baseScreenStyles } from "./src/styles/baseStyles";
+import CustomHomePage from "./src/screens/Home/HomePageCustomer";
+import HomePageBusiness from "./src/screens/Home/HomePageBusiness";
+import GemRegister1 from "./src/screens/GemProfile/GemRegister1";
+import GemRegister2 from "./src/screens/GemProfile/GemRegister2";
+
+import BS_NavBar from "./src/components/BS_NavBar";
 
 const Stack = createNativeStackNavigator();
 
 export default function App() {
   return (
     <SafeAreaProvider>
-      <SafeAreaView style={{ 
-        flex: 1,
-        backgroundColor: baseScreenStyles.backgroundColor.backgroundColor,
-        paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0 
-      }}>
+      <SafeAreaView
+        style={{
+          flex: 1,
+          backgroundColor: baseScreenStyles.backgroundColor.backgroundColor,
+          paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
+        }}
+      >
         <StatusBar
           barStyle="dark-content"
           backgroundColor={baseScreenStyles.backgroundColor.backgroundColor}
           translucent={true}
         />
         <NavigationContainer>
-          <Stack.Navigator initialRouteName="GemRegister1">
-            <Stack.Screen 
-              name="GemRegister1" 
+          <Stack.Navigator >
+            <Stack.Screen
+              name="BS_NavBar"
               options={{
                 headerShown: false,
-              }} 
-              component={GemRegister1} 
-            />
-            <Stack.Screen 
-              name="GemRegister2" 
-              component={GemRegister2} 
+              }}
+              component={BS_NavBar}
             />
           </Stack.Navigator>
         </NavigationContainer>

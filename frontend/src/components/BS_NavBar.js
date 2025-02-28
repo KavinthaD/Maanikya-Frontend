@@ -1,71 +1,95 @@
-import { Image } from "react-native";
-import React from "react";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { View, StyleSheet } from "react-native";
 
-import GemRegister1 from "../screens/GemRegister1";
-import GemOnDisplay from "../screens/GemOnDisplay";
-import Alerts from "../screens/AlertsScreen";
-import HomeScreen from "../screens/HomeScreen";
-import BusinessOwnerProfile from "../screens/BusinessOwnerProfile";
+//recreating navbar from scratch
+
+
+
+  import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import React, { useEffect, useRef } from 'react';
+import { SafeAreaView, StyleSheet, TouchableOpacity, View } from 'react-native';
+import Icon, { Icons } from '../components/Icons';
+
+import * as Animatable from 'react-native-animatable';
+
+const TabArr = [
+  { route: 'Home', label: 'Home', type: Icons.Feather, Ionicons: 'home', inActiveIcon: 'home-outline'  },
+    { route: 'Market', label: 'Cart', type: Icons.Ionicons, activeIcon: 'cart', inActiveIcon: 'cart' },
+    { route: 'AddGem', label: 'Gem', type: Icons.FontAwesome5, activeIcon: 'gem', inActiveIcon: 'gem' },
+    { route: 'Alerts', label: 'Bell', type: Icons.FontAwesome6, activeIcon: 'bell-alt', inActiveIcon: 'bell'},
+    { route: 'Profiles', label: 'User', type: Icons.FontAwesome, activeIcon: 'user', inActiveIcon: 'user' },
+];
 
 const Tab = createBottomTabNavigator();
 
-export default function BS_NavBar() {
+const TabButton = (props) => {
+  const { item, onPress, accessibilityState } = props;
+  const focused = accessibilityState.selected;
+  const viewRef = useRef(null);
+
+  useEffect(() => {
+    if (focused) {
+      viewRef.current.animate({ 0: { scale: .5, rotate: '0deg' }, 1: { scale: 1.5, rotate: '360deg' } });
+    } else {
+      viewRef.current.animate({ 0: { scale: 1.5, rotate: '360deg' }, 1: { scale: 1, rotate: '0deg' } });
+    }
+  }, [focused]);
+
   return (
-    <Tab.Navigator
-      screenOptions={({ route }) => ({
-        tabBarIcon: ({ color, size }) => {
-          let iconSource;
-          let iconWidth = 30;
-          let iconHeight = size;
-
-          if (route.name === "Home") {
-            iconSource = require("../assets/navbar-icons/home.png");
-          } else if (route.name === "Market") {
-            iconSource = require("../assets/navbar-icons/market.png");
-          } else if (route.name === "Add") {
-            iconSource = require("../assets/navbar-icons/addgem.png");
-            iconWidth = 35;
-            iconHeight = 35;
-          } else if (route.name === "Alerts") {
-            iconSource = require("../assets/navbar-icons/alerts.png");
-          } else if (route.name === "Profile") {
-            iconSource = require("../assets/navbar-icons/profile.png");
-          }
-
-          return (
-            <Image
-              source={iconSource}
-              style={{
-                width: iconWidth,
-                height: iconHeight,
-                tintColor: color,
-              }}
-            />
-          );
-        },
-        tabBarStyle: styles.tabBar,
-        tabBarActiveTintColor: "white",
-        tabBarInactiveTintColor: "#aaa",
-        headerShown: false, // Hide headers inside tab screens
-      })}
+    <TouchableOpacity
+      onPress={onPress}
+      activeOpacity={1}
+      style={[styles.container, { top: 0 }]}
     >
-      <Tab.Screen name="Home" component={HomeScreen} />
-      <Tab.Screen name="Market" component={GemOnDisplay} />
-      <Tab.Screen name="Add" component={GemRegister1} />
-      <Tab.Screen name="Alerts" component={Alerts} />
-      <Tab.Screen name="Profile" component={BusinessOwnerProfile} />
-    </Tab.Navigator>
+      <Animatable.View
+        ref={viewRef}
+        duration={1000}
+      >
+        <Icon
+          type={item.type}
+          name={focused ? item.activeIcon : item.inActiveIcon}
+          color={focused ? Colors.primary : Colors.primaryLite}
+        />
+      </Animatable.View>
+    </TouchableOpacity>
+  );
+};
+
+export default function AnimTab1() {
+  return (
+    <SafeAreaView style={{ flex: 1 }}>
+      <Tab.Navigator
+        screenOptions={{
+          headerShown: false,
+          tabBarStyle: {
+            height: 60,
+            position: 'absolute',
+            margin: 16,
+            borderRadius: 16,
+            justifyContent: 'center',
+            alignItems: 'center',
+          },
+        }}
+      >
+        {TabArr.map((item, index) => (
+          <Tab.Screen
+            key={index}
+            name={item.route}
+            component={item.component}
+            options={{
+              tabBarShowLabel: false,
+              tabBarButton: (props) => <TabButton {...props} item={item} />,
+            }}
+          />
+        ))}
+      </Tab.Navigator>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  tabBar: {
-    backgroundColor: "#072D44",
-    height: 80,
-    position: "absolute",
-    overflow: "hidden",
-    paddingTop: 5,
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: 60,
   },
 });

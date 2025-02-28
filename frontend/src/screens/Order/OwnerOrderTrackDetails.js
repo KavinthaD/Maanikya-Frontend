@@ -1,0 +1,279 @@
+//Screen creator: Thulani
+
+import React, {useState} from "react";
+import {View, Text, Image, StyleSheet, TouchableOpacity} from "react-native";
+import {FontAwesome} from "@expo/vector-icons";
+import { baseScreenStyles } from "../../styles/baseStyles";
+
+const OwnerOrderTrackDetails = () => {
+    const [orderConfirmed, setOrderConfirmed] = useState(false);
+    const [orderCanceled, setOrderCanceled]= useState(false);
+    const [rating, setRating] = useState(0);
+
+    return (
+        <View style={[baseScreenStyles.container,styles.container]}>
+            <View style= {styles.orderDetails}> 
+                <View style= {styles.row}>
+                    <View>
+                        <Text style={styles.gemId}> Gem ID - IHP164 </Text>
+                        <Text style={styles.price}> Rs. 7800 </Text>
+                        <Text style={styles.ratingLabel}> Rating </Text>
+                    </View>
+                    <View>
+                        <Image source={require("../assets/gem-images/gem1.jpeg")} style={styles.gemImage}/>
+                        <View style={styles.ratingContainer}>
+                            {[1,2,3,4,5].map((star)=> (
+                                <TouchableOpacity key={star} onPress={() => setRating(star)}>
+                                    <FontAwesome name="star" size={24} color={star <= rating ? "#334D85" : "#fff"} />
+                                </TouchableOpacity>
+                            ))}
+                        </View>
+                    </View>
+                </View>
+            </View>
+            <View style={styles.dividerContainer}>
+                <View style={styles.divider} />
+            </View>   
+            <View style={styles.orderStatus}> 
+                <Text style={styles.orderDet}> Order Details </Text>
+                <View style={styles.statusBoxRequest}>
+                    <Image source={require("../assets/owner-icons/order-request.png")} style={styles.statusIcon}/>
+                    <View>
+                    <Text style={styles.statusText}>Order Requested </Text>
+                    <Text style={styles.dateText}> Order requested on 20-12-2024 </Text>
+                    </View>
+                </View>
+                <View style={styles.statusBoxAccept}>
+                <Image source={require("../assets/owner-icons/order-accept.png")} style={styles.statusIcon}/>
+                <View> 
+                    <Text style={styles.statusText}>Order Accepted </Text>
+                    <Text style={styles.dateText}> Order accepted on 20-12-2014 </Text>
+                </View>
+                </View>
+
+                {orderConfirmed && (
+                    <View style={styles.statusBoxConfirm}>
+                        <Image source={require("../assets/owner-icons/order-confirm.png")} style={styles.statusIcon} />
+                        <View>
+                            <Text style={styles.statusText}>Order Confirmed</Text>
+                            <Text style={styles.dateText}>Order confirmed on 20-12-2024</Text>
+                        </View>
+                    </View>
+                )}
+
+                {orderCanceled && (
+                    <View style={styles.statusBoxCancel}>
+                        <Image source={require("../assets/owner-icons/order-decline.png")} style={styles.statusIcon} />
+                        <View>
+                            <Text style={styles.statusText}>Order Canceled</Text>
+                            <Text style={styles.dateText}>Order canceled on 20-12-2024</Text>
+                        </View>
+                    </View>
+                )}
+            </View>
+
+            {/* Hide buttons after one is clicked */}
+            {!orderConfirmed && !orderCanceled && (
+                <View style={styles.buttonContainer}>
+                    <TouchableOpacity
+                        style={styles.confirmButton}
+                        onPress={() => {
+                            setOrderConfirmed(true);
+                            setOrderCanceled(false); // Ensure only one status is shown
+                        }}
+                    >
+                        <Text style={styles.confirmButtonText}>Confirm Order</Text>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity
+                        style={styles.cancelButton}
+                        onPress={() => {
+                            setOrderCanceled(true);
+                            setOrderConfirmed(false); // Ensure only one status is shown
+                        }}
+                    >
+                        <Text style={styles.cancelButtonText}>Cancel Order</Text>
+                    </TouchableOpacity>
+                </View>
+            )}
+        </View>
+    );
+};
+
+const styles = StyleSheet.create ({
+    container: {
+        
+        paddingTop: 40,
+        
+    },
+
+
+    orderNumber: {
+        color: "white",
+        fontSize: 18,
+        fontWeight: "bold"
+    },
+
+    orderDetails: {
+        padding: 30
+    },
+
+    row: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+    },
+
+    gemId: {
+        fontSize: 18,
+        fontWeight: "bold"
+    },
+
+    price: {
+        fontSize: 18,
+        color: "#555",
+        fontWeight: "bold"
+    },
+
+
+    ratingLabel: {
+        fontSize: 16,
+        color: "#555",
+        marginTop: 40,
+        fontWeight: "bold"
+    },
+
+    ratingContainer: {
+        flexDirection: "row",
+        justifyContent: "center",
+        marginTop: 10,
+    },
+
+    gemImage: {
+        width: 80,
+        height: 80,
+        borderRadius: 10,
+        alignSelf: "center",
+        marginTop: 1,
+    },
+
+    orderDet: {
+        fontSize: 18,
+        fontWeight: "bold",
+        color: "#444",
+        marginBottom: 24,
+        marginLeft: 10,
+    },
+
+    orderStatus: {
+        marginTop: 20
+    },
+
+    statusBoxRequest: {
+        backgroundColor: "#A4AAFA",
+        flexDirection: "row",
+        alignItems: "center",
+        padding: 10,
+        borderRadius: 8,
+        marginBottom: 10,
+        marginLeft: 40,
+        marginRight: 30
+    },
+
+    statusBoxAccept: {
+        backgroundColor: "#7F87FD",
+        flexDirection: "row",
+        alignItems: "center",
+        padding: 10,
+        borderRadius: 8,
+        marginBottom: 10,
+        marginLeft: 40,
+        marginRight: 30
+    },
+    statusBoxConfirm: {
+        backgroundColor: "#5661FF",
+        flexDirection: "row",
+        alignItems: "center",
+        padding: 10,
+        borderRadius: 8,
+        marginBottom: 10,
+        marginLeft: 40,
+        marginRight: 30
+    },
+
+    statusBoxCancel: {
+        backgroundColor: "#4A0304",
+        flexDirection: "row",
+        alignItems: "center",
+        padding: 10,
+        borderRadius: 8,
+        marginBottom: 10,
+        marginLeft: 40,
+        marginRight: 30
+    },
+
+    statusIcon: {
+        width: 50,
+        height: 50,
+        marginLeft: 20,
+        marginRight: 20,
+      },
+
+    statusText: {
+        color: "white", 
+        fontSize: 16, 
+        fontWeight: "bold"
+    },
+
+    dateText: {
+        color: "white", 
+        fontSize: 12, 
+        marginTop: 5 
+    },
+
+    confirmButton: {
+        backgroundColor: "#02457A",
+        paddingVertical: 10,
+        borderRadius: 20,
+        width: "44%",
+        marginTop: "40%",
+        marginLeft: "30%",
+    },
+
+    confirmButtonText: {
+         color: "white", 
+         fontSize: 16, 
+         fontWeight: "bold",
+         textAlign: "center"
+    },
+
+    cancelButton: {
+        backgroundColor: "#690909",
+        paddingVertical: 10,
+        borderRadius: 20,
+        width: "44%",
+        marginLeft: "30%",
+        marginTop: "5%",
+    },
+
+    cancelButtonText: {
+        color: "white", 
+        fontSize: 16, 
+        fontWeight: "bold",
+        textAlign: "center"
+    },
+
+    dividerContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginVertical: 10,
+    },
+    divider: {
+        flex: 1,
+        height: 1,
+        backgroundColor: 'black',
+    }
+
+});
+
+export default OwnerOrderTrackDetails;

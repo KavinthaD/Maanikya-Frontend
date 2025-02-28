@@ -2,17 +2,16 @@ import React, { useState } from "react";
 import {
   View,
   Text,
-  
   FlatList,
   Image,
   StyleSheet,
-  TouchableOpacity, 
+  TouchableOpacity,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { baseScreenStyles } from "../styles/baseStyles";
 import Header_2 from "../components/Header_2";
 
-const personData = { 
+const personData = {
   name: "Dulith Wanigarathne",
   role: "Cutter",
   rating: 3,
@@ -33,11 +32,10 @@ const personData = {
 };
 
 export default function ProfileScreen() {
-  
   const [person, setPerson] = useState(personData);
 
   const handleStarRating = (rating) => {
-    setPerson({ ...person, rating: rating }); 
+    setPerson({ ...person, rating: rating });
   };
 
   const toggleFavorite = () => {
@@ -45,9 +43,9 @@ export default function ProfileScreen() {
   };
 
   return (
-    <View style={[baseScreenStyles.container,styles.container]}>
+    <View style={[baseScreenStyles.container, styles.container]}>
       <Text style={styles.header}>Connect</Text>
-     
+
       <View style={styles.profileCard}>
         <Image source={person.image} style={styles.profileImage} />
         <View style={styles.profileInfo}>
@@ -55,7 +53,9 @@ export default function ProfileScreen() {
           <Text style={styles.role}>{person.role}</Text>
           <View style={styles.rating}>
             {[...Array(5)].map((_, i) => (
-              <TouchableOpacity key={i} onPress={() => handleStarRating(i + 1)}> {/* Touchable stars */}
+              <TouchableOpacity key={i} onPress={() => handleStarRating(i + 1)}>
+                {" "}
+                {/* Touchable stars */}
                 <Ionicons
                   key={i}
                   name={i < person.rating ? "star" : "star-outline"}
@@ -66,7 +66,9 @@ export default function ProfileScreen() {
             ))}
           </View>
         </View>
-        <TouchableOpacity onPress={toggleFavorite}> {/* Touchable Heart */}
+        <TouchableOpacity onPress={toggleFavorite}>
+          {" "}
+          {/* Touchable Heart */}
           <Ionicons
             name={person.isFavorite ? "heart" : "heart-outline"}
             size={24}
@@ -105,8 +107,8 @@ export default function ProfileScreen() {
 const styles = StyleSheet.create({
   container: { padding: 16 },
   header: { fontSize: 18, fontWeight: "bold", marginBottom: 10 },
-  input: { // Removed input style as TextInput is removed
-
+  input: {
+    // Removed input style as TextInput is removed
   },
   profileCard: {
     flexDirection: "row",

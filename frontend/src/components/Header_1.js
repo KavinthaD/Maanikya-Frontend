@@ -8,7 +8,6 @@ export default function Header_1({ title }) {
   );
 }
 const styles = StyleSheet.create({
-  
   titleText: {
     fontFamily: "arial",
     fontSize: 24,

@@ -21,7 +21,6 @@ export default function Header_2({ title }) {
 }
 
 const styles = StyleSheet.create({
-  
   title: {
     paddingHorizontal: 0,
     marginTop: 0,

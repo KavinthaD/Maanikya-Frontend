@@ -21,12 +21,10 @@ export default function Header_2({ title }) {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    paddingVertical: 30,
-  },
+  
   title: {
     paddingHorizontal: 0,
-    marginTop: 5,
+    marginTop: 0,
     fontSize: 24,
     fontWeight: "bold",
     textAlign: "center",
@@ -38,7 +36,7 @@ const styles = StyleSheet.create({
   backButton: {
     position: "absolute",
     left: 10,
-    top: 50,
+    top: 15,
     zIndex: 1,
   },
 });

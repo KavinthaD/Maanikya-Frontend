@@ -10,22 +10,78 @@ import {
   TouchableOpacity,
   Image,
   TextInput,
-  Modal,
   Alert,
+  KeyboardAvoidingView,
+  ScrollView,
+  Platform,
 } from "react-native";
-import { launchImageLibrary } from "react-native-image-picker";
 import { baseScreenStyles } from "../styles/baseStyles";
 import { useNavigation } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Header_1 from "../components/Header_1";
-import Header_2 from "../components/Header_2";
+
 import Gem_register_2 from "./GemRegister2";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import CustomCamera from "../components/CustomCamera";
 import { Camera } from "expo-camera";
 import DropDownPicker from "react-native-dropdown-picker";
 import { FormFieldStyles } from "../styles/FormFields";
-import * as ImagePicker from "expo-image-picker";
+import Modal from "react-native-modal";
+import * as FileSystem from "expo-file-system";
+import ImageCropPicker from "react-native-image-crop-picker";
+
+const IMAGE_CONSTRAINTS = {
+  maxWidth: 2048,
+  maxHeight: 2048,
+  minWidth: 512,
+  minHeight: 512,
+  maxSizeMB: 5,
+  quality: 0.9,
+  allowedFormats: ["jpeg", "jpg", "png"],
+  aspectRatio: [1, 1],
+};
+
+// const validateImage = async (uri) => {
+//   console.log("Validating image URI:", uri);
+//   try {
+//     // Check file size
+//     const fileInfo = await FileSystem.getInfoAsync(uri);
+//     const fileSizeMB = fileInfo.size / (1024 * 1024);
+//     if (fileSizeMB > IMAGE_CONSTRAINTS.maxSizeMB) {
+//       throw new Error(
+//         `Image must be smaller than ${IMAGE_CONSTRAINTS.maxSizeMB}MB`
+//       );
+//     }
+
+//     // Check dimensions
+//     const { width, height } = await new Promise((resolve) => {
+//       Image.getSize(uri, (width, height) => resolve({ width, height }));
+//     });
+
+//     if (
+//       width > IMAGE_CONSTRAINTS.maxWidth ||
+//       height > IMAGE_CONSTRAINTS.maxHeight
+//     ) {
+//       throw new Error(
+//         `Image dimensions must not exceed ${IMAGE_CONSTRAINTS.maxWidth}x${IMAGE_CONSTRAINTS.maxHeight}`
+//       );
+//     }
+
+//     if (
+//       width < IMAGE_CONSTRAINTS.minWidth ||
+//       height < IMAGE_CONSTRAINTS.minHeight
+//     ) {
+//       throw new Error(
+//         `Image must be at least ${IMAGE_CONSTRAINTS.minWidth}x${IMAGE_CONSTRAINTS.minHeight}`
+//       );
+//     }
+
+//     return true;
+//   } catch (error) {
+//     Alert.alert("Image Validation Failed", error.message);
+//     return false;
+//   }
+// };
 
 const Stack = createNativeStackNavigator();
 
@@ -51,66 +107,59 @@ export default function GemRegister1() {
 }
 
 function GemRegister1Main() {
-  const handleCameraPress = async () => {
+  const [isModalVisible, setModalVisible] = useState(false);
+
+  const handleCameraPress = () => {
+    setModalVisible(true);
+  };
+
+  const handleTakePhoto = async () => {
     try {
-      Alert.alert("Select Image", "Choose an option", [
-        {
-          text: "Take Photo",
-          onPress: async () => {
-            const { status } =
-              await ImagePicker.requestCameraPermissionsAsync();
-            if (status !== "granted") {
-              Alert.alert("Permission needed", "Camera permission is required");
-              return;
-            }
+      const result = await ImageCropPicker.openCamera({
+        width: 600,
+        height: 600,
+        mediaType: "photo",
+        includeBase64: false,
+        maxHeight: 2000,
+        maxWidth: 2000,
+        cropping: true,
+        cropperCircleOverlay: false,
+        cropperStatusBarColor: "#9CCDDB",
+        cropperToolbarColor: "#9CCDDB",
+      });
 
-            const result = await ImagePicker.launchCameraAsync({
-              mediaTypes: ImagePicker.MediaTypeOptions.Images,
-              allowsEditing: true,
-              aspect: [4, 3],
-              quality: 1,
-            });
-
-            if (!result.canceled && result.assets[0]) {
-              const newPhotos = [...form.photos, result.assets[0].uri];
-              setForm((prev) => ({ ...prev, photos: newPhotos }));
-            }
-          },
-        },
-        {
-          text: "Choose from Gallery",
-          onPress: async () => {
-            const { status } =
-              await ImagePicker.requestMediaLibraryPermissionsAsync();
-            if (status !== "granted") {
-              Alert.alert(
-                "Permission needed",
-                "Gallery permission is required"
-              );
-              return;
-            }
-
-            const result = await ImagePicker.launchImageLibraryAsync({
-              mediaTypes: ImagePicker.MediaTypeOptions.Images,
-              allowsEditing: true,
-              aspect: [4, 3],
-              quality: 1,
-            });
-
-            if (!result.canceled && result.assets[0]) {
-              const newPhotos = [...form.photos, result.assets[0].uri];
-              setForm((prev) => ({ ...prev, photos: newPhotos }));
-            }
-          },
-        },
-        {
-          text: "Cancel",
-          style: "cancel",
-        },
-      ]);
+      if (result && result.path) {
+        setForm((prev) => ({ ...prev, photos: [result.path] }));
+      }
     } catch (error) {
-      console.error("Error handling image selection:", error);
-      Alert.alert("Error", "Failed to handle image selection");
+      console.error("Error taking photo:", error);
+    } finally {
+      setModalVisible(false);
+    }
+  };
+
+  const handleChooseFromGallery = async () => {
+    try {
+      const result = await ImageCropPicker.openPicker({
+        width: 600,
+        height: 600,
+        mediaType: "photo",
+        includeBase64: false,
+        maxHeight: 2000,
+        maxWidth: 2000,
+        cropping: true,
+        cropperCircleOverlay: false,
+        cropperStatusBarColor: "#9CCDDB",
+        cropperToolbarColor: "#9CCDDB",
+      });
+
+      if (result && result.path) {
+        setForm((prev) => ({ ...prev, photos: [result.path] }));
+      }
+    } catch (error) {
+      console.error("Error choosing from gallery:", error);
+    } finally {
+      setModalVisible(false);
     }
   };
 
@@ -156,84 +205,136 @@ function GemRegister1Main() {
       return;
     }
     console.log("Data passed to GemRegister1:", form);
-    navigation.navigate("GemRegister2", { formData: form }); // Pass the entire form object
+    navigation.navigate("GemRegister2", {
+      formData: { ...form, photo: form.photos[0] },
+    }); // Pass the image path
   };
 
   return (
-    <View style={baseScreenStyles.container}>
-      <View style={FormFieldStyles.innerContainer}>
-        <View style={styles.buttonContent}>
+    <KeyboardAvoidingView
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      style={[baseScreenStyles.container, { zIndex: 1 }]}
+      keyboardVerticalOffset={Platform.OS === "ios" ? 64 : 0}
+    >
+      <ScrollView
+        contentContainerStyle={{ flexGrow: 1 }}
+        nestedScrollEnabled={true}
+      >
+        <View style={[FormFieldStyles.innerContainer, { zIndex: 2 }]}>
+          <View style={styles.buttonContent}>
+            <TouchableOpacity
+              style={styles.buttonContainer}
+              onPress={handleCameraPress}
+            >
+              {form.photos.length > 0 ? (
+                <Image
+                  source={{ uri: form.photos[0] }}
+                  style={styles.selectedImage}
+                />
+              ) : (
+                <Icon name="camera-alt" size={60} color="#000" />
+              )}
+            </TouchableOpacity>
+            <Text style={styles.addPhotoButtonText}>AI auto filler</Text>
+            <Text style={baseScreenStyles.helperText}>
+              Below details can be filled with image of the gem or by mannually
+            </Text>
+          </View>
+          <TextInput
+            style={FormFieldStyles.input}
+            placeholder="Gem color *"
+            value={form.color}
+            onChangeText={(value) => handleInputChange("color", value)}
+          />
+          <DropDownPicker
+            open={openShape}
+            value={form.gemShape}
+            items={shapeItems}
+            setOpen={setOpenShape}
+            setValue={(callback) => handleInputChange("gemShape", callback())}
+            setItems={setShapeItems}
+            placeholder="Select Gem Shape *"
+            style={FormFieldStyles.dropdown}
+            dropDownContainerStyle={FormFieldStyles.dropdownContainer}
+            listItemContainerStyle={FormFieldStyles.listItemContainer}
+            listItemLabelStyle={FormFieldStyles.listItemLabel}
+            placeholderStyle={FormFieldStyles.placeholder}
+            textStyle={FormFieldStyles.dropdownText}
+            theme="LIGHT"
+            showArrowIcon={true}
+            showTickIcon={false} // Add this line
+            zIndex={3000}
+            zIndexInverse={1000}
+            listMode="SCROLLVIEW"
+            scrollViewProps={{
+              nestedScrollEnabled: true,
+            }}
+          />
+          <TextInput
+            style={[FormFieldStyles.input, styles.descriptionInput]}
+            placeholder="Description"
+            value={form.description}
+            onChangeText={(value) => handleInputChange("description", value)}
+            multiline={true}
+            numberOfLines={4}
+            textAlignVertical="top"
+          />
           <TouchableOpacity
-            style={styles.buttonContainer}
-            onPress={handleCameraPress}
+            style={[
+              baseScreenStyles.blueButton,
+              { opacity: form.color && form.gemShape ? 1 : 0.5 },
+            ]}
+            onPress={handleContinue}
           >
-            {form.photos.length > 0 ? (
-              <Image
-                source={{ uri: form.photos[0] }}
-                style={styles.selectedImage}
-              />
-            ) : (
-              <Icon name="camera-alt" size={60} color="#000" />
-            )}
+            <Text style={baseScreenStyles.buttonText}>Continue</Text>
           </TouchableOpacity>
-          <Text style={styles.addPhotoButtonText}>AI auto filler</Text>
-          <Text style={baseScreenStyles.helperText}>
-            Below details can be filled with image of the gem or by mannually
-          </Text>
         </View>
-        <TextInput
-          style={FormFieldStyles.input}
-          placeholder="Gem color *"
-          value={form.color}
-          onChangeText={(value) => handleInputChange("color", value)}
-        />
-        <DropDownPicker
-          open={openShape}
-          value={form.gemShape}
-          items={shapeItems}
-          setOpen={setOpenShape}
-          setValue={(callback) => handleInputChange("gemShape", callback())}
-          setItems={setShapeItems}
-          placeholder="Select Gem Shape *"
-          style={FormFieldStyles.dropdown}
-          dropDownContainerStyle={FormFieldStyles.dropdownContainer}
-          listItemContainerStyle={FormFieldStyles.listItemContainer}
-          listItemLabelStyle={FormFieldStyles.listItemLabel}
-          placeholderStyle={FormFieldStyles.placeholder}
-          textStyle={FormFieldStyles.dropdownText}
-          theme="LIGHT"
-          showArrowIcon={true}
-          showTickIcon={false} // Add this line
-        />
-        <TextInput
-          style={[FormFieldStyles.input, styles.descriptionInput]}
-          placeholder="Description"
-          value={form.description}
-          onChangeText={(value) => handleInputChange("description", value)}
-          multiline={true}
-          numberOfLines={4}
-          textAlignVertical="top"
-        />
-        <TouchableOpacity
-          style={[
-            baseScreenStyles.blueButton,
-            { opacity: form.color && form.gemShape ? 1 : 0.5 },
-          ]}
-          onPress={handleContinue}
-        >
-          <Text style={baseScreenStyles.buttonText}>Continue</Text>
-        </TouchableOpacity>
-      </View>
 
-      {/* Custom Camera Component */}
-      {cameraVisible && (
-        <CustomCamera
-          onPhotoTaken={handlePhotoTaken}
-          onClose={() => setCameraVisible(false)}
-          onError={handleCameraError}
-        />
-      )}
-    </View>
+        {/* Custom Camera Component */}
+        {cameraVisible && (
+          <CustomCamera
+            onPhotoTaken={handlePhotoTaken}
+            onClose={() => setCameraVisible(false)}
+            onError={handleCameraError}
+          />
+        )}
+      </ScrollView>
+      <Modal
+        isVisible={isModalVisible}
+        onBackdropPress={() => setModalVisible(false)}
+        onSwipeComplete={() => setModalVisible(false)}
+        swipeDirection="down"
+        style={styles.modal}
+      >
+        <View style={styles.modalContent}>
+          <View style={styles.modalHeader}>
+            <View style={styles.modalIndicator} />
+          </View>
+          <TouchableOpacity
+            style={styles.modalButton}
+            onPress={handleTakePhoto}
+          >
+            <Icon name="camera-alt" size={24} color="#170969" />
+            <Text style={styles.modalButtonText}>Take Photo</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.modalButton}
+            onPress={handleChooseFromGallery}
+          >
+            <Icon name="photo-library" size={24} color="#170969" />
+            <Text style={styles.modalButtonText}>Choose from Gallery</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.modalButton, styles.cancelButton]}
+            onPress={() => setModalVisible(false)}
+          >
+            <Text style={[styles.modalButtonText, styles.cancelButtonText]}>
+              Cancel
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </Modal>
+    </KeyboardAvoidingView>
   );
 }
 
@@ -256,8 +357,9 @@ const styles = StyleSheet.create({
     overflow: "hidden",
   },
   buttonContent: {
-    marginBottom: 80,
+    marginBottom: 40,
     alignItems: "center",
+    zIndex: 1,
   },
   photoGrid: {
     flexDirection: "row",
@@ -293,5 +395,49 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
     borderRadius: 10,
+  },
+  modal: {
+    justifyContent: "flex-end",
+    margin: 0,
+  },
+  modalContent: {
+    backgroundColor: "white",
+    padding: 22,
+    borderTopLeftRadius: 17,
+    borderTopRightRadius: 17,
+    alignItems: "center",
+  },
+  modalHeader: {
+    width: "100%",
+    alignItems: "center",
+    marginBottom: 12,
+  },
+  modalIndicator: {
+    width: 40,
+    height: 5,
+    borderRadius: 2.5,
+    backgroundColor: "#ccc",
+  },
+  modalButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+    backgroundColor: "#E8F0FE",
+    marginBottom: 10,
+    width: "100%",
+    justifyContent: "center",
+  },
+  modalButtonText: {
+    fontSize: 18,
+    color: "#170969",
+    marginLeft: 10,
+  },
+  cancelButton: {
+    backgroundColor: "#f8d7da",
+  },
+  cancelButtonText: {
+    color: "#721c24",
   },
 });

@@ -10,20 +10,39 @@ import {
   Image,
   PermissionsAndroid,
   Linking,
+  Share,
+  Platform,
 } from "react-native";
 import * as MediaLibrary from "expo-media-library";
 import * as FileSystem from "expo-file-system";
 import { baseScreenStyles } from "../styles/baseStyles";
 import QRCode from "react-native-qrcode-svg";
-import { useRoute } from "@react-navigation/native";
+import { useNavigation, useRoute } from '@react-navigation/native';
 import ViewShot from "react-native-view-shot"; // Add this import
 
+import { BackHandler } from 'react-native';  // Add this to your imports
+
 export default function Gem_register_3() {
+
+  const navigation = useNavigation();
   const route = useRoute();
   const { gemId, createdAt } = route.params;
   const [gemData] = useState(null);
   const qrContainerRef = useRef(); // Change qrRef to qrContainerRef
-  const [hasPermission, setHasPermission] = useState(null);
+
+// Disable back navigation
+useEffect(() => {
+
+  // Disable hardware back button
+  const backHandler = BackHandler.addEventListener(
+    'hardwareBackPress',
+    () => true  // Return true to prevent default behavior
+  );
+
+  // Cleanup on unmount
+  return () => backHandler.remove();
+}, [navigation]);
+
 
   const handleSaveToDevice = async () => {
     try {
@@ -33,18 +52,18 @@ export default function Gem_register_3() {
         const granted = await PermissionsAndroid.request(
           PermissionsAndroid.PERMISSIONS.READ_MEDIA_IMAGES,
           {
-            title: 'Gallery permission',
+            title: "Gallery permission",
             message:
-              'Maanikya needs permission to save QR codes to your gallery',
-            buttonNeutral: 'Ask Me Later',
-            buttonNegative: 'Cancel',
-            buttonPositive: 'OK',
-          },
+              "Maanikya needs permission to save QR codes to your gallery",
+            buttonNeutral: "Ask Me Later",
+            buttonNegative: "Cancel",
+            buttonPositive: "OK",
+          }
         );
         if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-          console.log('You can use the camera');
+          console.log("You can use the camera");
         } else {
-          console.log('Camera permission denied');
+          console.log("Camera permission denied");
         }
       } catch (err) {
         console.warn(err);
@@ -74,6 +93,38 @@ export default function Gem_register_3() {
     }
   };
 
+  const handleShare = async () => {
+    try {
+      // 1. Generate QR code and capture it
+      const uri = await qrContainerRef.current.capture();
+
+      // 2. Create a temporary file path
+      const shareableUri = `${FileSystem.cacheDirectory}temp_qr.png`;
+
+      // 3. Copy the captured image to the shareable location
+      await FileSystem.copyAsync({
+        from: uri,
+        to: shareableUri,
+      });
+
+      // 4. Share the image
+      const result = await Share.share({
+        message: "Check out this QR code from Maanikya",
+        title: "Maanikya Gem QR Code",
+        url: Platform.OS === "ios" ? shareableUri : `file://${shareableUri}`,
+      });
+
+      // 5. Clean up
+      await FileSystem.deleteAsync(shareableUri, { idempotent: true });
+      if (uri !== shareableUri) {
+        await FileSystem.deleteAsync(uri, { idempotent: true });
+      }
+    } catch (error) {
+      console.error("Share error:", error);
+      Alert.alert("Error", "Failed to share QR code");
+    }
+  };
+
   const formatDate = (dateString) => {
     if (!dateString) return "Loading...";
     const date = new Date(dateString);
@@ -94,6 +145,9 @@ export default function Gem_register_3() {
           options={{
             format: "png",
             quality: 0.9,
+            result: "tmpfile",
+            width: 250,
+            height: 250,
           }}
         >
           <View style={styles.qrContainer}>
@@ -129,8 +183,8 @@ export default function Gem_register_3() {
           </View>
         </View>
 
-        <TouchableOpacity style={styles.sendButton}>
-          <Text style={baseScreenStyles.buttonText}>Send to mail</Text>
+        <TouchableOpacity style={styles.sendButton} onPress={handleShare}>
+          <Text style={baseScreenStyles.buttonText}>Share QR code</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={baseScreenStyles.blueButton}
@@ -183,7 +237,7 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   sendButton: {
-    marginTop: 10,
+    marginTop: 50,
     backgroundColor: "#02457A",
     width: "95%",
     padding: 15,

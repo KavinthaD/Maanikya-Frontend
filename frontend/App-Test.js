@@ -1,7 +1,8 @@
 // Purpose: Test individual components/screens of the app.
 
 import React from "react";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, SafeAreaView, StatusBar, Platform } from "react-native";
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import BS_NavBar from "./src/components/BS_NavBar";
 
 // Import all screens
@@ -42,28 +43,39 @@ import WelcomePage from "./src/screens/WelcomePage";
 import WorkerOrderTrackDetails from "./src/screens/WorkerOrderTrackDetails";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { baseScreenStyles } from "./src/styles/baseStyles";
 
 const Stack = createNativeStackNavigator();
-const App = () => {
+
+export default function App() {
   return (
-    <NavigationContainer>
-      <Stack.Navigator initialRouteName="GemRegister1">
-        <Stack.Screen 
-        name="GemRegister1" 
-        options={{
-          headerShown: false,
-        }} 
-        component={GemRegister1} />
-        <Stack.Screen name="GemRegister2" component={GemRegister2} />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <SafeAreaProvider>
+      <SafeAreaView style={{ 
+        flex: 1,
+        backgroundColor: baseScreenStyles.backgroundColor.backgroundColor,
+        paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0 
+      }}>
+        <StatusBar
+          barStyle="dark-content"
+          backgroundColor={baseScreenStyles.backgroundColor.backgroundColor}
+          translucent={true}
+        />
+        <NavigationContainer>
+          <Stack.Navigator initialRouteName="GemRegister1">
+            <Stack.Screen 
+              name="GemRegister1" 
+              options={{
+                headerShown: false,
+              }} 
+              component={GemRegister1} 
+            />
+            <Stack.Screen 
+              name="GemRegister2" 
+              component={GemRegister2} 
+            />
+          </Stack.Navigator>
+        </NavigationContainer>
+      </SafeAreaView>
+    </SafeAreaProvider>
   );
-};
-
-export default App;
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-});
+}

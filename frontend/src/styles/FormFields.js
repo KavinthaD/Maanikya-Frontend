@@ -20,6 +20,8 @@ export const FormFieldStyles = StyleSheet.create({
     borderWidth: 0,
     height: 50,
     fontSize: 20,
+    marginVertical: 8,
+    zIndex: 2000,
   },
   dropdownText: {
     color: "#000",
@@ -37,6 +39,7 @@ export const FormFieldStyles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
     elevation: 5,
+    zIndex: 2000,
   },
   listItemContainer: {
     backgroundColor: "#E8F0FE",

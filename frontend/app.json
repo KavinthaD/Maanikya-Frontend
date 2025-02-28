@@ -17,14 +17,8 @@
           "savePhotosPermission": "Allow Maanikya to save QR codes to your gallery.",
           "isAccessMediaLocationEnabled": false
         }
-      ],
-      [
-        "expo-image-picker",
-        {
-          "photosPermission": "Allow Maanikya to access your photos for gem registration.",
-          "cameraPermission": "Allow Maanikya to use your camera for gem registration."
-        }
       ]
+      
     ],
     "android": {
       "package": "com.maanikya.app",

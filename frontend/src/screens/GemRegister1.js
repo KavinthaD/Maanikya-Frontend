@@ -15,20 +15,72 @@ import {
   ScrollView,
   Platform,
 } from "react-native";
-import { launchImageLibrary } from "react-native-image-picker";
 import { baseScreenStyles } from "../styles/baseStyles";
 import { useNavigation } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Header_1 from "../components/Header_1";
-import Header_2 from "../components/Header_2";
 import Gem_register_2 from "./GemRegister2";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import CustomCamera from "../components/CustomCamera";
 import { Camera } from "expo-camera";
 import DropDownPicker from "react-native-dropdown-picker";
 import { FormFieldStyles } from "../styles/FormFields";
-import * as ImagePicker from "expo-image-picker";
 import Modal from "react-native-modal";
+import * as FileSystem from "expo-file-system";
+import ImageCropPicker from "react-native-image-crop-picker";
+
+const IMAGE_CONSTRAINTS = {
+  maxWidth: 2048,
+  maxHeight: 2048,
+  minWidth: 512,
+  minHeight: 512,
+  maxSizeMB: 5,
+  quality: 0.9,
+  allowedFormats: ["jpeg", "jpg", "png"],
+  aspectRatio: [1, 1],
+};
+
+// const validateImage = async (uri) => {
+//   console.log("Validating image URI:", uri);
+//   try {
+//     // Check file size
+//     const fileInfo = await FileSystem.getInfoAsync(uri);
+//     const fileSizeMB = fileInfo.size / (1024 * 1024);
+//     if (fileSizeMB > IMAGE_CONSTRAINTS.maxSizeMB) {
+//       throw new Error(
+//         `Image must be smaller than ${IMAGE_CONSTRAINTS.maxSizeMB}MB`
+//       );
+//     }
+
+//     // Check dimensions
+//     const { width, height } = await new Promise((resolve) => {
+//       Image.getSize(uri, (width, height) => resolve({ width, height }));
+//     });
+
+//     if (
+//       width > IMAGE_CONSTRAINTS.maxWidth ||
+//       height > IMAGE_CONSTRAINTS.maxHeight
+//     ) {
+//       throw new Error(
+//         `Image dimensions must not exceed ${IMAGE_CONSTRAINTS.maxWidth}x${IMAGE_CONSTRAINTS.maxHeight}`
+//       );
+//     }
+
+//     if (
+//       width < IMAGE_CONSTRAINTS.minWidth ||
+//       height < IMAGE_CONSTRAINTS.minHeight
+//     ) {
+//       throw new Error(
+//         `Image must be at least ${IMAGE_CONSTRAINTS.minWidth}x${IMAGE_CONSTRAINTS.minHeight}`
+//       );
+//     }
+
+//     return true;
+//   } catch (error) {
+//     Alert.alert("Image Validation Failed", error.message);
+//     return false;
+//   }
+// };
 
 const Stack = createNativeStackNavigator();
 
@@ -62,22 +114,21 @@ function GemRegister1Main() {
 
   const handleTakePhoto = async () => {
     try {
-      const { status } = await ImagePicker.requestCameraPermissionsAsync();
-      if (status !== "granted") {
-        Alert.alert("Permission needed", "Camera permission is required");
-        return;
-      }
-
-      const result = await ImagePicker.launchCameraAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Images,
-        allowsEditing: true,
-        aspect: [4, 3],
-        quality: 1,
+      const result = await ImageCropPicker.openCamera({
+        width: 600,
+        height: 600,
+        mediaType: "photo",
+        includeBase64: false,
+        maxHeight: 2000,
+        maxWidth: 2000,
+        cropping: true,
+        cropperCircleOverlay: false,
+        cropperStatusBarColor: "#9CCDDB",
+        cropperToolbarColor: "#9CCDDB",
       });
 
-      if (!result.canceled && result.assets[0]) {
-        const newPhotos = [...form.photos, result.assets[0].uri];
-        setForm((prev) => ({ ...prev, photos: newPhotos }));
+      if (result && result.path) {
+        setForm((prev) => ({ ...prev, photos: [result.path] }));
       }
     } catch (error) {
       console.error("Error taking photo:", error);
@@ -88,23 +139,21 @@ function GemRegister1Main() {
 
   const handleChooseFromGallery = async () => {
     try {
-      const { status } =
-        await ImagePicker.requestMediaLibraryPermissionsAsync();
-      if (status !== "granted") {
-        Alert.alert("Permission needed", "Gallery permission is required");
-        return;
-      }
-
-      const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Images,
-        allowsEditing: true,
-        aspect: [4, 3],
-        quality: 1,
+      const result = await ImageCropPicker.openPicker({
+        width: 600,
+        height: 600,
+        mediaType: "photo",
+        includeBase64: false,
+        maxHeight: 2000,
+        maxWidth: 2000,
+        cropping: true,
+        cropperCircleOverlay: false,
+        cropperStatusBarColor: "#9CCDDB",
+        cropperToolbarColor: "#9CCDDB",
       });
 
-      if (!result.canceled && result.assets[0]) {
-        const newPhotos = [...form.photos, result.assets[0].uri];
-        setForm((prev) => ({ ...prev, photos: newPhotos }));
+      if (result && result.path) {
+        setForm((prev) => ({ ...prev, photos: [result.path] }));
       }
     } catch (error) {
       console.error("Error choosing from gallery:", error);
@@ -155,7 +204,9 @@ function GemRegister1Main() {
       return;
     }
     console.log("Data passed to GemRegister1:", form);
-    navigation.navigate("GemRegister2", { formData: form }); // Pass the entire form object
+    navigation.navigate("GemRegister2", {
+      formData: { ...form, photo: form.photos[0] },
+    }); // Pass the image path
   };
 
   return (

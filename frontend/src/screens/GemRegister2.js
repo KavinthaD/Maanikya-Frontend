@@ -11,7 +11,6 @@ import {
   KeyboardAvoidingView,
   ScrollView,
   Platform,
-  
 } from "react-native";
 import DropDownPicker from "react-native-dropdown-picker"; // Import DropDownPicker
 import { baseScreenStyles } from "../styles/baseStyles"; // Import base styles
@@ -28,7 +27,6 @@ import axios from "axios"; // Import axios
 import { FormFieldStyles } from "../styles/FormFields";
 import { API_URL, ENDPOINTS } from "../config/api-local"; //change api path here
 import AsyncStorage from "@react-native-async-storage/async-storage"; // Import AsyncStorage
-
 
 const Stack = createNativeStackNavigator();
 
@@ -131,12 +129,32 @@ function GemRegister2Main() {
       ...form, // Data from GemRegister2
     };
 
-    console.log("From Submitted combined with:", form);
+    console.log("From Submitted combined with:", combinedForm);
+
+    // Create a FormData object to send the image and other data
+    const formDataToSend = new FormData();
+    formDataToSend.append('photo', {
+      uri: combinedForm.photo, // The image path from GemRegister1
+      type: 'image/jpeg', // Adjust the type based on your image format
+      name: 'gem_photo.jpg', // You can set a default name
+    });
+
+    // Append other form data
+    Object.keys(combinedForm).forEach((key) => {
+      if (key !== 'photo' && key !== 'photos') { // Exclude photo and photos array
+        formDataToSend.append(key, combinedForm[key]);
+      }
+    });
 
     try {
       const response = await axios.post(
-        `${API_URL}${ENDPOINTS.REGISTER_GEM}`, //api url is from config file
-        combinedForm
+        `${API_URL}${ENDPOINTS.REGISTER_GEM}`,
+        formDataToSend,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data', // Set the content type
+          },
+        }
       );
 
       if (response.status === 201) {
@@ -176,10 +194,10 @@ function GemRegister2Main() {
       keyboardVerticalOffset={Platform.OS === "ios" ? 90 : 0}
     >
       <ScrollView
-         ref={scrollViewRef}
-         contentContainerStyle={{ flexGrow: 1}} 
-         nestedScrollEnabled={true}
-         keyboardShouldPersistTaps="handled"
+        ref={scrollViewRef}
+        contentContainerStyle={{ flexGrow: 1 }}
+        nestedScrollEnabled={true}
+        keyboardShouldPersistTaps="handled"
       >
         <View style={[styles.innerContainer, { zIndex: 2 }]}>
           <TextInput

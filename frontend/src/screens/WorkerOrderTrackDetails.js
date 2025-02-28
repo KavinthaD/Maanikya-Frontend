@@ -1,38 +1,50 @@
 //Screen creator: Thulani
 
 import React, {useState} from "react";
-import {View, Text, Image, StyleSheet, TouchableOpacity} from "react-native";
+import {View, Text, Image, StyleSheet, TouchableOpacity, ScrollView} from "react-native";
 import {FontAwesome} from "@expo/vector-icons";
+import Header_2 from "../components/Header_2";
 
 const WorkerOrderTrackDetails = () => {
     const [orderCompleted, setOrderCompleted] = useState(false);
     const [orderPayment, setOrderPayment] = useState(false);
-    const [rating, setRating] = useState(0);
-
+    const gems = [
+        { id: "BE002", image: require("../assets/gem-images/gem1.jpeg")},
+        { id: "BS079", image: require("../assets/gem-images/gem1.jpeg")},
+        { id: "RS305", image: require("../assets/gem-images/gem1.jpeg")},
+        { id: "BS001", image: require("../assets/gem-images/gem1.jpeg")},
+        { id: "BS002", image: require("../assets/gem-images/gem1.jpeg")},
+        { id: "BS005", image: require("../assets/gem-images/gem1.jpeg")},
+    ]
+    
     return (
         <View style={styles.container}>
-            <View style= {styles.orderDetails}> 
-                <View style= {styles.row}>
-                    <View>
-                        <Text style={styles.gemId}> Gem ID - IHP164 </Text>
-                        <Text style={styles.price}> Rs. 7800 </Text>
-                        <Text style={styles.ratingLabel}> Rating </Text>
-                    </View>
-                    <View>
-                        <Image source={require("../assets/gem-images/gem1.jpeg")} style={styles.gemImage}/>
-                        <View style={styles.ratingContainer}>
-                            {[1,2,3,4,5].map((star)=> (
-                                <TouchableOpacity key={star} onPress={() => setRating(star)}>
-                                    <FontAwesome name="star" size={24} color={star <= rating ? "#334D85" : "#fff"} />
-                                </TouchableOpacity>
-                            ))}
-                        </View>
-                    </View>
-                </View>
-            </View>
+            <Header_2 title="Order#: NB01130"/>
+            <ScrollView contentContainerStyle={styles.scrollContainer}>
+                    <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.gemScroll}>
+                        {gems.map((gem) => (
+                            <View key={gem.id} style={styles.gemContainer}>
+                                 <Image source={gem.image} style={styles.gemImage} />
+                                        <Text style={styles.gemId}>{gem.id}</Text>
+                            </View>
+                        ))}
+                    </ScrollView>
+
+                    <View style={styles.row}>
+                        <Text style={styles.price}> Rs.7800</Text>
+                        <View style={styles.ratingSection}>
+                            <View style={styles.ratingContainer}>
+                                    {[1, 2, 3, 4, 5].map((star) => (
+                                        <FontAwesome key={star} name="star" size={24} color="#334D85"/>
+                                ))}
+                              </View>
+                            </View>
+                          </View>
             <View style={styles.dividerContainer}>
                 <View style={styles.divider} />
             </View>   
+
+
             <View style={styles.orderStatus}> 
                 <Text style={styles.orderDet}> Order Details </Text>
                 <View style={styles.statusBoxRequest}>
@@ -90,6 +102,7 @@ const WorkerOrderTrackDetails = () => {
                     <Text style={styles.completeButtonText}>Confirm Payment and Close the Order</Text>
                 </TouchableOpacity>
             )}
+</ScrollView>
         </View>
     );
 };
@@ -98,21 +111,20 @@ const WorkerOrderTrackDetails = () => {
 const styles = StyleSheet.create ({
     container: {
         flex:1,
-        backgroundColor: "#A9D3E8",
-        paddingTop: 40
+        backgroundColor: "#9CCDDB",
+    },
+    scrollContainer: {
+        paddingHorizontal: 10,
+        paddingBottom: 20,
+    },
+    gemScroll: {
+        flexDirection: "row",
+        padding: 10,
     },
 
-    backButton: {
-        position: "absolute",
-        top: 50,
-        left: 20,
-        zIndex: 10
-    },
-
-    header: {
-        backgroundColor: "#022A41",
-        padding: 15,
+    gemContainer: {
         alignItems: "center",
+        marginRight: 10,
     },
 
     orderNumber: {
@@ -129,6 +141,7 @@ const styles = StyleSheet.create ({
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center",
+        marginVertical: 14,
     },
 
     gemId: {
@@ -142,26 +155,18 @@ const styles = StyleSheet.create ({
         fontWeight: "bold"
     },
 
-
-    ratingLabel: {
-        fontSize: 16,
-        color: "#555",
-        marginTop: 40,
-        fontWeight: "bold"
+    ratingSection: {
+        alignItems: "center",
     },
 
     ratingContainer: {
         flexDirection: "row",
-        justifyContent: "center",
-        marginTop: 10,
     },
 
     gemImage: {
         width: 80,
         height: 80,
         borderRadius: 10,
-        alignSelf: "center",
-        marginTop: 1,
     },
 
     orderDet: {
@@ -183,8 +188,7 @@ const styles = StyleSheet.create ({
         padding: 10,
         borderRadius: 8,
         marginBottom: 10,
-        marginLeft: 40,
-        marginRight: 30
+        marginHorizontal: 40,
     },
 
     statusBoxAccept: {
@@ -194,8 +198,7 @@ const styles = StyleSheet.create ({
         padding: 10,
         borderRadius: 8,
         marginBottom: 10,
-        marginLeft: 40,
-        marginRight: 30
+        marginHorizontal: 40,
     },
 
     statusBoxConfirm: {
@@ -205,8 +208,7 @@ const styles = StyleSheet.create ({
         padding: 10,
         borderRadius: 8,
         marginBottom: 10,
-        marginLeft: 40,
-        marginRight: 30
+        marginHorizontal: 40,
     },
 
     statusBoxComplete: {
@@ -216,8 +218,7 @@ const styles = StyleSheet.create ({
         padding: 10,
         borderRadius: 8,
         marginBottom: 10,
-        marginLeft: 40,
-        marginRight: 30
+        marginHorizontal: 40,
     },
 
     statusBoxPayment: {
@@ -227,8 +228,7 @@ const styles = StyleSheet.create ({
         padding: 10,
         borderRadius: 8,
         marginBottom: 10,
-        marginLeft: 40,
-        marginRight: 30
+        marginHorizontal: 40,
     },
 
     statusIcon: {
@@ -236,7 +236,7 @@ const styles = StyleSheet.create ({
         height: 50,
         marginLeft: 20,
         marginRight: 20,
-      },
+    },
 
     statusText: {
         color: "white", 
@@ -253,10 +253,10 @@ const styles = StyleSheet.create ({
     completeButton: {
         backgroundColor: '#02457A',
         paddingVertical: 8,
-        borderRadius: 70,
+        borderRadius: 10,
         width: '80%',
-        marginTop: 14,
-        marginLeft: 40
+        marginTop: 20,
+        alignSelf: "center"
     },
 
     completeButtonText: {
@@ -268,22 +268,16 @@ const styles = StyleSheet.create ({
 
     paidButton: {
         backgroundColor: '#02457A',
-        paddingVertical: 8,
-        borderRadius: 70,
+        paddingVertical: 14,
+        borderRadius: 10,
         width: '80%',
-        marginTop: 14,
-        marginLeft: 40
-    },
-
-    dividerContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        marginVertical: 1,
+        marginTop: 20,
+        alignSelf: "center"
     },
     divider: {
-        flex: 1,
         height: 1,
         backgroundColor: 'black',
+        marginVertical: 5,
     }
 
 });

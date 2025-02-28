@@ -19,6 +19,7 @@ import { baseScreenStyles } from "../styles/baseStyles";
 import { useNavigation } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Header_1 from "../components/Header_1";
+
 import Gem_register_2 from "./GemRegister2";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import CustomCamera from "../components/CustomCamera";

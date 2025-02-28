@@ -8,10 +8,7 @@ export default function Header_1({ title }) {
   );
 }
 const styles = StyleSheet.create({
-  container: {
-    // Default horizontal padding
-    paddingVertical: 30,
-  },
+  
   titleText: {
     fontFamily: "arial",
     fontSize: 24,
@@ -21,7 +18,7 @@ const styles = StyleSheet.create({
   },
   title: {
     paddingHorizontal: 0,
-    marginTop: 30,
+    marginTop: 0,
     fontSize: 24,
     fontWeight: "bold",
     textAlign: "center",

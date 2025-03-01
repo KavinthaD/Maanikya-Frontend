@@ -1,4 +1,9 @@
 import React from "react";
+import { StyleSheet, View, Text } from "react-native";
+
+import OwnerOrderTrackDetails from "./src/screens/OwnerOrderTrackDetails";
+import WorkerOrderTrackDetails from "./src/screens/WorkerOrderTrackDetails";
+
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { SafeAreaView, StatusBar, Platform } from "react-native";
@@ -29,116 +34,15 @@ const Stack = createNativeStackNavigator();
 
 const App = () => {
   return (
-    <SafeAreaProvider>
-      <SafeAreaView
-        style={{
-          flex: 1,
-          backgroundColor: baseScreenStyles.backgroundColor.backgroundColor,
-          paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
-        }}
-      >
-        <StatusBar
-          barStyle="dark-content"
-          backgroundColor={baseScreenStyles.backgroundColor.backgroundColor}
-          translucent={true}
+    <NavigationContainer>
+      <Stack.Navigator initialRouteName="WorkerOrderTrackDetails">
+        <Stack.Screen
+          name="WorkerOrderTrackDetails"
+          component={ WorkerOrderTrackDetails}
+          options={{ headerShown: false }}
         />
-        <NavigationContainer>
-          <Stack.Navigator initialRouteName="WelcomePage">
-            <Stack.Screen
-              name="WelcomePage"
-              component={WelcomePage}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="PurposeSelectionPage"
-              component={PurposeSelectionPage}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="RegisterSelectionPage"
-              component={RegisterSelectionPage}
-              options={{ headerShown: false }}
-            />
-
-            <Stack.Screen
-              name="Login"
-              component={Login}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="SignUpBusiness"
-              component={SignUpBusiness}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="SignUpScreen"
-              component={SignUpScreen}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="SignUpScreenCustomer"
-              component={SignUpScreenCustomer}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="MySellersScreen"
-              component={MySellersScreen}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="HomeScreen"
-              component={HomeScreen}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="CustomHomePage"
-              component={CustomHomePage}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="GemstoneMarketplace"
-              component={GemstoneMarketplace}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="HomeMyGems"
-              component={GemCollectionScreen}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="OwnerFinancialRecords"
-              component={OwnerFinancialRecords}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="ConnectScreen"
-              component={ConnectScreen}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="GemOnDisplay"
-              component={GemOnDisplay}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="ProfileScreen"
-              component={ProfileScreen}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="FavoritesScreen "
-              component={FavoritesScreen}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="OrderScreen"
-              component={OrderScreen}
-              options={{ headerShown: false }}
-            />
-          </Stack.Navigator>
-        </NavigationContainer>
-      </SafeAreaView>
-    </SafeAreaProvider>
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 };
 

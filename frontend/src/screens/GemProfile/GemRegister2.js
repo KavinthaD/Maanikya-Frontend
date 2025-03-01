@@ -116,6 +116,7 @@ function GemRegister2Main() {
 
   // Clear saved form data after successful submission
   const handleFinalize = async () => {
+    // Check required fields
     if (!form.ownerName || !form.contactNumber || !form.purchasePrice) {
       Alert.alert(
         "Fill Required Details",
@@ -129,25 +130,35 @@ function GemRegister2Main() {
       ...form, // Data from GemRegister2
     };
 
-    console.log("From Submitted combined with:", combinedForm);
+    console.log("Form Submitted combined with:", combinedForm);
 
-    // Create a FormData object to send the image and other data
+    // Create FormData object
     const formDataToSend = new FormData();
-    formDataToSend.append("photo", {
-      uri: combinedForm.photo, // The image path from GemRegister1
-      type: "image/jpeg", // Adjust the type based on your image format
-      name: "gem_photo.jpg", // You can set a default name
-    });
+
+    // Only append photo if it exists
+    if (
+      combinedForm.photo ||
+      (combinedForm.photos && combinedForm.photos.length > 0)
+    ) {
+      const photoUri = combinedForm.photo || combinedForm.photos[0];
+      formDataToSend.append("photo", {
+        uri: photoUri,
+        type: "image/jpeg",
+        name: "gem_photo.jpg",
+      });
+    }
 
     // Append other form data
     Object.keys(combinedForm).forEach((key) => {
-      if (key !== "photo" && key !== "photos") {
-        // Exclude photo and photos array
+      if (key !== "photo" && key !== "photos" && combinedForm[key]) {
         formDataToSend.append(key, combinedForm[key]);
       }
     });
 
     try {
+      console.log("API URL:", `${API_URL}${ENDPOINTS.REGISTER_GEM}`);
+      console.log("Form Data to Send:", formDataToSend);
+
       const response = await axios.post(
         `${API_URL}${ENDPOINTS.REGISTER_GEM}`,
         formDataToSend,
@@ -155,32 +166,30 @@ function GemRegister2Main() {
           headers: {
             "Content-Type": "multipart/form-data", // Set the content type
           },
+          timeout: 10000, // 10 second timeout
         }
       );
 
       if (response.status === 201) {
         console.log("Gem registered successfully:", response.data);
-        // Clear the saved form data
         await AsyncStorage.removeItem("gemRegister2Form");
-        // Pass the gemId and createdAt from the response to GemRegister3
         navigation.navigate("GemRegister3", {
           gemId: response.data.gem.gemId,
           createdAt: response.data.gem.createdAt,
         });
-      } else {
-        Alert.alert("Error", "Failed to register gem");
       }
     } catch (error) {
-      console.error("Error registering gem:", error); // Log the error for debugging
-      if (error.response) {
-        console.error("Server responded with:", error.response.data); // Log server response
-        Alert.alert(
-          "Error",
-          `Failed to register gem: ${error.response.data.message}`
-        );
-      } else {
-        Alert.alert("Error", "Failed to register gem");
-      }
+      console.error("Error details:", {
+        message: error.message,
+        response: error.response?.data,
+        status: error.response?.status,
+      });
+
+      Alert.alert(
+        "Error",
+        error.response?.data?.message ||
+          "Failed to register gem. Please try again."
+      );
     }
   };
 

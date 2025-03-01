@@ -1,12 +1,13 @@
 //Screen creator: Isum
 
 import React from "react";
-import { SafeAreaView,View, Text, Image, TouchableOpacity, StyleSheet, Button } from "react-native";
-import { Home, ShoppingBag, PlusCircle, Bell, User } from "lucide-react-native";
+import { SafeAreaView,View, Text, Image, TouchableOpacity, StyleSheet } from "react-native";
+
 import { Ionicons, FontAwesome5 } from '@expo/vector-icons'; 
 import { baseScreenStyles } from "../styles/baseStyles";
 
 const BusinessOwnerProfile = ({ navigation }) => {
+  //sample dataset
   const user = {
     image: "https://static.wikia.nocookie.net/garfield/images/6/60/Garfield_New_Look.jpg/revision/latest/scale-to-width/360?cb=20240328075614", 
     name: "abc",
@@ -17,19 +18,17 @@ const BusinessOwnerProfile = ({ navigation }) => {
   };
 
   return (
-    <SafeAreaView style={baseScreenStyles.container}>
-      
-      
-
+    <SafeAreaView style={[baseScreenStyles.container,styles.container]}>
+      {/*Handling profile pic and edit button*/}
       <View style={styles.profileContainer}>
         <Image source={{ uri: user.image }} style={styles.profilePic} />
         <TouchableOpacity style={styles.editProfileButton} onPress={() => navigation.navigate("BusinessOwnerEditProfile")}>
           <Text style={styles.editProfileButtonText}>Edit Profile</Text>
         </TouchableOpacity>
-        
-        
       </View>
-      <View style={style.info}>
+
+      {/*displaying information*/}
+      <View style={styles.info}>
         <View style={styles.infoContainer}>
           <Text style={styles.label}>NAME</Text>
           <Text style={styles.infoText}>{user.name}</Text>
@@ -66,7 +65,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#A7D7E7",
   },
   profileContainer: {
-    backgroundColor: '#ffffff', // White Section
+    backgroundColor: '#ffffff', 
     padding: 20,
     alignItems: 'center',
     borderBottomWidth: 1,
@@ -86,13 +85,13 @@ const styles = StyleSheet.create({
     borderRadius: 60, 
     marginBottom: 15,
   },
-  editBtn: {
+  editProfileButton: {
     backgroundColor: "#29abe2",
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 8,
   },
-  editBtnText: {
+  editProfileButtonText: {
     color: "white",
     fontSize: 16,
     fontWeight: "500",
@@ -102,7 +101,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 16,
   },
   infoContainer: {
-    backgroundColor: '#ffffff', // White Background
+    backgroundColor: '#ffffff',
     paddingVertical: 15,
     paddingHorizontal: 20,
     borderRadius: 12,

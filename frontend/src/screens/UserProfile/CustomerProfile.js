@@ -4,6 +4,7 @@ import React from "react";
 import { SafeAreaView,View, Text, Image, TouchableOpacity, StyleSheet, Button } from "react-native";
 import { Ionicons, FontAwesome5 } from '@expo/vector-icons'; 
 import { baseScreenStyles } from "../../styles/baseStyles";
+import Header_1 from "../../components/Header_1";
 
 const CustomerProfile = ({ navigation }) => {
   const user = {
@@ -17,7 +18,7 @@ const CustomerProfile = ({ navigation }) => {
 
   return (
     <SafeAreaView style={baseScreenStyles.container}>
-      
+      <Header_1 title="Home" />
 
       <View style={styles.profileContainer}>
         <Image source={{ uri: user.image }} style={styles.profilePic} />

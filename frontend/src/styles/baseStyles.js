@@ -7,6 +7,7 @@ export const baseScreenStyles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#9CCDDB", // Default background color for all screens
+    position: "relative", // Set position to relative to contain absolutely positioned children
   },
 
   buttonText: {
@@ -19,11 +20,17 @@ export const baseScreenStyles = StyleSheet.create({
     backgroundColor: "#170969",
     padding: 15,
     borderRadius: 10,
-    position: "absolute", // Position absolutely
-    bottom: -50, // Distance from bottom
-    left: 30, // Distance from left
-    right: 30, // Distance from right
+    width: "95%",
+    alignSelf: "center", // Center the button horizontally
   },
+  // blueButton: {
+  //   backgroundColor: "#170969",
+  //   padding: 15,
+  //   borderRadius: 10,
+  //   position: "absolute",
+  //   left: 30, // Distance from left
+  //   right: 30, // Distance from right
+  // },
   helperText: {
     color: "grey",
     fontSize: 15,
@@ -33,4 +40,3 @@ export const baseScreenStyles = StyleSheet.create({
     fontWeight: "bold",
   },
 });
-

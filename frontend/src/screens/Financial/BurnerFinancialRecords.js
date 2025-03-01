@@ -3,12 +3,12 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { baseScreenStyles } from "../../styles/baseStyles";
-import Header_2 from "../../components/Header_2";
+import Header_1 from "../../components/Header_1";
 
 const BurnerFinancialRecords = () => {
   return (
     <View style={[baseScreenStyles.container]}>
-      <Header_2 title="Financial Records"/>
+      <Header_1 title="Financial Records"/>
       <View style={styles.container}>
       <View style={styles.totalProfitContainer}>
         <Text style={styles.totalProfitTitle}>Total profit</Text>

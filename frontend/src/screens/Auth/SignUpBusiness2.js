@@ -1,6 +1,6 @@
 //Screen creator: Dulith
 
-import React from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -11,10 +11,19 @@ import {
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { baseScreenStyles } from "../../styles/baseStyles";
-import BS_Navbar from "../../components/BS_NavBar";
+import SuccessPopup from "../../components/SuccessPopup";
 
 const SignUpScreen = () => {
   const navigation = useNavigation();
+  const [popupVisible, setPopupVisible] = useState(false);
+
+  const handleCreateAccount = () => {
+    setPopupVisible(true);
+    setTimeout(() => {
+      navigation.navigate("BS_NavBar");
+    }, 2500);
+  };
+
   return (
     <View style={[baseScreenStyles.container]}>
       <View style={styles.container}>
@@ -30,13 +39,15 @@ const SignUpScreen = () => {
           placeholder="Re-enter password"
           secureTextEntry={true}
         />
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => navigation.navigate("BS_Navbar")}
-        >
+        <TouchableOpacity style={styles.button} onPress={handleCreateAccount}>
           <Text style={styles.buttonText}>Create account</Text>
         </TouchableOpacity>
       </View>
+      <SuccessPopup
+        visible={popupVisible}
+        onClose={() => setPopupVisible(false)}
+        message="Sign Up Success!"
+      />
     </View>
   );
 };

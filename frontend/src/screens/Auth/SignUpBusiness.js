@@ -68,7 +68,7 @@ const SignUpBusiness = () => {
           </Picker>
       </View>
       <TouchableOpacity style={styles.continueButton} 
-      onPress={() => navigation.navigate('SignUpScreen')}>
+      onPress={() => navigation.navigate('SignUpBusiness2')}>
         <Text style={styles.continueButtonText}>Continue</Text>
       </TouchableOpacity>
     </KeyboardAvoidingView>

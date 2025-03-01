@@ -9,10 +9,10 @@ import { baseScreenStyles } from "./src/styles/baseStyles";
 import PurposeSelectionPage from "./src/screens/Auth/PurposeSelectionPage";
 import RegisterSelectionPage from "./src/screens/Auth/RegisterSelectionPage";
 import WelcomePage from "./src/screens/WelcomePage";
-import HomeScreen from "./src/screens/Home/HomePageBusiness";
+import HomePageWorker from "./src/screens/Home/HomePageWorker";
+import HomePageBusiness from "./src/screens/Home/HomePageBusiness";
 import SignUpScreenCustomer from "./src/screens/Auth/SignUpCustomer";
-import CustomHomePage from "./src/screens/Home/HomePageCustomer";
-import GemstoneMarketplace from "./src/screens/Market";
+import Market from "./src/screens/Market";
 import OwnerFinancialRecords from "./src/screens/Financial/ownerFinancialRecords";
 import ConnectScreen from "./src/screens/ConnectScreen";
 import GemOnDisplay from "./src/screens/GemOnDisplay";
@@ -21,13 +21,17 @@ import FavoritesScreen from "./src/screens/Favorites";
 import OrderScreen from "./src/screens/Order/Orders";
 import Login from "./src/screens/Auth/Login";
 import SignUpBusiness from "./src/screens/Auth/SignUpBusiness";
-import SignUpScreen from "./src/screens/Auth/SignUpScreen";
-import MySellersScreen from "./src/screens/Customeraddseller";
+import SignUpBusiness2 from "./src/screens/Auth/SignUpBusiness2";
 import HomeMyGems from "./src/screens/GemProfile/HomeMyGems";
-import BS_Navbar from "./src/components/BS_NavBar";
+import BS_NavBar from "./src/components/BS_NavBar";
+import C_NavBar from "./src/components/C_NavBar";
+import W_NavBar from "./src/components/W_NavBar";
 import GemRegister1 from "./src/screens/GemProfile/GemRegister1";
 import Tracker from "./src/screens/Order/Tracker"
 import BusinessOwnerProfile from "./src/screens/UserProfile/BusinessOwnerProfile";
+import HomePageCustomer from "./src/screens/Home/HomePageCustomer";
+
+import Customeraddseller from "./src/screens/Customeraddseller"
 
 const Stack = createNativeStackNavigator();
 
@@ -75,8 +79,8 @@ const App = () => {
               options={{ headerShown: false }}
             />
             <Stack.Screen
-              name="SignUpScreen"
-              component={SignUpScreen}
+              name="SignUpBusiness2"
+              component={SignUpBusiness2}
               options={{ headerShown: false }}
             />
             <Stack.Screen
@@ -85,23 +89,28 @@ const App = () => {
               options={{ headerShown: false }}
             />
             <Stack.Screen
-              name="MySellersScreen"
-              component={MySellersScreen}
+              name="HomePageBusiness"
+              component={HomePageBusiness}
               options={{ headerShown: false }}
             />
             <Stack.Screen
-              name="HomeScreen"
-              component={HomeScreen}
+              name="HomePageWorker"
+              component={HomePageWorker}
               options={{ headerShown: false }}
             />
             <Stack.Screen
-              name="CustomHomePage"
-              component={CustomHomePage}
+              name="C_NavBar"
+              component={C_NavBar}
               options={{ headerShown: false }}
             />
             <Stack.Screen
-              name="GemstoneMarketplace"
-              component={GemstoneMarketplace}
+              name="HomePageCustomer"
+              component={HomePageCustomer}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="Market"
+              component={Market}
               options={{ headerShown: false }}
             />
             <Stack.Screen
@@ -140,10 +149,16 @@ const App = () => {
               options={{ headerShown: false }}
             />
             <Stack.Screen
-              name="BS_Navbar"
-              component={BS_Navbar}
+              name="BS_NavBar"
+              component={BS_NavBar}
               options={{ headerShown: false }}
             />
+            <Stack.Screen
+              name="W_NavBar"
+              component={W_NavBar}
+              options={{ headerShown: false }}
+            />
+            
             <Stack.Screen
               name="GemRegister1"
               component={GemRegister1}
@@ -157,6 +172,11 @@ const App = () => {
             <Stack.Screen
               name="BusinessOwnerProfile"
               component={BusinessOwnerProfile}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="Customeraddseller"
+              component={Customeraddseller}
               options={{ headerShown: false }}
             />
           </Stack.Navigator>

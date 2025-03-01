@@ -10,7 +10,7 @@ import {
   ScrollView,
 } from "react-native";
 import { baseScreenStyles } from "../styles/baseStyles";
-import Header_2 from "../components/Header_2";
+import Header_1 from "../components/Header_1";
 
 const GemstoneMarketplace = () => {
   const [sortAscending, setSortAscending] = useState(true);
@@ -85,7 +85,7 @@ const GemstoneMarketplace = () => {
 
   return (
     <ScrollView style={baseScreenStyles.container}>
-      <Header_2 title="Market" />
+      <Header_1 title="Market" />
       <View style={styles.searchContainer}>
         <View style={styles.searchBar}>
           <TextInput

@@ -9,17 +9,14 @@ import {
   Image,
 } from "react-native";
 import * as Animatable from "react-native-animatable";
-import HomePageBusiness from "../screens/Home/HomePageBusiness";
+import HomePageCustomer from "../screens/Home/HomePageCustomer";
 import Market from "../screens/Market";
-import AddGem from "../screens/GemProfile/GemRegister1";
-import AlertsScreen from "../screens/Notification/AlertsScreen";
-import Profiles from "../screens/UserProfile/BusinessOwnerProfile";
+import Alerts from "../screens/Notification/Alerts";
+import CustomerProfile from "../screens/UserProfile/CustomerProfile";
 
 // Import your custom icons
 const homeIcon = require("../assets/navbar-icons/home.png");
 const homeIconOutline = require("../assets/navbar-icons/home-outline.png");
-const gemIcon = require("../assets/navbar-icons/gem.png");
-const gemIconOutline = require("../assets/navbar-icons/gem-outline.png");
 const marketIcon = require("../assets/navbar-icons/market.png");
 const marketIconOutline = require("../assets/navbar-icons/market-outline.png");
 const notificationIcon = require("../assets/navbar-icons/notification.png");
@@ -29,11 +26,11 @@ const userIconOutline = require("../assets/navbar-icons/user-outline.png");
 
 const TabArr = [
   {
-    route: "Home",
+    route: "HomePageCustomer",
     label: "Home",
     activeIcon: homeIcon,
     inActiveIcon: homeIconOutline,
-    component: HomePageBusiness,
+    component: HomePageCustomer,
   },
   {
     route: "Market",
@@ -43,25 +40,18 @@ const TabArr = [
     component: Market,
   },
   {
-    route: "AddGem",
-    label: "Gem",
-    activeIcon: gemIcon,
-    inActiveIcon: gemIconOutline,
-    component: AddGem,
-  },
-  {
-    route: "AlertsScreen",
+    route: "Alerts",
     label: "Bell",
     activeIcon: notificationIcon,
     inActiveIcon: notificationIconOutline,
-    component: AlertsScreen,
+    component: Alerts,
   },
   {
-    route: "Profiles",
+    route: "CustomerProfile",
     label: "User",
     activeIcon: userIcon,
     inActiveIcon: userIconOutline,
-    component: Profiles,
+    component: CustomerProfile,
   },
 ];
 
@@ -106,7 +96,7 @@ const TabButton = (props) => {
   );
 };
 
-export default function BS_NavBar() {
+export default function C_NavBar() {
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <Tab.Navigator

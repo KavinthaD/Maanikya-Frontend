@@ -19,14 +19,11 @@ import { baseScreenStyles } from "../../styles/baseStyles";
 import { useNavigation } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Header_1 from "../../components/Header_1";
-
 import Gem_register_2 from "./GemRegister2";
 import Icon from "react-native-vector-icons/MaterialIcons";
-import { Camera } from "expo-camera";
 import DropDownPicker from "react-native-dropdown-picker";
 import { FormFieldStyles } from "../../styles/FormFields";
 import Modal from "react-native-modal";
-import * as FileSystem from "expo-file-system";
 import ImageCropPicker from "react-native-image-crop-picker";
 
 const IMAGE_CONSTRAINTS = {
@@ -280,7 +277,7 @@ function GemRegister1Main() {
           />
           <TouchableOpacity
             style={[
-              baseScreenStyles.blueButton,
+              baseScreenStyles.blueButton,styles.blueButton,
               { opacity: form.color && form.gemShape ? 1 : 0.5 },
             ]}
             onPress={handleContinue}
@@ -331,6 +328,7 @@ function GemRegister1Main() {
 }
 
 const styles = StyleSheet.create({
+ 
   finalizeButton: {
     backgroundColor: "#170969",
     padding: 10,

@@ -1,16 +1,48 @@
 //Screen creator: Dulith
 
-import React from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from 'react-native';
-import { Picker } from '@react-native-picker/picker';
+import React, { useState } from "react";
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
+  Image,
+  Alert,
+} from "react-native";
+import { Picker } from "@react-native-picker/picker";
+import { baseScreenStyles } from "../../styles/baseStyles";
+import { useNavigation } from "@react-navigation/native";
+
 const Login = () => {
-  const [email, setEmail] = useState(''); 
-  const [password, setPassword] = useState(''); 
-  const [role, setRole] = useState('');
+  const navigation = useNavigation();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [role, setRole] = useState("");
+
+  const handleLogin = () => {
+    if (!email || !password || !role) {
+      Alert.alert("Please fill all fields.");
+      return;
+    }
+
+    if (role === "gem_business_owner") {
+      navigation.navigate("BS_NavBar");
+    } else if (role === "cutter_burner") {
+      navigation.navigate("W_NavBar");
+    } else if (role === "customer") {
+      navigation.navigate("C_NavBar");
+    } else {
+      console.log("Please select a role.");
+    }
+  };
 
   return (
-    <View style={styles.container}>
-      <Image source={require('../../assets/logo-gem.png')} style={styles.logo} />
+    <View style={[baseScreenStyles.container, styles.container]}>
+      <Image
+        source={require("../../assets/logo-gem.png")}
+        style={styles.logo}
+      />
       <Text style={styles.title}>Welcome Back</Text>
       <Text style={styles.subtitle}>Login to your account</Text>
 
@@ -45,7 +77,7 @@ const Login = () => {
       <TouchableOpacity style={styles.forgotPasswordContainer}>
         <Text style={styles.forgotPassword}>Forgot your password?</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.loginButton}>
+      <TouchableOpacity style={[baseScreenStyles.blueButton,styles.loginButton]} onPress={handleLogin}>
         <Text style={styles.loginButtonText}>Log in</Text>
       </TouchableOpacity>
     </View>
@@ -54,10 +86,8 @@ const Login = () => {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: '#b3e5fc',
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     padding: 20,
   },
   logo: {
@@ -67,65 +97,61 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 32,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 10,
   },
   subtitle: {
     fontSize: 33,
     marginBottom: 5,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   prompt: {
     fontSize: 18,
     marginBottom: 20,
   },
   input: {
-    width: '100%',
+    width: "100%",
     height: 40,
-    borderColor: '#ccc',
+    borderColor: "#ccc",
     borderWidth: 1,
     borderRadius: 8,
     paddingHorizontal: 10,
     marginBottom: 10,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
   },
   pickerContainer: {
-    width: '100%',
+    width: "100%",
     height: 54,
-    borderColor: 'gray',
+    borderColor: "gray",
     borderWidth: 1,
     borderRadius: 12,
     marginBottom: 15,
-    overflow: 'hidden',
-    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+    overflow: "hidden",
+    backgroundColor: "rgba(255, 255, 255, 0.8)",
   },
   picker: {
-    height: '100%',
-    width: '100%',
+    height: "100%",
+    width: "100%",
   },
   pickerItem: {
-    color: '#888',
+    color: "#888",
   },
   inputWithOpacity: {
-    backgroundColor: 'rgba(255, 255, 255, 0.8)', // White color with 80% opacity
+    backgroundColor: "rgba(255, 255, 255, 0.8)", // White color with 80% opacity
   },
   forgotPasswordContainer: {
-    alignSelf: 'flex-start',
+    alignSelf: "flex-start",
   },
   forgotPassword: {
-    color: '#007bff',
+    color: "#007bff",
     marginBottom: 20,
   },
   loginButton: {
-    backgroundColor: '#170969',
-    borderRadius: 5,
-    width: '100%',
-    height: 50,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   loginButtonText: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 16,
   },
 });

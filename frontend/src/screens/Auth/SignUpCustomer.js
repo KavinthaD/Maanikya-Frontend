@@ -1,6 +1,6 @@
 //Screen creator: Dulith
 
-import React from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -10,8 +10,17 @@ import {
   Image,
 } from "react-native";
 import { baseScreenStyles } from "../../styles/baseStyles";
+import SuccessPopup from "../../components/SuccessPopup";
 
 const SignUpScreenCustomer = ({ navigation }) => {
+  const [popupVisible, setPopupVisible] = useState(false);
+
+  const handleCreateAccount = () => {
+    setPopupVisible(true);
+    setTimeout(() => {
+      navigation.navigate("BS_NavBar");
+    }, 2500);
+  };
   return (
     <View style={[baseScreenStyles.container, styles.container]}>
       <Image source={require("../../assets/logo.png")} style={styles.logo} />
@@ -60,10 +69,14 @@ const SignUpScreenCustomer = ({ navigation }) => {
       />
       <TouchableOpacity
         style={styles.button}
-        onPress={() => navigation.navigate("MySellersScreen")}
-      >
+        onPress={handleCreateAccount}>
         <Text style={styles.buttonText}>Create account</Text>
       </TouchableOpacity>
+      <SuccessPopup
+        visible={popupVisible}
+        onClose={() => setPopupVisible(false)}
+        message="Account created successfully!"
+      />
     </View>
   );
 };

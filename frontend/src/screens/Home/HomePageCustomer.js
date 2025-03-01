@@ -12,6 +12,7 @@ import {
 } from "react-native";
 import { baseScreenStyles } from "../../styles/baseStyles";
 import { useNavigation } from "@react-navigation/native";
+import Header_1 from "../../components/Header_1";
 
 const MenuItem = ({ image, title, onPress }) => (
   <TouchableOpacity style={styles.menuItem} onPress={onPress}>
@@ -22,7 +23,7 @@ const MenuItem = ({ image, title, onPress }) => (
   </TouchableOpacity>
 );
 
-const HomeScreen = ({ navigation }) => {
+const HomePageCustomer = ({ navigation }) => {
   const menuItems = [
     {
       image: require("../../assets/menu-icons/financialRecords.png"),
@@ -31,7 +32,6 @@ const HomeScreen = ({ navigation }) => {
     {
       image: require("../../assets/menu-icons/myGems.png"),
       title: "Gems",
-      screen: "",
     },
     {
       image: require("../../assets/menu-icons/scan.png"),
@@ -40,6 +40,7 @@ const HomeScreen = ({ navigation }) => {
     {
       image: require("../../assets/menu-icons/connect.png"),
       title: "My\nSellers",
+      screen: "Customeraddseller",
     },
   ];
 
@@ -53,6 +54,7 @@ const HomeScreen = ({ navigation }) => {
 
   return (
     <SafeAreaView style={baseScreenStyles.container}>
+      <Header_1 title="Home" />
       <View style={styles.content}>
         <Text style={styles.greeting}>Hello Rathnasiri,</Text>
         <View style={styles.menuGrid}>
@@ -125,4 +127,4 @@ const App = () => {
   );
 };
 
-export default App;
+export default HomePageCustomer;

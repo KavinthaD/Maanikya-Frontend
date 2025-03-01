@@ -70,7 +70,7 @@ const HomeScreen = () => {
   };
 
   return (
-    <View style={[baseScreenStyles.container, styles.container]}>
+    <View style={baseScreenStyles.container}>
       <Header_1 title="Home" />
       <View style={styles.content}>
         <Text style={styles.greeting}>Hello Rathnasiri,</Text>
@@ -90,10 +90,7 @@ const HomeScreen = () => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#9CCDDB",
-  },
+  
 
   content: {
     padding: 16,

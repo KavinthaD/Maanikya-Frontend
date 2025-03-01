@@ -2,13 +2,15 @@
 
 import React, { useState } from 'react';
 import { View, Text, Image, TouchableOpacity, Modal, Button, StyleSheet } from 'react-native';
-import QRCode from 'react-native-qrcode-svg'; 
+import QRCode from 'react-native-qrcode-svg'; // Import QR library
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Ionicons, FontAwesome5 } from '@expo/vector-icons'; 
+import { Ionicons, FontAwesome5 } from '@expo/vector-icons'; // Import icons
 
 const MyGems = ({ route, navigation }) => {
+  //to conntrol QR popups
   const [popQRCode, setPopQRCode] = useState(false);
 
+  //sample data set
   const sampleDetails = {
     gemId: 'BS001',
     dateAdded: '9/12/2023',
@@ -22,8 +24,10 @@ const MyGems = ({ route, navigation }) => {
     soldPrice: 'LKR 100,000',
   };
 
+  //Extract gem details from route
   const { gemDetails = sampleDetails } = route.params || {};
 
+  //if no dtails available
   if (!gemDetails) {
     return (
       <SafeAreaView style={baseScreenStyles.container}>
@@ -32,49 +36,25 @@ const MyGems = ({ route, navigation }) => {
     );
   }
 
-  const qrCode = JSON.stringify({
-    gem: gemDetails.identification,
-    weight: gemDetails.weight,
-    color: gemDetails.color,
-  });
+//qr value as a String field
+const qrCode = JSON.stringify({
+  gem: gemDetails.identification,
+  weight: gemDetails.weight,
+  color: gemDetails.color,
+});
 
-  // QR code value as a stringified JSON object
-  const qrValue = JSON.stringify({
-    gem: gemDetails[0].identification,
-    weight: gemDetails[0].weight,
-    color: gemDetails[0].color,
-  });
 
-  // Function gives gem details
-  const renderGemDetails = ({ item }) => (
-    <View style={styles.detailCard}>
-      <Text>Date added to system: {item.dateAdded}</Text>
-      <Text>Identification: {item.identification}</Text>
-      <Text>Weight: {item.weight}</Text>
-      <Text>Measurements: {item.measurements}</Text>
-      <Text>Shape: {item.shape}</Text>
-      <Text>Color: {item.color}</Text>
-    </View>
-  );
-
-  // Function gives financial details
-  const renderFinancialDetails = ({ item }) => (
-    <View style={styles.detailCard}>
-      <Text>Purchase Price: {item.purchasePrice}</Text>
-      <Text>Cost: {item.cost}</Text>
-      <Text>Sold Price: {item.soldPrice}</Text>
-    </View>
-  );
 
   return (
     <SafeAreaView style={styles.container}>
-
+     
       <View style={styles.imageContainer}>
+        {/* Gem Image */}
         <Image
           source={{ uri: 'https://cdn.britannica.com/80/151380-050-2ABD86F2/diamond.jpg' }}
           style={styles.gemPhoto}
         />
-
+        {/*Popup QR code*/}
         <TouchableOpacity style={styles.qrContainer} onPress={() => setPopQRCode(true)}>
           <QRCode value={qrCode} size={50} />
         </TouchableOpacity>
@@ -82,7 +62,7 @@ const MyGems = ({ route, navigation }) => {
 
       {/* Gem ID */}
       <Text style={styles.gemId}>Gem ID - {gemDetails.gemId}</Text>
-
+      {/* Gem Details */}
       <View style={styles.detailCard}>
         <Text style={styles.detailTitle}>Date added to system - {gemDetails.dateAdded}</Text>
         <Text style={styles.detailText}>Identification - {gemDetails.identification}</Text>
@@ -92,7 +72,7 @@ const MyGems = ({ route, navigation }) => {
         <Text style={styles.detailText}>Color - {gemDetails.color}</Text>
         <Text style={styles.detailText}>Additional Information - </Text>
       </View>
-
+      {/*Financial Details */}
       <View style={styles.detailCard}>
         <Text style={styles.detailText}>Purchase Price - {gemDetails.purchasePrice}</Text>
         <Text style={styles.detailText}>Cost - {gemDetails.cost}</Text>
@@ -104,11 +84,12 @@ const MyGems = ({ route, navigation }) => {
         source={{ uri: 'https://cdn.britannica.com/80/151380-050-2ABD86F2/diamond.jpg' }}
         style={styles.gemCert}
       />
+      {/*edit button for editing the profile*/}
       <TouchableOpacity onPress={() => navigation.navigate('BusinessOwnerProfilePhoto')} style={styles.editBtn}>
         <FontAwesome5 name="pen" size={16} color="white" />
       </TouchableOpacity>
 
-      
+      {/* QR Code Popup modal */}
       <Modal transparent visible={popQRCode} animationType="fade">
         <View style={styles.popUpContainer}>
           <View style={styles.popUpContent}>
@@ -127,6 +108,17 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#9CCDDB',
+  },
+  topic: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#082f4f',
+    padding: 15,
+  },
+  topicName: {
+    color: 'white',
+    fontSize: 18,
+    fontWeight: 'bold',
   },
   imageContainer: {
     alignItems: 'center',

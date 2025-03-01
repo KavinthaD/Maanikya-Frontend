@@ -13,7 +13,6 @@ import HomeScreen from "./src/screens/Home/HomePageBusiness";
 import SignUpScreenCustomer from "./src/screens/Auth/SignUpCustomer";
 import CustomHomePage from "./src/screens/Home/HomePageCustomer";
 import GemstoneMarketplace from "./src/screens/Market";
-import GemCollectionScreen from "./src/screens/GemProfile/HomeMyGems";
 import OwnerFinancialRecords from "./src/screens/Financial/ownerFinancialRecords";
 import ConnectScreen from "./src/screens/ConnectScreen";
 import GemOnDisplay from "./src/screens/GemOnDisplay";
@@ -24,6 +23,11 @@ import Login from "./src/screens/Auth/Login";
 import SignUpBusiness from "./src/screens/Auth/SignUpBusiness";
 import SignUpScreen from "./src/screens/Auth/SignUpScreen";
 import MySellersScreen from "./src/screens/Customeraddseller";
+import HomeMyGems from "./src/screens/GemProfile/HomeMyGems";
+import BS_Navbar from "./src/components/BS_NavBar";
+import GemRegister1 from "./src/screens/GemProfile/GemRegister1";
+import Tracker from "./src/screens/Order/Tracker"
+import BusinessOwnerProfile from "./src/screens/UserProfile/BusinessOwnerProfile";
 
 const Stack = createNativeStackNavigator();
 
@@ -101,11 +105,6 @@ const App = () => {
               options={{ headerShown: false }}
             />
             <Stack.Screen
-              name="HomeMyGems"
-              component={GemCollectionScreen}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
               name="OwnerFinancialRecords"
               component={OwnerFinancialRecords}
               options={{ headerShown: false }}
@@ -133,6 +132,31 @@ const App = () => {
             <Stack.Screen
               name="OrderScreen"
               component={OrderScreen}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="HomeMyGems"
+              component={HomeMyGems}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="BS_Navbar"
+              component={BS_Navbar}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="GemRegister1"
+              component={GemRegister1}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="Tracker"
+              component={Tracker}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="BusinessOwnerProfile"
+              component={BusinessOwnerProfile}
               options={{ headerShown: false }}
             />
           </Stack.Navigator>

@@ -31,7 +31,7 @@ const personData = {
   isFavorite: false, // Added isFavorite property
 };
 
-export default function ProfileScreen() {
+export default function ConnectedUsers() {
   const [person, setPerson] = useState(personData);
 
   const handleStarRating = (rating) => {
@@ -107,9 +107,7 @@ export default function ProfileScreen() {
 const styles = StyleSheet.create({
   container: { padding: 16 },
   header: { fontSize: 18, fontWeight: "bold", marginBottom: 10 },
-  input: {
-    // Removed input style as TextInput is removed
-  },
+  input: {},
   profileCard: {
     flexDirection: "row",
     backgroundColor: "#CDE3F9",

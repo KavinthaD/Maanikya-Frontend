@@ -28,6 +28,7 @@ const HomeScreen = () => {
     {
       image: require("../../assets/menu-icons/addGem.png"),
       title: "Add Gem",
+      screen: "GemRegister1",
     },
     {
       image: require("../../assets/menu-icons/myGems.png"),
@@ -46,7 +47,7 @@ const HomeScreen = () => {
     {
       image: require("../../assets/menu-icons/addGem.png"),
       title: "Tracker",
-      screen: "OrderScreen",
+      screen: "Tracker",
     },
     {
       image: require("../../assets/menu-icons/connect.png"),
@@ -56,6 +57,7 @@ const HomeScreen = () => {
     {
       image: require("../../assets/menu-icons/GemsDisplay.png"),
       title: "Gems on\ndisplay",
+      screen: "ConnectScreen",
     },
   ];
 
@@ -68,24 +70,22 @@ const HomeScreen = () => {
   };
 
   return (
-    
-      <View style={[baseScreenStyles.container, styles.container]}>
-        <Header_1 title="Home" />
-        <View style={styles.content}>
-          <Text style={styles.greeting}>Hello Rathnasiri,</Text>
-          <View style={styles.menuGrid}>
-            {menuItems.map((item, index) => (
-              <MenuItem
-                key={index}
-                image={item.image}
-                title={item.title}
-                onPress={() => handleMenuItemPress(item.screen)}
-              />
-            ))}
-          </View>
+    <View style={[baseScreenStyles.container, styles.container]}>
+      <Header_1 title="Home" />
+      <View style={styles.content}>
+        <Text style={styles.greeting}>Hello Rathnasiri,</Text>
+        <View style={styles.menuGrid}>
+          {menuItems.map((item, index) => (
+            <MenuItem
+              key={index}
+              image={item.image}
+              title={item.title}
+              onPress={() => handleMenuItemPress(item.screen)}
+            />
+          ))}
         </View>
       </View>
-    
+    </View>
   );
 };
 

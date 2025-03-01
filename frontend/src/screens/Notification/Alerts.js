@@ -7,17 +7,17 @@ import Header_1 from '../../components/Header_1';
 const Alerts = [
   {
     id: '1',
-    image: require('../assets/gemimg/user1.jpg'), 
+    image: require('../../assets/gemimg/user1.jpg'), 
     text: 'Order Request From Mehara Wilfred',
   },
   {
     id: '2',
-    image: require('../assets/gemimg/user2.jpg'), 
+    image: require('../../assets/gemimg/user2.jpg'), 
     text: 'On-going Order From Tilmi Thishara',
   },
   {
     id: '3',
-    image: require('../assets/gemimg/user3.jpg'), 
+    image: require('../../assets/gemimg/user3.jpg'), 
     text: 'Order#: 3098NS Is Completed',
   },
 ];

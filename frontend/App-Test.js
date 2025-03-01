@@ -47,8 +47,13 @@ import CustomHomePage from "./src/screens/Home/HomePageCustomer";
 import HomePageBusiness from "./src/screens/Home/HomePageBusiness";
 import GemRegister1 from "./src/screens/GemProfile/GemRegister1";
 import GemRegister2 from "./src/screens/GemProfile/GemRegister2";
-
+import HomeMyGems from "./src/screens/GemProfile/HomeMyGems";
 import BS_NavBar from "./src/components/BS_NavBar";
+import ConnectScreen from "./src/screens/ConnectScreen";
+import ConnectedUser from "./src/screens/ConnectedUsers";
+import GemOnDisplay from "./src/screens/GemOnDisplay";
+import Market from "./src/screens/GemOnDisplay";
+import BusinessOwnerProfile from "./src/screens/UserProfile/BusinessOwnerProfile";
 
 const Stack = createNativeStackNavigator();
 
@@ -68,7 +73,7 @@ export default function App() {
           translucent={true}
         />
         <NavigationContainer>
-          <Stack.Navigator >
+          <Stack.Navigator>
             <Stack.Screen
               name="BS_NavBar"
               options={{

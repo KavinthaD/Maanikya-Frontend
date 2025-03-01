@@ -11,31 +11,32 @@ import {
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { baseScreenStyles } from "../../styles/baseStyles";
-import HomePageBusiness from "../Home/HomePageBusiness";
-
+import BS_Navbar from "../../components/BS_NavBar";
 
 const SignUpScreen = () => {
-  const navigation = useNavigation(); 
+  const navigation = useNavigation();
   return (
     <View style={[baseScreenStyles.container]}>
-    <View style={styles.container}>
-      <Image source={require('../../assets/logo.png')} style={styles.logo} />
-      <TextInput style={styles.input} placeholder="Username" />
-      <TextInput
-        style={styles.input}
-        placeholder="Password"
-        secureTextEntry={true}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Re-enter password"
-        secureTextEntry={true}
-      />
-      <TouchableOpacity style={styles.button}
-      onPress={() => navigation.navigate(HomePageBusiness)} >
-        <Text style={styles.buttonText}>Create account</Text>
-      </TouchableOpacity>
-    </View>
+      <View style={styles.container}>
+        <Image source={require("../../assets/logo.png")} style={styles.logo} />
+        <TextInput style={styles.input} placeholder="Username" />
+        <TextInput
+          style={styles.input}
+          placeholder="Password"
+          secureTextEntry={true}
+        />
+        <TextInput
+          style={styles.input}
+          placeholder="Re-enter password"
+          secureTextEntry={true}
+        />
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => navigation.navigate("BS_Navbar")}
+        >
+          <Text style={styles.buttonText}>Create account</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };
@@ -74,15 +75,15 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     marginBottom: 20,
     color: "grey",
-    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+    backgroundColor: "rgba(255, 255, 255, 0.8)",
   },
   button: {
     width: "100%",
     height: 40,
     backgroundColor: "#1a237e",
     borderRadius: 5,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     marginTop: 70,
   },
   buttonText: {

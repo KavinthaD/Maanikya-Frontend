@@ -1,21 +1,68 @@
-
 //recreating navbar from scratch
 
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import React, { useEffect, useRef } from "react";
+import {
+  SafeAreaView,
+  StyleSheet,
+  TouchableOpacity,
+  Image,
+} from "react-native";
+import * as Animatable from "react-native-animatable";
+import HomeScreen from "../screens/Home/HomePageBusiness";
+import Market from "../screens/Market";
+import AddGem from "../screens/GemProfile/GemRegister1";
+import Alerts from "../screens/Notification/Alerts";
+import Profiles from "../screens/UserProfile/BusinessOwnerProfile";
 
-
-  import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import React, { useEffect, useRef } from 'react';
-import { SafeAreaView, StyleSheet, TouchableOpacity, View } from 'react-native';
-import Icon, { Icons } from '../components/Icons';
-
-import * as Animatable from 'react-native-animatable';
+// Import your custom icons
+const homeIcon = require("../assets/navbar-icons/home.png");
+const homeIconOutline = require("../assets/navbar-icons/home-outline.png");
+const gemIcon = require("../assets/navbar-icons/gem.png");
+const gemIconOutline = require("../assets/navbar-icons/gem-outline.png");
+const marketIcon = require("../assets/navbar-icons/market.png");
+const marketIconOutline = require("../assets/navbar-icons/market-outline.png");
+const notificationIcon = require("../assets/navbar-icons/notification.png");
+const notificationIconOutline = require("../assets/navbar-icons/notification-outline.png");
+const userIcon = require("../assets/navbar-icons/user.png");
+const userIconOutline = require("../assets/navbar-icons/user-outline.png");
 
 const TabArr = [
-  { route: 'Home', label: 'Home', type: Icons.Feather, Ionicons: 'home', inActiveIcon: 'home-outline'  },
-    { route: 'Market', label: 'Cart', type: Icons.Ionicons, activeIcon: 'cart', inActiveIcon: 'cart' },
-    { route: 'AddGem', label: 'Gem', type: Icons.FontAwesome5, activeIcon: 'gem', inActiveIcon: 'gem' },
-    { route: 'Alerts', label: 'Bell', type: Icons.FontAwesome6, activeIcon: 'bell-alt', inActiveIcon: 'bell'},
-    { route: 'Profiles', label: 'User', type: Icons.FontAwesome, activeIcon: 'user', inActiveIcon: 'user' },
+  {
+    route: "Home",
+    label: "Home",
+    activeIcon: homeIcon,
+    inActiveIcon: homeIconOutline,
+    component: HomeScreen,
+  },
+  {
+    route: "Market",
+    label: "Market",
+    activeIcon: marketIcon,
+    inActiveIcon: marketIconOutline,
+    component: Market,
+  },
+  {
+    route: "AddGem",
+    label: "Gem",
+    activeIcon: gemIcon,
+    inActiveIcon: gemIconOutline,
+    component: AddGem,
+  },
+  {
+    route: "Alerts",
+    label: "Bell",
+    activeIcon: notificationIcon,
+    inActiveIcon: notificationIconOutline,
+    component: Alerts,
+  },
+  {
+    route: "Profiles",
+    label: "User",
+    activeIcon: userIcon,
+    inActiveIcon: userIconOutline,
+    component: Profiles,
+  },
 ];
 
 const Tab = createBottomTabNavigator();
@@ -27,9 +74,15 @@ const TabButton = (props) => {
 
   useEffect(() => {
     if (focused) {
-      viewRef.current.animate({ 0: { scale: .5, rotate: '0deg' }, 1: { scale: 1.5, rotate: '360deg' } });
+      viewRef.current.animate({
+        0: { scale: 1.4 },
+        1: { scale: 1.7 },
+      });
     } else {
-      viewRef.current.animate({ 0: { scale: 1.5, rotate: '360deg' }, 1: { scale: 1, rotate: '0deg' } });
+      viewRef.current.animate({
+        0: { scale: 1.7 },
+        1: { scale: 1.4 },
+      });
     }
   }, [focused]);
 
@@ -39,21 +92,21 @@ const TabButton = (props) => {
       activeOpacity={1}
       style={[styles.container, { top: 0 }]}
     >
-      <Animatable.View
-        ref={viewRef}
-        duration={1000}
-      >
-        <Icon
-          type={item.type}
-          name={focused ? item.activeIcon : item.inActiveIcon}
-          color={focused ? Colors.primary : Colors.primaryLite}
+      <Animatable.View ref={viewRef} duration={1000}>
+        <Image
+          source={focused ? item.activeIcon : item.inActiveIcon}
+          style={{
+            width: 24,
+            height: 24,
+            tintColor: focused ? "black" : "grey",
+          }} // Adjust size and color
         />
       </Animatable.View>
     </TouchableOpacity>
   );
 };
 
-export default function AnimTab1() {
+export default function BS_NavBar() {
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <Tab.Navigator
@@ -61,11 +114,11 @@ export default function AnimTab1() {
           headerShown: false,
           tabBarStyle: {
             height: 60,
-            position: 'absolute',
+            position: "absolute",
             margin: 16,
             borderRadius: 16,
-            justifyContent: 'center',
-            alignItems: 'center',
+            justifyContent: "center",
+            alignItems: "center",
           },
         }}
       >
@@ -88,8 +141,8 @@ export default function AnimTab1() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     height: 60,
   },
 });

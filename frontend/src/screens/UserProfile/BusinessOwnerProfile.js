@@ -29,7 +29,7 @@ const BusinessOwnerProfile = ({ navigation }) => {
         
         
       </View>
-      <View style={style.info}>
+      <View style={styles.info}>
         <View style={styles.infoContainer}>
           <Text style={styles.label}>NAME</Text>
           <Text style={styles.infoText}>{user.name}</Text>

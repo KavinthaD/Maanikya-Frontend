@@ -2,11 +2,11 @@
 
 import React from "react";
 import { SafeAreaView,View, Text, Image, TouchableOpacity, StyleSheet, Button } from "react-native";
-import { Home, ShoppingBag, PlusCircle, Bell, User } from "lucide-react-native";
-import { Ionicons, FontAwesome5 } from '@expo/vector-icons'; 
+
 import { baseScreenStyles } from "../styles/baseStyles";
 
 const CustomerProfile = ({ navigation }) => {
+  //sample dataset
   const user = {
     image: "https://static.wikia.nocookie.net/garfield/images/6/60/Garfield_New_Look.jpg/revision/latest/scale-to-width/360?cb=20240328075614", 
     name: "abc",
@@ -18,32 +18,33 @@ const CustomerProfile = ({ navigation }) => {
 
   return (
     <SafeAreaView style={baseScreenStyles.container}>
-      
-
+      {/*Handling profile pic and edit button*/}
       <View style={styles.profileContainer}>
         <Image source={{ uri: user.image }} style={styles.profilePic} />
-        
-        <Button title="Edit Profile" onPress={() => navigation.navigate("BusinessOwnerEditProfile")} />
-        
+        <TouchableOpacity style={styles.editProfileButton} onPress={() => navigation.navigate("CustomerProfileEdit")}>
+          <Text style={styles.editProfileButtonText}>Edit Profile</Text>
+        </TouchableOpacity>
       </View>
 
-      <View style={styles.infoContainer}>
-        <Text style={styles.label}>NAME</Text>
-        <Text style={styles.info}>{user.name}</Text>
+      {/*displaying information*/}
+      <View style={styles.info}>
+        <View style={styles.infoContainer}>
+          <Text style={styles.label}>NAME</Text>
+          <Text style={styles.infoText}>{user.name}</Text>
+        </View>
+        <View style={styles.infoContainer}>
+          <Text style={styles.label}>EMAIL</Text>
+          <Text style={styles.infoText}>{user.email}</Text>
+        </View>
+        <View style={styles.infoContainer}>
+          <Text style={styles.label}>Contact No</Text>
+          <Text style={styles.infoText}>{user.phone}</Text>
+        </View>
+        <View style={styles.infoContainer}>
+          <Text style={styles.label}>Address</Text>
+          <Text style={styles.infoText}>{user.address}</Text>
+        </View>
       </View>
-      <View style={styles.infoContainer}>
-        <Text style={styles.label}>EMAIL</Text>
-        <Text style={styles.info}>{user.email}</Text>
-      </View>
-      <View style={styles.infoContainer}>
-        <Text style={styles.label}>Contact No</Text>
-        <Text style={styles.info}>{user.phone}</Text>
-      </View>
-      <View style={styles.infoContainer}>
-        <Text style={styles.label}>Address</Text>
-        <Text style={styles.info}>{user.address}</Text>
-      </View>
-
       
     </SafeAreaView>
   );
@@ -52,57 +53,69 @@ const CustomerProfile = ({ navigation }) => {
 
 
 const styles = StyleSheet.create({
- 
-  topic: {
-    flexDirection: "row",
-    alignItems: "center",
-    padding: 15,
-    backgroundColor: "#0a3a5d",
-  },
-  topicName: {
-    color: "white",
-    fontSize: 18,
-    fontWeight: "bold",
-    alignItems: "center",
+  container: {
+    flex: 1,
+    backgroundColor: "#A7D7E7",
   },
   profileContainer: {
-    alignItems: "center",
-    padding: 16,
-    backgroundColor: "#C5F0EE",
+    backgroundColor: '#ffffff', 
+    padding: 20,
+    alignItems: 'center',
+    borderBottomWidth: 1,
+    borderBottomColor: '#e0e0e0',
+    marginTop: 20,
+    marginHorizontal: 16,
+    borderRadius: 12,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   profilePic: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
+    width: 120,
+    height: 150,
+    borderRadius: 60,
+    marginBottom: 15,
   },
-  editBtn: {
-    backgroundColor: "#007AFF",
-    paddingVertical: 6,
-    paddingHorizontal: 12,
-    borderRadius: 6,
+  editProfileButton: {
+    backgroundColor: "#29abe2",
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 8,
+  },
+  editProfileButtonText: {
+    color: "white",
+    fontSize: 16,
+    fontWeight: "500",
+  },
+  info:{
     marginTop: 20,
-  },
-  editBtnText: {
-    color: "black",
-    fontSize: 14,
-    fontWeight: "bold",
+    marginHorizontal: 16,
   },
   infoContainer: {
-    padding: 16,
-    backgroundColor: "white"
+    backgroundColor: '#ffffff',
+    paddingVertical: 15,
+    paddingHorizontal: 20,
+    borderRadius: 12,
+    marginBottom: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3
   },
   label: {
     fontSize: 14,
-    fontWeight: "bold",
-    color: "#003366",
-    marginTop: 25,
-    borderColor: "black",
+    fontWeight: '600',
+    color: '#777',
+    marginBottom: 5,
     
   },
-  info: {
-    fontSize: 16,
-    color: "#333",
-    marginBottom: 5,
+  
+  infoText: {
+    ffontSize: 16,
+    color: '#333',
   },
   
 });

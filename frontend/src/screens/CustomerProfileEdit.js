@@ -1,11 +1,10 @@
 //Screen creator: Isum
 
 import React, { useState } from "react";
-import {View, Text, TextInput,Image,TouchableOpacity,StyleSheet, Button} from "react-native";
-import { launchImageLibrary } from "react-native-image-picker";
+import {View, Text, TextInput,Image,TouchableOpacity,StyleSheet} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Ionicons, FontAwesome } from "@expo/vector-icons";
-import BusinessOwnerProfile from "./BusinessOwnerProfile";
+import { Ionicons } from "@expo/vector-icons";
+
 
 const CustomerProfileEdit = ({ navigation }) => {
   // Profile state
@@ -19,8 +18,7 @@ const CustomerProfileEdit = ({ navigation }) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      
-
+      {/* Profile photo */}
       <View style={styles.profileContainer}>
         <Image
           source={
@@ -28,12 +26,13 @@ const CustomerProfileEdit = ({ navigation }) => {
           }
           style={styles.profilePhoto}
         />
-        <TouchableOpacity style={style.editPhotoBtn} >
+        {/*edit photo button*/}
+        <TouchableOpacity style={styles.editPhotoBtn} >
           <Ionicons name="pencil" size={20} color ="#0a3a5d" />
         </TouchableOpacity>
         
       </View>
-
+       {/*edit fields*/}   
       <View style={styles.inputContainer}>
         <Text style={styles.label}>NAME</Text>
         <TextInput style={styles.input} value={name} onChangeText={setName} placeholderTextColor="#777" />
@@ -54,7 +53,7 @@ const CustomerProfileEdit = ({ navigation }) => {
         />
       </View>
 
-
+      {/*save button*/}    
       <TouchableOpacity style={styles.saveBtn} onPress={() => navigation.goBack()}>
         <Text style={styles.saveBtnText}>Save</Text>
       </TouchableOpacity>

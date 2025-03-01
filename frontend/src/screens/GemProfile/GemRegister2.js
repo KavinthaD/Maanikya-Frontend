@@ -25,7 +25,7 @@ import Header_2 from "../../components/Header_2";
 import Gem_register_3 from "./GemRegister3"; // Import GemRegister3
 import axios from "axios"; // Import axios
 import { FormFieldStyles } from "../../styles/FormFields";
-import { API_URL, ENDPOINTS } from "../../config/api-local"; //change api path here
+import { API_URL, ENDPOINTS } from "../../config/api"; //change api path here
 import AsyncStorage from "@react-native-async-storage/async-storage"; // Import AsyncStorage
 
 const Stack = createNativeStackNavigator();

@@ -11,15 +11,15 @@ const Tracker = () => {
   const [search, setSearch] = useState("");
 
   const [progressGem, setProgressGem] = useState([
-    { id: "gem3", code: "DCW030", image: require("../assets/logo.png") },
-    { id: "gem2", code: "KDD437", image: require("../assets/logo.png") },
-    { id: "gem1", code: "IHP164", image: require("../assets/logo.png") },
+    { id: "gem3", code: "DCW030", image: require("../../assets/logo.png") },
+    { id: "gem2", code: "KDD437", image: require("../../assets/logo.png") },
+    { id: "gem1", code: "IHP164", image: require("../../assets/logo.png") },
   ]);
 
   const [completeGem, setCompleteGem] = useState([
-    { id: "gem6", code: "TTP467", image: require("../assets/logo.png") },
-    { id: "gem5", code: "MW963", image: require("../assets/logo.png") },
-    { id: "gem4", code: "TPK476", image: require("../assets/logo.png") },
+    { id: "gem6", code: "TTP467", image: require("../../assets/logo.png") },
+    { id: "gem5", code: "MW963", image: require("../../assets/logo.png") },
+    { id: "gem4", code: "TPK476", image: require("../../assets/logo.png") },
   ]);
 
   const addNewGem = (newGem, setGems) => {

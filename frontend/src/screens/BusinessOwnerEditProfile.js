@@ -1,16 +1,14 @@
 //Screen creator: Isum
 
 import React, { useState } from "react";
-import {View, Text, TextInput,Image,TouchableOpacity,StyleSheet, Button} from "react-native";
-import { launchImageLibrary } from "react-native-image-picker";
+import {View, Text, TextInput,Image,TouchableOpacity,StyleSheet} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Ionicons, FontAwesome } from "@expo/vector-icons";
-import BusinessOwnerProfile from "./BusinessOwnerProfile";
-import { baseScreenStyles } from "../styles/baseStyles";
+import { Ionicons} from "@expo/vector-icons";
+
 
 const BusinessOwnerEditProfile = ({ navigation }) => {
   // Profile state
-  const [profilePhoto, setProfilePhoto] = useState(null);
+  const [profilePhoto, setProfilePhoto] = useState("https://static.wikia.nocookie.net/garfield/images/6/60/Garfield_New_Look.jpg/revision/latest/scale-to-width/360?cb=20240328075614");
   const [name, setName] = useState("M.D Rathnasiri Navasinghe");
   const [email, setEmail] = useState("rathnasiri.n@hotmail.com");
   const [contact, setContact] = useState("+94 987 654 321");
@@ -21,8 +19,7 @@ const BusinessOwnerEditProfile = ({ navigation }) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      
-
+      {/* Profile photo */}
       <View style={styles.profileContainer}>
         <Image
           source={
@@ -30,12 +27,12 @@ const BusinessOwnerEditProfile = ({ navigation }) => {
           }
           style={styles.profilePhoto}
         />
-        <TouchableOpacity style={style.editPhotoBtn} >
+        {/*edit photo button*/}
+        <TouchableOpacity style={styles.editPhotoBtn} >
           <Ionicons name="pencil" size={20} color ="#0a3a5d" />
         </TouchableOpacity>
-        
       </View>
-
+      {/*edit fields*/}    
       <View style={styles.inputContainer}>
         <Text style={styles.label}>NAME</Text>
         <TextInput style={styles.input} value={name} onChangeText={setName} placeholderTextColor="#777" />
@@ -58,8 +55,7 @@ const BusinessOwnerEditProfile = ({ navigation }) => {
           placeholderTextColor="#777"
         />
       </View>
-
-
+      {/*save button*/}    
       <TouchableOpacity style={styles.saveBtn} onPress={() => navigation.goBack()}>
         <Text style={styles.saveBtnText}>Save</Text>
       </TouchableOpacity>
@@ -113,6 +109,7 @@ const styles = StyleSheet.create({
     marginTop: 5,
     fontSize: 16,
     color: "#333", 
+    borderWidth: 1,
     borderColor: "#ccc",
   },
   textArea: {
@@ -120,12 +117,12 @@ const styles = StyleSheet.create({
     textAlignVertical: "top",
   },
   saveBtn: {
-    backgroundColor: "#0a3a5d",
+    backgroundColor: "#29abe2",
     padding: 12,
-    borderRadius: 5,
+    borderRadius: 8,
     alignItems: "center",
     marginHorizontal: 20,
-    marginTop: 20,
+    marginTop: 25,
     marginBottom:20
   },
   saveBtnText: {

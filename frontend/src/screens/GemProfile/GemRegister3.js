@@ -129,7 +129,7 @@ export default function Gem_register_3() {
   };
 
   return (
-    <View style={[baseScreenStyles.container, styles.container]}>
+    <View style={baseScreenStyles.container}>
       <View style={styles.innerContainer}>
         <View>
           <Text style={baseScreenStyles.helperText}>
@@ -184,7 +184,7 @@ export default function Gem_register_3() {
           <Text style={baseScreenStyles.buttonText}>Share QR code</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          style={baseScreenStyles.blueButton}
+          style={[baseScreenStyles.blueButton, styles.blueButton]}
           onPress={handleSaveToDevice}
         >
           <Text style={baseScreenStyles.buttonText}>Save to device</Text>
@@ -195,12 +195,15 @@ export default function Gem_register_3() {
 }
 
 const styles = StyleSheet.create({
+  blueButton: {
+
+  },
   innerContainer: {
     padding: 20,
     alignItems: "center",
   },
   qrContainer: {
-    marginTop: 20,
+    marginTop: 10,
     padding: 20,
   },
   qrPlaceholder: {
@@ -214,7 +217,8 @@ const styles = StyleSheet.create({
   infoContainer: {
     width: "100%",
     alignItems: "center",
-    marginTop: 20,
+    marginTop: 10,
+    marginBottom: 20,
     gap: 10,
   },
   infoBox: {
@@ -234,7 +238,8 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   sendButton: {
-    marginTop: 50,
+    marginTop: 10,
+    marginBottom: 15,
     backgroundColor: "#02457A",
     width: "95%",
     padding: 15,

@@ -9,8 +9,7 @@ import {
   Image,
 } from "react-native";
 import * as Animatable from "react-native-animatable";
-import HomePageCustomer from "../screens/Home/HomePageCustomer";
-import Market from "../screens/Market";
+import HomePageWorker from "../screens/Home/HomePageWorker";
 import Alerts from "../screens/Notification/Alerts";
 import Profiles from "../screens/UserProfile/BusinessOwnerProfile";
 
@@ -26,11 +25,11 @@ const userIconOutline = require("../assets/navbar-icons/user-outline.png");
 
 const TabArr = [
   {
-    route: "HomePageCustomer",
+    route: "HomePageWorker",
     label: "Home",
     activeIcon: homeIcon,
     inActiveIcon: homeIconOutline,
-    component: HomePageCustomer,
+    component: HomePageWorker,
   },
   {
     route: "Alerts",

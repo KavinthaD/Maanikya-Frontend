@@ -19,12 +19,19 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [role, setRole] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
 
   const handleLogin = () => {
     if (!email || !password || !role) {
       Alert.alert("Please fill all fields.");
       return;
     }
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailPattern.test(email)) {
+      setErrorMessage("Invalid email format.");
+      return;
+    }
+    setErrorMessage("");
 
     if (role === "gem_business_owner") {
       navigation.navigate("BS_NavBar");
@@ -40,7 +47,7 @@ const Login = () => {
   return (
     <View style={[baseScreenStyles.container, styles.container]}>
       <Image
-        source={require("../../assets/logo-gem.png")}
+        source={require("../../assets/logo.png")}
         style={styles.logo}
       />
       <Text style={styles.title}>Welcome Back</Text>
@@ -74,6 +81,9 @@ const Login = () => {
         value={password}
         onChangeText={setPassword}
       />
+       {errorMessage ? (
+        <Text style={styles.errorText}>{errorMessage}</Text>
+      ) : null}
       <TouchableOpacity style={styles.forgotPasswordContainer}>
         <Text style={styles.forgotPassword}>Forgot your password?</Text>
       </TouchableOpacity>
@@ -91,8 +101,8 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   logo: {
-    width: 150,
-    height: 80,
+    width: 170,
+    height: 150,
     marginBottom: 20,
   },
   title: {
@@ -101,8 +111,8 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   subtitle: {
-    fontSize: 33,
-    marginBottom: 5,
+    fontSize: 20,
+    marginBottom: 15,
     fontWeight: "bold",
   },
   prompt: {
@@ -137,7 +147,7 @@ const styles = StyleSheet.create({
     color: "#888",
   },
   inputWithOpacity: {
-    backgroundColor: "rgba(255, 255, 255, 0.8)", // White color with 80% opacity
+    backgroundColor: "rgba(255, 255, 255, 0.8)", 
   },
   forgotPasswordContainer: {
     alignSelf: "flex-start",

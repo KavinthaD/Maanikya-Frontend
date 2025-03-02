@@ -13,14 +13,32 @@ import { baseScreenStyles } from "../../styles/baseStyles";
 import SuccessPopup from "../../components/SuccessPopup";
 
 const SignUpScreenCustomer = ({ navigation }) => {
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [userName, setUserName] = useState("");
+  const [password, setPassword] = useState("");
+  const [reEnterPassword, setReEnterPassword] = useState("");
   const [popupVisible, setPopupVisible] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const handleCreateAccount = () => {
-    setPopupVisible(true);
-    setTimeout(() => {
-      navigation.navigate("BS_NavBar");
-    }, 2500);
-  };
+ 
+ if (!firstName || !lastName || !email || !phoneNumber || !userName || !password || !reEnterPassword) {
+  setErrorMessage("All fields are required");
+  return;
+}
+if (password !== reEnterPassword) {
+  setErrorMessage("Passwords do not match");
+  return;
+}
+
+setPopupVisible(true);
+setTimeout(() => {
+  navigation.navigate("BS_NavBar");
+}, 2500);
+};
   return (
     <View style={[baseScreenStyles.container, styles.container]}>
       <Image source={require("../../assets/logo.png")} style={styles.logo} />
@@ -31,11 +49,15 @@ const SignUpScreenCustomer = ({ navigation }) => {
           style={[styles.input, styles.halfInput]}
           placeholder="First Name"
           placeholderTextColor="#888"
+          value={firstName}
+          onChangeText={setFirstName}
         />
         <TextInput
           style={[styles.input, styles.halfInput]}
           placeholder="Last Name"
           placeholderTextColor="#888"
+          value={lastName}
+          onChangeText={setLastName}
         />
       </View>
       <TextInput
@@ -43,30 +65,43 @@ const SignUpScreenCustomer = ({ navigation }) => {
         placeholder="email@domain.com"
         keyboardType="email-address"
         placeholderTextColor="#888"
+        value={email}
+        onChangeText={setEmail}
       />
       <TextInput
         style={styles.input}
         placeholder="Phone number"
         keyboardType="phone-pad"
         placeholderTextColor="#888"
+        value={phoneNumber}
+        onChangeText={setPhoneNumber}
       />
       <TextInput
         style={styles.input}
         placeholder="User Name"
         placeholderTextColor="#888"
+        value={userName}
+        onChangeText={setUserName}
       />
       <TextInput
         style={styles.input}
         placeholder="Password"
         placeholderTextColor="#888"
         secureTextEntry
+        value={password}
+        onChangeText={setPassword}
       />
       <TextInput
         style={styles.input}
         placeholder="Re-enter password"
         placeholderTextColor="#888"
         secureTextEntry
+        value={reEnterPassword}
+        onChangeText={setReEnterPassword}
       />
+      {errorMessage ? (
+        <Text style={styles.errorText}>{errorMessage}</Text>
+      ) : null}
       <TouchableOpacity
         style={styles.button}
         onPress={handleCreateAccount}>
@@ -89,7 +124,7 @@ const styles = StyleSheet.create({
   },
   logo: {
     width: 150,
-    height: 80,
+    height: 100,
     marginBottom: 20,
   },
   title: {
@@ -138,6 +173,10 @@ const styles = StyleSheet.create({
   buttonText: {
     color: "#fff",
     fontSize: 16,
+  },
+  errorText: {
+    color: 'red',
+    marginBottom: 10,
   },
 });
 

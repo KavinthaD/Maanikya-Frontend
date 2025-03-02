@@ -13,6 +13,23 @@ const SignUpBusiness = () => {
   const [email, setEmail] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [role, setRole] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
+
+  const handleContinue = () => {
+    // Validate inputs
+    if (!firstName || !lastName || !email || !phoneNumber || !role) {
+      setErrorMessage("All fields are required.");
+      return;
+    }
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailPattern.test(email)) {
+      setErrorMessage("Invalid email format.");
+      return;
+    }
+    setErrorMessage("");
+
+    navigation.navigate('SignUpBusiness2');
+  };
 
   return (
     <View style={[baseScreenStyles.container]}>
@@ -67,11 +84,13 @@ const SignUpBusiness = () => {
           <Picker.Item label="Electric Burner" value="electric_burner" />
           </Picker>
       </View>
-      <TouchableOpacity style={styles.continueButton} 
-      onPress={() => navigation.navigate('SignUpBusiness2')}>
-        <Text style={styles.continueButtonText}>Continue</Text>
-      </TouchableOpacity>
-    </KeyboardAvoidingView>
+      {errorMessage ? (
+          <Text style={styles.errorText}>{errorMessage}</Text>
+        ) : null}
+     <TouchableOpacity style={styles.continueButton} onPress={handleContinue}>
+          <Text style={styles.continueButtonText}>Continue</Text>
+        </TouchableOpacity>
+      </KeyboardAvoidingView>
     </View>
   );
 };
@@ -139,6 +158,10 @@ const styles = StyleSheet.create({
   pickerItem: {
     color: '#888',
   },
+  errorText: {
+    color: 'red',
+    marginBottom: 10,
+  },
   continueButton: {
     backgroundColor: '#000080',
     borderRadius: 5,
@@ -151,6 +174,7 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 16,
   },
+
 });
 
 export default SignUpBusiness;

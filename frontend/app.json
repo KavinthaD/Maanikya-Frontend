@@ -20,6 +20,7 @@
       ]
       
     ],
+    "orientation": "portrait",
     "android": {
       "package": "com.maanikya.app",
       "permissions": [

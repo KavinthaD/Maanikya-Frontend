@@ -12,7 +12,7 @@ import WelcomePage from "./src/screens/WelcomePage";
 import HomePageWorker from "./src/screens/Home/HomePageWorker";
 import HomePageBusiness from "./src/screens/Home/HomePageBusiness";
 import SignUpScreenCustomer from "./src/screens/Auth/SignUpCustomer";
-import Market from "./src/screens/Market";
+import GemstoneMarketplace from "./src/screens/Market";
 import OwnerFinancialRecords from "./src/screens/Financial/ownerFinancialRecords";
 import ConnectScreen from "./src/screens/ConnectScreen";
 import GemOnDisplay from "./src/screens/GemOnDisplay";
@@ -30,7 +30,8 @@ import GemRegister1 from "./src/screens/GemProfile/GemRegister1";
 import Tracker from "./src/screens/Order/Tracker"
 import BusinessOwnerProfile from "./src/screens/UserProfile/BusinessOwnerProfile";
 import HomePageCustomer from "./src/screens/Home/HomePageCustomer";
-
+import InProgressTrackerScreen from "./src/screens/Order/InProgressTracker";
+import CompletedTrackerScreen from "./src/screens/Order/CompletedTracker";
 import Customeraddseller from "./src/screens/Customeraddseller"
 
 const Stack = createNativeStackNavigator();
@@ -109,8 +110,8 @@ const App = () => {
               options={{ headerShown: false }}
             />
             <Stack.Screen
-              name="Market"
-              component={Market}
+              name="GemstoneMarketplace"
+              component={ GemstoneMarketplace}
               options={{ headerShown: false }}
             />
             <Stack.Screen
@@ -177,6 +178,16 @@ const App = () => {
             <Stack.Screen
               name="Customeraddseller"
               component={Customeraddseller}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="InProgressTrackerScreen"
+              component={InProgressTrackerScreen}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="CompletedTrackerScreen"
+              component={CompletedTrackerScreen}
               options={{ headerShown: false }}
             />
           </Stack.Navigator>

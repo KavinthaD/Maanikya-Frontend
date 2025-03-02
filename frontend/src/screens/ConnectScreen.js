@@ -136,7 +136,7 @@ const ConnectScreen = ({ navigation }) => {
                 <FontAwesome
                   name={index < personRatings[item.id] ? "star" : "star-o"} // Use personRatings for star display
                   size={16}
-                  color="#FFD700"
+                  color="#334D85"
                 />
               </TouchableOpacity>
             ))}
@@ -216,8 +216,6 @@ const ConnectScreen = ({ navigation }) => {
     </View>
   );
 };
-
-export default ConnectScreen;
 
 const styles = StyleSheet.create({
   container: {
@@ -319,3 +317,5 @@ const styles = StyleSheet.create({
     marginTop: 5,
   },
 });
+
+export default ConnectScreen;

@@ -19,7 +19,7 @@ const InProgressTracker = [
     type: "Burn",
     estimatedDate: "22/05/2025",
     person: "Mehara",
-    gemImage: require("../assets/gemimg/gem1.jpg"),
+    gemImage: require("../../assets/gemimg/gem1.jpg"),
   },
   {
     id: "KDD437",
@@ -27,7 +27,7 @@ const InProgressTracker = [
     type: "Cut",
     estimatedDate: "23/02/2025",
     person: "Tilmi",
-    gemImage: require("../assets/gemimg/gem2.jpg"),
+    gemImage: require("../../assets/gemimg/gem2.jpg"),
   },
   {
     id: "DCW030",
@@ -35,7 +35,7 @@ const InProgressTracker = [
     type: "Cut",
     estimatedDate: "13/03/2025",
     person: "Kavintha",
-    gemImage: require("../assets/gemimg/gem3.jpg"),
+    gemImage: require("../../assets/gemimg/gem3.jpg"),
   },
 ];
 

@@ -84,6 +84,7 @@ const GemCollectionScreen = ({ navigation }) => {
     setSellModalVisible(false);
     setIsSelectMode(false);
     setSelectedGems([]);
+    navigation.navigate("GemstoneMarketplace");
   };
 
   const handleSellCancel = () => {
@@ -381,7 +382,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#457EA0",
     borderRadius: 8,
     padding: 16,
-    width: "60%",
+    width: "65%",
     maxHeight: "50%",
     alignItems: "center",
   },
@@ -407,7 +408,7 @@ const styles = StyleSheet.create({
   modalGemId: {
     marginTop: 4,
     fontSize: 14,
-    color: "#003366",
+    color: "#ffff",
     fontWeight: "500",
   },
   modalActions: {

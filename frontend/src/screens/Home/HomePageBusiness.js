@@ -45,7 +45,7 @@ const HomeScreen = () => {
       screen: "OwnerFinancialRecords",
     },
     {
-      image: require("../../assets/menu-icons/addGem.png"),
+      image: require("../../assets/menu-icons/Tracker.png"),
       title: "Tracker",
       screen: "Tracker",
     },
@@ -55,9 +55,9 @@ const HomeScreen = () => {
       screen: "ConnectScreen",
     },
     {
-      image: require("../../assets/menu-icons/GemsDisplay.png"),
+      image: require("../../assets/menu-icons/GemsOnDisplay.png"),
       title: "Gems on\ndisplay",
-      screen: "ConnectScreen",
+      screen: "GemOnDisplay",
     },
   ];
 

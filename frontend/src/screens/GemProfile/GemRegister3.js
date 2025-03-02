@@ -9,61 +9,61 @@ import {
   Alert,
   Image,
   PermissionsAndroid,
-  Linking,
-  Share,
   Platform,
 } from "react-native";
 import * as MediaLibrary from "expo-media-library";
 import * as FileSystem from "expo-file-system";
+import * as Sharing from "expo-sharing";
 import { baseScreenStyles } from "../../styles/baseStyles";
 import QRCode from "react-native-qrcode-svg";
 import { useNavigation, useRoute } from "@react-navigation/native";
-import ViewShot from "react-native-view-shot"; // Add this import
-
-import { BackHandler } from "react-native"; // Add this to your imports
+import ViewShot from "react-native-view-shot";
+import { BackHandler } from "react-native";
 
 export default function Gem_register_3() {
   const navigation = useNavigation();
   const route = useRoute();
-  const { gemId, createdAt } = route.params;
+  const { gemId, createdAt, qrCode } = route.params;
   const [gemData] = useState(null);
-  const qrContainerRef = useRef(); // Change qrRef to qrContainerRef
+  const qrContainerRef = useRef();
 
   // Disable back navigation
   useEffect(() => {
-    // Disable hardware back button
     const backHandler = BackHandler.addEventListener(
       "hardwareBackPress",
-      () => true // Return true to prevent default behavior
+      () => true
     );
-
-    // Cleanup on unmount
     return () => backHandler.remove();
   }, [navigation]);
 
   const handleSaveToDevice = async () => {
     try {
       // Request permission
-
-      try {
-        const granted = await PermissionsAndroid.request(
-          PermissionsAndroid.PERMISSIONS.READ_MEDIA_IMAGES,
-          {
-            title: "Gallery permission",
-            message:
-              "Maanikya needs permission to save QR codes to your gallery",
-            buttonNeutral: "Ask Me Later",
-            buttonNegative: "Cancel",
-            buttonPositive: "OK",
+      if (Platform.OS === "android") {
+        try {
+          const granted = await PermissionsAndroid.request(
+            PermissionsAndroid.PERMISSIONS.READ_MEDIA_IMAGES,
+            {
+              title: "Gallery permission",
+              message:
+                "Maanikya needs permission to save QR codes to your gallery",
+              buttonNeutral: "Ask Me Later",
+              buttonNegative: "Cancel",
+              buttonPositive: "OK",
+            }
+          );
+          if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
+            console.log("Permission denied");
+            Alert.alert(
+              "Permission Denied",
+              "Cannot save QR code without permission"
+            );
+            return;
           }
-        );
-        if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-          console.log("You can use the camera");
-        } else {
-          console.log("Camera permission denied");
+        } catch (err) {
+          console.warn(err);
+          return;
         }
-      } catch (err) {
-        console.warn(err);
       }
 
       // Capture the QR code container
@@ -92,33 +92,63 @@ export default function Gem_register_3() {
 
   const handleShare = async () => {
     try {
-      // 1. Generate QR code and capture it
+      // First check if sharing is available
+      const isAvailable = await Sharing.isAvailableAsync();
+      if (!isAvailable) {
+        Alert.alert(
+          "Sharing not available",
+          "Sharing is not available on this device"
+        );
+        return;
+      }
+
+      // Capture the QR code
       const uri = await qrContainerRef.current.capture();
+      console.log("Captured QR code at:", uri);
 
-      // 2. Create a temporary file path
-      const shareableUri = `${FileSystem.cacheDirectory}temp_qr.png`;
+      // Create a temporary file with a proper extension
+      const tempFile = `${FileSystem.cacheDirectory}qrcode_${gemId}.png`;
 
-      // 3. Copy the captured image to the shareable location
+      // Copy the captured image to the temporary file
       await FileSystem.copyAsync({
         from: uri,
-        to: shareableUri,
+        to: tempFile,
       });
 
-      // 4. Share the image
-      const result = await Share.share({
-        message: "Check out this QR code from Maanikya",
-        title: "Maanikya Gem QR Code",
-        url: Platform.OS === "ios" ? shareableUri : `file://${shareableUri}`,
+      console.log("Copied to:", tempFile);
+
+      // Share the file using expo-sharing
+      await Sharing.shareAsync(tempFile, {
+        mimeType: "image/png",
+        dialogTitle: "Share QR Code",
+        UTI: "public.png", // For iOS
       });
 
-      // 5. Clean up
-      await FileSystem.deleteAsync(shareableUri, { idempotent: true });
-      if (uri !== shareableUri) {
+      // Clean up the temporary file after sharing
+      try {
+        await FileSystem.deleteAsync(tempFile, { idempotent: true });
         await FileSystem.deleteAsync(uri, { idempotent: true });
+      } catch (cleanupError) {
+        console.log("Cleanup error (non-critical):", cleanupError);
       }
     } catch (error) {
       console.error("Share error:", error);
-      Alert.alert("Error", "Failed to share QR code");
+
+      // Fallback to save & manual share if sharing fails
+      Alert.alert(
+        "Sharing Error",
+        "Could not share the QR code directly. Would you like to save it to your gallery?",
+        [
+          {
+            text: "Cancel",
+            style: "cancel",
+          },
+          {
+            text: "Save to Gallery",
+            onPress: handleSaveToDevice,
+          },
+        ]
+      );
     }
   };
 
@@ -136,28 +166,23 @@ export default function Gem_register_3() {
             Gem Registered Successfully! Qr code is generated below
           </Text>
         </View>
-        {/* Wrap QR container with ViewShot */}
         <ViewShot
           ref={qrContainerRef}
           options={{
             format: "png",
-            quality: 0.9,
+            quality: 1.0,
             result: "tmpfile",
-            width: 250,
-            height: 250,
+            width: 1000,
+            height: 1000,
           }}
         >
           <View style={styles.qrContainer}>
             <View style={styles.qrPlaceholder}>
-              {gemData ? (
-                <QRCode
-                  value={JSON.stringify({
-                    gemId: gemData.gemId,
-                    ownerName: gemData.ownerName,
-                    gemType: gemData.gemType,
-                    registeredDate: formatDate(gemData.createdAt),
-                  })}
-                  size={230}
+              {qrCode ? (
+                <Image
+                  source={{ uri: qrCode }}
+                  style={styles.qrImage}
+                  resizeMode="contain"
                 />
               ) : (
                 <Image
@@ -195,9 +220,7 @@ export default function Gem_register_3() {
 }
 
 const styles = StyleSheet.create({
-  blueButton: {
-
-  },
+  blueButton: {},
   innerContainer: {
     padding: 20,
     alignItems: "center",
@@ -248,6 +271,11 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontSize: 16,
     fontWeight: "bold",
+  },
+  qrImage: {
+    width: "100%",
+    height: "100%",
+    borderRadius: 10,
   },
   testQRImage: {
     flex: 1,

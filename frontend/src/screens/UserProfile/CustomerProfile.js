@@ -3,7 +3,7 @@
 import React from "react";
 import { SafeAreaView,View, Text, Image, TouchableOpacity, StyleSheet, Button } from "react-native";
 
-import { baseScreenStyles } from "../styles/baseStyles";
+import { baseScreenStyles } from "../../styles/baseStyles";
 
 const CustomerProfile = ({ navigation }) => {
   //sample dataset

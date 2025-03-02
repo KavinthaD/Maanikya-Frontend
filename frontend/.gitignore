@@ -43,5 +43,3 @@ src/config/api-local.js
 # expo prebuild (no changes done manually in these folders yet)
 android
 ios
-
-# Expo-specific files (already included)

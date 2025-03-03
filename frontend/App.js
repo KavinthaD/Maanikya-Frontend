@@ -18,7 +18,7 @@ import ConnectScreen from "./src/screens/ConnectScreen";
 import GemOnDisplay from "./src/screens/GemOnDisplay";
 import ProfileScreen from "./src/screens/ConnectedUsers";
 import FavoritesScreen from "./src/screens/Favorites";
-import OrderScreen from "./src/screens/Order/Orders";
+import Orders from "./src/screens/Order/Orders";
 import Login from "./src/screens/Auth/Login";
 import SignUpBusiness from "./src/screens/Auth/SignUpBusiness";
 import SignUpBusiness2 from "./src/screens/Auth/SignUpBusiness2";
@@ -30,6 +30,8 @@ import GemRegister1 from "./src/screens/GemProfile/GemRegister1";
 import Tracker from "./src/screens/Order/Tracker"
 import BusinessOwnerProfile from "./src/screens/UserProfile/BusinessOwnerProfile";
 import HomePageCustomer from "./src/screens/Home/HomePageCustomer";
+import BurnerFinancialRecords from "./src/screens/Financial/BurnerFinancialRecords";
+import CutterFinancialRecords from "./src/screens/Financial/CutterFinancialRecords";
 
 import Customeraddseller from "./src/screens/Customeraddseller"
 
@@ -119,6 +121,16 @@ const App = () => {
               options={{ headerShown: false }}
             />
             <Stack.Screen
+              name="BurnerFinancialRecords"
+              component={BurnerFinancialRecords}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="CutterFinancialRecords"
+              component={CutterFinancialRecords}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
               name="ConnectScreen"
               component={ConnectScreen}
               options={{ headerShown: false }}
@@ -139,8 +151,8 @@ const App = () => {
               options={{ headerShown: false }}
             />
             <Stack.Screen
-              name="OrderScreen"
-              component={OrderScreen}
+              name="Orders"
+              component={Orders}
               options={{ headerShown: false }}
             />
             <Stack.Screen

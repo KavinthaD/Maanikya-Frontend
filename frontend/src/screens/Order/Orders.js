@@ -54,7 +54,7 @@ const OrderScreen = () => {
       case 'Ongoing':
         return (
           <View style={styles.contentContainer}>
-            <Text>Ongoing orders will be displayed here.</Text>
+            <Text>Ongoing orders will be displayed here.</Text> 
           </View>
         );
       case 'History':
@@ -70,7 +70,7 @@ const OrderScreen = () => {
 
   return (
     <View style={baseScreenStyles.container}>
-      <View style={styles.spacer} /> {/* Add this view for the space */}
+      <View style={styles.spacer} /> 
       <Text style={styles.header}>Orders</Text>
       <View style={styles.tabContainer}>
         <TouchableOpacity onPress={() => setActiveTab('Requested')} style={styles.tab}>
@@ -89,10 +89,9 @@ const OrderScreen = () => {
 };
 
 const styles = StyleSheet.create({
-  
   spacer: {
     backgroundColor: '#b3e5fc',
-    height: 20, // Adjust the height as needed for the desired space
+    height: 20, 
   },
   header: {
     fontSize: 24,
@@ -114,7 +113,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   tabText: {
-    color: '#000',
+    color: '#676765',
+    fontWeight: 'bold',
   },
   activeTabText: {
     color: '#007bff',
@@ -132,28 +132,35 @@ const styles = StyleSheet.create({
   },
   orderContainer: {
     flexDirection: 'row',
-    backgroundColor: '#fff',
-    margin: 10,
+    backgroundColor: '#457EA0',
+    margin: 13,
     padding: 10,
-    borderRadius: 5,
+    borderRadius: 15,
     alignItems: 'center',
+    width: '90%',
+    alignSelf: 'center',
   },
   image: {
-    width: 50,
-    height: 50,
+    width: 70,
+    height: 70,
     marginRight: 10,
+    borderRadius: 10,
   },
   orderDetails: {
     flex: 1,
   },
   orderId: {
     fontWeight: 'bold',
+    color: '#fff',
+    fontSize: 20,
   },
   orderName: {
-    color: '#555',
+    color: '#fff',
+    fontSize: 17,
   },
   orderDate: {
-    color: '#999',
+    color: 'rgba(255, 255, 255, 0.7)',
+    fontSize: 16,
   },
 });
 

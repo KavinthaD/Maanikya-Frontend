@@ -42,13 +42,13 @@ const TabArr = [
     inActiveIcon: marketIconOutline,
     component: Market,
   },
-  {
-    route: "AddGem",
-    label: "Gem",
-    activeIcon: gemIcon,
-    inActiveIcon: gemIconOutline,
-    component: AddGem,
-  },
+  // {  <-- COMMENT OUT THIS BLOCK - Option 1: Direct Commenting
+  //   route: "AddGem",
+  //   label: "Gem",
+  //   activeIcon: gemIcon,
+  //   inActiveIcon: gemIconOutline,
+  //   component: AddGem,
+  // },
   {
     route: "AlertsScreen",
     label: "Bell",

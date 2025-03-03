@@ -40,7 +40,7 @@ const SignUpScreenCustomer = ({ navigation }) => {
       setErrorMessage("Password must be at least 8 characters long.");
       return;
     }
-    // Password regex validation - consider adding this if you have specific password requirements
+    
 
     setErrorMessage(""); // Clear previous errors
 
@@ -146,7 +146,7 @@ const SignUpScreenCustomer = ({ navigation }) => {
         onPress={handleCreateAccount}>
         <Text style={styles.buttonText}>Create account</Text>
       </TouchableOpacity>
-      {/* SuccessPopup - you can keep this if you want a popup in addition to the Alert, or remove if you just want the Alert */}
+      
       {/* <SuccessPopup
         visible={popupVisible}
         onClose={() => setPopupVisible(false)}

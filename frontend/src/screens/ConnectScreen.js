@@ -10,8 +10,6 @@ import {
   ScrollView,
 } from "react-native";
 import { FontAwesome, MaterialIcons } from "@expo/vector-icons";
-import { baseScreenStyles } from "../styles/baseStyles";
-import Header_2 from "../components/Header_2";
 
 // Updated categories to match the image
 const categories = ["All", "Burner", "Elec. Burner", "Cutter", "Owner"];
@@ -120,7 +118,7 @@ const ConnectScreen = ({ navigation }) => {
 
   const renderItem = ({ item }) => (
     <TouchableOpacity
-      onPress={() => navigation.navigate("ProfileScreen", { person: item })}
+      onPress={() => navigation.navigate("Profile", { person: item })}
     >
       <View style={styles.card}>
         <Image source={item.avatar} style={styles.avatar} />
@@ -154,8 +152,7 @@ const ConnectScreen = ({ navigation }) => {
   );
 
   return (
-    <View style={[baseScreenStyles.container, styles.container]}>
-      <Header_2 title="Connect" />
+    <View style={styles.container}>
       {/* Search Bar */}
       <View style={styles.searchContainer}>
         <TextInput
@@ -221,6 +218,7 @@ const styles = StyleSheet.create({
   container: {
     width: "100%",
     height: "100%",
+    backgroundColor: "#9CCDDB",
     paddingTop: 10,
   },
   searchContainer: {

@@ -8,9 +8,12 @@ import {
   TouchableOpacity,
   StyleSheet,
   Image,
+  Alert, // Import Alert
 } from "react-native";
 import { baseScreenStyles } from "../../styles/baseStyles";
-import SuccessPopup from "../../components/SuccessPopup";
+import SuccessPopup from "../../components/SuccessPopup"; 
+import axios from 'axios'; // Import axios
+import { useNavigation } from "@react-navigation/native";
 
 const SignUpScreenCustomer = ({ navigation }) => {
   const [firstName, setFirstName] = useState("");
@@ -23,22 +26,58 @@ const SignUpScreenCustomer = ({ navigation }) => {
   const [popupVisible, setPopupVisible] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
-  const handleCreateAccount = () => {
- 
- if (!firstName || !lastName || !email || !phoneNumber || !userName || !password || !reEnterPassword) {
-  setErrorMessage("All fields are required");
-  return;
-}
-if (password !== reEnterPassword) {
-  setErrorMessage("Passwords do not match");
-  return;
-}
+  const handleCreateAccount = async () => { // Make async
 
-setPopupVisible(true);
-setTimeout(() => {
-  navigation.navigate("BS_NavBar");
-}, 2500);
-};
+    if (!firstName || !lastName || !email || !phoneNumber || !userName || !password || !reEnterPassword) {
+      setErrorMessage("All fields are required");
+      return;
+    }
+    if (password !== reEnterPassword) {
+      setErrorMessage("Passwords do not match");
+      return;
+    }
+    if (password.length < 8) {
+      setErrorMessage("Password must be at least 8 characters long.");
+      return;
+    }
+    // Password regex validation - consider adding this if you have specific password requirements
+
+    setErrorMessage(""); // Clear previous errors
+
+    try {
+      const response = await axios.post('http://10.0.2.2:5000/api/auth/register-customer', { // Customer register endpoint
+        firstName: firstName,
+        lastName: lastName,
+        email: email,
+        phone: phoneNumber,
+        username: userName,
+        password: password,
+        confirmPassword: reEnterPassword, // Include confirmPassword in request
+      });
+
+      // **Successful Customer Registration:**
+      console.log("Customer registration successful:", response.data);
+      Alert.alert("Registration Successful!", response.data.message, [ // Use Alert for success
+        { text: "OK", onPress: () => navigation.navigate("Login") } // Navigate to Login after successful registration
+      ]);
+      // Optionally, you might want to store the token or user data here if needed for immediate login
+
+    } catch (error) {
+      // **Customer Registration Error:**
+      console.error("Customer registration failed:", error.response ? error.response.data : error.message);
+      if (error.response && error.response.data && error.response.data.errors) {
+        // Backend is sending validation errors as an array
+        const errorList = error.response.data.errors.map(err => err.msg).join("\n");
+        setErrorMessage("Registration failed:\n" + errorList);
+      } else if (error.response && error.response.data && error.response.data.message) {
+        // Backend is sending a single error message
+        setErrorMessage("Registration failed: " + error.response.data.message);
+      }
+      else {
+        setErrorMessage("Customer registration failed. Please try again."); // Generic error message
+      }
+    }
+  };
   return (
     <View style={[baseScreenStyles.container, styles.container]}>
       <Image source={require("../../assets/logo.png")} style={styles.logo} />
@@ -107,11 +146,12 @@ setTimeout(() => {
         onPress={handleCreateAccount}>
         <Text style={styles.buttonText}>Create account</Text>
       </TouchableOpacity>
-      <SuccessPopup
+      {/* SuccessPopup - you can keep this if you want a popup in addition to the Alert, or remove if you just want the Alert */}
+      {/* <SuccessPopup
         visible={popupVisible}
         onClose={() => setPopupVisible(false)}
         message="Account created successfully!"
-      />
+      /> */}
     </View>
   );
 };
@@ -180,4 +220,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default SignUpScreenCustomer;
+export default SignUpScreenCustomer; 

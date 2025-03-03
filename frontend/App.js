@@ -79,11 +79,12 @@ const App = () => {
               component={SignUpBusiness}
               options={{ headerShown: false }}
             />
-            <Stack.Screen
-              name="SignUpBusiness2"
+             <Stack.Screen
+              name="SignUpScreen"
               component={SignUpBusiness2}
               options={{ headerShown: false }}
             />
+
             <Stack.Screen
               name="SignUpScreenCustomer"
               component={SignUpScreenCustomer}

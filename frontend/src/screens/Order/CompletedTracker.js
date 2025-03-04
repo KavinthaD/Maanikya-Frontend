@@ -20,7 +20,7 @@ const CompletedTracker = [
     type: "Burn",
     completedDate: "22/05/2025",
     person: "Mehara",
-    gemImage: require("../assets/gemimg/gem1.jpg"),
+    gemImage: require("../../assets/gemimg/gem1.jpg"),
   },
   {
     id: "MW963",
@@ -29,7 +29,7 @@ const CompletedTracker = [
     type: "Burn",
     completedDate: "23/02/2025",
     person: "Tilmi",
-    gemImage: require("../assets/gemimg/gem2.jpg"),
+    gemImage: require("../../assets/gemimg/gem2.jpg"),
   },
   {
     id: "DCW030",
@@ -38,7 +38,7 @@ const CompletedTracker = [
     type: "Cut",
     completedDate: "13/03/2025",
     person: "Kavintha",
-    gemImage: require("../assets/gemimg/gem3.jpg"),
+    gemImage: require("../../assets/gemimg/gem3.jpg"),
   },
   {
     id: "TPK476",
@@ -47,11 +47,11 @@ const CompletedTracker = [
     type: "Cut",
     completedDate: "22/05/2025",
     person: "Dulith",
-    gemImage: require("../assets/gemimg/gem4.jpg"),
+    gemImage: require("../../assets/gemimg/gem4.jpg"),
   },
 ];
 
-const NotificationItem = ({ item }) => (
+const CompletedTrackerScreen = ({ item }) => (
   <View style={styles.notificationItem}>
     <View style={styles.textContainer}>
       <Text style={styles.text}>ID: {item.id}</Text>
@@ -159,4 +159,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default NotificationScreen;
+export default CompletedTrackerScreen;

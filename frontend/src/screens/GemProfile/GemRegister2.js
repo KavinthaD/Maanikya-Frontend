@@ -25,7 +25,7 @@ import Header_2 from "../../components/Header_2";
 import Gem_register_3 from "./GemRegister3"; // Import GemRegister3
 import axios from "axios"; // Import axios
 import { FormFieldStyles } from "../../styles/FormFields";
-import { API_URL, ENDPOINTS } from "../../config/api-local"; //change api path here
+import { API_URL, ENDPOINTS } from "../../config/api"; //change api path here
 import AsyncStorage from "@react-native-async-storage/async-storage"; // Import AsyncStorage
 
 const Stack = createNativeStackNavigator();
@@ -159,12 +159,21 @@ function GemRegister2Main() {
       console.log("API URL:", `${API_URL}${ENDPOINTS.REGISTER_GEM}`);
       console.log("Form Data to Send:", formDataToSend);
 
+      // Get the token from storage
+      // const token = await AsyncStorage.getItem("userToken");
+      const token =
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2N2M0NWRmMWZlYWFhMzc5YmQzYTMxOGQiLCJ1c2VybmFtZSI6ImpvaG5kb2UiLCJsb2dpblJvbGUiOiJHZW0gYnVzaW5lc3Mgb3duZXIiLCJ0eXBlIjoiYnVzaW5lc3MiLCJpYXQiOjE3NDA5MjcxNDksImV4cCI6MTc0MTAxMzU0OX0.FT2fG9DDySsf8on2MuvSy5kZwARYu6loAK5H7Mjgla4";
+      if (!token) {
+        throw new Error("Authentication token not found");
+      }
+
       const response = await axios.post(
         `${API_URL}${ENDPOINTS.REGISTER_GEM}`,
         formDataToSend,
         {
           headers: {
             "Content-Type": "multipart/form-data", // Set the content type
+            Authorization: `Bearer ${token}`, // Add the bearer token
           },
           timeout: 10000, // 10 second timeout
         }
@@ -176,6 +185,7 @@ function GemRegister2Main() {
         navigation.navigate("GemRegister3", {
           gemId: response.data.gem.gemId,
           createdAt: response.data.gem.createdAt,
+          qrCode: response.data.qrCode,
         });
       }
     } catch (error) {

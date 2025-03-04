@@ -1,7 +1,11 @@
 import React, { useState } from "react";
+import { useNavigation } from "@react-navigation/native";
 import { View, Text, FlatList, StyleSheet, Image, TextInput, SafeAreaView, TouchableOpacity } from "react-native";
+import { baseScreenStyles } from "../../styles/baseStyles";
+import Header_2 from "../components/Header_2";
 
-const Tracker = () => {
+const Tracker = ({navigation}) => {
+  const navigation = useNavigation();
   //manage the search option
   const [search, setSearch] = useState("");
 
@@ -28,8 +32,8 @@ const Tracker = () => {
   );
   //functions marks gems as complete
   const markedComplete = (gem) =>{
-    setprogressGem(progressGem.filter((item) => item.id !== gem.id));
-    setcompleteGem([...completeGem, gem]);
+    setProgressGem(progressGem.filter((item) => item.id !== gem.id));
+    setCompleteGem([...completeGem, gem]);
   };
   //render each gem item
   const renderGem = ({item}) => (
@@ -40,9 +44,8 @@ const Tracker = () => {
   );
 
   return (
-    <SafeAreaView style={styles.container}>
-      
-
+    <SafeAreaView style={[baseScreenStyles.container]}>
+      <Header_2 title="Tracker"/>
       {/*Search Bar */}
       <TextInput
         style={styles.searchBar}
@@ -51,7 +54,7 @@ const Tracker = () => {
         onChangeText={(text) => setSearch(text)}
       />
       {/*In Progress gems*/}
-      <TouchableOpacity style={styles.progressContainer}>
+      <TouchableOpacity style={styles.progressContainer} onPress={() => navigation.navigate("InProgressTrackerScreen")}>
         <Text style={styles.subTitle}>In Progress {'>'}</Text>
         <FlatList
           data={selectedGems} //filter gems on search
@@ -63,7 +66,7 @@ const Tracker = () => {
       </TouchableOpacity>
 
       {/*Completed gems*/}
-      <TouchableOpacity style={styles.complitedContainer}>
+      <TouchableOpacity style={styles.complitedContainer} onPress ={()=> navigation.navigate("CompletedTrackerScreen")}>
         <Text style={styles.sectionTitle}>Completed {'>'}</Text>
         <FlatList
           data={completeGem}

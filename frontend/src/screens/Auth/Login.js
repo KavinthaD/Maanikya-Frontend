@@ -1,4 +1,4 @@
-//Screen creator: Dulith
+//Screen creator: Dulith   // login
 
 import React, { useState } from "react";
 import {
@@ -13,6 +13,8 @@ import {
 import { Picker } from "@react-native-picker/picker";
 import { baseScreenStyles } from "../../styles/baseStyles";
 import { useNavigation } from "@react-navigation/native";
+import axios from 'axios'; // Import axios
+import AsyncStorage from '@react-native-async-storage/async-storage'; // Import AsyncStorage
 
 const Login = () => {
   const navigation = useNavigation();
@@ -21,7 +23,7 @@ const Login = () => {
   const [role, setRole] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
 
-  const handleLogin = () => {
+  const handleLogin = async () => { // Make handleLogin async
     if (!email || !password || !role) {
       Alert.alert("Please fill all fields.");
       return;
@@ -33,14 +35,50 @@ const Login = () => {
     }
     setErrorMessage("");
 
+    // **Role Mapping for Backend:**
+    let backendLoginRole = "";
     if (role === "gem_business_owner") {
-      navigation.navigate("BS_NavBar");
+      backendLoginRole = "Gem business owner";
     } else if (role === "cutter_burner") {
-      navigation.navigate("W_NavBar");
+      backendLoginRole = "Cutter/Burner";
     } else if (role === "customer") {
-      navigation.navigate("C_NavBar");
+      backendLoginRole = "Customer";
     } else {
-      console.log("Please select a role.");
+      Alert.alert("Please select a role."); // Keep this alert for role selection
+      return;
+    }
+
+    try {
+      const response = await axios.post('http://10.0.2.2:5000/api/auth/login', { // Replace with your backend URL if different
+        email: email,
+        password: password,
+        loginRole: backendLoginRole, // Use the mapped backend role
+      });
+
+      // **Successful Login:**
+      console.log("Login successful:", response.data);
+      Alert.alert("Login Successful!", response.data.message);
+
+      // **Store the JWT token securely (using AsyncStorage):**
+      await AsyncStorage.setItem('authToken', response.data.token);
+
+      // **Navigate based on user role after successful login:**
+      if (response.data.user.loginRole === "Gem business owner") {
+        navigation.navigate("BS_NavBar");
+      } else if (response.data.user.loginRole === "Cutter/Burner") {
+        navigation.navigate("W_NavBar");
+      } else if (response.data.user.loginRole === "Customer") {
+        navigation.navigate("C_NavBar");
+      }
+
+    } catch (error) {
+      // **Login Error:**
+      console.error("Login failed:", error.response ? error.response.data : error.message);
+      if (error.response && error.response.data && error.response.data.error) {
+        setErrorMessage(error.response.data.error); // Display backend error message
+      } else {
+        setErrorMessage("Login failed. Please check your credentials and try again."); // Generic error message
+      }
     }
   };
 
@@ -147,7 +185,7 @@ const styles = StyleSheet.create({
     color: "#888",
   },
   inputWithOpacity: {
-    backgroundColor: "rgba(255, 255, 255, 0.8)", 
+    backgroundColor: "rgba(255, 255, 255, 0.8)",
   },
   forgotPasswordContainer: {
     alignSelf: "flex-start",

@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { SafeAreaView, Text, TouchableOpacity, FlatList, Image, View, StyleSheet, Modal, TextInput, ScrollView } from "react-native";
 import { Ionicons } from '@expo/vector-icons'; 
+import Header_2 from "../components/Header_2";
 
 const GemOnDisplay = ({}) => {
   //Store gems on display
@@ -40,9 +41,6 @@ const GemOnDisplay = ({}) => {
       alert("Please enter buyer's name and gem price.");
     }
   };
-  const itemSeperator = () => (
-    <View style={{ height: 1, backgroundColor: "e0e0e0", marginVertical: 5 }} />
-  );
 
   //seperate the sold and displayed gems 
   const ItemSeperator = () => {
@@ -50,12 +48,13 @@ const GemOnDisplay = ({}) => {
   };
   return (
     <SafeAreaView style={styles.container}>
+      <Header_2 title="Gems On Display"/>
       <ScrollView contentContainerStyle={styles.scrollContainer} keyboardShouldPersistTaps="handled">
         <View style={styles.displayContainer}>
 
           <View style={styles.header}>
             <View style = {styles.headerLine} />
-              < Text style={styles.subTopic}>Gems On Display</Text>
+              < Text style={styles.subTopic}>On Display</Text>
             <View style = {styles.headerLine} />
           </View>
           <View style={styles.tableHeader}>
@@ -163,7 +162,7 @@ const styles = StyleSheet.create({
   soldContainer: {
     marginHorizontal: 16,
     marginTop: 20,
-    backgroundColor: '#505050',
+    backgroundColor: '#334D85',
     borderRadius: 12,
     padding: 16,
     shadowColor: '#000',
@@ -182,10 +181,15 @@ const styles = StyleSheet.create({
     height: 1,
     backgroundColor: '#ccc',
   },
+  subTopic: {
+    fontSize: 18,
+    fontWeight: "600",
+    marginHorizontal: 10,
+  },
   subtopic: {
     fontSize: 18,
     fontWeight: "600",
-    color: "#333",
+    color: "#ffff",
     marginHorizontal: 10,
   },
   tableHeader: {
@@ -197,7 +201,6 @@ const styles = StyleSheet.create({
   tableHeaderText: {
     fontSize: 14,
     fontWeight: '500',
-    color: '#777',
     width: 100,
   },  
   gemDisplay: {
@@ -233,7 +236,7 @@ const styles = StyleSheet.create({
   soldGems: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#5D9CEC",
+    backgroundColor: "#9AC3FF",
     padding: 10,
     borderRadius: 10,
     marginVertical: 5,

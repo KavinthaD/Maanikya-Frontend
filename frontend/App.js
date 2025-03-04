@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { SafeAreaView, StatusBar, Platform } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { baseScreenStyles } from "./src/styles/baseStyles";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 //import screens
 import PurposeSelectionPage from "./src/screens/Auth/PurposeSelectionPage";
@@ -12,7 +13,7 @@ import WelcomePage from "./src/screens/WelcomePage";
 import HomePageWorker from "./src/screens/Home/HomePageWorker";
 import HomePageBusiness from "./src/screens/Home/HomePageBusiness";
 import SignUpScreenCustomer from "./src/screens/Auth/SignUpCustomer";
-import Market from "./src/screens/Market";
+import GemstoneMarketplace from "./src/screens/Market";
 import OwnerFinancialRecords from "./src/screens/Financial/ownerFinancialRecords";
 import ConnectScreen from "./src/screens/ConnectScreen";
 import GemOnDisplay from "./src/screens/GemOnDisplay";
@@ -33,11 +34,44 @@ import HomePageCustomer from "./src/screens/Home/HomePageCustomer";
 import BurnerFinancialRecords from "./src/screens/Financial/BurnerFinancialRecords";
 import CutterFinancialRecords from "./src/screens/Financial/CutterFinancialRecords";
 
+import InProgressTrackerScreen from "./src/screens/Order/InProgressTracker";
+import CompletedTrackerScreen from "./src/screens/Order/CompletedTracker";
 import Customeraddseller from "./src/screens/Customeraddseller"
 
 const Stack = createNativeStackNavigator();
 
 const App = () => {
+  const [initialRouteName, setInitialRouteName] = useState('WelcomePage'); // Default to WelcomePage initially
+
+  useEffect(() => {
+    const checkLoginStatus = async () => {
+      console.log("checkLoginStatus: Starting..."); // Debug log at start
+      try {
+        const authToken = await AsyncStorage.getItem('authToken');
+        console.log("checkLoginStatus: Retrieved authToken from AsyncStorage:", authToken); // Log authToken value
+
+        if (authToken) {
+          console.log("checkLoginStatus: authToken found - User likely logged in");
+          // **IMPORTANT: Replace 'HomePageBusiness' with the correct logic based on user role**
+          setInitialRouteName('HomePageBusiness'); // Placeholder - adjust this based on role
+          console.log("checkLoginStatus: initialRouteName set to HomePageBusiness (placeholder)");
+        } else {
+          console.log("checkLoginStatus: No authToken found - User not logged in");
+          setInitialRouteName('WelcomePage'); // Or 'Login' - you can change to 'Login' if you prefer to start at login screen
+          console.log("checkLoginStatus: initialRouteName set to WelcomePage");
+        }
+      } catch (error) {
+        console.error("checkLoginStatus: Error checking login status:", error);
+        setInitialRouteName('WelcomePage'); // Fallback
+        console.log("checkLoginStatus: Error occurred, initialRouteName set to WelcomePage (fallback)");
+      }
+      console.log("checkLoginStatus: Final initialRouteName:", initialRouteName); // Log final initialRouteName before navigation
+      console.log("checkLoginStatus: Ending."); // Debug log at end
+    };
+
+    checkLoginStatus();
+  }, []);
+
   return (
     <SafeAreaProvider>
       <SafeAreaView
@@ -53,7 +87,7 @@ const App = () => {
           translucent={true}
         />
         <NavigationContainer>
-          <Stack.Navigator initialRouteName="WelcomePage">
+          <Stack.Navigator initialRouteName={initialRouteName}>
             <Stack.Screen
               name="WelcomePage"
               component={WelcomePage}
@@ -80,11 +114,12 @@ const App = () => {
               component={SignUpBusiness}
               options={{ headerShown: false }}
             />
-            <Stack.Screen
-              name="SignUpBusiness2"
+             <Stack.Screen
+              name="SignUpScreen"
               component={SignUpBusiness2}
               options={{ headerShown: false }}
             />
+
             <Stack.Screen
               name="SignUpScreenCustomer"
               component={SignUpScreenCustomer}
@@ -111,8 +146,8 @@ const App = () => {
               options={{ headerShown: false }}
             />
             <Stack.Screen
-              name="Market"
-              component={Market}
+              name="GemstoneMarketplace"
+              component={ GemstoneMarketplace}
               options={{ headerShown: false }}
             />
             <Stack.Screen
@@ -170,7 +205,7 @@ const App = () => {
               component={W_NavBar}
               options={{ headerShown: false }}
             />
-            
+
             <Stack.Screen
               name="GemRegister1"
               component={GemRegister1}
@@ -189,6 +224,16 @@ const App = () => {
             <Stack.Screen
               name="Customeraddseller"
               component={Customeraddseller}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="InProgressTrackerScreen"
+              component={InProgressTrackerScreen}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="CompletedTrackerScreen"
+              component={CompletedTrackerScreen}
               options={{ headerShown: false }}
             />
           </Stack.Navigator>

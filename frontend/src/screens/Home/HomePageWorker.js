@@ -1,6 +1,7 @@
 //Screen Creator Tilmi
 
 import React from "react";
+import { useNavigation } from "@react-navigation/native";
 import {
   View,
   Text,
@@ -23,20 +24,30 @@ const MenuItem = ({ image, title, onPress }) => (
 );
 
 const HomeScreen = () => {
+  const navigation = useNavigation();
   const menuItems = [
     {
       image: require("../../assets/menu-icons/Orders.png"),
       title: "Orders",
+      screen: "Orders",
     },
     {
       image: require("../../assets/menu-icons/financialRecords.png"),
       title: "Financial\nRecords",
+      screen: "CutterFinancialRecords", 
     },
     {
       image: require("../../assets/menu-icons/scan.png"),
       title: "Scan",
     },
   ];
+  const handleMenuItemPress = (screenName) => {
+    if (screenName) {
+      navigation.navigate(screenName); // Navigate to the specified screen
+    } else {
+      console.log(`No screen defined for this item`); // Optional: Handle cases where no screen is specified
+    }
+  };
 
   return (
     <SafeAreaView style={baseScreenStyles.container}>
@@ -49,7 +60,7 @@ const HomeScreen = () => {
               key={index}
               image={item.image}
               title={item.title}
-              onPress={() => console.log(`Pressed ${item.title}`)}
+              onPress={() => handleMenuItemPress(item.screen)}
             />
           ))}
         </View>

@@ -40,34 +40,7 @@ const Stack = createNativeStackNavigator();
 const App = () => {
   const [initialRouteName, setInitialRouteName] = useState('WelcomePage'); // Default to WelcomePage initially
 
-  useEffect(() => {
-    const checkLoginStatus = async () => {
-      console.log("checkLoginStatus: Starting..."); // Debug log at start
-      try {
-        const authToken = await AsyncStorage.getItem('authToken');
-        console.log("checkLoginStatus: Retrieved authToken from AsyncStorage:", authToken); // Log authToken value
 
-        if (authToken) {
-          console.log("checkLoginStatus: authToken found - User likely logged in");
-          // **IMPORTANT: Replace 'HomePageBusiness' with the correct logic based on user role**
-          setInitialRouteName('HomePageBusiness'); // Placeholder - adjust this based on role
-          console.log("checkLoginStatus: initialRouteName set to HomePageBusiness (placeholder)");
-        } else {
-          console.log("checkLoginStatus: No authToken found - User not logged in");
-          setInitialRouteName('WelcomePage'); // Or 'Login' - you can change to 'Login' if you prefer to start at login screen
-          console.log("checkLoginStatus: initialRouteName set to WelcomePage");
-        }
-      } catch (error) {
-        console.error("checkLoginStatus: Error checking login status:", error);
-        setInitialRouteName('WelcomePage'); // Fallback
-        console.log("checkLoginStatus: Error occurred, initialRouteName set to WelcomePage (fallback)");
-      }
-      console.log("checkLoginStatus: Final initialRouteName:", initialRouteName); // Log final initialRouteName before navigation
-      console.log("checkLoginStatus: Ending."); // Debug log at end
-    };
-
-    checkLoginStatus();
-  }, []);
 
   return (
     <SafeAreaProvider>

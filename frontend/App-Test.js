@@ -15,6 +15,7 @@ import HomePageBusiness from "./src/screens/Home/HomePageBusiness";
 import GemRegister1 from "./src/screens/GemProfile/GemRegister1";
 import GemRegister2 from "./src/screens/GemProfile/GemRegister2";
 import HomeMyGems from "./src/screens/GemProfile/HomeMyGems";
+import MyGems from "./src/screens/GemProfile/MyGems";
 import BS_NavBar from "./src/components/BS_NavBar";
 import C_NavBar from "./src/components/C_NavBar";
 import ConnectScreen from "./src/screens/ConnectScreen";

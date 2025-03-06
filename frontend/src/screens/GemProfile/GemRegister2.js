@@ -162,7 +162,7 @@ function GemRegister2Main() {
       // Get the token from storage
       // const token = await AsyncStorage.getItem("userToken");
       const token =
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2N2M0NWRmMWZlYWFhMzc5YmQzYTMxOGQiLCJ1c2VybmFtZSI6ImpvaG5kb2UiLCJsb2dpblJvbGUiOiJHZW0gYnVzaW5lc3Mgb3duZXIiLCJ0eXBlIjoiYnVzaW5lc3MiLCJpYXQiOjE3NDA5MjcxNDksImV4cCI6MTc0MTAxMzU0OX0.FT2fG9DDySsf8on2MuvSy5kZwARYu6loAK5H7Mjgla4";
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2N2M0NWRmMWZlYWFhMzc5YmQzYTMxOGQiLCJ1c2VybmFtZSI6ImpvaG5kb2UiLCJsb2dpblJvbGUiOiJHZW0gYnVzaW5lc3Mgb3duZXIiLCJ0eXBlIjoiYnVzaW5lc3MiLCJpYXQiOjE3NDEyNjQzODAsImV4cCI6MTc0MTM1MDc4MH0.8wNR8MUovPVN7trO_BDfVj0IZRykZnQn_gYciKUQTV4";
       if (!token) {
         throw new Error("Authentication token not found");
       }
@@ -240,15 +240,14 @@ function GemRegister2Main() {
 
           <TextInput
             style={FormFieldStyles.input}
-            placeholder="Dimensions"
+            placeholder="Dimensions (e.g., 9.30 x 7.30 x 4.60mm.5)"
             value={form.dimensions}
             onChangeText={(value) => {
-              const numericValue = value
-                .replace(/[^0-9.]/g, "")
-                .replace(/(\..*)\./g, "$1");
-              handleInputChange("dimensions", numericValue);
+              // Allow numbers, decimal points, and the characters 'x', 'X', and '*'
+              const formattedValue = value.replace(/[^0-9.xX* ]/g, "");
+              handleInputChange("dimensions", formattedValue);
             }}
-            keyboardType="decimal-pad"
+            keyboardType="default" // Change to default to allow all characters
           />
 
           <TextInput

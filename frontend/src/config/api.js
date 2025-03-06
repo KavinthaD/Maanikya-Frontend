@@ -4,7 +4,7 @@ const getBaseUrl = () => {
   if (__DEV__) {
     // Development environment
     if (Platform.OS === 'android') {
-      return 'http://localhost:5000'; // Android emulator
+      return 'http://10.0.2.2:5000'; // Android emulator
     } else if (Platform.OS === 'ios') {
       return 'http://localhost:5000'; // iOS simulator
     } else {

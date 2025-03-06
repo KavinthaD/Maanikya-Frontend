@@ -13,8 +13,8 @@ import {
 import { Picker } from "@react-native-picker/picker";
 import { baseScreenStyles } from "../../styles/baseStyles";
 import { useNavigation } from "@react-navigation/native";
-import axios from 'axios'; // Import axios
-import AsyncStorage from '@react-native-async-storage/async-storage'; // Import AsyncStorage
+import axios from "axios"; // Import axios
+import AsyncStorage from "@react-native-async-storage/async-storage"; // Import AsyncStorage
 
 const Login = () => {
   const navigation = useNavigation();
@@ -23,7 +23,8 @@ const Login = () => {
   const [role, setRole] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
 
-  const handleLogin = async () => { // Make handleLogin async
+  const handleLogin = async () => {
+    // Make handleLogin async
     if (!email || !password || !role) {
       Alert.alert("Please fill all fields.");
       return;
@@ -49,7 +50,8 @@ const Login = () => {
     }
 
     try {
-      const response = await axios.post('http://10.0.2.2:5000/api/auth/login', { // Replace with your backend URL if different
+      const response = await axios.post("http://10.0.2.2:5000/api/auth/login", {
+        // Replace with your backend URL if different
         email: email,
         password: password,
         loginRole: backendLoginRole, // Use the mapped backend role
@@ -60,7 +62,7 @@ const Login = () => {
       Alert.alert("Login Successful!", response.data.message);
 
       // **Store the JWT token securely (using AsyncStorage):**
-      await AsyncStorage.setItem('authToken', response.data.token);
+      await AsyncStorage.setItem("authToken", response.data.token);
 
       // **Navigate based on user role after successful login:**
       if (response.data.user.loginRole === "Gem business owner") {
@@ -70,24 +72,41 @@ const Login = () => {
       } else if (response.data.user.loginRole === "Customer") {
         navigation.navigate("C_NavBar");
       }
-
     } catch (error) {
       // **Login Error:**
-      console.error("Login failed:", error.response ? error.response.data : error.message);
+      console.error(
+        "Login failed:",
+        error.response ? error.response.data : error.message
+      );
       if (error.response && error.response.data && error.response.data.error) {
         setErrorMessage(error.response.data.error); // Display backend error message
       } else {
-        setErrorMessage("Login failed. Please check your credentials and try again."); // Generic error message
+        setErrorMessage(
+          "Login failed. Please check your credentials and try again."
+        ); // Generic error message
       }
+    }
+  };
+
+  // New function to bypass backend for testing
+  const handleTestLogin = (testRole) => {
+    // Set the role based on the test role
+    setRole(testRole);
+    // Navigate based on the test role
+    if (testRole === "gem_business_owner") {
+      navigation.navigate("BS_NavBar");
+    } else if (testRole === "cutter_burner") {
+      navigation.navigate("W_NavBar");
+    } else if (testRole === "customer") {
+      navigation.navigate("C_NavBar");
+    } else {
+      Alert.alert("Invalid role for testing.");
     }
   };
 
   return (
     <View style={[baseScreenStyles.container, styles.container]}>
-      <Image
-        source={require("../../assets/logo.png")}
-        style={styles.logo}
-      />
+      <Image source={require("../../assets/logo.png")} style={styles.logo} />
       <Text style={styles.title}>Welcome Back</Text>
       <Text style={styles.subtitle}>Login to your account</Text>
 
@@ -119,15 +138,40 @@ const Login = () => {
         value={password}
         onChangeText={setPassword}
       />
-       {errorMessage ? (
+      {errorMessage ? (
         <Text style={styles.errorText}>{errorMessage}</Text>
       ) : null}
       <TouchableOpacity style={styles.forgotPasswordContainer}>
         <Text style={styles.forgotPassword}>Forgot your password?</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={[baseScreenStyles.blueButton,styles.loginButton]} onPress={handleLogin}>
+      <TouchableOpacity
+        style={[baseScreenStyles.blueButton, styles.loginButton]}
+        onPress={handleLogin}
+      >
         <Text style={styles.loginButtonText}>Log in</Text>
       </TouchableOpacity>
+
+      {/* Test Login Buttons */}
+      <View style={styles.testLoginContainer}>
+        <TouchableOpacity
+          style={styles.testLoginButton}
+          onPress={() => handleTestLogin("gem_business_owner")}
+        >
+          <Text style={styles.testLoginButtonText}>B</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.testLoginButton}
+          onPress={() => handleTestLogin("cutter_burner")}
+        >
+          <Text style={styles.testLoginButtonText}>W</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.testLoginButton}
+          onPress={() => handleTestLogin("customer")}
+        >
+          <Text style={styles.testLoginButtonText}>C</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };
@@ -152,10 +196,6 @@ const styles = StyleSheet.create({
     fontSize: 20,
     marginBottom: 15,
     fontWeight: "bold",
-  },
-  prompt: {
-    fontSize: 18,
-    marginBottom: 20,
   },
   input: {
     width: "100%",
@@ -201,6 +241,24 @@ const styles = StyleSheet.create({
   loginButtonText: {
     color: "#fff",
     fontSize: 16,
+  },
+  testLoginContainer: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    marginTop: 20,
+    width: "100%",
+  },
+  testLoginButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: "red",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  testLoginButtonText: {
+    color: "white",
+    fontWeight: "bold",
   },
 });
 

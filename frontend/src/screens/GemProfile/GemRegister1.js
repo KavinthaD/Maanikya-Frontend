@@ -25,61 +25,36 @@ import DropDownPicker from "react-native-dropdown-picker";
 import { FormFieldStyles } from "../../styles/FormFields";
 import Modal from "react-native-modal";
 import ImageCropPicker from "react-native-image-crop-picker";
+import { gemTypeItems } from "./gemTypes"; // Import gem types from gemTypes.js
+import axios from 'axios';
+import { API_URL } from '../../config/api';
 
+// Update IMAGE_CONSTRAINTS
 const IMAGE_CONSTRAINTS = {
-  maxWidth: 2048,
-  maxHeight: 2048,
-  minWidth: 512,
-  minHeight: 512,
-  maxSizeMB: 5,
-  quality: 0.9,
+  maxWidth: 2048,      // Maximum 2K resolution
+  maxHeight: 2048,     // Maximum 2K resolution
+  minWidth: 300,       // Minimum 300px for decent detail
+  minHeight: 300,      // Minimum 300px for decent detail
+  maxSizeMB: 15,       // Increased to 15MB before rejection
+  quality: 0.9,        // Initial quality
   allowedFormats: ["jpeg", "jpg", "png"],
-  aspectRatio: [1, 1],
+  aspectRatio: [1, 1], // Square images for consistency
 };
 
-// const validateImage = async (uri) => {
-//   console.log("Validating image URI:", uri);
-//   try {
-//     // Check file size
-//     const fileInfo = await FileSystem.getInfoAsync(uri);
-//     const fileSizeMB = fileInfo.size / (1024 * 1024);
-//     if (fileSizeMB > IMAGE_CONSTRAINTS.maxSizeMB) {
-//       throw new Error(
-//         `Image must be smaller than ${IMAGE_CONSTRAINTS.maxSizeMB}MB`
-//       );
-//     }
-
-//     // Check dimensions
-//     const { width, height } = await new Promise((resolve) => {
-//       Image.getSize(uri, (width, height) => resolve({ width, height }));
-//     });
-
-//     if (
-//       width > IMAGE_CONSTRAINTS.maxWidth ||
-//       height > IMAGE_CONSTRAINTS.maxHeight
-//     ) {
-//       throw new Error(
-//         `Image dimensions must not exceed ${IMAGE_CONSTRAINTS.maxWidth}x${IMAGE_CONSTRAINTS.maxHeight}`
-//       );
-//     }
-
-//     if (
-//       width < IMAGE_CONSTRAINTS.minWidth ||
-//       height < IMAGE_CONSTRAINTS.minHeight
-//     ) {
-//       throw new Error(
-//         `Image must be at least ${IMAGE_CONSTRAINTS.minWidth}x${IMAGE_CONSTRAINTS.minHeight}`
-//       );
-//     }
-
-//     return true;
-//   } catch (error) {
-//     Alert.alert("Image Validation Failed", error.message);
-//     return false;
-//   }
-// };
-
 const Stack = createNativeStackNavigator();
+
+// Add gem shapes array
+const shapeItems = [
+  { label: "Bar", value: "bar" },
+  { label: "Dot", value: "dot" },
+  { label: "Heart", value: "heart" },
+  { label: "Marquise", value: "marquise" },
+  { label: "Oval", value: "oval" },
+  { label: "Pear", value: "pear" },
+  { label: "Round", value: "round" },
+  { label: "Square", value: "square" },
+  { label: "Triangle", value: "triangle" },
+];
 
 export default function GemRegister1() {
   return (
@@ -109,23 +84,153 @@ function GemRegister1Main() {
     setModalVisible(true);
   };
 
-  const handleTakePhoto = async () => {
+  // Add image validation function
+  const validateImage = async (imageResult) => {
     try {
-      const result = await ImageCropPicker.openCamera({
-        width: 600,
-        height: 600,
-        mediaType: "photo",
-        includeBase64: false,
-        maxHeight: 2000,
-        maxWidth: 2000,
-        cropping: true,
-        cropperCircleOverlay: false,
-        cropperStatusBarColor: "#9CCDDB",
-        cropperToolbarColor: "#9CCDDB",
+      const fileSizeMB = imageResult.size / (1024 * 1024);
+      
+      const validationResults = {
+        isValid: true,
+        errors: [],
+        needsCompression: false
+      };
+  
+      // Check minimum dimensions
+      if (imageResult.width < IMAGE_CONSTRAINTS.minWidth || 
+          imageResult.height < IMAGE_CONSTRAINTS.minHeight) {
+        validationResults.isValid = false;
+        validationResults.errors.push(
+          `Image must be at least ${IMAGE_CONSTRAINTS.minWidth}x${IMAGE_CONSTRAINTS.minHeight} pixels`
+        );
+      }
+  
+      // Check if file is extremely large
+      if (fileSizeMB > IMAGE_CONSTRAINTS.maxSizeMB) {
+        validationResults.isValid = false;
+        validationResults.errors.push(
+          `Image file is too large (${fileSizeMB.toFixed(1)}MB). Maximum allowed size is ${IMAGE_CONSTRAINTS.maxSizeMB}MB`
+        );
+      }
+  
+      return validationResults;
+    } catch (error) {
+      console.error('Image validation error:', error);
+      return {
+        isValid: false,
+        errors: ['Failed to validate image'],
+        needsCompression: false
+      };
+    }
+  };
+
+  // Add new function to handle AI analysis
+  const handleAIAnalysis = async (imagePath) => {
+    try {
+      // Get file stats before sending
+      const imageInfo = await ImageCropPicker.openCropper({
+        path: imagePath,
+        ...imagePickerConfig
+      });
+      
+      console.log('Image Stats before API call:', {
+        width: imageInfo.width,
+        height: imageInfo.height,
+        size: `${(imageInfo.size / (1024 * 1024)).toFixed(2)}MB`,
+        mime: imageInfo.mime
       });
 
-      if (result && result.path) {
-        setForm((prev) => ({ ...prev, photos: [result.path] }));
+      // Validate image before processing
+      const validationResult = await validateImage(imagePath);
+      if (!validationResult.isValid) {
+        Alert.alert(
+          "Invalid Image",
+          validationResult.errors.join('\n'),
+          [{ text: "OK" }]
+        );
+        return;
+      }
+
+      // const token = await AsyncStorage.getItem('token');
+      const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2N2M0NWRmMWZlYWFhMzc5YmQzYTMxOGQiLCJ1c2VybmFtZSI6ImpvaG5kb2UiLCJsb2dpblJvbGUiOiJHZW0gYnVzaW5lc3Mgb3duZXIiLCJ0eXBlIjoiYnVzaW5lc3MiLCJpYXQiOjE3NDEzNjQwMzUsImV4cCI6MTc0MTQ1MDQzNX0.31cQSPkbqwLrE9qLBekOXzLLyqdUBiwmsPxSoHNkuV4"; // Temporary token for testing
+      if (!token) {
+        throw new Error('No authentication token found');
+      }
+  
+      const formData = new FormData();
+      formData.append('image', {
+        uri: Platform.OS === 'ios' ? imagePath.replace('file://', '') : imagePath,
+        type: 'image/jpeg',
+        name: 'gem_image.jpg',
+      });
+  
+      const response = await axios.post(`${API_URL}/api/ai/analyze`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+      
+      // Log raw response data
+      console.log('Raw API Response:', JSON.stringify(response.data, null, 2));
+
+      if (response.data.success) {
+        const analysis = response.data.analysis;
+        
+        // Find the matching gem type in gemTypeItems
+        const matchingGemType = gemTypeItems.find(
+          item => item.label === analysis.gemTypes[0]
+        )?.value || analysis.gemTypes[0];
+
+        // Auto-fill the form with AI analysis results
+        setForm(prev => ({
+          ...prev,
+          color: analysis.color.name,
+          gemShape: analysis.shape.toLowerCase(),
+          gemType: matchingGemType, // Use the matching value from gemTypeItems
+          description: analysis.description,
+          photos: [imagePath],
+        }));
+
+        Alert.alert(
+          "AI Analysis Complete",
+          "The form has been filled with AI suggestions. You can modify them if needed."
+        );
+      }
+    } catch (error) {
+      console.error('AI Analysis error:', error);
+      Alert.alert(
+        "AI Analysis Failed",
+        error.response?.data?.message || "Could not analyze the image. Please fill the form manually."
+      );
+    }
+  };
+
+  // Update handleTakePhoto and handleChooseFromGallery configurations
+  const imagePickerConfig = {
+    width: IMAGE_CONSTRAINTS.maxWidth,
+    height: IMAGE_CONSTRAINTS.maxHeight,
+    mediaType: "photo",
+    includeBase64: false,
+    cropping: true,
+    cropperCircleOverlay: false,
+    cropperStatusBarColor: "#9CCDDB",
+    cropperToolbarColor: "#9CCDDB",
+    compressImageQuality: IMAGE_CONSTRAINTS.quality,
+    compressImageMaxWidth: IMAGE_CONSTRAINTS.maxWidth,
+    compressImageMaxHeight: IMAGE_CONSTRAINTS.maxHeight,
+    forceJpg: true, // Convert all images to JPG for better compression
+  };
+
+  const handleTakePhoto = async () => {
+    try {
+      const result = await ImageCropPicker.openCamera(imagePickerConfig);
+      if (result) {
+        const validation = await validateImage(result);
+        if (!validation.isValid) {
+          Alert.alert("Invalid Image", validation.errors.join('\n'));
+          return;
+        }
+        await handleAIAnalysis(result.path);
       }
     } catch (error) {
       console.error("Error taking photo:", error);
@@ -136,21 +241,14 @@ function GemRegister1Main() {
 
   const handleChooseFromGallery = async () => {
     try {
-      const result = await ImageCropPicker.openPicker({
-        width: 600,
-        height: 600,
-        mediaType: "photo",
-        includeBase64: false,
-        maxHeight: 2000,
-        maxWidth: 2000,
-        cropping: true,
-        cropperCircleOverlay: false,
-        cropperStatusBarColor: "#9CCDDB",
-        cropperToolbarColor: "#9CCDDB",
-      });
-
-      if (result && result.path) {
-        setForm((prev) => ({ ...prev, photos: [result.path] }));
+      const result = await ImageCropPicker.openPicker(imagePickerConfig);
+      if (result) {
+        const validation = await validateImage(result);
+        if (!validation.isValid) {
+          Alert.alert("Invalid Image", validation.errors.join('\n'));
+          return;
+        }
+        await handleAIAnalysis(result.path);
       }
     } catch (error) {
       console.error("Error choosing from gallery:", error);
@@ -163,26 +261,14 @@ function GemRegister1Main() {
 
   // For gem shape dropdown
   const [openShape, setOpenShape] = useState(false);
-  const [shapeItems, setShapeItems] = useState([
-    { label: "Round", value: "round" },
-    { label: "Baguette Cut", value: "baguette" },
-    { label: "Cabochon", value: "cabochon" },
-    { label: "Cushion", value: "cushion" },
-    { label: "Emerald Cut", value: "emerald" },
-    { label: "Heart Shape", value: "heart" },
-    { label: "Hexagonal Cut", value: "hexagonal" },
-    { label: "Marquise", value: "marquise" },
-    { label: "Oval", value: "oval" },
-    { label: "Pear", value: "pear" },
-    { label: "Princess Cut", value: "princess" },
-    { label: "Radiant Cut", value: "radiant" },
-    { label: "Rose Cut", value: "rose" },
-    { label: "Trillion Cut", value: "trillion" },
-  ]);
+
+  // For gem type dropdown
+  const [openGemType, setOpenGemType] = useState(false);
 
   const [form, setForm] = useState({
     color: "",
     gemShape: "",
+    gemType: "",
     description: "",
     photos: [],
   });
@@ -193,13 +279,22 @@ function GemRegister1Main() {
   };
 
   const handleContinue = () => {
-    if (!form.color || !form.gemShape) {
+    if (!form.color || !form.gemShape || !form.gemType) {
       Alert.alert(
         "Fill Required Details",
         "Please fill in the required details marked by '*'."
       );
       return;
     }
+
+    // Log image details before navigation
+    if (form.photos[0]) {
+      console.log('Image Stats passed to GemRegister2:', {
+        path: form.photos[0],
+        formData: form
+      });
+    }
+
     console.log("Data passed to GemRegister1:", form);
     navigation.navigate("GemRegister2", {
       formData: { ...form, photo: form.photos[0] },
@@ -233,7 +328,7 @@ function GemRegister1Main() {
             </TouchableOpacity>
             <Text style={styles.addPhotoButtonText}>AI auto filler</Text>
             <Text style={baseScreenStyles.helperText}>
-              Below details can be filled with image of the gem or by mannually
+              Below details can be filled with image of the gem or by manually (please beaware AI auto filler can make mistakes.)
             </Text>
           </View>
           <TextInput
@@ -248,7 +343,6 @@ function GemRegister1Main() {
             items={shapeItems}
             setOpen={setOpenShape}
             setValue={(callback) => handleInputChange("gemShape", callback())}
-            setItems={setShapeItems}
             placeholder="Select Gem Shape *"
             style={FormFieldStyles.dropdown}
             dropDownContainerStyle={FormFieldStyles.dropdownContainer}
@@ -258,9 +352,32 @@ function GemRegister1Main() {
             textStyle={FormFieldStyles.dropdownText}
             theme="LIGHT"
             showArrowIcon={true}
-            showTickIcon={false} // Add this line
+            showTickIcon={false}
             zIndex={3000}
-            zIndexInverse={1000}
+            zIndexInverse={2000}
+            listMode="SCROLLVIEW"
+            scrollViewProps={{
+              nestedScrollEnabled: true,
+            }}
+          />
+          <DropDownPicker
+            open={openGemType}
+            value={form.gemType}
+            items={gemTypeItems}
+            setOpen={setOpenGemType}
+            setValue={(callback) => handleInputChange("gemType", callback())}
+            placeholder="Select Gem Type *"
+            style={FormFieldStyles.dropdown}
+            dropDownContainerStyle={FormFieldStyles.dropdownContainer}
+            listItemContainerStyle={FormFieldStyles.listItemContainer}
+            listItemLabelStyle={FormFieldStyles.listItemLabel}
+            placeholderStyle={FormFieldStyles.placeholder}
+            textStyle={FormFieldStyles.dropdownText}
+            theme="LIGHT"
+            showArrowIcon={true}
+            showTickIcon={false}
+            zIndex={2000}
+            zIndexInverse={3000}
             listMode="SCROLLVIEW"
             scrollViewProps={{
               nestedScrollEnabled: true,
@@ -277,7 +394,8 @@ function GemRegister1Main() {
           />
           <TouchableOpacity
             style={[
-              baseScreenStyles.blueButton,styles.blueButton,
+              baseScreenStyles.blueButton,
+              styles.blueButton,
               { opacity: form.color && form.gemShape ? 1 : 0.5 },
             ]}
             onPress={handleContinue}
@@ -285,8 +403,6 @@ function GemRegister1Main() {
             <Text style={baseScreenStyles.buttonText}>Continue</Text>
           </TouchableOpacity>
         </View>
-
-        
       </ScrollView>
       <Modal
         isVisible={isModalVisible}
@@ -328,7 +444,6 @@ function GemRegister1Main() {
 }
 
 const styles = StyleSheet.create({
- 
   finalizeButton: {
     backgroundColor: "#170969",
     padding: 10,

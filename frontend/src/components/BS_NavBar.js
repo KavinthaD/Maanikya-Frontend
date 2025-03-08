@@ -98,7 +98,7 @@ const TabButton = (props) => {
           style={{
             width: 24,
             height: 24,
-            tintColor: focused ? "black" : "grey",
+            tintColor: focused ? "white" : "grey",
           }} // Adjust size and color
         />
       </Animatable.View>
@@ -113,6 +113,7 @@ export default function BS_NavBar() {
         screenOptions={{
           headerShown: false,
           tabBarStyle: {
+            backgroundColor: "#072D44",
             height: 60,
             position: "absolute",
             margin: 16,
@@ -140,6 +141,7 @@ export default function BS_NavBar() {
 
 const styles = StyleSheet.create({
   container: {
+  
     flex: 1,
     justifyContent: "center",
     alignItems: "center",

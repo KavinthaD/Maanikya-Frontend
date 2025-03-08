@@ -6,7 +6,8 @@ import QRCode from 'react-native-qrcode-svg'; // Import QR library
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons, FontAwesome5 } from '@expo/vector-icons'; // Import icons
 import axios from "axios"; // Import axios
-import { API_URL, ENDPOINTS } from "../../config/api-local"; // Import the API URL and endpoints
+import { API_URL, ENDPOINTS } from "../../config/api"; // Import the API URL and endpoints
+import ImageCropPicker from 'react-native-image-crop-picker'; // Import ImageCropPicker
 
 const MyGems = ({ route, navigation }) => {
   //to conntrol QR popups
@@ -14,6 +15,8 @@ const MyGems = ({ route, navigation }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [gemDetails, setGemDetails] = useState(null);
+  const [modalVisible, setModalVisible] = useState(false); // State for modal visibility
+
 
   const qrCodeUrl = route.params?.qrCodeUrl;
   console.log("Received QR URL:", qrCodeUrl);
@@ -42,6 +45,61 @@ const MyGems = ({ route, navigation }) => {
       fetchGemDetails();
     }
   }, [qrCodeUrl]);
+
+  const handleCameraPress = () => {
+    setModalVisible(true);
+  };
+
+  const handleTakePhoto = async () => {
+    try {
+      const result = await ImageCropPicker.openCamera({
+        width: 600,
+        height: 600,
+        mediaType: "photo",
+        includeBase64: false,
+        maxHeight: 2000,
+        maxWidth: 2000,
+        cropping: true,
+        cropperCircleOverlay: false,
+        cropperStatusBarColor: "#9CCDDB",
+        cropperToolbarColor: "#9CCDDB",
+      });
+
+      if (result && result.path) {
+        setForm((prev) => ({ ...prev, photos: [result.path] }));
+      }
+    } catch (error) {
+      console.error("Error taking photo:", error);
+    } finally {
+      setModalVisible(false);
+    }
+  };
+
+  const handleChooseFromGallery = async () => {
+    try {
+      const result = await ImageCropPicker.openPicker({
+        width: 600,
+        height: 600,
+        mediaType: "photo",
+        includeBase64: false,
+        maxHeight: 2000,
+        maxWidth: 2000,
+        cropping: true,
+        cropperCircleOverlay: false,
+        cropperStatusBarColor: "#9CCDDB",
+        cropperToolbarColor: "#9CCDDB",
+      });
+
+      if (result && result.path) {
+        setForm((prev) => ({ ...prev, photos: [result.path] }));
+      }
+    } catch (error) {
+      console.error("Error choosing from gallery:", error);
+    } finally {
+      setModalVisible(false);
+    }
+  };
+
 
   // If loading, show a loading indicator
   if (loading) {
@@ -137,7 +195,7 @@ const MyGems = ({ route, navigation }) => {
         onError={(error) => console.error("Certificate image loading error:", error)}
       />
       {/*edit button for editing the profile*/}
-      <TouchableOpacity onPress={() => navigation.navigate('BusinessOwnerProfilePhoto')} style={styles.editBtn}>
+      <TouchableOpacity onPress={handleCameraPress} style={styles.editBtn}>
         <FontAwesome5 name="pen" size={16} color="white" />
       </TouchableOpacity>
 
@@ -158,6 +216,38 @@ const MyGems = ({ route, navigation }) => {
               )}
             </View>
             <Button title="Close" onPress={() => setPopQRCode(false)} />
+          </View>
+        </View>
+      </Modal>
+
+      <Modal transparent visible={modalVisible} animationType="slide">
+        <View style={styles.popUpContainer}>
+          <View style={styles.modalContent}>
+            <View style={styles.modalHeader}>
+              <View style={styles.modalIndicator} />
+            </View>
+            <TouchableOpacity
+              style={styles.modalButton}
+              onPress={handleTakePhoto}
+            >
+              <Ionicons name="camera" size={24} color="#170969" />
+              <Text style={styles.modalButtonText}>Take Photo</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.modalButton}
+              onPress={handleChooseFromGallery}
+            >
+              <Ionicons name="images" size={24} color="#170969" />
+              <Text style={styles.modalButtonText}>Choose from Gallery</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.modalButton, styles.cancelButton]}
+              onPress={() => setModalVisible(false)}
+            >
+              <Text style={[styles.modalButtonText, styles.cancelButtonText]}>
+                Cancel
+              </Text>
+            </TouchableOpacity>
           </View>
         </View>
       </Modal>
@@ -217,7 +307,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   detailCard: {
-    backgroundColor: '#f9f9f9',
+    backgroundColor: '#0B3D4B',
     padding: 15,
     borderRadius: 10,
     marginHorizontal: 20,
@@ -265,7 +355,40 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     borderRadius: 8,
     marginVertical: 10
-  }
+  },
+  modalContent: {
+    backgroundColor: 'white',
+    padding: 20,
+    borderRadius: 10,
+    alignItems: 'center',
+  },
+  modalHeader: {
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  modalIndicator: {
+    width: 40,
+    height: 5,
+    backgroundColor: '#ccc',
+    borderRadius: 2.5,
+  },
+  modalButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 10,
+    marginVertical: 5,
+  },
+  modalButtonText: {
+    marginLeft: 10,
+    fontSize: 16,
+    color: '#170969',
+  },
+  cancelButton: {
+    backgroundColor: '#f5f5f5',
+  },
+  cancelButtonText: {
+    color: '#ff0000',
+  },
 
 });
 

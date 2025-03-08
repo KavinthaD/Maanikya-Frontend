@@ -1,6 +1,6 @@
 //Screen creator: Isum
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, Image, TouchableOpacity, Modal, Button, StyleSheet } from 'react-native';
 import QRCode from 'react-native-qrcode-svg'; // Import QR library
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -13,7 +13,7 @@ const MyGems = ({ route, navigation }) => {
   const [popQRCode, setPopQRCode] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const { gemDetails = sampleDetails } = route.params || {};
+  const [gemDetails, setGemDetails] = useState(null);
 
   const qrCodeUrl = route.params?.qrCodeUrl;
   console.log("Received QR URL:", qrCodeUrl);
@@ -78,8 +78,14 @@ const MyGems = ({ route, navigation }) => {
       <View style={styles.imageContainer}>
         {/* Gem Image */}
         <Image
-          source={{ uri: 'https://cdn.britannica.com/80/151380-050-2ABD86F2/diamond.jpg' }}
+          source={{
+            uri: gemDetails?.photo || "https://cdn.britannica.com/80/151380-050-2ABD86F2/diamond.jpg"
+          }}
           style={styles.gemPhoto}
+          onError={(error) => {
+            console.error("Image loading error:", error);
+            // You might want to set a fallback image here
+          }}
         />
         {/*Popup QR code*/}
         <TouchableOpacity
@@ -124,8 +130,11 @@ const MyGems = ({ route, navigation }) => {
 
       {/* Certificate Image */}
       <Image
-        source={{ uri: 'https://cdn.britannica.com/80/151380-050-2ABD86F2/diamond.jpg' }}
+        source={{
+          uri: gemDetails?.certificateUrl || gemDetails?.certificate || "https://cdn.britannica.com/80/151380-050-2ABD86F2/diamond.jpg"
+        }}
         style={styles.gemCert}
+        onError={(error) => console.error("Certificate image loading error:", error)}
       />
       {/*edit button for editing the profile*/}
       <TouchableOpacity onPress={() => navigation.navigate('BusinessOwnerProfilePhoto')} style={styles.editBtn}>
@@ -139,7 +148,11 @@ const MyGems = ({ route, navigation }) => {
             <Text style={styles.modalTopic}>QR Code</Text>
             <View tyle={styles.qrCodeWrapper}>
               {qrCodeUrl ? (
-                <QRCode value={qrCode} size={200} quietZone={10}/>
+                <QRCode 
+                 value={qrCodeUrl} 
+                 size={200}
+                 quietZone={10}
+               />
               ) : (  
                 <Text>No QR Code available</Text>
               )}

@@ -11,11 +11,19 @@ import {
 } from "react-native";
 import React, { useState } from "react";
 import { baseScreenStyles } from "../../styles/baseStyles";
+import LinearGradient from "react-native-linear-gradient";
 
 const RegisterSelectionPage = ({ navigation }) => {
   const [modalVisible, setModalVisible] = useState(false);
   return (
     <SafeAreaView style={[baseScreenStyles.container, styles.container]}>
+      <LinearGradient
+        colors={baseScreenStyles.backgroundGradient.colors}
+        locations={baseScreenStyles.backgroundGradient.locations}
+        start={baseScreenStyles.backgroundGradient.start}
+        end={baseScreenStyles.backgroundGradient.end}
+        style={styles.gradient}
+        >
       <View style={styles.logoContainer}>
         <Image source={require("../../assets/logo.png")} style={styles.logo} />
       </View>
@@ -78,17 +86,20 @@ const RegisterSelectionPage = ({ navigation }) => {
           </View>
         </View>
       </Modal>
+      </LinearGradient>
     </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingVertical: 50,
+    flex:1,
   },
-
+  gradient: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
   logo: {
     marginTop: 100,
     width: 250,
@@ -116,7 +127,7 @@ const styles = StyleSheet.create({
   },
 
   guestButton: {
-    backgroundColor: "#09690F",
+    backgroundColor: "#004B78",
     paddingVertical: 12,
     width: "100%",
     borderRadius: 8,
@@ -143,16 +154,16 @@ const styles = StyleSheet.create({
 
   languageText: {
     fontSize: 14,
-    color: "#000",
+    color: "#ffffff",
     marginRight: 8,
   },
   globeIcon: {
     width: 28,
     height: 28,
-    tintColor: "#000",
+    tintColor: "#ffffff",
   },
   logoContainer: {
-    flex: 1,
+    marginBottom: 40,
   },
   modalOverlay: {
     flex: 1,

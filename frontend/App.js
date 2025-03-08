@@ -51,13 +51,13 @@ const App = () => {
       <SafeAreaView
         style={{
           flex: 1,
-          backgroundColor: baseScreenStyles.backgroundColor.backgroundColor,
+          backgroundColor: baseScreenStyles.backgroundGradient,
           paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
         }}
       >
         <StatusBar
           barStyle="dark-content"
-          backgroundColor={baseScreenStyles.backgroundColor.backgroundColor}
+          backgroundColor={baseScreenStyles.container.backgroundColor}
           translucent={true}
         />
         <NavigationContainer>

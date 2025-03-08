@@ -4,6 +4,7 @@ import React, {useState} from "react";
 import {View, Text, Image, StyleSheet, TouchableOpacity, ScrollView} from "react-native";
 import {FontAwesome} from "@expo/vector-icons";
 import Header_2 from "../components/Header_2";
+import { baseScreenStyles } from "../../styles/baseStyles";
 
 const WorkerOrderTrackDetails = () => {
     const [orderCompleted, setOrderCompleted] = useState(false);
@@ -18,7 +19,7 @@ const WorkerOrderTrackDetails = () => {
     ]
     
     return (
-        <View style={styles.container}>
+        <View style={baseScreenStyles.container}>
             <Header_2 title="Order#: NB01130"/>
             <ScrollView contentContainerStyle={styles.scrollContainer}>
                     <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.gemScroll}>

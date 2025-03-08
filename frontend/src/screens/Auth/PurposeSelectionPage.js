@@ -11,6 +11,7 @@ import {
   Animated,
 } from "react-native";
 import { baseScreenStyles } from "../../styles/baseStyles";
+import LinearGradient from "react-native-linear-gradient";
 
 const PurposeSelectionPage = ({ navigation }) => {
   const [modalVisible, setModalVisible] = useState(false);
@@ -34,6 +35,13 @@ const PurposeSelectionPage = ({ navigation }) => {
 
   return (
     <View style={baseScreenStyles.container}>
+      <LinearGradient
+                  colors={baseScreenStyles.backgroundGradient.colors}
+                  locations={baseScreenStyles.backgroundGradient.locations}
+                  start={baseScreenStyles.backgroundGradient.start}
+                  end={baseScreenStyles.backgroundGradient.end}
+                  style={{ flex: 1 }}
+                >
       <Animated.Image
         source={require("../../assets/logo-gem.png")}
         style={[styles.logo, { transform: [{ scale: scaleValue }] }]}
@@ -113,22 +121,22 @@ const PurposeSelectionPage = ({ navigation }) => {
           </View>
         </View>
       </Modal>
+      </LinearGradient>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   logo: {
-    width: 190,
-    height: 90,
+    width: 139,
+    height: 93,
     alignSelf: "center",
     resizeMode: "contain",
     marginTop: 100,
   },
   logoLetter: {
-    width: "60%",
     aspectRatio: 2,
-    height: 128,
+    height: 118,
     alignSelf: "center",
     resizeMode: "contain",
     marginTop: -20,
@@ -138,7 +146,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 28,
     fontWeight: "bold",
-    color: "#000",
+    color: "#ffffff",
     marginLeft: 120,
     marginBottom: 48,
     marginBlockStart: 30,
@@ -151,15 +159,15 @@ const styles = StyleSheet.create({
   },
 
   card: {
-    backgroundColor: "#C2E9FF",
+    backgroundColor: "rgba(92, 125, 134, 0.51)",
     marginTop: -36,
     padding: 30,
-    borderRadius: 20,
+    borderRadius: 25,
     width: "90%",
     alignItems: "center",
     marginLeft: 20,
     elevation: 5,
-    shadowColor: "#000",
+    shadowColor: " rgba(0, 0, 0, 0.46)",
     shadowOpacity: 0.1,
     shadowOffset: { width: 0, height: 2 },
   },
@@ -185,30 +193,30 @@ const styles = StyleSheet.create({
   divider: {
     flex: 1,
     height: 1,
-    backgroundColor: "#A0A0A0",
+    backgroundColor: "#ffffff",
   },
   orText: {
     marginHorizontal: 10,
-    color: "#000",
+    color: "#ffffff",
     fontWeight: "bold",
   },
   loginText: {
     fontSize: 14,
-    color: "#000",
-    fontWeight: "bold",
+    color: "#ffffff",
+    fontWeight: "b",
     marginTop: 2,
   },
   loginButton: {
-    backgroundColor: "#02457A",
+    backgroundColor: "#9CCDDB",
     paddingVertical: 8,
     borderRadius: 70,
     width: "80%",
     marginTop: 10,
   },
   loginButtonText: {
-    color: "#FFF",
+    color: "#170969",
     fontSize: 15,
-    fontWeight: "",
+    fontWeight: "semi-bold",
     textAlign: "center",
   },
   footerContainer: {
@@ -225,13 +233,13 @@ const styles = StyleSheet.create({
 
   languageText: {
     fontSize: 14,
-    color: "#000",
+    color: "#ffffff",
     marginRight: 8,
   },
   globeIcon: {
     width: 28,
     height: 28,
-    tintColor: "#000",
+    tintColor: "#ffffff",
   },
   logoContainer: {
     flex: 1,

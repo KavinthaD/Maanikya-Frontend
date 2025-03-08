@@ -3,6 +3,7 @@
 import React, { useEffect, useRef } from "react";
 import { View, StyleSheet, Image, Animated } from "react-native";
 import { baseScreenStyles } from "../styles/baseStyles";
+import LinearGradient from "react-native-linear-gradient";
 
 const WelcomePage = ({ navigation }) => {
   const scaleValue = useRef(new Animated.Value(50)).current;
@@ -27,7 +28,15 @@ const WelcomePage = ({ navigation }) => {
   }, [navigation]);
 
   return (
-    <View style={[baseScreenStyles.container, styles.container]}>
+    <View style={styles.container}>
+      <LinearGradient
+            colors={baseScreenStyles.backgroundGradient.colors}
+            locations={baseScreenStyles.backgroundGradient.locations}
+            start={baseScreenStyles.backgroundGradient.start}
+            end={baseScreenStyles.backgroundGradient.end}
+            style={{ flex: 1 }}
+          >
+      <View style={baseScreenStyles.container}>
       <Animated.Image
         source={require("../assets/logo-gem.png")}
         style={[
@@ -38,6 +47,8 @@ const WelcomePage = ({ navigation }) => {
         ]}
         resizeMode="contain"
       />
+      </View>
+      </LinearGradient>
     </View>
   );
 };

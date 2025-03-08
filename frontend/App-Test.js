@@ -19,32 +19,44 @@ import Market from "./src/screens/GemOnDisplay";
 import BusinessOwnerProfile from "./src/screens/UserProfile/BusinessOwnerProfile";
 import Login from "./src/screens/Auth/Login";
 import AlertsScreen from "./src/screens/Notification/AlertsScreen";
+import WorkerOrderTrackDetails from "./src/screens/Order/WorkerOrderTrackDetails";
+import WelcomePage from "./src/screens/WelcomePage";
+import PurposeSelectionPage from "./src/screens/Auth/PurposeSelectionPage";
+import OwnerOrderTrackDetails from "./src/screens/Order/OwnerOrderTrackDetails";
+import SellerProfile from "./src/screens/MySellerFullProfile";
+import { baseScreenStyles } from "./src/styles/baseStyles";
 
 const Stack = createNativeStackNavigator();
 
 export default function App() {
   return (
     <SafeAreaProvider>
-      <View style={{ flex: 1, backgroundColor: '#072D44' }}>
+      <SafeAreaView
+        style={{
+          flex: 1,
+          backgroundColor: 'black',
+          paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
+        }}
+      >
         <StatusBar
           barStyle="light-content"
-          backgroundColor="#072D44"
+          backgroundColor={baseScreenStyles.container.backgroundColor}
           translucent={true}
         />
         <NavigationContainer>
           <Stack.Navigator>
             <Stack.Screen
-              name="AlertsScreen"
+              name="SellerProfile"
               options={{
                 headerShown: false,
               }}
-              component={AlertsScreen}
+              component={GemRegister1}
             />
            
             {/* Add other screens here */}
           </Stack.Navigator>
         </NavigationContainer>
-      </View>
+        </SafeAreaView>
     </SafeAreaProvider>
   );
 }

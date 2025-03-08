@@ -3,7 +3,7 @@
 import React, {useState} from "react";
 import {View, Text, Image, StyleSheet, TouchableOpacity, ScrollView} from "react-native";
 import {FontAwesome} from "@expo/vector-icons";
-import Header_2 from "../components/Header_2";
+import Header_2 from "../../components/Header_2";
 import { baseScreenStyles } from "../../styles/baseStyles";
 import GradientContainer from "../../components/GradientContainer";
 
@@ -11,12 +11,12 @@ const WorkerOrderTrackDetails = () => {
     const [orderCompleted, setOrderCompleted] = useState(false);
     const [orderPayment, setOrderPayment] = useState(false);
     const gems = [
-        { id: "BE002", image: require("../assets/gem-images/gem1.jpeg")},
-        { id: "BS079", image: require("../assets/gem-images/gem1.jpeg")},
-        { id: "RS305", image: require("../assets/gem-images/gem1.jpeg")},
-        { id: "BS001", image: require("../assets/gem-images/gem1.jpeg")},
-        { id: "BS002", image: require("../assets/gem-images/gem1.jpeg")},
-        { id: "BS005", image: require("../assets/gem-images/gem1.jpeg")},
+        { id: "BE002", image: require("../../assets/gem-images/gem1.jpeg")},
+        { id: "BS079", image: require("../../assets/gem-images/gem1.jpeg")},
+        { id: "RS305", image: require("../../assets/gem-images/gem1.jpeg")},
+        { id: "BS001", image: require("../../assets/gem-images/gem1.jpeg")},
+        { id: "BS002", image: require("../../assets/gem-images/gem1.jpeg")},
+        { id: "BS005", image: require("../../assets/gem-images/gem1.jpeg")},
     ]
     
     return (
@@ -38,7 +38,7 @@ const WorkerOrderTrackDetails = () => {
                         <View style={styles.ratingSection}>
                             <View style={styles.ratingContainer}>
                                     {[1, 2, 3, 4, 5].map((star) => (
-                                        <FontAwesome key={star} name="star" size={24} color="#334D85"/>
+                                        <FontAwesome key={star} name="star" size={24} color="#170969"/>
                                 ))}
                               </View>
                             </View>
@@ -51,21 +51,21 @@ const WorkerOrderTrackDetails = () => {
             <View style={styles.orderStatus}> 
                 <Text style={styles.orderDet}> Order Details </Text>
                 <View style={styles.statusBoxRequest}>
-                    <Image source={require("../assets/owner-icons/order-request.png")} style={styles.statusIcon}/>
+                    <Image source={require("../../assets/owner-icons/order-request.png")} style={styles.statusIcon}/>
                     <View>
                     <Text style={styles.statusText}>Order Requested </Text>
                     <Text style={styles.dateText}> Order requested on 20-12-2024 </Text>
                     </View>
                 </View>
                 <View style={styles.statusBoxAccept}>
-                    <Image source={require("../assets/owner-icons/order-accept.png")} style={styles.statusIcon}/>
+                    <Image source={require("../../assets/owner-icons/order-accept.png")} style={styles.statusIcon}/>
                     <View>
                     <Text style={styles.statusText}>Order Accepted </Text>
                     <Text style={styles.dateText}> Order accepted on 20-12-2024 </Text>
                     </View>
                 </View>
                 <View style={styles.statusBoxConfirm}>
-                <Image source={require("../assets/owner-icons/order-confirm.png")} style={styles.statusIcon}/>
+                <Image source={require("../../assets/owner-icons/order-confirm.png")} style={styles.statusIcon}/>
                 <View> 
                     <Text style={styles.statusText}>Order Confirmed </Text>
                     <Text style={styles.dateText}> Order confirmed on 20-12-2014 </Text>
@@ -73,7 +73,7 @@ const WorkerOrderTrackDetails = () => {
                 </View>
                 {orderCompleted && (
                     <View style={styles.statusBoxComplete}>
-                        <Image source={require("../assets/owner-icons/order-complete.png")} style={styles.statusIcon} />
+                        <Image source={require("../../assets/owner-icons/order-complete.png")} style={styles.statusIcon} />
                         <View>
                             <Text style={styles.statusText}>Order Completed</Text>
                             <Text style={styles.dateText}>Order completed on 20-12-2024</Text>
@@ -84,7 +84,7 @@ const WorkerOrderTrackDetails = () => {
             
                 {orderPayment && (
                     <View style={styles.statusBoxPayment}>
-                        <Image source={require("../assets/owner-icons/order-paid.png")} style={styles.statusIcon} />
+                        <Image source={require("../../assets/owner-icons/order-paid.png")} style={styles.statusIcon} />
                         <View>
                             <Text style={styles.statusText}>Payment Received</Text>
                             <Text style={styles.dateText}>Received and paid on 20-12-2024</Text>
@@ -105,7 +105,7 @@ const WorkerOrderTrackDetails = () => {
                     <Text style={styles.completeButtonText}>Confirm Payment and Close the Order</Text>
                 </TouchableOpacity>
             )}
-</ScrollView>
+            </ScrollView>
         </View>
         </GradientContainer>
     );
@@ -115,7 +115,7 @@ const WorkerOrderTrackDetails = () => {
 const styles = StyleSheet.create ({
     container: {
         flex:1,
-        backgroundColor: "#9CCDDB",
+        backgroundColor: "#6B8391",
     },
     scrollContainer: {
         paddingHorizontal: 10,
@@ -150,12 +150,13 @@ const styles = StyleSheet.create ({
 
     gemId: {
         fontSize: 18,
-        fontWeight: "bold"
+        fontWeight: "bold",
+        color: "#fff"
     },
 
     price: {
         fontSize: 18,
-        color: "#555",
+        color: "#fff",
         fontWeight: "bold"
     },
 
@@ -176,7 +177,7 @@ const styles = StyleSheet.create ({
     orderDet: {
         fontSize: 18,
         fontWeight: "bold",
-        color: "#444",
+        color: "#fff",
         marginBottom: 14,
         marginLeft: 10,
     },
@@ -186,7 +187,7 @@ const styles = StyleSheet.create ({
     },
 
     statusBoxRequest: {
-        backgroundColor: "#A4AAFA",
+        backgroundColor: "#426F88",
         flexDirection: "row",
         alignItems: "center",
         padding: 10,
@@ -196,7 +197,7 @@ const styles = StyleSheet.create ({
     },
 
     statusBoxAccept: {
-        backgroundColor: "#7F87FD",
+        backgroundColor: "#1B5172",
         flexDirection: "row",
         alignItems: "center",
         padding: 10,
@@ -206,7 +207,7 @@ const styles = StyleSheet.create ({
     },
 
     statusBoxConfirm: {
-        backgroundColor: "#5661FF",
+        backgroundColor: "#185667",
         flexDirection: "row",
         alignItems: "center",
         padding: 10,
@@ -216,7 +217,7 @@ const styles = StyleSheet.create ({
     },
 
     statusBoxComplete: {
-        backgroundColor: "#0616FF",
+        backgroundColor: "#2D5481",
         flexDirection: "row",
         alignItems: "center",
         padding: 10,
@@ -226,7 +227,7 @@ const styles = StyleSheet.create ({
     },
 
     statusBoxPayment: {
-        backgroundColor: "#000CBB",
+        backgroundColor: "rgba(51, 137, 207, 0.8)",
         flexDirection: "row",
         alignItems: "center",
         padding: 10,

@@ -1,5 +1,5 @@
-import React from "react";
-import { StyleSheet, View } from "react-native";
+
+import { StyleSheet} from "react-native";
 
 // Define base styles that are common across screens
 const styles = StyleSheet.create({
@@ -7,7 +7,6 @@ const styles = StyleSheet.create({
   backgroundColor: 'transparent',
   container: {
     flex: 1,
-    
     backgroundColor: 'transparent',
   },
   buttonText: {

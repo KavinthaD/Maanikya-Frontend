@@ -39,7 +39,7 @@ import CutterFinancialRecords from "./src/screens/Financial/CutterFinancialRecor
 import InProgressTrackerScreen from "./src/screens/Order/InProgressTracker";
 import CompletedTrackerScreen from "./src/screens/Order/CompletedTracker";
 import Customeraddseller from "./src/screens/Customeraddseller";
-
+import SellerProfile from "./src/screens/MySellerFullProfile";
 const Stack = createNativeStackNavigator();
 
 const App = () => {
@@ -223,6 +223,11 @@ const App = () => {
             <Stack.Screen
               name="CompletedTrackerScreen"
               component={CompletedTrackerScreen}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="SellerProfile"
+              component={SellerProfile}
               options={{ headerShown: false }}
             />
           </Stack.Navigator>

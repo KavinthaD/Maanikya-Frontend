@@ -63,7 +63,7 @@ const Tracker = () => {
 
       {/*In progress gems*/}
       <TouchableOpacity style={styles.sectionContainer}>
-        <Text style={styles.subTitle}>In Progress {'>'}</Text>
+        <Text style={styles.subTopicProgress}>In Progress {'>'}</Text>
         <FlatList
           data={selectedGems}
           horizontal
@@ -75,7 +75,7 @@ const Tracker = () => {
 
       {/*Completed gems*/}
       <TouchableOpacity style={styles.sectionContainer}>
-        <Text style={styles.sectionTitle}>Completed {'>'}</Text>
+        <Text style={styles.subTopicCompleted}>Completed {'>'}</Text>
         <FlatList
           data={completeGem}
           horizontal
@@ -91,7 +91,7 @@ const Tracker = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#9CCDDB",
+    backgroundColor: "#1A3A55",
   },
   searchBar: {
     flexDirection: "row",
@@ -112,23 +112,32 @@ const styles = StyleSheet.create({
     marginBottom: 50,
     marginTop: 30,
     paddingVertical: 10,
-    backgroundColor: "#DDD1FF",
+    backgroundColor: "#7B96AC",
     borderRadius: 10,
     marginHorizontal: 16,
     paddingLeft: 16,
     width: "auto",
   },
-  subTopic: {
+  subTopicProgress: {
+    ffontSize: 18,
+    fontWeight: "bold",
+    color:"FFFFFF",
+    marginBottom: 10,
+  },
+  subTopicCompleted: 
+  {
     fontSize: 18,
     fontWeight: "bold",
-    color: "#082f4f",
+    color:"FFFFFF",
+    marginBottom: 10,
   },
+
   gemItem: {
     alignItems: "center",
     margin: 16,
   },
   gemImage: {
-    width: 100,
+    width: 90,
     height: 100,
     borderRadius: 12,
     backgroundColor: "#fff",

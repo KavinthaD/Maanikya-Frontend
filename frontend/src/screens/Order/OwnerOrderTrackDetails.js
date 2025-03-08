@@ -5,8 +5,7 @@ import {View, Text, Image, StyleSheet, TouchableOpacity, ScrollView, FlatList} f
 import {FontAwesome} from "@expo/vector-icons";
 import Header_2 from "../../components/Header_2";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { baseScreenStyles } from "../../styles/baseStyles";
-import LinearGradient from "react-native-linear-gradient";
+import GradientContainer from "../../components/GradientContainer";
 
 const gems = [
     { id: "BE002", image: require("../../assets/gem-images/gem1.jpeg")},
@@ -22,14 +21,9 @@ const OwnerOrderTrackDetails = () => {
     const [rating, setRating] = useState(0);
 
     return (
-        <SafeAreaView style={baseScreenStyles.container}>
+        <GradientContainer>
+        <SafeAreaView style={styles.container}>
         <Header_2 title=" Order#: NB01130"/>
-        <LinearGradient
-                    colors={baseScreenStyles.backgroundGradient.colors}
-                    locations={baseScreenStyles.backgroundGradient.locations}
-                    start={baseScreenStyles.backgroundGradient.start}
-                    end={baseScreenStyles.backgroundGradient.end}
-                    style={{ flex: 1 }}>
         <ScrollView contentContainerStyle={styles.scrollContainer}>
                 <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.gemScroll}>
                     {gems.map((gem) => (
@@ -121,8 +115,8 @@ const OwnerOrderTrackDetails = () => {
                 </View>
             )}
             </ScrollView>
-            </LinearGradient>
         </SafeAreaView>
+        </GradientContainer>
     );
 };
 

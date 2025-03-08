@@ -6,6 +6,7 @@ import { Picker } from '@react-native-picker/picker';
 import { useNavigation } from '@react-navigation/native';
 import { baseScreenStyles } from "../../styles/baseStyles";
 import axios from 'axios'; // Import axios
+import GradientContainer from '../../components/GradientContainer';
 
 const SignUpBusiness = () => {
     const navigation = useNavigation();
@@ -79,6 +80,7 @@ const SignUpBusiness = () => {
     };
 
     return (
+        <GradientContainer>
         <View style={[baseScreenStyles.container]}>
             <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.container}>
                 <Image source={require('../../assets/logo.png')} style={styles.logo} />
@@ -139,6 +141,7 @@ const SignUpBusiness = () => {
                 </TouchableOpacity>
             </KeyboardAvoidingView>
         </View>
+        </GradientContainer>
     );
 };
 

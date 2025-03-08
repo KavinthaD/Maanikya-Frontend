@@ -11,6 +11,7 @@ import {
 } from "react-native";
 import { baseScreenStyles } from "../../styles/baseStyles";
 import Header_2 from "../../components/Header_2";
+import GradientContainer from "../../components/GradientContainer";
 
 const OngoingTracker = [
   {
@@ -63,6 +64,7 @@ const OngoingTrackerScreen = () => {
   );
 
   return (
+    <GradientContainer>
     <View style={[baseScreenStyles.container]}>
       <Header_2 title="On-going Orders"/>
       <View style={styles.container}>
@@ -79,6 +81,7 @@ const OngoingTrackerScreen = () => {
       />
     </View>
     </View>
+    </GradientContainer>
   );
 };
 

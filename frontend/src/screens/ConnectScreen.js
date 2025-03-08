@@ -10,6 +10,7 @@ import {
   ScrollView,
 } from "react-native";
 import { FontAwesome, MaterialIcons } from "@expo/vector-icons";
+import GradientContainer from "../components/GradientContainer"; // Import the GradientContainer
 
 // Updated categories to match the image
 const categories = ["All", "Burner", "Elec. Burner", "Cutter", "Owner"];
@@ -152,65 +153,67 @@ const ConnectScreen = ({ navigation }) => {
   );
 
   return (
-    <View style={styles.container}>
-      {/* Search Bar */}
-      <View style={styles.searchContainer}>
-        <TextInput
-          style={styles.searchInput}
-          placeholder="Search person"
-          value={searchText}
-          onChangeText={(text) => setSearchText(text)} // Update searchText state
-        />
-        <MaterialIcons name="search" size={24} color="#6646ee" />{" "}
-        {/* Changed to search icon */}
-      </View>
-
-      <View style={styles.addPersonContainer}>
-        <View style={styles.addPersonButtonContainer}>
-          <TouchableOpacity style={styles.addPersonButton}>
-            <FontAwesome name="plus" size={15} color="#C1E8FF" />
-          </TouchableOpacity>
+    <GradientContainer>
+      <View style={styles.container}>
+        {/* Search Bar */}
+        <View style={styles.searchContainer}>
+          <TextInput
+            style={styles.searchInput}
+            placeholder="Search person"
+            value={searchText}
+            onChangeText={(text) => setSearchText(text)} // Update searchText state
+          />
+          <MaterialIcons name="search" size={24} color="#6646ee" />{" "}
+          {/* Changed to search icon */}
         </View>
-        <Text style={styles.addPersonLabel}>Add person</Text>
-      </View>
 
-      {/* Category Filter Tabs */}
-      <View style={{ height: 50 }}>
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          style={styles.tabs}
-        >
-          {categories.map((category) => (
-            <TouchableOpacity
-              key={category}
-              style={[
-                styles.tab,
-                selectedCategory === category && styles.activeTab,
-              ]}
-              onPress={() => setSelectedCategory(category)}
-            >
-              <Text
-                style={[
-                  styles.tabText,
-                  selectedCategory === category && styles.activeTabText,
-                ]}
-              >
-                {category}
-              </Text>
+        <View style={styles.addPersonContainer}>
+          <View style={styles.addPersonButtonContainer}>
+            <TouchableOpacity style={styles.addPersonButton}>
+              <FontAwesome name="plus" size={15} color="#C1E8FF" />
             </TouchableOpacity>
-          ))}
-        </ScrollView>
-      </View>
+          </View>
+          <Text style={styles.addPersonLabel}>Add person</Text>
+        </View>
 
-      {/* People List */}
-      <FlatList
-        data={filteredPeople} // Use filteredPeople for data
-        keyExtractor={(item) => item.id}
-        renderItem={renderItem}
-        showsVerticalScrollIndicator={false}
-      />
-    </View>
+        {/* Category Filter Tabs */}
+        <View style={{ height: 50 }}>
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            style={styles.tabs}
+          >
+            {categories.map((category) => (
+              <TouchableOpacity
+                key={category}
+                style={[
+                  styles.tab,
+                  selectedCategory === category && styles.activeTab,
+                ]}
+                onPress={() => setSelectedCategory(category)}
+              >
+                <Text
+                  style={[
+                    styles.tabText,
+                    selectedCategory === category && styles.activeTabText,
+                  ]}
+                >
+                  {category}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
+        </View>
+
+        {/* People List */}
+        <FlatList
+          data={filteredPeople} // Use filteredPeople for data
+          keyExtractor={(item) => item.id}
+          renderItem={renderItem}
+          showsVerticalScrollIndicator={false}
+        />
+      </View>
+    </GradientContainer>
   );
 };
 

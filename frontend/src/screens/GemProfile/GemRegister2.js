@@ -27,6 +27,7 @@ import axios from "axios"; // Import axios
 import { FormFieldStyles } from "../../styles/FormFields";
 import { API_URL, ENDPOINTS } from "../../config/api"; //change api path here
 import AsyncStorage from "@react-native-async-storage/async-storage"; // Import AsyncStorage
+import GradientContainer from "../../components/GradientContainer";
 
 const Stack = createNativeStackNavigator();
 
@@ -34,6 +35,7 @@ export default function GemRegister2({ route }) {
   const { formData } = route.params; // Destructure formData instead of name
 
   return (
+    <GradientContainer>
     <Stack.Navigator screenOptions={{ headerShown: true }}>
       <Stack.Screen
         name="GemRegister2Main"
@@ -51,6 +53,7 @@ export default function GemRegister2({ route }) {
         }}
       />
     </Stack.Navigator>
+    </GradientContainer>
   );
 }
 

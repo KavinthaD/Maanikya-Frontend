@@ -15,6 +15,7 @@ import { baseScreenStyles } from "../../styles/baseStyles";
 import { useNavigation } from "@react-navigation/native";
 import axios from "axios"; // Import axios
 import AsyncStorage from "@react-native-async-storage/async-storage"; // Import AsyncStorage
+import GradientContainer from "../../components/GradientContainer"; // Import the GradientContainer
 
 const Login = () => {
   const navigation = useNavigation();
@@ -105,6 +106,7 @@ const Login = () => {
   };
 
   return (
+    <GradientContainer>
     <View style={[baseScreenStyles.container, styles.container]}>
       <Image source={require("../../assets/logo.png")} style={styles.logo} />
       <Text style={styles.title}>Welcome Back</Text>
@@ -173,6 +175,7 @@ const Login = () => {
         </TouchableOpacity>
       </View>
     </View>
+    </GradientContainer>
   );
 };
 

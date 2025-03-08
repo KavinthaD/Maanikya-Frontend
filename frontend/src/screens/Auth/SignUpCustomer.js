@@ -14,6 +14,7 @@ import { baseScreenStyles } from "../../styles/baseStyles";
 import SuccessPopup from "../../components/SuccessPopup"; 
 import axios from 'axios'; // Import axios
 import { useNavigation } from "@react-navigation/native";
+import GradientContainer from "../../components/GradientContainer";
 
 const SignUpScreenCustomer = ({ navigation }) => {
   const [firstName, setFirstName] = useState("");
@@ -79,6 +80,7 @@ const SignUpScreenCustomer = ({ navigation }) => {
     }
   };
   return (
+    <GradientContainer>
     <View style={[baseScreenStyles.container, styles.container]}>
       <Image source={require("../../assets/logo.png")} style={styles.logo} />
       <Text style={styles.subtitle}>Sign Up</Text>
@@ -153,6 +155,7 @@ const SignUpScreenCustomer = ({ navigation }) => {
         message="Account created successfully!"
       /> */}
     </View>
+    </GradientContainer>
   );
 };
 

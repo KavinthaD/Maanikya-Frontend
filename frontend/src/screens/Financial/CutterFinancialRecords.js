@@ -3,9 +3,11 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { baseScreenStyles } from "../../styles/baseStyles";
+import GradientContainer from "../../components/GradientContainer";
 
 const CutterFinancialRecords = () => {
   return (
+    <GradientContainer>
     <View style={[baseScreenStyles.container,styles.container]}>
       <View style={styles.totalProfitContainer}>
         <Text style={styles.totalProfitTitle}>Total profit</Text>
@@ -47,6 +49,7 @@ const CutterFinancialRecords = () => {
         </View>
       </View>
     </View>
+    </GradientContainer>
   );
 };
 

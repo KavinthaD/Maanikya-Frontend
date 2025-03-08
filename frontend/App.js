@@ -4,7 +4,8 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { SafeAreaView, StatusBar, Platform } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { baseScreenStyles } from "./src/styles/baseStyles";
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import * as ScreenOrientation from "expo-screen-orientation";
 
 //import screens
 import PurposeSelectionPage from "./src/screens/Auth/PurposeSelectionPage";
@@ -29,7 +30,7 @@ import BS_NavBar from "./src/components/BS_NavBar";
 import C_NavBar from "./src/components/C_NavBar";
 import W_NavBar from "./src/components/W_NavBar";
 import GemRegister1 from "./src/screens/GemProfile/GemRegister1";
-import Tracker from "./src/screens/Order/Tracker"
+import Tracker from "./src/screens/Order/Tracker";
 import BusinessOwnerProfile from "./src/screens/UserProfile/BusinessOwnerProfile";
 import HomePageCustomer from "./src/screens/Home/HomePageCustomer";
 import BurnerFinancialRecords from "./src/screens/Financial/BurnerFinancialRecords";
@@ -37,27 +38,35 @@ import CutterFinancialRecords from "./src/screens/Financial/CutterFinancialRecor
 
 import InProgressTrackerScreen from "./src/screens/Order/InProgressTracker";
 import CompletedTrackerScreen from "./src/screens/Order/CompletedTracker";
-import Customeraddseller from "./src/screens/Customeraddseller"
+import Customeraddseller from "./src/screens/Customeraddseller";
 import SellerProfile from "./src/screens/MySellerFullProfile";
-
 const Stack = createNativeStackNavigator();
 
 const App = () => {
-  const [initialRouteName, setInitialRouteName] = useState('WelcomePage'); // Default to WelcomePage initially
+  const [initialRouteName, setInitialRouteName] = useState("WelcomePage"); // Default to WelcomePage initially
 
+  // Lock orientation to portrait when the app starts
+  useEffect(() => {
+    const lockOrientation = async () => {
+      await ScreenOrientation.lockAsync(
+        ScreenOrientation.OrientationLock.PORTRAIT
+      );
+    };
 
+    lockOrientation();
+  }, []);
 
   return (
     <SafeAreaProvider>
       <SafeAreaView
         style={{
           flex: 1,
-          backgroundColor: baseScreenStyles.backgroundGradient,
+          backgroundColor: 'black',
           paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
         }}
       >
         <StatusBar
-          barStyle="dark-content"
+          barStyle="light-content"
           backgroundColor={baseScreenStyles.container.backgroundColor}
           translucent={true}
         />
@@ -89,7 +98,7 @@ const App = () => {
               component={SignUpBusiness}
               options={{ headerShown: false }}
             />
-             <Stack.Screen
+            <Stack.Screen
               name="SignUpScreen"
               component={SignUpBusiness2}
               options={{ headerShown: false }}
@@ -122,7 +131,7 @@ const App = () => {
             />
             <Stack.Screen
               name="GemstoneMarketplace"
-              component={ GemstoneMarketplace}
+              component={GemstoneMarketplace}
               options={{ headerShown: false }}
             />
             <Stack.Screen

@@ -12,6 +12,7 @@ import {
 } from "react-native";
 import { baseScreenStyles } from "../../styles/baseStyles";
 import LinearGradient from "react-native-linear-gradient";
+import GradientContainer from "../../components/GradientContainer";
 
 const PurposeSelectionPage = ({ navigation }) => {
   const [modalVisible, setModalVisible] = useState(false);
@@ -34,14 +35,8 @@ const PurposeSelectionPage = ({ navigation }) => {
   }, []);
 
   return (
+    <GradientContainer>
     <View style={baseScreenStyles.container}>
-      <LinearGradient
-                  colors={baseScreenStyles.backgroundGradient.colors}
-                  locations={baseScreenStyles.backgroundGradient.locations}
-                  start={baseScreenStyles.backgroundGradient.start}
-                  end={baseScreenStyles.backgroundGradient.end}
-                  style={{ flex: 1 }}
-                >
       <Animated.Image
         source={require("../../assets/logo-gem.png")}
         style={[styles.logo, { transform: [{ scale: scaleValue }] }]}
@@ -121,8 +116,9 @@ const PurposeSelectionPage = ({ navigation }) => {
           </View>
         </View>
       </Modal>
-      </LinearGradient>
+      
     </View>
+    </GradientContainer>
   );
 };
 

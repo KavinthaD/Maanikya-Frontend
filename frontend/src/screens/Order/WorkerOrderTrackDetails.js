@@ -5,7 +5,7 @@ import {View, Text, Image, StyleSheet, TouchableOpacity, ScrollView} from "react
 import {FontAwesome} from "@expo/vector-icons";
 import Header_2 from "../../components/Header_2";
 import { baseScreenStyles } from "../../styles/baseStyles";
-import LinearGradient from "react-native-linear-gradient";
+import GradientContainer from "../../components/GradientContainer";
 
 const WorkerOrderTrackDetails = () => {
     const [orderCompleted, setOrderCompleted] = useState(false);
@@ -20,13 +20,8 @@ const WorkerOrderTrackDetails = () => {
     ]
     
     return (
+        <GradientContainer>
         <View style={baseScreenStyles.container}>
-            <LinearGradient
-            colors={baseScreenStyles.backgroundGradient.colors}
-            locations={baseScreenStyles.backgroundGradient.locations}
-            start={baseScreenStyles.backgroundGradient.start}
-            end={baseScreenStyles.backgroundGradient.end}
-            style={{ flex: 1 }}>
             <Header_2 title="Order#: NB01130"/>
             <ScrollView contentContainerStyle={styles.scrollContainer}>
                     <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.gemScroll}>
@@ -111,8 +106,8 @@ const WorkerOrderTrackDetails = () => {
                 </TouchableOpacity>
             )}
             </ScrollView>
-            </LinearGradient>
         </View>
+        </GradientContainer>
     );
 };
 

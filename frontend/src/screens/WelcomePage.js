@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import { View, StyleSheet, Animated } from "react-native";
 import { baseScreenStyles } from "../styles/baseStyles";
+import GradientContainer from "../components/GradientContainer";
 
 const WelcomePage = ({ navigation }) => {
   const fadeValue = useRef(new Animated.Value(0)).current;
@@ -27,6 +28,7 @@ const WelcomePage = ({ navigation }) => {
   }, [navigation]);
 
   return (
+    <GradientContainer>
     <View style={[baseScreenStyles.container, styles.container]}>
       <View style={styles.logoContainer}>
         <Animated.Image
@@ -45,6 +47,7 @@ const WelcomePage = ({ navigation }) => {
         </View>
       </View>
     </View>
+    </GradientContainer>
   );
 };
 

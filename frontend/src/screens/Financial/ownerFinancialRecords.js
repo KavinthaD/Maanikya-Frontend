@@ -4,54 +4,56 @@ import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { baseScreenStyles } from "../../styles/baseStyles";
 import Header_2 from "../../components/Header_2";
+import GradientContainer from "../../components/GradientContainer";
 
 const OwnerFinancialRecords = () => {
   return (
-    
-    <View style={[baseScreenStyles.container]}>
-      <Header_2 title="Financial Records"/>
-      <View style={styles.container}>
-      <View style={styles.totalProfitContainer}>
-        <Text style={styles.totalProfitTitle}>Total profit</Text>
-        <Text style={styles.totalProfitAmount}>LKR. 780 000</Text>
-      </View>
+    <GradientContainer>
+      <View style={[baseScreenStyles.container]}>
+        <Header_2 title="Financial Records" />
+        <View style={styles.container}>
+          <View style={styles.totalProfitContainer}>
+            <Text style={styles.totalProfitTitle}>Total profit</Text>
+            <Text style={styles.totalProfitAmount}>LKR. 780 000</Text>
+          </View>
 
-      <View style={styles.recordList}>
-        <View style={styles.recordItem}>
-          <Text>Burner cs001</Text>
-          <Text>LKR. 100 000</Text>
+          <View style={styles.recordList}>
+            <View style={styles.recordItem}>
+              <Text>Burner cs001</Text>
+              <Text>LKR. 100 000</Text>
+            </View>
+          </View>
+
+          <View style={styles.recordList}>
+            <View style={styles.recordItem}>
+              <Text>Cutter cs002</Text>
+              <Text>LKR. 20 000</Text>
+            </View>
+          </View>
+
+          <View style={styles.recordList}>
+            <View style={styles.recordItem}>
+              <Text>Cutter PJ004</Text>
+              <Text>LKR. 60 000</Text>
+            </View>
+          </View>
+
+          <View style={styles.recordList}>
+            <View style={styles.recordItem}>
+              <Text>Burner IHP006</Text>
+              <Text>LKR. 600 000</Text>
+            </View>
+          </View>
+
+          <View style={styles.recordList}>
+            <View style={[styles.recordItem, styles.lastRecordItem]}>
+              <Text>Total</Text>
+              <Text>LKR. 780 000</Text>
+            </View>
+          </View>
         </View>
       </View>
-
-      <View style={styles.recordList}>
-        <View style={styles.recordItem}>
-          <Text>Cutter cs002</Text>
-          <Text>LKR. 20 000</Text>
-        </View>
-      </View>
-
-      <View style={styles.recordList}>
-        <View style={styles.recordItem}>
-          <Text>Cutter PJ004</Text>
-          <Text>LKR. 60 000</Text>
-        </View>
-      </View>
-
-      <View style={styles.recordList}>
-        <View style={styles.recordItem}>
-          <Text>Burner IHP006</Text>
-          <Text>LKR. 600 000</Text>
-        </View>
-      </View>
-
-      <View style={styles.recordList}>
-        <View style={[styles.recordItem, styles.lastRecordItem]}>
-          <Text>Total</Text>
-          <Text>LKR. 780 000</Text>
-        </View>
-      </View>
-    </View>
-    </View>
+    </GradientContainer>
   );
 };
 

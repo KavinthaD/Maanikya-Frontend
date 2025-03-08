@@ -3,7 +3,7 @@ import { View, Text, FlatList, Image, StatusBar, StyleSheet } from "react-native
 import LinearGradient from 'react-native-linear-gradient';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { baseScreenStyles } from "../../styles/baseStyles";
- 
+import GradientContainer from "../../components/GradientContainer";
 
 // Alert data
 const alerts = [
@@ -111,13 +111,8 @@ const AlertsScreen = ({ navigation }) => {
   );
 
   return (
-    <LinearGradient
-      colors={baseScreenStyles.backgroundGradient.colors}
-      locations={baseScreenStyles.backgroundGradient.locations}
-      start={baseScreenStyles.backgroundGradient.start}
-      end={baseScreenStyles.backgroundGradient.end}
-      style={{ flex: 1 }}
-    >
+    <GradientContainer>
+    
       <StatusBar
         barStyle="light-content"
         backgroundColor="transparent"
@@ -139,7 +134,7 @@ const AlertsScreen = ({ navigation }) => {
         {/* ✅ Ensure BS_NavBar is correctly placed */}
         
       </SafeAreaView>
-    </LinearGradient>
+      </GradientContainer>
   );
 };
 

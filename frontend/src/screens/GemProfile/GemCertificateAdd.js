@@ -7,6 +7,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { Ionicons, FontAwesome5 } from "@expo/vector-icons";
 import { baseScreenStyles } from "../../styles/baseStyles";
+import GradientContainer from "../../components/GradientContainer";
 
 const GemCertificateAdd = ({ navigation }) => {
   const [photo, setPhoto] = useState(null);
@@ -33,6 +34,7 @@ const GemCertificateAdd = ({ navigation }) => {
   };
 
   return (
+    <GradientContainer>
     <SafeAreaView style={[baseScreenStyles.container, styles.container]}>
       {/* Header */}
       <View style={styles.topic}>
@@ -64,6 +66,7 @@ const GemCertificateAdd = ({ navigation }) => {
         <Text style={styles.photoBtnText}>Take a Photo</Text>
       </TouchableOpacity>
     </SafeAreaView>
+    </GradientContainer>
   );
 };
 

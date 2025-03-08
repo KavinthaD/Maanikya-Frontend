@@ -1,9 +1,21 @@
 //Screen creator: Isum
 
 import React, { useState } from "react";
-import { SafeAreaView, Text, TouchableOpacity, FlatList, Image, View, StyleSheet, Modal, TextInput, ScrollView } from "react-native";
-import { Ionicons } from '@expo/vector-icons'; 
+import {
+  SafeAreaView,
+  Text,
+  TouchableOpacity,
+  FlatList,
+  Image,
+  View,
+  StyleSheet,
+  Modal,
+  TextInput,
+  ScrollView,
+} from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 import Header_2 from "../components/Header_2";
+import GradientContainer from "../components/GradientContainer";
 
 const GemOnDisplay = ({}) => {
   //Store gems on display
@@ -14,8 +26,18 @@ const GemOnDisplay = ({}) => {
   ]);
   //Store sold gems
   const [sold, setSold] = useState([
-    { id: "Gem004", image: require("../assets/logo.png"), buyer: "John Doe", price: "5000" },
-    { id: "Gem005", image: require("../assets/logo.png"), buyer: "Jane Doe", price: "8000" },
+    {
+      id: "Gem004",
+      image: require("../assets/logo.png"),
+      buyer: "John Doe",
+      price: "5000",
+    },
+    {
+      id: "Gem005",
+      image: require("../assets/logo.png"),
+      buyer: "Jane Doe",
+      price: "8000",
+    },
   ]);
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedGem, setSelectedGem] = useState(null);
@@ -28,13 +50,12 @@ const GemOnDisplay = ({}) => {
     setModalVisible(true);
   };
 
-  
   //making gem sold
   const markSold = () => {
     if (selectedGem && buyerName && price) {
-      setOnDisplay(onDisplay.filter((item) => item.id !== selectedGem.id));         //remove gem from on display
-      setSold([...sold, { ...selectedGem, buyer: buyerName, price: price }]);       //add gem to sold
-      setModalVisible(false);     //close modal
+      setOnDisplay(onDisplay.filter((item) => item.id !== selectedGem.id)); //remove gem from on display
+      setSold([...sold, { ...selectedGem, buyer: buyerName, price: price }]); //add gem to sold
+      setModalVisible(false); //close modal
       setBuyerName("");
       setPrice("");
     } else {
@@ -42,25 +63,30 @@ const GemOnDisplay = ({}) => {
     }
   };
 
-  //seperate the sold and displayed gems 
+  //seperate the sold and displayed gems
   const ItemSeperator = () => {
-    <View style={{ height: 1, backgroundColor: "#e0e0e0", marginVertical: 5 }} />
+    <View
+      style={{ height: 1, backgroundColor: "#e0e0e0", marginVertical: 5 }}
+    />;
   };
   return (
+    <GradientContainer>
     <SafeAreaView style={styles.container}>
-      <Header_2 title="Gems On Display"/>
-      <ScrollView contentContainerStyle={styles.scrollContainer} keyboardShouldPersistTaps="handled">
+      <Header_2 title="Gems On Display" />
+      <ScrollView
+        contentContainerStyle={styles.scrollContainer}
+        keyboardShouldPersistTaps="handled"
+      >
         <View style={styles.displayContainer}>
-
           <View style={styles.header}>
-            <View style = {styles.headerLine} />
-              < Text style={styles.subTopic}>On Display</Text>
-            <View style = {styles.headerLine} />
+            <View style={styles.headerLine} />
+            <Text style={styles.subTopic}>On Display</Text>
+            <View style={styles.headerLine} />
           </View>
           <View style={styles.tableHeader}>
             <Text style={styles.tableHeaderText}>Code</Text>
-            <View style={{flex: 1}} />
-          </View>  
+            <View style={{ flex: 1 }} />
+          </View>
           {/*Displayed as a list*/}
           <FlatList
             data={onDisplay}
@@ -69,27 +95,30 @@ const GemOnDisplay = ({}) => {
               <View style={styles.gemDisplay}>
                 <Image source={item.image} style={styles.gemImg} />
                 <Text style={styles.gemId}>{item.id}</Text>
-                <TouchableOpacity onPress={() => openModal(item)} style={styles.soldBtn}>
+                <TouchableOpacity
+                  onPress={() => openModal(item)}
+                  style={styles.soldBtn}
+                >
                   <Text style={styles.soldBtnText}>Mark As Sold</Text>
                 </TouchableOpacity>
               </View>
             )}
             ItemSeparatorComponent={ItemSeperator}
           />
-        </View>  
+        </View>
 
-          {/* Sold Gems */}
+        {/* Sold Gems */}
         <View style={styles.soldContainer}>
           <View style={styles.header}>
-            <View style = {styles.headerLine} />
-              <Text style={styles.subtopic}>Sold out</Text>
-            <View style = {styles.headerLine} />
+            <View style={styles.headerLine} />
+            <Text style={styles.subtopic}>Sold out</Text>
+            <View style={styles.headerLine} />
           </View>
           <View style={styles.tableHeader}>
             <Text style={styles.tableHeaderText}>Code</Text>
             <Text style={styles.tableHeaderText}>To</Text>
             <Text style={styles.tableHeaderText}>Price(LKR)</Text>
-          </View>  
+          </View>
           {/*display sold gems as a list*/}
           <FlatList
             data={sold}
@@ -101,11 +130,11 @@ const GemOnDisplay = ({}) => {
                 <Text style={styles.soldText}>{item.buyer} </Text>
                 <Text style={styles.soldText}>{item.price}</Text>
               </View>
-              )}
+            )}
             ItemSeparatorComponent={ItemSeperator}
           />
-        </View> 
-          
+        </View>
+
         {/*modal making sold gem*/}
         <Modal animationType="slide" transparent={true} visible={modalVisible}>
           <View style={styles.modalContainer}>
@@ -127,7 +156,10 @@ const GemOnDisplay = ({}) => {
                 placeholderTextColor="#888"
               />
               <View style={styles.modalBtn}>
-                <TouchableOpacity onPress={() => setModalVisible(false)} style={styles.cancelBtn}>
+                <TouchableOpacity
+                  onPress={() => setModalVisible(false)}
+                  style={styles.cancelBtn}
+                >
                   <Text style={styles.btnText}>Cancel</Text>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={markSold} style={styles.confirmBtn}>
@@ -139,6 +171,7 @@ const GemOnDisplay = ({}) => {
         </Modal>
       </ScrollView>
     </SafeAreaView>
+    </GradientContainer>
   );
 };
 
@@ -150,10 +183,10 @@ const styles = StyleSheet.create({
   displayContainer: {
     marginHorizontal: 16,
     marginTop: 20,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: "#FFFFFF",
     borderRadius: 12,
     padding: 16,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
@@ -162,24 +195,24 @@ const styles = StyleSheet.create({
   soldContainer: {
     marginHorizontal: 16,
     marginTop: 20,
-    backgroundColor: '#334D85',
+    backgroundColor: "#334D85",
     borderRadius: 12,
     padding: 16,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,
-  },  
+  },
   header: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     marginBottom: 15,
   },
   headerLine: {
     flex: 1,
     height: 1,
-    backgroundColor: '#ccc',
+    backgroundColor: "#ccc",
   },
   subTopic: {
     fontSize: 18,
@@ -193,19 +226,19 @@ const styles = StyleSheet.create({
     marginHorizontal: 10,
   },
   tableHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    justifyContent: "space-between",
     paddingHorizontal: 5,
     marginBottom: 8,
-  },  
+  },
   tableHeaderText: {
     fontSize: 14,
-    fontWeight: '500',
+    fontWeight: "500",
     width: 100,
-  },  
+  },
   gemDisplay: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     paddingVertical: 8,
     paddingHorizontal: 5,
   },
@@ -231,7 +264,7 @@ const styles = StyleSheet.create({
   soldBtnText: {
     color: "white",
     fontSize: 14,
-    fontWeight:"500",
+    fontWeight: "500",
   },
   soldGems: {
     flexDirection: "row",
@@ -246,7 +279,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     justifyContent: "center",
     alignItems: "center",
-  },  
+  },
   modalContainer: {
     flex: 1,
     justifyContent: "center",
@@ -254,7 +287,7 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0,0,0,0.5)",
   },
   modalContent: {
-    width: '80%',
+    width: "80%",
     backgroundColor: "white",
     padding: 24,
     borderRadius: 12,

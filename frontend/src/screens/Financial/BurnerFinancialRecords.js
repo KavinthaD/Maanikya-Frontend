@@ -4,9 +4,11 @@ import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { baseScreenStyles } from "../../styles/baseStyles";
 import Header_1 from "../../components/Header_1";
+import GradientContainer from "../../components/GradientContainer";
 
 const BurnerFinancialRecords = () => {
   return (
+    <GradientContainer>
     <View style={[baseScreenStyles.container]}>
       <Header_1 title="Financial Records"/>
       <View style={styles.container}>
@@ -51,6 +53,7 @@ const BurnerFinancialRecords = () => {
       </View>
     </View>
     </View>
+    </GradientContainer>
   );
 };
 

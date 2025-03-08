@@ -8,12 +8,11 @@ import ImageCropPicker from "react-native-image-crop-picker";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const BusinessOwnerEditProfile = ({ navigation, route }) => {
- 
+  //Destructuring the user data if available, other wise display null
   const { user } = route.params || {};
 
   // Profile state
-  
-  const [profilePhoto, setProfilePhoto] = useState(user?.image || null); // Use optional chaining and fallback
+  const [profilePhoto, setProfilePhoto] = useState(user?.image || null); 
   const [firstName, setFirstName] = useState(user?.firstName || "");
   const [lastName, setLastName] = useState(user?.lastName || "");
   const [email, setEmail] = useState(user?.email || "");
@@ -21,6 +20,18 @@ const BusinessOwnerEditProfile = ({ navigation, route }) => {
   const [title, setTitle] = useState(user?.role || ""); // Use user.role
   const [address, setAddress] = useState(user?.address || "");
   const [isModalVisible, setModalVisible] = useState(false);
+
+    // Update IMAGE_CONSTRAINTS
+  const IMAGE_CONSTRAINTS = {
+    maxWidth: 2048, // Maximum 2K resolution
+    maxHeight: 2048, // Maximum 2K resolution
+    minWidth: 300, // Minimum 300px for decent detail
+    minHeight: 300, // Minimum 300px for decent detail
+    maxSizeMB: 15, // Increased to 15MB before rejection
+    quality: 0.9, // Initial quality
+    allowedFormats: ["jpeg", "jpg", "png"],
+    aspectRatio: [1, 1], // Square images for consistency
+  };
 
   useEffect(() => {
     // Optionally update state if user prop changes
@@ -37,9 +48,9 @@ const BusinessOwnerEditProfile = ({ navigation, route }) => {
 }, [route.params?.user]);
 
   const handleCameraPress = () => {
-    setModalVisible(true);
+    setModalVisible(true); //sets modal visibility
   };
-
+//handle taking photo using camera
   const handleTakePhoto = async () => {
     try {
       const result = await ImageCropPicker.openCamera({
@@ -56,7 +67,7 @@ const BusinessOwnerEditProfile = ({ navigation, route }) => {
       });
 
       if (result && result.path) {
-        setProfilePhoto(result.path);
+        setProfilePhoto(result.path);  //setting profile state with the path
       }
     } catch (error) {
       console.error("Error taking photo:", error);
@@ -64,16 +75,14 @@ const BusinessOwnerEditProfile = ({ navigation, route }) => {
       setModalVisible(false);
     }
   };
-
+  //handle choosing images from the gallery
   const handleChooseFromGallery = async () => {
     try {
       const result = await ImageCropPicker.openPicker({
-        width: 600,
-        height: 600,
+        width: IMAGE_CONSTRAINTS.maxWidth,
+        height: IMAGE_CONSTRAINTS.maxHeight,
         mediaType: "photo",
-        includeBase64: false,
-        maxHeight: 2000,
-        maxWidth: 2000,
+        includeBase64: true,
         cropping: true,
         cropperCircleOverlay: false,
         cropperStatusBarColor: "#9CCDDB",
@@ -81,7 +90,7 @@ const BusinessOwnerEditProfile = ({ navigation, route }) => {
       });
 
       if (result && result.path) {
-        setProfilePhoto(result.path);
+        setProfilePhoto(result.path);         //setting profile state with the path
       }
     } catch (error) {
       console.error("Error choosing from gallery:", error);
@@ -89,30 +98,40 @@ const BusinessOwnerEditProfile = ({ navigation, route }) => {
       setModalVisible(false);
     }
   };
-
-  
-
+  //handle saving profile data
   const handleSave = async () => {
     try {
       //const token = await AsyncStorage.getItem('authToken'); // Get the auth token
       const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2N2M0NWRmMWZlYWFhMzc5YmQzYTMxOGQiLCJ1c2VybmFtZSI6ImpvaG5kb2UiLCJsb2dpblJvbGUiOiJHZW0gYnVzaW5lc3Mgb3duZXIiLCJ0eXBlIjoiYnVzaW5lc3MiLCJpYXQiOjE3NDE0NDA0MDMsImV4cCI6MTc0MTUyNjgwM30.R__Woqu8KAMQHP8PHgroFfWCcMvw17ahlq-90BPkG1g";
+      
+      const formData = new FormData();
+
+      // append the fields to the FormData object
+      formData.append("firstName", firstName);
+      formData.append("lastName", lastName);
+      formData.append("email", email);
+      formData.append("phone", contact);
+      formData.append("role", title);
+      formData.append("address", address);
+      
+      if (profilePhoto) {
+        formData.append("image", {
+          uri: profilePhoto,
+          type: "image/jpeg", // Adjust the type based on your image format
+          name: "profile.jpg", 
+        });
+      }
+
+
       const response = await fetch('http://10.0.2.2:5000/api/auth/update-profile', {
         method: 'PUT',
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'multipart/form-data',
           'Authorization': `Bearer ${token}`, // Include the token
         },
-        body: JSON.stringify({
-          firstName: firstName,
-          lastName: lastName,
-          email: email,
-          phone: contact,
-          role: title, // Use the title state
-          address: address,
-          image: profilePhoto, // Send image URL if changed
-        }),
+        body: formData,  
       });
-
+      console.log("GUser profile updated successfully:", response.data);
       if (!response.ok) {
         const errorData = await response.json();
         console.error('Update failed:', errorData);
@@ -126,7 +145,7 @@ const BusinessOwnerEditProfile = ({ navigation, route }) => {
         console.log('Profile updated:', data);
         Alert.alert('Success', 'Profile updated successfully!');
 
-        // Navigate back and pass updated data (using navigation.navigate instead of goBack)
+        // Navigate back and pass 
         navigation.navigate('BusinessOwnerProfile', { updatedUser: data.user }); // Pass the updated user data
       } else {
         console.error('Unexpected content type:', contentType);
@@ -275,13 +294,13 @@ const styles = StyleSheet.create({
     marginBottom: 3,
   },
   input: {
-    backgroundColor: "#ffffff",
+    backgroundColor: "#4C697E",
     paddingVertical: 10,
     paddingHorizontal: 12,
     borderRadius: 8,
     marginTop: 5,
     fontSize: 16,
-    color: "#333", 
+    color: "#fff", 
     borderWidth: 1,
     borderColor: "#ccc",
   },

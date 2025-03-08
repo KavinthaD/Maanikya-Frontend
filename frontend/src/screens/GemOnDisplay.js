@@ -54,7 +54,7 @@ const GemOnDisplay = ({}) => {
 
           <View style={styles.header}>
             <View style = {styles.headerLine} />
-              < Text style={styles.subTopic}>On Display</Text>
+              < Text style={styles.subtopic}>On Display</Text>
             <View style = {styles.headerLine} />
           </View>
           <View style={styles.tableHeader}>
@@ -150,7 +150,7 @@ const styles = StyleSheet.create({
   displayContainer: {
     marginHorizontal: 16,
     marginTop: 20,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#949EA9',
     borderRadius: 12,
     padding: 16,
     shadowColor: '#000',
@@ -161,8 +161,8 @@ const styles = StyleSheet.create({
   },
   soldContainer: {
     marginHorizontal: 16,
-    marginTop: 20,
-    backgroundColor: '#334D85',
+    marginTop: 75,
+    backgroundColor: '#505050',
     borderRadius: 12,
     padding: 16,
     shadowColor: '#000',
@@ -181,15 +181,10 @@ const styles = StyleSheet.create({
     height: 1,
     backgroundColor: '#ccc',
   },
-  subTopic: {
-    fontSize: 18,
-    fontWeight: "600",
-    marginHorizontal: 10,
-  },
   subtopic: {
     fontSize: 18,
     fontWeight: "600",
-    color: "#ffff",
+    color: "#ffffff",
     marginHorizontal: 10,
   },
   tableHeader: {
@@ -202,6 +197,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '500',
     width: 100,
+    color: "#ffffff",
   },  
   gemDisplay: {
     flexDirection: 'row',
@@ -220,10 +216,10 @@ const styles = StyleSheet.create({
     color: "#333",
     flex: 1,
     fontSize: 16,
-    color: "#333",
+    color: "#ffffff",
   },
   soldBtn: {
-    backgroundColor: "#007bff",
+    backgroundColor: "#051B41",
     paddingVertical: 8,
     paddingHorizontal: 10,
     borderRadius: 10,
@@ -236,7 +232,6 @@ const styles = StyleSheet.create({
   soldGems: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#9AC3FF",
     padding: 10,
     borderRadius: 10,
     marginVertical: 5,
@@ -246,6 +241,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     justifyContent: "center",
     alignItems: "center",
+    color: "#fff",
   },  
   modalContainer: {
     flex: 1,

@@ -1,24 +1,40 @@
 //Screen creator: Isum
 
-import React, { useState } from "react";
-import {View, Text, TextInput,Image,TouchableOpacity,StyleSheet, Modal, KeyboardAvoidingView, Platform} from "react-native";
+import React, { useState, useEffect } from "react";
+import {View, Text, TextInput,Image,TouchableOpacity,StyleSheet, Modal, KeyboardAvoidingView, Platform, Alert} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons} from "@expo/vector-icons";
 import ImageCropPicker from "react-native-image-crop-picker";
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const BusinessOwnerEditProfile = ({ navigation, route }) => {
  
+  const { user } = route.params || {};
+
   // Profile state
-  const [profilePhoto, setProfilePhoto] = useState(null);
-  const [name, setName] = useState("M.D Rathnasiri Navasinghe");
-  const [email, setEmail] = useState("rathnasiri.n@hotmail.com");
-  const [contact, setContact] = useState("+94 987 654 321");
-  const [title, setTitle] = useState("Owner of Navarathna Gems");
-  const [address, setAddress] = useState(
-    "602, Kalawana Rd, Nivitigala, Rathnapura, Sri Lanka"
-  );
+  
+  const [profilePhoto, setProfilePhoto] = useState(user?.image || null); // Use optional chaining and fallback
+  const [firstName, setFirstName] = useState(user?.firstName || "");
+  const [lastName, setLastName] = useState(user?.lastName || "");
+  const [email, setEmail] = useState(user?.email || "");
+  const [contact, setContact] = useState(user?.phone || "");
+  const [title, setTitle] = useState(user?.role || ""); // Use user.role
+  const [address, setAddress] = useState(user?.address || "");
   const [isModalVisible, setModalVisible] = useState(false);
+
+  useEffect(() => {
+    // Optionally update state if user prop changes
+    if (route.params?.user) {
+        const { user } = route.params;
+        setProfilePhoto(user.image || null);
+        setFirstName(user.firstName || "");
+        setLastName(user.lastName || "");
+        setEmail(user.email || "");
+        setContact(user.phone || "");
+        setTitle(user.role || "");
+        setAddress(user.address || "");
+    }
+}, [route.params?.user]);
 
   const handleCameraPress = () => {
     setModalVisible(true);
@@ -74,6 +90,54 @@ const BusinessOwnerEditProfile = ({ navigation, route }) => {
     }
   };
 
+  
+
+  const handleSave = async () => {
+    try {
+      //const token = await AsyncStorage.getItem('authToken'); // Get the auth token
+      const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2N2M0NWRmMWZlYWFhMzc5YmQzYTMxOGQiLCJ1c2VybmFtZSI6ImpvaG5kb2UiLCJsb2dpblJvbGUiOiJHZW0gYnVzaW5lc3Mgb3duZXIiLCJ0eXBlIjoiYnVzaW5lc3MiLCJpYXQiOjE3NDE0NDA0MDMsImV4cCI6MTc0MTUyNjgwM30.R__Woqu8KAMQHP8PHgroFfWCcMvw17ahlq-90BPkG1g";
+      const response = await fetch('http://10.0.2.2:5000/api/auth/update-profile', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`, // Include the token
+        },
+        body: JSON.stringify({
+          firstName: firstName,
+          lastName: lastName,
+          email: email,
+          phone: contact,
+          role: title, // Use the title state
+          address: address,
+          image: profilePhoto, // Send image URL if changed
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error('Update failed:', errorData);
+        Alert.alert('Update Failed', errorData.message || 'Something went wrong.'); // Show user-friendly error
+        return;
+      }
+
+      const contentType = response.headers.get('content-type');
+      if (contentType && contentType.indexOf('application/json') !== -1) {
+        const data = await response.json();
+        console.log('Profile updated:', data);
+        Alert.alert('Success', 'Profile updated successfully!');
+
+        // Navigate back and pass updated data (using navigation.navigate instead of goBack)
+        navigation.navigate('BusinessOwnerProfile', { updatedUser: data.user }); // Pass the updated user data
+      } else {
+        console.error('Unexpected content type:', contentType);
+        Alert.alert('Error', 'Unexpected response from server.');
+      }
+    } catch (error) {
+      console.error('Error updating profile:', error);
+      Alert.alert('Error', 'Failed to update profile.  Check your network connection.');
+    }
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <KeyboardAvoidingView
@@ -84,9 +148,7 @@ const BusinessOwnerEditProfile = ({ navigation, route }) => {
       {/* Profile photo */}
         <View style={styles.profileContainer}>
           <Image
-            source={
-              profilePhoto ? { uri: profilePhoto } : {uri:"https://upload.wikimedia.org/wikipedia/commons/a/a4/2019_Toyota_Corolla_Icon_Tech_VVT-i_Hybrid_1.8.jpg"}
-            }
+             source={{ uri: profilePhoto }}
             style={styles.profilePhoto}
           />
           {/*edit photo button*/}
@@ -96,11 +158,19 @@ const BusinessOwnerEditProfile = ({ navigation, route }) => {
         </View>
         {/*edit fields*/}    
         <View style={styles.inputContainer}>
-          <Text style={styles.label}>NAME</Text>
+          <Text style={styles.label}>First NAME</Text>
           <TextInput
             style={styles.input}
-            value={name}
-            onChangeText={setName}
+            value={firstName} 
+            onChangeText={setFirstName}
+            placeholderTextColor="#777"
+          />
+
+          <Text style={styles.label}>Last NAME</Text>
+          <TextInput
+            style={styles.input}
+            value={lastName}
+            onChangeText={setLastName}
             placeholderTextColor="#777"
           />
 
@@ -135,7 +205,7 @@ const BusinessOwnerEditProfile = ({ navigation, route }) => {
           />
         </View>
         {/*save button*/}    
-        <TouchableOpacity style={styles.saveBtn} onPress={() => navigation.goBack()}>
+        <TouchableOpacity style={styles.saveBtn} onPress={handleSave}>
           <Text style={styles.saveBtnText}>Save</Text>
         </TouchableOpacity>
 

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   View,
   Text,
@@ -9,8 +9,8 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { baseScreenStyles } from "../styles/baseStyles";
-import Header_2 from "../components/Header_2";
 import GradientContainer from "../components/GradientContainer";
+import { LinearGradient } from "expo-linear-gradient";
 
 const personData = {
   name: "Dulith Wanigarathne",
@@ -29,110 +29,168 @@ const personData = {
     require("../assets/Gem5.png"),
     require("../assets/Gem6.png"),
   ],
-  isFavorite: false, // Added isFavorite property
+  isFavorite: false,
 };
 
 export default function ConnectedUsers() {
-  const [person, setPerson] = useState(personData);
+  const [person, setPerson] = React.useState(personData);
 
   const handleStarRating = (rating) => {
     setPerson({ ...person, rating: rating });
   };
 
   const toggleFavorite = () => {
-    setPerson({ ...person, isFavorite: !person.isFavorite }); // Toggle favorite status
+    setPerson({ ...person, isFavorite: !person.isFavorite });
   };
 
   return (
     <GradientContainer>
-    <View style={[baseScreenStyles.container, styles.container]}>
-      <Text style={styles.header}>Connect</Text>
+      <View style={[baseScreenStyles.container, styles.container]}>
+        <Text style={styles.header}>Connect</Text>
 
-      <View style={styles.profileCard}>
-        <Image source={person.image} style={styles.profileImage} />
-        <View style={styles.profileInfo}>
-          <Text style={styles.name}>{person.name}</Text>
-          <Text style={styles.role}>{person.role}</Text>
-          <View style={styles.rating}>
-            {[...Array(5)].map((_, i) => (
-              <TouchableOpacity key={i} onPress={() => handleStarRating(i + 1)}>
-                {" "}
-                {/* Touchable stars */}
-                <Ionicons
-                  key={i}
-                  name={i < person.rating ? "star" : "star-outline"}
-                  size={16}
-                  color={"#3B5998"} // Set star color to blue
-                />
-              </TouchableOpacity>
-            ))}
+        
+        <LinearGradient
+          colors={['#798693', '#E0E5EA']}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 0 }}
+          style={styles.profileCardWrapper}
+        >
+          <View style={styles.profileCard}>
+            <Image source={person.image} style={styles.profileImage} />
+            <View style={styles.profileInfo}>
+              <Text style={styles.name}>{person.name}</Text>
+              <Text style={styles.role}>{person.role}</Text>
+              <View style={styles.rating}>
+                {[...Array(5)].map((_, i) => (
+                  <TouchableOpacity key={i} onPress={() => handleStarRating(i + 1)}>
+                    <Ionicons
+                      name={i < person.rating ? "star" : "star-outline"}
+                      size={16}
+                      color={"#170969"}
+                    />
+                  </TouchableOpacity>
+                ))}
+              </View>
+            </View>
+            <TouchableOpacity onPress={toggleFavorite}>
+              <Ionicons
+                name={person.isFavorite ? "heart" : "heart-outline"}
+                size={24}
+                color={person.isFavorite ? "#4F30C2" : "#3B5998"}
+                style={styles.icon}
+              />
+            </TouchableOpacity>
           </View>
-        </View>
-        <TouchableOpacity onPress={toggleFavorite}>
-          {" "}
-          {/* Touchable Heart */}
-          <Ionicons
-            name={person.isFavorite ? "heart" : "heart-outline"}
-            size={24}
-            color={"#3B5998"} // Set heart color to blue
-            style={styles.icon}
-          />
-        </TouchableOpacity>
+        </LinearGradient>
+
+      
+        <LinearGradient
+          colors={['#798693', '#E0E5EA']}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 0 }}
+          style={styles.detailsContainerWrapper}
+        >
+          <View style={styles.detailsContainer}>
+            <Text style={styles.detail}>
+              <Text style={styles.bold}>TITLE :</Text> {person.title}
+            </Text>
+            <Text style={styles.detail}>
+              <Text style={styles.bold}>CONTACT NO :</Text> {person.contact}
+            </Text>
+            <Text style={styles.detail}>
+              <Text style={styles.bold}>E-MAIL :</Text> {person.email}
+            </Text>
+            <Text style={styles.detail}>
+              <Text style={styles.bold}>LOCATION :</Text> {person.location}
+            </Text>
+          </View>
+        </LinearGradient>
+
+        <Text style={styles.sectionTitle}>PAST WORK</Text>
+        <FlatList
+          data={person.pastWork}
+          numColumns={3}
+          keyExtractor={(_, index) => index.toString()}
+          renderItem={({ item }) => (
+            <Image source={item} style={styles.pastWorkImage} />
+          )}
+        />
       </View>
-      <View style={styles.detailsContainer}>
-        <Text style={styles.detail}>
-          <Text style={styles.bold}>TITLE :</Text> {person.title}
-        </Text>
-        <Text style={styles.detail}>
-          <Text style={styles.bold}>CONTACT NO :</Text> {person.contact}
-        </Text>
-        <Text style={styles.detail}>
-          <Text style={styles.bold}>E-MAIL :</Text> {person.email}
-        </Text>
-        <Text style={styles.detail}>
-          <Text style={styles.bold}>LOCATION :</Text> {person.location}
-        </Text>
-      </View>
-      <Text style={styles.sectionTitle}>PAST WORK</Text>
-      <FlatList
-        data={person.pastWork}
-        numColumns={3}
-        keyExtractor={(_, index) => index.toString()}
-        renderItem={({ item }) => (
-          <Image source={item} style={styles.pastWorkImage} />
-        )}
-      />
-    </View>
     </GradientContainer>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { padding: 16 },
-  header: { fontSize: 18, fontWeight: "bold", marginBottom: 10 },
-  input: {},
+  container: { 
+    padding: 16 
+  },
+  header: { 
+    fontSize: 18, 
+    fontWeight: "bold", 
+    marginBottom: 10 
+  },
+  // Profile card styles
+  profileCardWrapper: {
+    borderRadius: 8,
+    marginBottom: 10,
+    overflow: 'hidden',
+  },
   profileCard: {
     flexDirection: "row",
-    backgroundColor: "#CDE3F9",
-    borderRadius: 8,
     padding: 10,
     alignItems: "center",
-    marginBottom: 10,
   },
-  profileImage: { width: 50, height: 50, borderRadius: 25, marginRight: 10 },
-  profileInfo: { flex: 1 },
-  name: { fontSize: 16, fontWeight: "bold" },
-  role: { fontSize: 14, color: "black" },
-  rating: { flexDirection: "row", marginTop: 5 },
-  icon: { marginLeft: 10, color: "#3B5998" }, // Set default heart color to blue
-  detailsContainer: {
-    backgroundColor: "#CDE3F9",
-    padding: 10,
+  profileImage: { 
+    width: 50, 
+    height: 50, 
+    borderRadius: 25, 
+    marginRight: 10 
+  },
+  profileInfo: { 
+    flex: 1 
+  },
+  name: { 
+    fontSize: 16, 
+    fontWeight: "bold", 
+    color: "black" 
+  },
+  role: { 
+    fontSize: 14, 
+    color: "black" 
+  },
+  rating: { 
+    flexDirection: "row", 
+    marginTop: 5 
+  },
+  icon: { 
+    marginLeft: 10
+  },
+  
+  // Details container styles
+  detailsContainerWrapper: {
     borderRadius: 8,
     marginBottom: 10,
+    overflow: 'hidden',
   },
-  detail: { fontSize: 14, marginBottom: 5 },
-  bold: { fontWeight: "bold" },
-  sectionTitle: { fontSize: 16, fontWeight: "bold", marginBottom: 10 },
-  pastWorkImage: { width: 100, height: 100, margin: 5, borderRadius: 8 },
+  detailsContainer: {
+    padding: 10,
+  },
+  detail: { 
+    fontSize: 14, 
+    marginBottom: 5 
+  },
+  bold: { 
+    fontWeight: "bold" 
+  },
+  sectionTitle: { 
+    fontSize: 16, 
+    fontWeight: "bold", 
+    marginBottom: 10 
+  },
+  pastWorkImage: { 
+    width: 100, 
+    height: 100, 
+    margin: 5, 
+    borderRadius: 8 
+  },
 });

@@ -1,58 +1,70 @@
-// Purpose: Test individual components/screens of the app.
-
 import React from "react";
-import { SafeAreaView, StatusBar, Platform } from "react-native";
+import { SafeAreaView, StatusBar, Platform, View } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { NavigationContainer } from "@react-navigation/native";
-
-// Import all screens
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+
+// Import screens
 import FavoritesScreen from "./src/screens/Favorites";
 import HomeScreen from "./src/screens/Home/HomePageBusiness";
-import { baseScreenStyles } from "./src/styles/baseStyles";
 import CustomHomePage from "./src/screens/Home/HomePageCustomer";
 import HomePageBusiness from "./src/screens/Home/HomePageBusiness";
 import GemRegister1 from "./src/screens/GemProfile/GemRegister1";
 import GemRegister2 from "./src/screens/GemProfile/GemRegister2";
 import HomeMyGems from "./src/screens/GemProfile/HomeMyGems";
-import BS_NavBar from "./src/components/BS_NavBar";
-import C_NavBar from "./src/components/C_NavBar";
 import ConnectScreen from "./src/screens/ConnectScreen";
 import ConnectedUser from "./src/screens/ConnectedUsers";
 import GemOnDisplay from "./src/screens/GemOnDisplay";
 import Market from "./src/screens/GemOnDisplay";
 import BusinessOwnerProfile from "./src/screens/UserProfile/BusinessOwnerProfile";
 import Login from "./src/screens/Auth/Login";
+import AlertsScreen from "./src/screens/Notification/AlertsScreen";
 
 const Stack = createNativeStackNavigator();
 
 export default function App() {
   return (
     <SafeAreaProvider>
-      <SafeAreaView
-        style={{
-          flex: 1,
-          backgroundColor: baseScreenStyles.backgroundColor.backgroundColor,
-          paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
-        }}
-      >
+      <View style={{ flex: 1, backgroundColor: '#072D44' }}>
         <StatusBar
-          barStyle="dark-content"
-          backgroundColor={baseScreenStyles.backgroundColor.backgroundColor}
+          barStyle="light-content"
+          backgroundColor="#072D44"
           translucent={true}
         />
         <NavigationContainer>
           <Stack.Navigator>
             <Stack.Screen
-              name="BS_NavBar"
+              name="AlertsScreen"
               options={{
                 headerShown: false,
               }}
-              component={GemRegister1}
+              component={AlertsScreen}
             />
+            <Stack.Screen
+              name="Home"
+              options={{
+                headerShown: false,
+              }}
+              component={HomePageBusiness}
+            />
+            <Stack.Screen
+              name="Market"
+              options={{
+                headerShown: false,
+              }}
+              component={Market}
+            />
+            <Stack.Screen
+              name="Profile"
+              options={{
+                headerShown: false,
+              }}
+              component={BusinessOwnerProfile}
+            />
+            {/* Add other screens here */}
           </Stack.Navigator>
         </NavigationContainer>
-      </SafeAreaView>
+      </View>
     </SafeAreaProvider>
   );
 }

@@ -13,35 +13,35 @@ import { Ionicons } from '@expo/vector-icons';
 import Header_2 from '../components/Header_2';
 import { baseScreenStyles } from '../styles/baseStyles';
 
-const App = () => {
+const App = ({navigation}) => {
   const [data, setData] = useState([
     {
       id: 1,
       name: 'Sunil Gamalath',
       company: 'Gamage Gems',
       rating: 4,
-      image: require('../assets/seller.png'), // Replace with your actual image path
+      image: require('../assets/seller.png'), 
     },
     {
       id: 2,
       name: 'Subash Hettiarachchi',
       company: 'Pixe; Gems',
       rating: 3,
-      image: require('../assets/seller.png'), // Replace with your actual image path
+      image: require('../assets/seller.png'), 
     },
     {
       id: 3,
       name: 'Rashantha Gamage',
       company: 'Zodiac Gems',
       rating: 2,
-      image: require('../assets/seller.png'), // Replace with your actual image path
+      image: require('../assets/seller.png'),  
     },
     {
       id: 4,
       name: 'Wimalasiri Siriwardana',
       company: 'Janatha Gems',
       rating: 1,
-      image: require('../assets/seller.png'), // Replace with your actual image path
+      image: require('../assets/seller.png'), 
     },
   ]);
 
@@ -77,7 +77,7 @@ const App = () => {
         <Text style={styles.itemCompany}>{item.company}</Text>
         {renderStars(item.id, item.rating)}
       </View>
-      <TouchableOpacity style={styles.viewGemsButton}>
+      <TouchableOpacity style={styles.viewGemsButton} onPress={() => navigation.navigate("SellerProfile")}>
         <Text style={styles.viewGemsText}>View gems</Text>
       </TouchableOpacity>
     </View>

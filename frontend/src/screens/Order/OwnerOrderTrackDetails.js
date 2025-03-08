@@ -3,16 +3,18 @@
 import React, {useState} from "react";
 import {View, Text, Image, StyleSheet, TouchableOpacity, ScrollView, FlatList} from "react-native";
 import {FontAwesome} from "@expo/vector-icons";
-import Header_2 from "../components/Header_2";
+import Header_2 from "../../components/Header_2";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { baseScreenStyles } from "../../styles/baseStyles";
+import LinearGradient from "react-native-linear-gradient";
 
 const gems = [
-    { id: "BE002", image: require("../assets/gem-images/gem1.jpeg")},
-    { id: "BS079", image: require("../assets/gem-images/gem1.jpeg")},
-    { id: "RS305", image: require("../assets/gem-images/gem1.jpeg")},
-    { id: "BS001", image: require("../assets/gem-images/gem1.jpeg")},
-    { id: "BS002", image: require("../assets/gem-images/gem1.jpeg")},
-    { id: "BS005", image: require("../assets/gem-images/gem1.jpeg")},
+    { id: "BE002", image: require("../../assets/gem-images/gem1.jpeg")},
+    { id: "BS079", image: require("../../assets/gem-images/gem1.jpeg")},
+    { id: "RS305", image: require("../../assets/gem-images/gem1.jpeg")},
+    { id: "BS001", image: require("../../assets/gem-images/gem1.jpeg")},
+    { id: "BS002", image: require("../../assets/gem-images/gem1.jpeg")},
+    { id: "BS005", image: require("../../assets/gem-images/gem1.jpeg")},
 ]
 const OwnerOrderTrackDetails = () => {
     const [orderConfirmed, setOrderConfirmed] = useState(false);
@@ -20,8 +22,14 @@ const OwnerOrderTrackDetails = () => {
     const [rating, setRating] = useState(0);
 
     return (
-        <SafeAreaView style={styles.container}>
+        <SafeAreaView style={baseScreenStyles.container}>
         <Header_2 title=" Order#: NB01130"/>
+        <LinearGradient
+                    colors={baseScreenStyles.backgroundGradient.colors}
+                    locations={baseScreenStyles.backgroundGradient.locations}
+                    start={baseScreenStyles.backgroundGradient.start}
+                    end={baseScreenStyles.backgroundGradient.end}
+                    style={{ flex: 1 }}>
         <ScrollView contentContainerStyle={styles.scrollContainer}>
                 <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.gemScroll}>
                     {gems.map((gem) => (
@@ -38,7 +46,7 @@ const OwnerOrderTrackDetails = () => {
                 <View style={styles.ratingContainer}>
                     {[1, 2, 3, 4, 5].map((star) => (
                     <TouchableOpacity key={star} onPress={() => setRating(star)}>
-                        <FontAwesome name="star" size={24} color={star <= rating ? "#334D85" : "white"} />
+                        <FontAwesome name="star" size={24} color={star <= rating ? "#170969" : "white"} />
                     </TouchableOpacity>
             ))}
           </View>
@@ -53,14 +61,14 @@ const OwnerOrderTrackDetails = () => {
             <View style={styles.orderStatus}> 
                 <Text style={styles.orderDet}> Order Details </Text>
                 <View style={styles.statusBoxRequest}>
-                    <Image source={require("../assets/owner-icons/order-request.png")} style={styles.statusIcon}/>
+                    <Image source={require("../../assets/owner-icons/order-request.png")} style={styles.statusIcon}/>
                     <View>
                         <Text style={styles.statusText}>Order Requested </Text>
                         <Text style={styles.dateText}> Order requested on 20-12-2024 </Text>
                     </View>
                 </View>
                 <View style={styles.statusBoxAccept}>
-                <Image source={require("../assets/owner-icons/order-accept.png")} style={styles.statusIcon}/>
+                <Image source={require("../../assets/owner-icons/order-accept.png")} style={styles.statusIcon}/>
                 <View> 
                     <Text style={styles.statusText}>Order Accepted </Text>
                     <Text style={styles.dateText}> Order accepted on 20-12-2014 </Text>
@@ -69,7 +77,7 @@ const OwnerOrderTrackDetails = () => {
 
                 {orderConfirmed && (
                     <View style={styles.statusBoxConfirm}>
-                        <Image source={require("../assets/owner-icons/order-confirm.png")} style={styles.statusIcon} />
+                        <Image source={require("../../assets/owner-icons/order-confirm.png")} style={styles.statusIcon} />
                         <View>
                             <Text style={styles.statusText}>Order Confirmed</Text>
                             <Text style={styles.dateText}>Order confirmed on 20-12-2024</Text>
@@ -79,7 +87,7 @@ const OwnerOrderTrackDetails = () => {
 
                 {orderCanceled && (
                     <View style={styles.statusBoxCancel}>
-                        <Image source={require("../assets/owner-icons/order-decline.png")} style={styles.statusIcon} />
+                        <Image source={require("../../assets/owner-icons/order-decline.png")} style={styles.statusIcon} />
                         <View>
                             <Text style={styles.statusText}>Order Canceled</Text>
                             <Text style={styles.dateText}>Order canceled on 20-12-2024</Text>
@@ -113,6 +121,7 @@ const OwnerOrderTrackDetails = () => {
                 </View>
             )}
             </ScrollView>
+            </LinearGradient>
         </SafeAreaView>
     );
 };
@@ -120,7 +129,6 @@ const OwnerOrderTrackDetails = () => {
 const styles = StyleSheet.create ({
     container: {
         flex: 1,
-        backgroundColor: "#9CCDDB",
     },
     scrollContainer: {
         paddingHorizontal: 10,
@@ -147,11 +155,13 @@ const styles = StyleSheet.create ({
     },
     gemId: {
         fontSize: 18,
+        color: "white",
         fontWeight: "bold",
     },
 
     price: {
         fontSize: 18,
+        color: "white",
         fontWeight: "bold",
     },
     ratingContainer: {
@@ -169,7 +179,7 @@ const styles = StyleSheet.create ({
     orderDet: {
         fontSize: 18,
         fontWeight: "bold",
-        color: "#444",
+        color: "#fff",
         marginBottom: 15,
     },
 
@@ -179,7 +189,7 @@ const styles = StyleSheet.create ({
     },
 
     statusBoxRequest: {
-        backgroundColor: "#A4AAFA",
+        backgroundColor: "#426F88",
         flexDirection: "row",
         alignItems: "center",
         padding: 10,
@@ -188,7 +198,7 @@ const styles = StyleSheet.create ({
     },
 
     statusBoxAccept: {
-        backgroundColor: "#7F87FD",
+        backgroundColor: "#1B5172",
         flexDirection: "row",
         alignItems: "center",
         padding: 10,
@@ -197,7 +207,7 @@ const styles = StyleSheet.create ({
         
     },
     statusBoxConfirm: {
-        backgroundColor: "#5661FF",
+        backgroundColor: "#185667",
         flexDirection: "row",
         alignItems: "center",
         padding: 10,
@@ -206,7 +216,7 @@ const styles = StyleSheet.create ({
     },
 
     statusBoxCancel: {
-        backgroundColor: "#4A0304",
+        backgroundColor: "#620202",
         flexDirection: "row",
         alignItems: "center",
         padding: 10,
@@ -274,7 +284,7 @@ const styles = StyleSheet.create ({
     divider: {
         flex: 1,
         height: 1,
-        backgroundColor: 'black',
+        backgroundColor: 'white',
     }
 
 });

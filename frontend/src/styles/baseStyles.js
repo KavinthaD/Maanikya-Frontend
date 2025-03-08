@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleSheet, View, Text, TouchableOpacity, Image } from "react-native";
+import { StyleSheet, View, TouchableOpacity, Image } from "react-native";
 
 // Create a function that returns the navigation bar JSX with icons
 const renderNavigationBar = (activeScreen, navigation) => {
@@ -78,21 +78,6 @@ const renderNavigationBar = (activeScreen, navigation) => {
   );
 };
 
-// Create a function that returns the header JSX
-const renderHeader = (title, onBackPress) => {
-  return (
-    <View style={styles.headerContainer}>
-      <TouchableOpacity 
-        style={styles.backButton}
-        onPress={onBackPress}
-      >
-        <Text style={styles.backButtonText}>‹</Text>
-      </TouchableOpacity>
-      <Text style={styles.headerText}>{title}</Text>
-    </View>
-  );
-};
-
 // Define base styles that are common across screens
 const styles = StyleSheet.create({
   backgroundColor: 'transparent',
@@ -111,30 +96,6 @@ const styles = StyleSheet.create({
     locations: [0, 0.23, 0.47, 0.68, 0.89],
     start: { x: 0.5, y: 0 },
     end: { x: 0.5, y: 1 },
-  },
-  headerContainer: {
-    backgroundColor: '#072D44',
-    paddingVertical: 12,
-    paddingHorizontal: 20,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: 20,
-  },
-  headerText: {
-    color: "white",
-    fontWeight: "bold",
-    fontSize: 18,
-  },
-  backButton: {
-    position: 'absolute',
-    left: 15,
-    padding: 5,
-  },
-  backButtonText: {
-    color: '#FFFFFF',
-    fontSize: 26,
-    fontWeight: '300',
   },
   footerContainer: {
     flexDirection: 'row',
@@ -193,9 +154,7 @@ const styles = StyleSheet.create({
   },
 });
 
-
 export const baseScreenStyles = {
   ...styles,
   renderNavigationBar,
-  renderHeader,
 };

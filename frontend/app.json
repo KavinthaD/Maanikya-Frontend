@@ -4,10 +4,21 @@
     "slug": "Maanikya",
     "plugins": [
       [
+        "expo-image-picker",
+        {
+          "photosPermission": "Allow Maanikya to access your photos."
+        }
+      ],
+      [
+        "expo-barcode-scanner",
+        {
+          "cameraPermission": "Allow Maanikya to access your camera to scan QR codes."
+        }
+      ],
+      [
         "expo-camera",
         {
-          "cameraPermission": "Allow Maanikya to access your camera to scan QR codes.",
-          "microphonePermission": false
+          "cameraPermission": "Allow Maanikya to access your camera to scan QR codes."
         }
       ],
       [
@@ -18,7 +29,6 @@
           "isAccessMediaLocationEnabled": false
         }
       ]
-      
     ],
     "orientation": "portrait",
     "android": {

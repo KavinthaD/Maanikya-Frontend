@@ -24,6 +24,7 @@ import Login from "./src/screens/Auth/Login";
 import SignUpBusiness from "./src/screens/Auth/SignUpBusiness";
 import SignUpBusiness2 from "./src/screens/Auth/SignUpBusiness2";
 import HomeMyGems from "./src/screens/GemProfile/HomeMyGems";
+import MyGems from "./src/screens/GemProfile/MyGems";
 import BS_NavBar from "./src/components/BS_NavBar";
 import C_NavBar from "./src/components/C_NavBar";
 import W_NavBar from "./src/components/W_NavBar";
@@ -166,6 +167,11 @@ const App = () => {
             <Stack.Screen
               name="HomeMyGems"
               component={HomeMyGems}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="MyGems"
+              component={MyGems}
               options={{ headerShown: false }}
             />
             <Stack.Screen

@@ -8,7 +8,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import FavoritesScreen from "./src/screens/Favorites";
 import HomeScreen from "./src/screens/Home/HomePageBusiness";
 import CustomHomePage from "./src/screens/Home/HomePageCustomer";
-import HomePageBusiness from "./src/screens/Home/HomePageBusiness";
+//import HomePageBusiness from "./src/screens/Home/HomePageBusiness";
 import GemRegister1 from "./src/screens/GemProfile/GemRegister1";
 import GemRegister2 from "./src/screens/GemProfile/GemRegister2";
 import HomeMyGems from "./src/screens/GemProfile/HomeMyGems";
@@ -40,27 +40,7 @@ export default function App() {
               }}
               component={AlertsScreen}
             />
-            <Stack.Screen
-              name="Home"
-              options={{
-                headerShown: false,
-              }}
-              component={HomePageBusiness}
-            />
-            <Stack.Screen
-              name="Market"
-              options={{
-                headerShown: false,
-              }}
-              component={Market}
-            />
-            <Stack.Screen
-              name="Profile"
-              options={{
-                headerShown: false,
-              }}
-              component={BusinessOwnerProfile}
-            />
+           
             {/* Add other screens here */}
           </Stack.Navigator>
         </NavigationContainer>

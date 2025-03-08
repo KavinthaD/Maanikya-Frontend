@@ -3,6 +3,7 @@ import { View, Text, FlatList, Image, StatusBar, StyleSheet } from "react-native
 import LinearGradient from 'react-native-linear-gradient';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { baseScreenStyles } from "../../styles/baseStyles";
+ 
 
 // Alert data
 const alerts = [
@@ -123,9 +124,8 @@ const AlertsScreen = ({ navigation }) => {
         translucent={true}
       />
       <SafeAreaView style={baseScreenStyles.container}>
-        {/* Use the header render function */}
-        {baseScreenStyles.renderHeader("Alerts", () => navigation && navigation.goBack())}
-
+        {/* 🚀 Header removed here */}
+        
         {/* Alert List */}
         <FlatList
           data={alerts}
@@ -136,8 +136,8 @@ const AlertsScreen = ({ navigation }) => {
           contentContainerStyle={alertStyles.alertListContent}
         />
 
-        {/* Use the navigation bar render function */}
-        {baseScreenStyles.renderNavigationBar("Alerts", navigation)}
+        {/* ✅ Ensure BS_NavBar is correctly placed */}
+        
       </SafeAreaView>
     </LinearGradient>
   );

@@ -5,45 +5,72 @@ import { View, Text, Image, TouchableOpacity, Modal, Button, StyleSheet } from '
 import QRCode from 'react-native-qrcode-svg'; // Import QR library
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons, FontAwesome5 } from '@expo/vector-icons'; // Import icons
+import axios from "axios"; // Import axios
+import { API_URL, ENDPOINTS } from "../../config/api"; // Import the API URL and endpoints
 
 const MyGems = ({ route, navigation }) => {
   //to conntrol QR popups
   const [popQRCode, setPopQRCode] = useState(false);
-
-  //sample data set
-  const sampleDetails = {
-    gemId: 'BS001',
-    dateAdded: '9/12/2023',
-    identification: 'Natural Blue Sapphire',
-    weight: '1.96 carats',
-    measurements: '6.59 x 6.36 x 4.97 mm',
-    shape: 'Cushion',
-    color: 'Vivid Blue',
-    purchasePrice: 'LKR 60,000',
-    cost: 'LKR 20,000 (for cutting)',
-    soldPrice: 'LKR 100,000',
-  };
-
-  //Extract gem details from route
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const { gemDetails = sampleDetails } = route.params || {};
 
-  //if no dtails available
-  if (!gemDetails) {
+  const qrCodeUrl = route.params?.qrCodeUrl;
+  console.log("Received QR URL:", qrCodeUrl);
+
+  useEffect(() => {
+    const fetchGemDetails = async () => {
+      try {
+        console.log("Fetching with URL:", qrCodeUrl);
+        
+        // Pass the qrCodeUrl as a route parameter instead of query parameter
+        const response = await axios.get(
+          `${API_URL}${ENDPOINTS.GEMS}/view/${encodeURIComponent(qrCodeUrl)}`
+        );
+
+        console.log("API Response:", response.data);
+        setGemDetails(response.data.gem);
+      } catch (err) {
+        console.error("Error fetching gem details:", err);
+        setError(err.response?.data?.message || "Failed to fetch gem details.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (qrCodeUrl) {
+      fetchGemDetails();
+    }
+  }, [qrCodeUrl]);
+
+  // If loading, show a loading indicator
+  if (loading) {
     return (
-      <SafeAreaView style={baseScreenStyles.container}>
-        <Text style={{ textAlign: 'center', marginTop: 20 }}>No Gem Data Available</Text>
+      <SafeAreaView style={styles.container}>
+        <Text>Loading...</Text>
       </SafeAreaView>
     );
   }
 
-//qr value as a String field
-const qrCode = JSON.stringify({
-  gem: gemDetails.identification,
-  weight: gemDetails.weight,
-  color: gemDetails.color,
-});
+  // If there's an error, display the error message
+  if (error) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <Text style={{ textAlign: "center", marginTop: 20 }}>{error}</Text>
+      </SafeAreaView>
+    );
+  }
 
-
+  // If no gem details available
+  if (!gemDetails) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <Text style={{ textAlign: "center", marginTop: 20 }}>
+          No Gem Data Available
+        </Text>
+      </SafeAreaView>
+    );
+  }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -55,28 +82,44 @@ const qrCode = JSON.stringify({
           style={styles.gemPhoto}
         />
         {/*Popup QR code*/}
-        <TouchableOpacity style={styles.qrContainer} onPress={() => setPopQRCode(true)}>
-          <QRCode value={qrCode} size={50} />
+        <TouchableOpacity
+        style={styles.qrContainer}
+          onPress={() => setPopQRCode(true)}
+        >
+          <View>
+            {qrCodeUrl ? (
+              <QRCode 
+                value={qrCodeUrl} 
+                size={50}
+                quietZone={5}
+              />
+            ) : (
+              <Text>No QR Code</Text>
+            )}
+          </View>
         </TouchableOpacity>
       </View>
 
       {/* Gem ID */}
-      <Text style={styles.gemId}>Gem ID - {gemDetails.gemId}</Text>
+      <Text style={styles.gemId}>Gem ID - {gemDetails?.gemId || "N/A"}</Text>
       {/* Gem Details */}
       <View style={styles.detailCard}>
-        <Text style={styles.detailTitle}>Date added to system - {gemDetails.dateAdded}</Text>
-        <Text style={styles.detailText}>Identification - {gemDetails.identification}</Text>
-        <Text style={styles.detailText}>Weight - {gemDetails.weight}</Text>
-        <Text style={styles.detailText}>Measurements - {gemDetails.measurements}</Text>
-        <Text style={styles.detailText}>Shape - {gemDetails.shape}</Text>
-        <Text style={styles.detailText}>Color - {gemDetails.color}</Text>
-        <Text style={styles.detailText}>Additional Information - </Text>
+        <Text style={styles.detailTitle}> Date added to system - {
+    gemDetails?.createdAt 
+      ? new Date(gemDetails.createdAt).toISOString().split('T')[0]
+      : "N/A"}</Text>
+        <Text style={styles.detailText}>Identification - {gemDetails?.details?.gemType || "N/A"}</Text>
+        <Text style={styles.detailText}>Weight - {gemDetails?.details?.weight?.toString() || "N/A"}</Text>
+        <Text style={styles.detailText}>Measurements - {gemDetails?.details?.dimensions || "N/A"}</Text>
+        <Text style={styles.detailText}>Shape - {gemDetails?.details?.gemShape || "N/A"}</Text>
+        <Text style={styles.detailText}>Color - {gemDetails?.details?.color || "N/A"}</Text>
+        <Text style={styles.detailText}>Additional Information -  {gemDetails?.details?.extraInfo || "N/A"}</Text>
       </View>
       {/*Financial Details */}
       <View style={styles.detailCard}>
-        <Text style={styles.detailText}>Purchase Price - {gemDetails.purchasePrice}</Text>
-        <Text style={styles.detailText}>Cost - {gemDetails.cost}</Text>
-        <Text style={styles.detailText}>Sold Price - {gemDetails.soldPrice}</Text>
+        <Text style={styles.detailText}>Purchase Price - {gemDetails?.details?.purchasePrice?.toString() || "N/A"}</Text>
+        <Text style={styles.detailText}>Cost - {gemDetails?.details?.cost?.toString() || "N/A"}</Text>
+        <Text style={styles.detailText}>Sold Price - {gemDetails?.details?.soldPrice?.toString() || "N/A"}</Text>
       </View>
 
       {/* Certificate Image */}
@@ -94,7 +137,13 @@ const qrCode = JSON.stringify({
         <View style={styles.popUpContainer}>
           <View style={styles.popUpContent}>
             <Text style={styles.modalTopic}>QR Code</Text>
-            <QRCode value={qrCode} size={200} />
+            <View tyle={styles.qrCodeWrapper}>
+              {qrCodeUrl ? (
+                <QRCode value={qrCode} size={200} quietZone={10}/>
+              ) : (  
+                <Text>No QR Code available</Text>
+              )}
+            </View>
             <Button title="Close" onPress={() => setPopQRCode(false)} />
           </View>
         </View>
@@ -198,6 +247,13 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 10,
   },
+  qrCodeWrapper: {
+    padding: 10,
+    backgroundColor: 'white',
+    borderRadius: 8,
+    marginVertical: 10
+  }
+
 });
 
 export default MyGems;

@@ -7,22 +7,9 @@ import { NavigationContainer } from "@react-navigation/native";
 
 // Import all screens
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import FavoritesScreen from "./src/screens/Favorites";
-import HomeScreen from "./src/screens/Home/HomePageBusiness";
 import { baseScreenStyles } from "./src/styles/baseStyles";
-import CustomHomePage from "./src/screens/Home/HomePageCustomer";
-import HomePageBusiness from "./src/screens/Home/HomePageBusiness";
-import GemRegister1 from "./src/screens/GemProfile/GemRegister1";
-import GemRegister2 from "./src/screens/GemProfile/GemRegister2";
-import HomeMyGems from "./src/screens/GemProfile/HomeMyGems";
-import BS_NavBar from "./src/components/BS_NavBar";
-import C_NavBar from "./src/components/C_NavBar";
-import ConnectScreen from "./src/screens/ConnectScreen";
-import ConnectedUser from "./src/screens/ConnectedUsers";
-import GemOnDisplay from "./src/screens/GemOnDisplay";
-import Market from "./src/screens/GemOnDisplay";
 import BusinessOwnerProfile from "./src/screens/UserProfile/BusinessOwnerProfile";
-import Login from "./src/screens/Auth/Login";
+import BusinessOwnerEditProfile from "./src/screens/UserProfile/BusinessOwnerEditProfile";
 
 const Stack = createNativeStackNavigator();
 
@@ -44,11 +31,14 @@ export default function App() {
         <NavigationContainer>
           <Stack.Navigator>
             <Stack.Screen
-              name="BS_NavBar"
-              options={{
-                headerShown: false,
-              }}
-              component={GemRegister1}
+              name="BusinessOwnerProfile"
+              component={BusinessOwnerProfile}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="BusinessOwnerEditProfile"
+              component={BusinessOwnerEditProfile}
+              options={{ headerShown: false }}
             />
           </Stack.Navigator>
         </NavigationContainer>

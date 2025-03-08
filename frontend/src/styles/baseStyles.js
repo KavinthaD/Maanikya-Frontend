@@ -1,82 +1,5 @@
 import React from "react";
-import { StyleSheet, View, TouchableOpacity, Image } from "react-native";
-
-// Create a function that returns the navigation bar JSX with icons
-const renderNavigationBar = (activeScreen, navigation) => {
-  return (
-    <View style={styles.footerContainer}>
-      <TouchableOpacity 
-        style={[
-          styles.footerItem, 
-          activeScreen === "Home" && styles.activeFooterItem
-        ]}
-        onPress={() => navigation && navigation.navigate("Home")}
-      >
-        <Image 
-          source={require('../assets/navbar-icons/home-outline.png')} 
-          style={styles.footerIcon} 
-          resizeMode="contain"
-        />
-      </TouchableOpacity>
-      
-      <TouchableOpacity 
-        style={[
-          styles.footerItem, 
-          activeScreen === "Market" && styles.activeFooterItem
-        ]}
-        onPress={() => navigation && navigation.navigate("Market")}
-      >
-        <Image 
-          source={require('../assets/navbar-icons/market-outline.png')} 
-          style={styles.footerIcon} 
-          resizeMode="contain"
-        />
-      </TouchableOpacity>
-      
-      <TouchableOpacity 
-        style={[
-          styles.footerItem, 
-          activeScreen === "Add" && styles.activeFooterItem
-        ]}
-        onPress={() => navigation && navigation.navigate("Add")}
-      >
-        <Image 
-          source={require('../assets/navbar-icons/gem-outline.png')} 
-          style={styles.footerIcon} 
-          resizeMode="contain"
-        />
-      </TouchableOpacity>
-      
-      <TouchableOpacity 
-        style={[
-          styles.footerItem, 
-          activeScreen === "Alerts" && styles.activeFooterItem
-        ]}
-        onPress={() => navigation && navigation.navigate("AlertsScreen")}
-      >
-        <Image 
-          source={require('../assets/navbar-icons/notification-outline.png')} 
-          style={styles.footerIcon} 
-          resizeMode="contain"
-        />
-      </TouchableOpacity>
-      
-      <TouchableOpacity 
-        style={[
-          styles.footerItem, 
-          activeScreen === "Profile" && styles.activeFooterItem
-        ]}
-        onPress={() => navigation && navigation.navigate("Profile")}
-      >
-        <Image 
-          source={require('../assets/navbar-icons/user-outline.png')} 
-          style={styles.footerIcon} 
-          resizeMode="contain"
-        />
-      </TouchableOpacity>
-    </View>
-  );
-};
+import { StyleSheet, View } from "react-native";
 
 // Define base styles that are common across screens
 const styles = StyleSheet.create({
@@ -96,40 +19,6 @@ const styles = StyleSheet.create({
     locations: [0, 0.23, 0.47, 0.68, 0.89],
     start: { x: 0.5, y: 0 },
     end: { x: 0.5, y: 1 },
-  },
-  footerContainer: {
-    flexDirection: 'row',
-    backgroundColor: '#072D44', 
-    paddingVertical: 12,
-    justifyContent: 'space-around',
-    borderTopWidth: 0, 
-    borderTopLeftRadius: 15,
-    borderTopRightRadius: 15,
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: -2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
-  },
-  footerItem: {
-    alignItems: 'center',
-    padding: 8,
-    width: '20%',
-  },
-  footerIcon: {
-    width: 24,
-    height: 24, 
-    tintColor: '#FFFFFF',
-  },
-  activeFooterItem: {
-    borderBottomWidth: 3,
-    borderBottomColor: '#fff',
-  },
-  activeFooterText: {
-    fontWeight: 'bold',
   },
   buttonText: {
     color: "white",
@@ -156,5 +45,4 @@ const styles = StyleSheet.create({
 
 export const baseScreenStyles = {
   ...styles,
-  renderNavigationBar,
 };

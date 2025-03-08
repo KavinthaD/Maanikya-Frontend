@@ -11,6 +11,7 @@ import {
 } from "react-native";
 import { baseScreenStyles } from "../../styles/baseStyles";
 import Header_2 from "../../components/Header_2";
+import GradientContainer from "../../components/GradientContainer";
 
 const CompletedTracker = [
   {
@@ -76,6 +77,7 @@ const NotificationScreen = () => {
   );
 
   return (
+    <GradientContainer>
     <View style={[baseScreenStyles.container,styles.container]}>
       <Header_2 title="Completed "/>
       <View style={styles.container}>
@@ -92,6 +94,7 @@ const NotificationScreen = () => {
       />
     </View>
     </View>
+    </GradientContainer>
   );
 };
 

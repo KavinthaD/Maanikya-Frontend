@@ -19,6 +19,7 @@ import QRCode from "react-native-qrcode-svg";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import ViewShot from "react-native-view-shot";
 import { BackHandler } from "react-native";
+import GradientContainer from "../../components/GradientContainer";
 
 export default function Gem_register_3() {
   const navigation = useNavigation();
@@ -159,6 +160,7 @@ export default function Gem_register_3() {
   };
 
   return (
+    <GradientContainer>
     <View style={baseScreenStyles.container}>
       <View style={styles.innerContainer}>
         <View>
@@ -216,6 +218,7 @@ export default function Gem_register_3() {
         </TouchableOpacity>
       </View>
     </View>
+    </GradientContainer>
   );
 }
 

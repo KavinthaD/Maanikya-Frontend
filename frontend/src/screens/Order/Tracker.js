@@ -5,6 +5,7 @@ import { View, Text, FlatList, StyleSheet, Image, TextInput, SafeAreaView, Touch
 import Icon from "react-native-vector-icons/FontAwesome";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { baseScreenStyles } from "../../styles/baseStyles";
+import GradientContainer from '../../components/GradientContainer';
 
 const Tracker = () => {
   //manage the search option
@@ -47,44 +48,46 @@ const Tracker = () => {
   
 
   return (
-    <SafeAreaView style={styles.container}>
-      
+    <GradientContainer>
+      <SafeAreaView style={styles.container}>
+        
 
-      <View style={styles.searchBar}>
-        <Ionicons name="search" size={20} color="#888" style={styles.searchIcon} />
-        <TextInput
-          style={styles.searchData}
-          placeholder="Gem code"
-          value={search}
-          onChangeText={(text) => setSearch(text)}
-          placeholderTextColor="#888"
-        />
-      </View>
+        <View style={styles.searchBar}>
+          <Ionicons name="search" size={20} color="#888" style={styles.searchIcon} />
+          <TextInput
+            style={styles.searchData}
+            placeholder="Gem code"
+            value={search}
+            onChangeText={(text) => setSearch(text)}
+            placeholderTextColor="#888"
+          />
+        </View>
 
-      {/*In progress gems*/}
-      <TouchableOpacity style={styles.sectionContainer}>
-        <Text style={styles.subTopicProgress}>In Progress {'>'}</Text>
-        <FlatList
-          data={selectedGems}
-          horizontal
-          keyExtractor={(item) => item.id}
-          renderItem={renderGem}
-          showsHorizontalScrollIndicator={false}
-        />
-      </TouchableOpacity>
+        {/*In progress gems*/}
+        <TouchableOpacity style={styles.sectionContainer}>
+          <Text style={styles.subTopicProgress}>In Progress {'>'}</Text>
+          <FlatList
+            data={selectedGems}
+            horizontal
+            keyExtractor={(item) => item.id}
+            renderItem={renderGem}
+            showsHorizontalScrollIndicator={false}
+          />
+        </TouchableOpacity>
 
-      {/*Completed gems*/}
-      <TouchableOpacity style={styles.sectionContainer}>
-        <Text style={styles.subTopicCompleted}>Completed {'>'}</Text>
-        <FlatList
-          data={completeGem}
-          horizontal
-          keyExtractor={(item) => item.id}
-          renderItem={renderGem}
-          showsHorizontalScrollIndicator={false}
-        />
-      </TouchableOpacity>
-    </SafeAreaView>
+        {/*Completed gems*/}
+        <TouchableOpacity style={styles.sectionContainer}>
+          <Text style={styles.subTopicCompleted}>Completed {'>'}</Text>
+          <FlatList
+            data={completeGem}
+            horizontal
+            keyExtractor={(item) => item.id}
+            renderItem={renderGem}
+            showsHorizontalScrollIndicator={false}
+          />
+        </TouchableOpacity>
+      </SafeAreaView>
+    </GradientContainer>
   );
 };
 

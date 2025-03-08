@@ -11,6 +11,7 @@ import {
 } from "react-native";
 import { baseScreenStyles } from "../styles/baseStyles";
 import Header_1 from "../components/Header_1";
+import GradientContainer from "../components/GradientContainer";
 
 const GemstoneMarketplace = () => {
   const [sortAscending, setSortAscending] = useState(true);
@@ -84,40 +85,42 @@ const GemstoneMarketplace = () => {
     });
 
   return (
-    <ScrollView style={baseScreenStyles.container}>
-      <Header_1 title="Market" />
-      <View style={styles.searchContainer}>
-        <View style={styles.searchBar}>
-          <TextInput
-            style={styles.searchInput}
-            placeholder="Search"
-            placeholderTextColor="#999"
-            value={searchQuery}
-            onChangeText={handleSearch}
-          />
-          <TouchableOpacity style={styles.sortButton} onPress={handleSort}>
-            <Text style={styles.sortButtonText}>
-              Sort {sortAscending ? "↓" : "↑"}
-            </Text>
-          </TouchableOpacity>
-        </View>
-
-        <Text style={styles.sectionTitle}>Popular</Text>
-
-        <View style={styles.gemstoneGrid}>
-          {filteredAndSortedGemstones.map((gem) => (
-            <TouchableOpacity key={gem.id} style={styles.gemstoneItem}>
-              <Image
-                source={gem.image}
-                style={styles.gemImage}
-                resizeMode="cover"
-              />
-              <Text style={styles.gemId}>{gem.id}</Text>
+    <GradientContainer>
+      <ScrollView style={baseScreenStyles.container}>
+        <Header_1 title="Market" />
+        <View style={styles.searchContainer}>
+          <View style={styles.searchBar}>
+            <TextInput
+              style={styles.searchInput}
+              placeholder="Search"
+              placeholderTextColor="#999"
+              value={searchQuery}
+              onChangeText={handleSearch}
+            />
+            <TouchableOpacity style={styles.sortButton} onPress={handleSort}>
+              <Text style={styles.sortButtonText}>
+                Sort {sortAscending ? "↓" : "↑"}
+              </Text>
             </TouchableOpacity>
-          ))}
+          </View>
+
+          <Text style={styles.sectionTitle}>Popular</Text>
+
+          <View style={styles.gemstoneGrid}>
+            {filteredAndSortedGemstones.map((gem) => (
+              <TouchableOpacity key={gem.id} style={styles.gemstoneItem}>
+                <Image
+                  source={gem.image}
+                  style={styles.gemImage}
+                  resizeMode="cover"
+                />
+                <Text style={styles.gemId}>{gem.id}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
         </View>
-      </View>
-    </ScrollView>
+      </ScrollView>
+    </GradientContainer>
   );
 };
 

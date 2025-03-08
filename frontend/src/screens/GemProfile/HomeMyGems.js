@@ -16,6 +16,7 @@ import {
 import { baseScreenStyles } from "../../styles/baseStyles";
 import Header_2 from "../../components/Header_2";
 import BS_NavBar from "../../components/BS_NavBar";
+import GradientContainer from "../../components/GradientContainer";
 
 const searchIcon =
   "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAABmJLR0QA/wD/AP+gvaeTAAAAqklEQVRYhe2UQQ6AIAwEWeL/v6wHY0QK3W0JiYns0VB2h1YUiDQD2oABGdAFaW+AAawR+ybXPQBJupO0SPq6FylBLyeXx56klSkqgCRJc+YARxvQzg1oxwW0E3+PMue8/BR/+wqSZ0B6CpLvgHYKktfAkT+h1eb1i3B1BrRjAO1fB2g/TNqJv0eZc15+ir99BckzID0FyXdAOwXJa+DIn9Bq83oAVx0DTyemB+GeqEUAAAAASUVORK5CYII=";
@@ -149,6 +150,7 @@ const GemCollectionScreen = ({ navigation }) => {
   );
 
   return (
+    <GradientContainer>
     <SafeAreaView style={baseScreenStyles.container}>
       <Header_2 title="My Gems" />
       <StatusBar barStyle="light-content" />
@@ -238,6 +240,7 @@ const GemCollectionScreen = ({ navigation }) => {
         </View>
       )}
     </SafeAreaView>
+    </GradientContainer>
   );
 };
 

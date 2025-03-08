@@ -13,6 +13,7 @@ import {
 import { baseScreenStyles } from "../../styles/baseStyles";
 import { useNavigation } from "@react-navigation/native";
 import Header_1 from "../../components/Header_1";
+import GradientContainer from "../../components/GradientContainer";
 
 const MenuItem = ({ image, title, onPress }) => (
   <TouchableOpacity style={styles.menuItem} onPress={onPress}>
@@ -53,6 +54,7 @@ const HomePageCustomer = ({ navigation }) => {
   };
 
   return (
+    <GradientContainer>
     <SafeAreaView style={baseScreenStyles.container}>
       <Header_1 title="Home" />
       <View style={styles.content}>
@@ -69,6 +71,7 @@ const HomePageCustomer = ({ navigation }) => {
         </View>
       </View>
     </SafeAreaView>
+    </GradientContainer>
   );
 };
 

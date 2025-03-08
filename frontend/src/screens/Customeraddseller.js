@@ -12,6 +12,7 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import Header_2 from '../components/Header_2';
 import { baseScreenStyles } from '../styles/baseStyles';
+import GradientContainer from "../components/GradientContainer";
 
 const App = () => {
   const [data, setData] = useState([
@@ -84,7 +85,7 @@ const App = () => {
   );
 
   return (
-    
+    <GradientContainer>
     <SafeAreaView style={baseScreenStyles.container}>
       <Header_2 title="My Sellers" />
       <View style={styles.innercontainer}>
@@ -113,6 +114,7 @@ const App = () => {
       </ScrollView>
       </View>
     </SafeAreaView>
+    </GradientContainer>
   );
 };
 

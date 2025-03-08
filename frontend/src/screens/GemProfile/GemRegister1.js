@@ -28,6 +28,7 @@ import ImageCropPicker from "react-native-image-crop-picker";
 import { gemTypeItems } from "./gemTypes"; // Import gem types from gemTypes.js
 import axios from 'axios';
 import { API_URL } from '../../config/api';
+import GradientContainer from "../../components/GradientContainer";
 
 // Update IMAGE_CONSTRAINTS
 const IMAGE_CONSTRAINTS = {
@@ -302,6 +303,7 @@ function GemRegister1Main() {
   };
 
   return (
+    <GradientContainer>
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       style={[baseScreenStyles.container, { zIndex: 1 }]}
@@ -440,6 +442,7 @@ function GemRegister1Main() {
         </View>
       </Modal>
     </KeyboardAvoidingView>
+    </GradientContainer>
   );
 }
 

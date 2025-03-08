@@ -4,6 +4,8 @@ import React from 'react';
 import { View, Text, StyleSheet, FlatList, Image } from 'react-native';
 import { baseScreenStyles } from '../../styles/baseStyles';
 import Header_1 from '../../components/Header_1';
+import GradientContainer from "../../components/GradientContainer";
+
 const Alerts = [
   {
     id: '1',
@@ -31,6 +33,7 @@ const AlertItem = ({ item }) => (
 
 const AlertsScreen = () => {
   return (
+    <GradientContainer>
     <View style={baseScreenStyles.container}>
       <Header_1 title="Alerts"/>
       <FlatList
@@ -39,6 +42,7 @@ const AlertsScreen = () => {
         keyExtractor={item => item.id}
       />
     </View>
+    </GradientContainer>
   );
 };
 

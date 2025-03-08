@@ -14,6 +14,7 @@ import { useNavigation } from "@react-navigation/native";
 import { baseScreenStyles } from "../../styles/baseStyles";
 import SuccessPopup from "../../components/SuccessPopup"; // You are using this, keep it
 import axios from 'axios'; // Import axios
+import GradientContainer from "../../components/GradientContainer";
 
 const SignUpScreen = () => {
   const navigation = useNavigation();
@@ -73,6 +74,7 @@ const SignUpScreen = () => {
   };
 
   return (
+    <GradientContainer>
     <View style={[baseScreenStyles.container]}>
       <View style={styles.container}>
         <Image source={require("../../assets/logo.png")} style={styles.logo} />
@@ -114,6 +116,7 @@ const SignUpScreen = () => {
         message="Sign Up Success!"
       /> */}
     </View>
+    </GradientContainer>
   );
 };
 

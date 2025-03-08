@@ -5,6 +5,7 @@ import {View, Text, Image, StyleSheet, TouchableOpacity, ScrollView} from "react
 import {FontAwesome} from "@expo/vector-icons";
 import Header_2 from "../components/Header_2";
 import { baseScreenStyles } from "../../styles/baseStyles";
+import GradientContainer from "../../components/GradientContainer";
 
 const WorkerOrderTrackDetails = () => {
     const [orderCompleted, setOrderCompleted] = useState(false);
@@ -19,6 +20,7 @@ const WorkerOrderTrackDetails = () => {
     ]
     
     return (
+        <GradientContainer>
         <View style={baseScreenStyles.container}>
             <Header_2 title="Order#: NB01130"/>
             <ScrollView contentContainerStyle={styles.scrollContainer}>
@@ -105,6 +107,7 @@ const WorkerOrderTrackDetails = () => {
             )}
 </ScrollView>
         </View>
+        </GradientContainer>
     );
 };
 

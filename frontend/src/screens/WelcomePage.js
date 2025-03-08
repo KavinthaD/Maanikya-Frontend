@@ -4,6 +4,7 @@ import React, { useEffect, useRef } from "react";
 import { View, StyleSheet, Image, Animated } from "react-native";
 import { baseScreenStyles } from "../styles/baseStyles";
 import LinearGradient from "react-native-linear-gradient";
+import GradientContainer from '../components/GradientContainer';
 
 const WelcomePage = ({ navigation }) => {
   const scaleValue = useRef(new Animated.Value(50)).current;
@@ -28,28 +29,20 @@ const WelcomePage = ({ navigation }) => {
   }, [navigation]);
 
   return (
-    <View style={styles.container}>
-      <LinearGradient
-            colors={baseScreenStyles.backgroundGradient.colors}
-            locations={baseScreenStyles.backgroundGradient.locations}
-            start={baseScreenStyles.backgroundGradient.start}
-            end={baseScreenStyles.backgroundGradient.end}
-            style={{ flex: 1 }}
-          >
-      <View style={baseScreenStyles.container}>
-      <Animated.Image
-        source={require("../assets/logo-gem.png")}
-        style={[
-          styles.logo,
-          {
-            transform: [{ scale: scaleValue }, { translateY: gemTranslateY }],
-          },
-        ]}
-        resizeMode="contain"
-      />
+    <GradientContainer>
+      <View style={styles.container}>
+        <Animated.Image
+          source={require("../assets/logo-gem.png")}
+          style={[
+            styles.logo,
+            {
+              transform: [{ scale: scaleValue }, { translateY: gemTranslateY }],
+            },
+          ]}
+          resizeMode="contain"
+        />
       </View>
-      </LinearGradient>
-    </View>
+    </GradientContainer>
   );
 };
 

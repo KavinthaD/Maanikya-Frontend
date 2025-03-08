@@ -10,6 +10,7 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import { baseScreenStyles } from "../styles/baseStyles";
 import Header_2 from "../components/Header_2";
+import GradientContainer from "../components/GradientContainer";
 
 const personData = {
   name: "Dulith Wanigarathne",
@@ -43,6 +44,7 @@ export default function ConnectedUsers() {
   };
 
   return (
+    <GradientContainer>
     <View style={[baseScreenStyles.container, styles.container]}>
       <Text style={styles.header}>Connect</Text>
 
@@ -101,6 +103,7 @@ export default function ConnectedUsers() {
         )}
       />
     </View>
+    </GradientContainer>
   );
 }
 

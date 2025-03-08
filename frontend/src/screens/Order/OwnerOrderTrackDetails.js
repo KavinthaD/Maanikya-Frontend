@@ -5,6 +5,7 @@ import {View, Text, Image, StyleSheet, TouchableOpacity, ScrollView, FlatList} f
 import {FontAwesome} from "@expo/vector-icons";
 import Header_2 from "../components/Header_2";
 import { SafeAreaView } from "react-native-safe-area-context";
+import GradientContainer from "../../components/GradientContainer";
 
 const gems = [
     { id: "BE002", image: require("../assets/gem-images/gem1.jpeg")},
@@ -20,6 +21,7 @@ const OwnerOrderTrackDetails = () => {
     const [rating, setRating] = useState(0);
 
     return (
+        <GradientContainer>
         <SafeAreaView style={styles.container}>
         <Header_2 title=" Order#: NB01130"/>
         <ScrollView contentContainerStyle={styles.scrollContainer}>
@@ -114,6 +116,7 @@ const OwnerOrderTrackDetails = () => {
             )}
             </ScrollView>
         </SafeAreaView>
+        </GradientContainer>
     );
 };
 

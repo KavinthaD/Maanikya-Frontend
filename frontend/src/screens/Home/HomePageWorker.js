@@ -13,6 +13,7 @@ import {
 } from "react-native";
 import { baseScreenStyles } from "../../styles/baseStyles";
 import Header_1 from "../../components/Header_1";
+import GradientContainer from "../../components/GradientContainer"; // Import the GradientContainer
 
 const MenuItem = ({ image, title, onPress }) => (
   <TouchableOpacity style={styles.menuItem} onPress={onPress}>
@@ -34,7 +35,7 @@ const HomeScreen = () => {
     {
       image: require("../../assets/menu-icons/financialRecords.png"),
       title: "Financial\nRecords",
-      screen: "CutterFinancialRecords", 
+      screen: "CutterFinancialRecords",
     },
     {
       image: require("../../assets/menu-icons/scan.png"),
@@ -50,22 +51,24 @@ const HomeScreen = () => {
   };
 
   return (
-    <SafeAreaView style={baseScreenStyles.container}>
-      <Header_1 title="Home" />
-      <View style={styles.content}>
-        <Text style={styles.greeting}>Hello Sriyan,</Text>
-        <View style={styles.menuGrid}>
-          {menuItems.map((item, index) => (
-            <MenuItem
-              key={index}
-              image={item.image}
-              title={item.title}
-              onPress={() => handleMenuItemPress(item.screen)}
-            />
-          ))}
+    <GradientContainer>
+      <SafeAreaView style={baseScreenStyles.container}>
+        <Header_1 title="Home" />
+        <View style={styles.content}>
+          <Text style={styles.greeting}>Hello Sriyan,</Text>
+          <View style={styles.menuGrid}>
+            {menuItems.map((item, index) => (
+              <MenuItem
+                key={index}
+                image={item.image}
+                title={item.title}
+                onPress={() => handleMenuItemPress(item.screen)}
+              />
+            ))}
+          </View>
         </View>
-      </View>
-    </SafeAreaView>
+      </SafeAreaView>
+    </GradientContainer>
   );
 };
 

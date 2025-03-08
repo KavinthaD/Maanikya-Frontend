@@ -15,6 +15,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { baseScreenStyles } from "../styles/baseStyles";
 import Header_1 from "../components/Header_1";
 import BS_NavBar from "../components/BS_NavBar";
+import GradientContainer from "../components/GradientContainer";
 
 const OrderRequestModal = ({ visible, onClose, selectedPerson }) => {
   const [additionalMessage, setAdditionalMessage] = useState("");
@@ -176,68 +177,70 @@ const FavoritesScreen = () => {
   );
 
   return (
-    <SafeAreaView style={baseScreenStyles.container}>
-      <Header_1 title="Favourites" />
-      <View style={styles.searchContainer}>
-        <Ionicons
-          name="search"
-          size={20}
-          color="#666"
-          style={styles.searchIcon}
-        />
-        <TextInput
-          style={styles.searchInput}
-          placeholder="Search person"
-          placeholderTextColor="#666"
-          value={searchQuery}
-          onChangeText={setSearchQuery}
-        />
-      </View>
+    <GradientContainer>
+      <SafeAreaView style={baseScreenStyles.container}>
+        <Header_1 title="Favourites" />
+        <View style={styles.searchContainer}>
+          <Ionicons
+            name="search"
+            size={20}
+            color="#666"
+            style={styles.searchIcon}
+          />
+          <TextInput
+            style={styles.searchInput}
+            placeholder="Search person"
+            placeholderTextColor="#666"
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+          />
+        </View>
 
-      <View style={styles.categoriesContainer}>
-        {categories.map((category) => (
-          <TouchableOpacity
-            key={category}
-            style={[
-              styles.categoryButton,
-              selectedCategory === category && styles.categoryButtonActive,
-            ]}
-            onPress={() => handleCategoryPress(category)}
-          >
-            <Text
+        <View style={styles.categoriesContainer}>
+          {categories.map((category) => (
+            <TouchableOpacity
+              key={category}
               style={[
-                styles.categoryText,
-                selectedCategory === category && styles.categoryTextActive,
+                styles.categoryButton,
+                selectedCategory === category && styles.categoryButtonActive,
               ]}
+              onPress={() => handleCategoryPress(category)}
             >
-              {category}
-            </Text>
-          </TouchableOpacity>
-        ))}
-      </View>
+              <Text
+                style={[
+                  styles.categoryText,
+                  selectedCategory === category && styles.categoryTextActive,
+                ]}
+              >
+                {category}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </View>
 
-      <FlatList
-        data={filteredFavorites}
-        renderItem={renderFavoriteItem}
-        keyExtractor={(item) => item.id}
-        style={styles.list}
-      />
+        <FlatList
+          data={filteredFavorites}
+          renderItem={renderFavoriteItem}
+          keyExtractor={(item) => item.id}
+          style={styles.list}
+        />
 
-      <TouchableOpacity style={styles.confirmButton} onPress={handleConfirm}>
-        <Text style={styles.confirmButtonText}>Confirm</Text>
-      </TouchableOpacity>
+        <TouchableOpacity style={styles.confirmButton} onPress={handleConfirm}>
+          <Text style={styles.confirmButtonText}>Confirm</Text>
+        </TouchableOpacity>
 
-      <OrderRequestModal
-        visible={modalVisible}
-        onClose={() => {
-          setModalVisible(false);
-          setSelectedPerson(null);
-        }}
-        selectedPerson={selectedPerson}
-      />
+        <OrderRequestModal
+          visible={modalVisible}
+          onClose={() => {
+            setModalVisible(false);
+            setSelectedPerson(null);
+          }}
+          selectedPerson={selectedPerson}
+        />
 
-      <BS_NavBar />
-    </SafeAreaView>
+        <BS_NavBar />
+      </SafeAreaView>
+    </GradientContainer>
   );
 };
 

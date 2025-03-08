@@ -3,8 +3,8 @@ import Modal from "react-native-modal";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import React, { useState, useEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
-import * as ImagePicker from 'expo-image-picker';
-import { encode as base64Encode } from 'base-64';
+import * as ImagePicker from "expo-image-picker";
+import { encode as base64Encode } from "base-64";
 import {
   View,
   Text,
@@ -17,8 +17,10 @@ import {
 } from "react-native";
 import { baseScreenStyles } from "../../styles/baseStyles";
 import Header_1 from "../../components/Header_1";
-import { Camera } from 'expo-camera';
-import { BarCodeScanner } from 'expo-barcode-scanner';
+import { Camera } from "expo-camera";
+import { BarCodeScanner } from "expo-barcode-scanner";
+import GradientContainer from "../../components/GradientContainer";
+
 
 const MenuItem = ({ image, title, onPress }) => (
   <TouchableOpacity style={styles.menuItem} onPress={onPress}>
@@ -43,7 +45,7 @@ const HomeScreen = () => {
   useEffect(() => {
     (async () => {
       const { status } = await Camera.requestCameraPermissionsAsync();
-      setHasPermission(status === 'granted');
+      setHasPermission(status === "granted");
     })();
   }, []);
 
@@ -54,15 +56,15 @@ const HomeScreen = () => {
   const handleBarCodeScanned = ({ data }) => {
     setScanning(false);
     setModalVisible(false);
-    
+
     let finalData = data;
     // Check if the data is a data URL and extract base64
-    if (data.includes('base64,')) {
-      finalData = data.split('base64,')[1];
+    if (data.includes("base64,")) {
+      finalData = data.split("base64,")[1];
     }
-    
-    navigation.navigate("MyGems", { 
-      qrCodeImage: finalData
+
+    navigation.navigate("MyGems", {
+      qrCodeImage: finalData,
     });
   };
 
@@ -73,9 +75,13 @@ const HomeScreen = () => {
 
   const handleScanFromGallery = async () => {
     try {
-      const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-      if (status !== 'granted') {
-        Alert.alert('Permission needed', 'Please grant camera roll permissions');
+      const { status } =
+        await ImagePicker.requestMediaLibraryPermissionsAsync();
+      if (status !== "granted") {
+        Alert.alert(
+          "Permission needed",
+          "Please grant camera roll permissions"
+        );
         return;
       }
 
@@ -94,26 +100,26 @@ const HomeScreen = () => {
           const scannedBarcodes = await BarCodeScanner.scanFromURLAsync(
             result.assets[0].uri
           );
-          
+
           if (scannedBarcodes.length > 0) {
             const scannedUrl = scannedBarcodes[0].data;
-            console.log('Scanned URL:', scannedUrl);
-            
+            console.log("Scanned URL:", scannedUrl);
+
             setModalVisible(false);
-            navigation.navigate("MyGems", { 
-              qrCodeUrl: scannedUrl // Changed from qrCodeImage to qrCodeUrl
+            navigation.navigate("MyGems", {
+              qrCodeUrl: scannedUrl, // Changed from qrCodeImage to qrCodeUrl
             });
           } else {
-            Alert.alert('Error', 'No valid QR code found in the image');
+            Alert.alert("Error", "No valid QR code found in the image");
           }
         } catch (error) {
-          console.error('QR scanning error:', error);
-          Alert.alert('Error', 'Failed to scan QR code');
+          console.error("QR scanning error:", error);
+          Alert.alert("Error", "Failed to scan QR code");
         }
       }
     } catch (error) {
-      console.error('Gallery error:', error);
-      Alert.alert('Error', 'Failed to process image');
+      console.error("Gallery error:", error);
+      Alert.alert("Error", "Failed to process image");
     }
   };
 
@@ -166,6 +172,7 @@ const HomeScreen = () => {
   };
 
   return (
+    <GradientContainer>
     <View style={baseScreenStyles.container}>
       {scanning ? (
         <Camera
@@ -177,7 +184,7 @@ const HomeScreen = () => {
         >
           <View style={styles.scannerOverlay}>
             <Text style={styles.scannerText}>Align QR code within frame</Text>
-            <TouchableOpacity 
+            <TouchableOpacity
               style={styles.cancelScanButton}
               onPress={() => setScanning(false)}
             >
@@ -203,7 +210,7 @@ const HomeScreen = () => {
           </View>
         </>
       )}
-      
+
       <Modal
         isVisible={isModalVisible}
         onBackdropPress={() => setModalVisible(false)}
@@ -240,6 +247,7 @@ const HomeScreen = () => {
         </View>
       </Modal>
     </View>
+    </GradientContainer>
   );
 };
 
@@ -355,24 +363,24 @@ const styles = StyleSheet.create({
   },
   scannerOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.5)',
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: "rgba(0,0,0,0.5)",
+    justifyContent: "center",
+    alignItems: "center",
   },
   scannerText: {
-    color: 'white',
+    color: "white",
     fontSize: 16,
     marginBottom: 20,
   },
   cancelScanButton: {
     padding: 12,
-    backgroundColor: '#f8d7da',
+    backgroundColor: "#f8d7da",
     borderRadius: 8,
     marginTop: 20,
   },
   cancelScanButtonText: {
     fontSize: 16,
-    color: '#721c24',
+    color: "#721c24",
   },
 });
 

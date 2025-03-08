@@ -17,7 +17,7 @@ import {
 } from "react-native";
 import { baseScreenStyles } from "../../styles/baseStyles";
 import Header_1 from "../../components/Header_1";
-import { Camera } from 'expo-camera';
+import { CameraView, useCameraPermissions } from 'expo-camera';
 import { BarCodeScanner } from 'expo-barcode-scanner';
 
 const MenuItem = ({ image, title, onPress }) => (
@@ -38,14 +38,27 @@ const HomeScreen = () => {
   const navigation = useNavigation();
   const [isModalVisible, setModalVisible] = useState(false);
   const [scanning, setScanning] = useState(false);
-  const [hasPermission, setHasPermission] = useState(null);
+  const [permission, requestPermission] = useCameraPermissions();
 
-  useEffect(() => {
-    (async () => {
-      const { status } = await Camera.requestCameraPermissionsAsync();
-      setHasPermission(status === 'granted');
-    })();
-  }, []);
+  // Replace old useEffect with new permission check
+  if (!permission) {
+    // Camera permissions are still loading
+    return <View />;
+  }
+
+  if (!permission.granted) {
+    return (
+      <View style={styles.container}>
+        <Text style={styles.message}>We need your permission to use the camera</Text>
+        <TouchableOpacity 
+          style={styles.permissionButton}
+          onPress={requestPermission}
+        >
+          <Text style={styles.buttonText}>Grant Permission</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  }
 
   const handleQrScan = () => {
     setModalVisible(true);
@@ -62,7 +75,7 @@ const HomeScreen = () => {
     }
     
     navigation.navigate("MyGems", { 
-      qrCodeImage: finalData
+      qrCodeUrl: finalData // Changed from qrCodeImage to qrCodeUrl
     });
   };
 
@@ -168,12 +181,13 @@ const HomeScreen = () => {
   return (
     <View style={baseScreenStyles.container}>
       {scanning ? (
-        <Camera
+        <CameraView
           style={StyleSheet.absoluteFillObject}
-          onBarCodeScanned={handleBarCodeScanned}
-          barCodeScannerSettings={{
-            barCodeTypes: [BarCodeScanner.Constants.BarCodeType.qr],
+          facing="back"
+          barcodeScannerSettings={{
+            barCodeTypes: ["qr"],
           }}
+          onBarcodeScanned={handleBarCodeScanned}
         >
           <View style={styles.scannerOverlay}>
             <Text style={styles.scannerText}>Align QR code within frame</Text>
@@ -184,7 +198,7 @@ const HomeScreen = () => {
               <Text style={styles.cancelScanButtonText}>Cancel</Text>
             </TouchableOpacity>
           </View>
-        </Camera>
+        </CameraView>
       ) : (
         <>
           <Header_1 title="Home" />
@@ -373,6 +387,17 @@ const styles = StyleSheet.create({
   cancelScanButtonText: {
     fontSize: 16,
     color: '#721c24',
+  },
+  permissionButton: {
+    backgroundColor: '#2196F3',
+    padding: 12,
+    borderRadius: 8,
+    marginTop: 20,
+  },
+  message: {
+    fontSize: 16,
+    textAlign: 'center',
+    marginBottom: 20,
   },
 });
 

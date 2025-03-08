@@ -4,7 +4,7 @@ import { useNavigation } from "@react-navigation/native";
 import {Ionicons} from "@expo/vector-icons"
 import Header_2 from "../components/Header_2";
 import { baseScreenStyles } from "../styles/baseStyles";
-import LinearGradient from "react-native-linear-gradient";
+import GradientContainer from "../components/GradientContainer";
 import { TouchableWithoutFeedback } from "react-native";
 
 const SellerProfile = () => {
@@ -34,14 +34,9 @@ const SellerProfile = () => {
     };
 
     return (
+        <GradientContainer>
         <View style={baseScreenStyles.container}>
             <Header_2 title="My Sellers"/>
-            <LinearGradient
-                colors={baseScreenStyles.backgroundGradient.colors}
-                locations={baseScreenStyles.backgroundGradient.locations}
-                start={baseScreenStyles.backgroundGradient.start}
-                end={baseScreenStyles.backgroundGradient.end}
-                style={{ flex: 1 }}>
             <View style={styles.profileSection}>
                 <Image source={require("../assets/seller.png")} style={styles.profileImage} />
                 <Text style={styles.name}>{seller.name}</Text>
@@ -114,8 +109,8 @@ const SellerProfile = () => {
                     </View>
                 </TouchableWithoutFeedback>
             </Modal>
-            </LinearGradient>
         </View>
+        </GradientContainer>
     );
 };
 

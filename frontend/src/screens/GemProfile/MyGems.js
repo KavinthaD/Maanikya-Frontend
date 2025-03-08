@@ -6,7 +6,7 @@ import QRCode from 'react-native-qrcode-svg'; // Import QR library
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons, FontAwesome5 } from '@expo/vector-icons'; // Import icons
 import axios from "axios"; // Import axios
-import { API_URL, ENDPOINTS } from "../../config/api"; // Import the API URL and endpoints
+import { API_URL, ENDPOINTS } from "../../config/api-local"; // Import the API URL and endpoints
 
 const MyGems = ({ route, navigation }) => {
   //to conntrol QR popups
@@ -115,8 +115,8 @@ const MyGems = ({ route, navigation }) => {
       ? new Date(gemDetails.createdAt).toISOString().split('T')[0]
       : "N/A"}</Text>
         <Text style={styles.detailText}>Identification - {gemDetails?.details?.gemType || "N/A"}</Text>
-        <Text style={styles.detailText}>Weight - {gemDetails?.details?.weight?.toString() || "N/A"}</Text>
-        <Text style={styles.detailText}>Measurements - {gemDetails?.details?.dimensions || "N/A"}</Text>
+        <Text style={styles.detailText}>Weight - {gemDetails?.details?.weight?.toString() || "N/A"} ct</Text>
+        <Text style={styles.detailText}>Measurements - {gemDetails?.details?.dimensions || "N/A"} mm</Text>
         <Text style={styles.detailText}>Shape - {gemDetails?.details?.gemShape || "N/A"}</Text>
         <Text style={styles.detailText}>Color - {gemDetails?.details?.color || "N/A"}</Text>
         <Text style={styles.detailText}>Additional Information -  {gemDetails?.details?.extraInfo || "N/A"}</Text>

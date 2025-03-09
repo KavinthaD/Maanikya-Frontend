@@ -15,15 +15,25 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontSize: 16,
   },
-  blueButton: {
-    backgroundColor: "#005A8C",
+  Button2: {
+    marginTop: 15,
+    marginBottom: 15,
+    backgroundColor: "#0082A7",
+    width: "100%",
     padding: 15,
     borderRadius: 10,
-    width: "95%",
+    alignSelf: "center",
+  },
+  
+  Button1: {
+    backgroundColor: "#498b9c",
+    padding: 15,
+    borderRadius: 10,
+    width: "100%",
     alignSelf: "center",
   },
   helperText: {
-    color: "grey",
+    color: "#a6a6a6",
     fontSize: 15,
     marginTop: 5,
     textAlign: "center",

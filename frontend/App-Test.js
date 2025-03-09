@@ -25,6 +25,9 @@ import PurposeSelectionPage from "./src/screens/Auth/PurposeSelectionPage";
 import OwnerOrderTrackDetails from "./src/screens/Order/OwnerOrderTrackDetails";
 import SellerProfile from "./src/screens/MySellerFullProfile";
 import { baseScreenStyles } from "./src/styles/baseStyles";
+import Tracker from "./src/screens/Order/Tracker";
+import CompletedTracker from "./src/screens/Order/CompletedTracker";
+import OngoingTracker from "./src/screens/Order/OngoingTracker";
 
 const Stack = createNativeStackNavigator();
 
@@ -50,7 +53,7 @@ export default function App() {
               options={{
                 headerShown: false,
               }}
-              component={GemRegister1}
+              component={CompletedTracker}
             />
            
             {/* Add other screens here */}

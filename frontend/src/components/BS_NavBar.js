@@ -75,13 +75,13 @@ const TabButton = (props) => {
   useEffect(() => {
     if (focused) {
       viewRef.current.animate({
-        0: { scale: 1.4 },
-        1: { scale: 1.7 },
+        0: { scale: 1.2 },
+        1: { scale: 1.5 },
       });
     } else {
       viewRef.current.animate({
-        0: { scale: 1.7 },
-        1: { scale: 1.4 },
+        0: { scale: 1.5 },
+        1: { scale: 1.2 },
       });
     }
   }, [focused]);
@@ -113,7 +113,7 @@ export default function BS_NavBar() {
         screenOptions={{
           headerShown: false,
           tabBarStyle: {
-           
+            backgroundColor:"#c1e2f7",
             height: 60,
             position: "absolute",
             margin: 16,
@@ -141,7 +141,7 @@ export default function BS_NavBar() {
 
 const styles = StyleSheet.create({
   container: {
-  
+    
     flex: 1,
     justifyContent: "center",
     alignItems: "center",

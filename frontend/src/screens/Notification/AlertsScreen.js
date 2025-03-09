@@ -1,111 +1,69 @@
-//Screen Creator : Mehara
-
 import React from "react";
-import { View, Text, FlatList, Image, StyleSheet } from "react-native";
+import { View, Text, FlatList, Image, StatusBar, StyleSheet } from "react-native";
+import LinearGradient from 'react-native-linear-gradient';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { baseScreenStyles } from "../../styles/baseStyles";
+import GradientContainer from "../../components/GradientContainer";
 
+// Alert data
 const alerts = [
   {
     id: "1",
-    name: "Mehara",
-    action: "just finished the burning process",
-    gem: "BS001 gem",
-    image: "../assets/seller.png",
+    name: "Mehara Wilfred",
+    action: "Updated Order #:",
+    gem: "MN30045",
+    image: require("../../assets/seller.png"),
   },
-
   {
     id: "2",
-    name: "Tilmi",
-    action: "just finished the cutting process",
-    gem: "BS002 gem lot",
-    image: "../assets/seller.png",
+    name: "Tilmi Premarathna",
+    action: "Updated Order #:",
+    gem: "MN4567",
+    image: require("../../assets/seller.png"),
   },
-
   {
     id: "3",
-    name: "Thulani",
-    action: "was given your EM002 gem lot one month ago.",
-    gem: "",
-    image: "../assets/seller.png",
+    name: "Thulani Kalutuwawa",
+    action: "was sent Order #: MN5649",
+    suffix: "1 Month ago",
+    image: require("../../assets/seller.png"),
   },
-
   {
     id: "4",
-    name: "Kavintha",
+    name: "Kavintha Dinushan",
     action: "is interested in your",
     gem: "YS101 gem",
-    image: "../assets/seller.png",
+    image: require("../../assets/seller.png"),
   },
-
   {
     id: "5",
-    name: "Isum",
-    action: "just sent you an update on your",
-    gem: "ER2004 gem lot",
-    image: "../assets/seller.png",
+    name: "Isum Perera",
+    action: "Updated Order #:",
+    gem: "MN9867",
+    image: require("../../assets/seller.png"),
   },
-
   {
     id: "6",
-    name: "Sansidu",
-    action: "just finished the cutting and burning process of your",
-    gem: "ED304 gem lot",
-    image: "../assets/seller.png",
-  },
-
-  {
-    id: "7",
-    name: "Dulith",
-    action: "just sent you an update on your",
-    gem: "JRK185 gem lot",
-    image: "../assets/seller.png",
+    name: "Dulith Wanigrathne",
+    action: "Updated Order#:",
+    gem: "MN6789",
+    image: require("../../assets/seller.png"),
   },
 ];
 
-const AlertsScreen = () => {
-  const renderItem = ({ item }) => (
-    <View style={styles.alertItem}>
-      <Image source={{ uri: item.image }} style={styles.avatar} />
-      <View style={styles.textContainer}>
-        <Text style={styles.alertText}>
-          <Text style={styles.bold}>{item.name}</Text> {item.action}{" "}
-          <Text style={styles.bold}>{item.gem}</Text>
-        </Text>
-      </View>
-    </View>
-  );
-
-  return (
-    <View style={styles.container}>
-      <FlatList
-        data={alerts}
-        keyExtractor={(item) => item.id}
-        renderItem={renderItem}
-        showsVerticalScrollIndicator={false}
-      />
-    </View>
-  );
-};
-
-const styles = StyleSheet.create({
-  container: {
+// Alert-specific styles
+const alertStyles = StyleSheet.create({
+  alertList: {
     flex: 1,
-    backgroundColor: "#f0f4f8",
   },
-  header: {
-    fontSize: 20,
-    fontWeight: "bold",
-    textAlign: "center",
-    paddingVertical: 15,
-    backgroundColor: "#007BFF",
-    color: "#fff",
+  alertListContent: {
+    padding: 16,
   },
-  alertItem: {
+  alertContainer: {
     flexDirection: "row",
-    backgroundColor: "#ffffff",
-    marginHorizontal: 15,
-    marginVertical: 8,
-    borderRadius: 8,
-    padding: 10,
+    marginVertical: 6,
+    borderRadius: 12,
+    padding: 12,
     elevation: 3,
   },
   avatar: {
@@ -120,11 +78,64 @@ const styles = StyleSheet.create({
   },
   alertText: {
     fontSize: 14,
-    color: "#333",
+    color: "#000",
   },
-  bold: {
+  boldName: {
     fontWeight: "bold",
+    color: "#000",
+  },
+  boldGem: {
+    fontWeight: "bold",
+    color: "#000",
   },
 });
+
+const AlertsScreen = ({ navigation }) => {
+  const renderItem = ({ item }) => (
+    <LinearGradient
+      colors={['#ACB1B7', '#4C4E51']}
+      start={{ x: 0, y: 0 }}
+      end={{ x: 1, y: 0 }}
+      style={alertStyles.alertContainer}
+    >
+      <Image source={item.image} style={alertStyles.avatar} />
+      <View style={alertStyles.textContainer}>
+        <Text style={alertStyles.alertText}>
+          <Text style={alertStyles.boldName}>{item.name}</Text>
+          <Text> {item.action} </Text>
+          <Text style={alertStyles.boldGem}>{item.gem}</Text>
+          {item.suffix && <Text> {item.suffix}</Text>}
+        </Text>
+      </View>
+    </LinearGradient>
+  );
+
+  return (
+    <GradientContainer>
+    
+      <StatusBar
+        barStyle="light-content"
+        backgroundColor="transparent"
+        translucent={true}
+      />
+      <SafeAreaView style={baseScreenStyles.container}>
+        
+        
+        
+        <FlatList
+          data={alerts}
+          keyExtractor={(item) => item.id}
+          renderItem={renderItem}
+          showsVerticalScrollIndicator={false}
+          style={alertStyles.alertList}
+          contentContainerStyle={alertStyles.alertListContent}
+        />
+
+        
+        
+      </SafeAreaView>
+      </GradientContainer>
+  );
+};
 
 export default AlertsScreen;

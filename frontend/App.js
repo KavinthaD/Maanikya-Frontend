@@ -19,7 +19,6 @@ import OwnerFinancialRecords from "./src/screens/Financial/ownerFinancialRecords
 import ConnectScreen from "./src/screens/ConnectScreen";
 import GemOnDisplay from "./src/screens/GemOnDisplay";
 import ProfileScreen from "./src/screens/ConnectedUsers";
-import FavoritesScreen from "./src/screens/Favorites";
 import Orders from "./src/screens/Order/Orders";
 import Login from "./src/screens/Auth/Login";
 import SignUpBusiness from "./src/screens/Auth/SignUpBusiness";
@@ -35,11 +34,12 @@ import BusinessOwnerProfile from "./src/screens/UserProfile/BusinessOwnerProfile
 import HomePageCustomer from "./src/screens/Home/HomePageCustomer";
 import BurnerFinancialRecords from "./src/screens/Financial/BurnerFinancialRecords";
 import CutterFinancialRecords from "./src/screens/Financial/CutterFinancialRecords";
-
+import FavoritesScreen from "./src/screens/Favorites";
 import InProgressTrackerScreen from "./src/screens/Order/InProgressTracker";
 import CompletedTrackerScreen from "./src/screens/Order/CompletedTracker";
 import Customeraddseller from "./src/screens/Customeraddseller";
 import SellerProfile from "./src/screens/MySellerFullProfile";
+import BusinessOwnerEditProfile from "./src/screens/UserProfile/BusinessOwnerEditProfile";
 const Stack = createNativeStackNavigator();
 
 const App = () => {
@@ -165,9 +165,14 @@ const App = () => {
               options={{ headerShown: false }}
             />
             <Stack.Screen
-              name="FavoritesScreen "
-              component={FavoritesScreen}
+              name="BusinessOwnerEditProfile"
+              component={BusinessOwnerEditProfile}
               options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="FavoritesScreen"
+              options={{headerShown: false,}}
+              component={FavoritesScreen}
             />
             <Stack.Screen
               name="Orders"

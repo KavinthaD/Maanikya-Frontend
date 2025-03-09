@@ -14,7 +14,7 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import { baseScreenStyles } from "../styles/baseStyles";
 import Header_1 from "../components/Header_1";
-import BS_NavBar from "../components/BS_NavBar";
+
 import GradientContainer from "../components/GradientContainer";
 
 const OrderRequestModal = ({ visible, onClose, selectedPerson }) => {
@@ -238,7 +238,7 @@ const FavoritesScreen = () => {
           selectedPerson={selectedPerson}
         />
 
-        <BS_NavBar />
+       
       </SafeAreaView>
     </GradientContainer>
   );

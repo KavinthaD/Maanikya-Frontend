@@ -23,7 +23,7 @@ const BusinessOwnerEditProfile = ({ navigation }) => {
       <View style={styles.profileContainer}>
         <Image
           source={
-            profilePhoto ? { uri: profilePhoto } : require("../assets/logo.png")
+            profilePhoto ? { uri: profilePhoto } : require("../../assets/logo.png")
           }
           style={styles.profilePhoto}
         />

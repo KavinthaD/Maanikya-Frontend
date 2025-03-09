@@ -5,7 +5,7 @@ import Header_2 from "../../components/Header_2";
 import GradientContainer from "../../components/GradientContainer";
 import LinearGradient from "react-native-linear-gradient";
 
-const OwnerFinancialRecords = () => {
+const CutterFinancialRecords = () => {
   return (
     <GradientContainer>
       <View style={[baseScreenStyles.container]}>

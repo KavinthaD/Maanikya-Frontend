@@ -53,7 +53,7 @@ const BusinessOwnerProfile = ({ navigation, route }) => {
 
   return (
     <GradientContainer>
-    <SafeAreaView style={[baseScreenStyles.container,styles.container]}>
+ 
     <SafeAreaView style={[baseScreenStyles.container, styles.container]}>
       {/*Handling profile pic and edit button*/}
       <View style={styles.profileContainer}>

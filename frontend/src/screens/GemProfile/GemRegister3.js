@@ -159,6 +159,10 @@ export default function Gem_register_3() {
     const date = new Date(dateString);
     return date.toISOString().split("T")[0]; // This will return YYYY-MM-DD format
   };
+  const handleHome = async () => {
+    navigation.navigate("BS_NavBar", { screen: "Home" });
+  };
+  
 
   return (
     <GradientContainer>
@@ -208,6 +212,10 @@ export default function Gem_register_3() {
           </View>
         </View>
         <View style={styles.buttonContainer}>
+        <TouchableOpacity style={baseScreenStyles.Button3} onPress={handleHome}>
+          <Text style={baseScreenStyles.buttonText}>Go Back Home</Text>
+        </TouchableOpacity>
+
         <TouchableOpacity style={baseScreenStyles.Button2} onPress={handleShare}>
           <Text style={baseScreenStyles.buttonText}>Share QR code</Text>
         </TouchableOpacity>
@@ -262,7 +270,7 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     width: "100%",
-    marginTop: 50,
+    marginTop: 30,
     
   },
   sendButton: {

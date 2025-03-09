@@ -15,6 +15,13 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontSize: 16,
   },
+  Button3: {
+    backgroundColor: "#5a72a1",
+    padding: 5,
+    borderRadius: 10,
+    width: "40%",
+    alignSelf: "center",
+  },
   Button2: {
     marginTop: 15,
     marginBottom: 15,

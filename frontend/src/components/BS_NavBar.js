@@ -110,6 +110,7 @@ export default function BS_NavBar() {
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <Tab.Navigator
+       initialRouteName="Home"
         screenOptions={{
           headerShown: false,
           tabBarStyle: {

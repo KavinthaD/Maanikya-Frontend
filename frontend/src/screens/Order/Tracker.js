@@ -7,7 +7,7 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import { baseScreenStyles } from "../../styles/baseStyles";
 import GradientContainer from '../../components/GradientContainer';
 
-const Tracker = () => {
+const Tracker = ({navigation}) => {
   //manage the search option
   const [search, setSearch] = useState("");
 
@@ -49,9 +49,7 @@ const Tracker = () => {
 
   return (
     <GradientContainer>
-      <SafeAreaView style={styles.container}>
-        
-
+      <SafeAreaView style={baseScreenStyles.container}>
         <View style={styles.searchBar}>
           <Ionicons name="search" size={20} color="#888" style={styles.searchIcon} />
           <TextInput
@@ -64,7 +62,7 @@ const Tracker = () => {
         </View>
 
         {/*In progress gems*/}
-        <TouchableOpacity style={styles.sectionContainer}>
+        <TouchableOpacity style={styles.sectionContainer} onPress={() => navigation.navigate("InProgressTrackerScreen")}>
           <Text style={styles.subTopicProgress}>In Progress {'>'}</Text>
           <FlatList
             data={selectedGems}
@@ -76,7 +74,7 @@ const Tracker = () => {
         </TouchableOpacity>
 
         {/*Completed gems*/}
-        <TouchableOpacity style={styles.sectionContainer}>
+        <TouchableOpacity style={styles.sectionContainer} onPress ={()=> navigation.navigate("CompletedTrackerScreen")}>
           <Text style={styles.subTopicCompleted}>Completed {'>'}</Text>
           <FlatList
             data={completeGem}

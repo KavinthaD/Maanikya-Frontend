@@ -16,6 +16,7 @@ import { useNavigation } from "@react-navigation/native";
 import axios from "axios"; // Import axios
 import AsyncStorage from "@react-native-async-storage/async-storage"; // Import AsyncStorage
 import GradientContainer from "../../components/GradientContainer"; // Import the GradientContainer
+import { API_URL, ENDPOINTS } from '../../config/api'; 
 
 const Login = () => {
   const navigation = useNavigation();
@@ -51,7 +52,7 @@ const Login = () => {
     }
 
     try {
-      const response = await axios.post("http://10.0.2.2:5000/api/auth/login", {
+      const response = await axios.post(`${API_URL}${ENDPOINTS.LOGIN}`, { 
         // Replace with your backend URL if different
         email: email,
         password: password,

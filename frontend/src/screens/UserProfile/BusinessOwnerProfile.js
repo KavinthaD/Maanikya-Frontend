@@ -6,20 +6,26 @@ import axios from "axios";
 import { Ionicons, FontAwesome5 } from '@expo/vector-icons';
 import { baseScreenStyles } from "../../styles/baseStyles";
 import GradientContainer from "../../components/GradientContainer";
-//import AsyncStorage from '@react-native-async-storage/async-storage";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { API_URL, ENDPOINTS } from '../../config/api'; 
+import Header_1 from "../../components/Header_1";
+
 
 const BusinessOwnerProfile = ({ navigation, route }) => {
   //state holds user data
   const [user, setUser] = useState(null);
 
   async function getCurrentUser() {
-    //testing token
-    const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2N2M0NWRmMWZlYWFhMzc5YmQzYTMxOGQiLCJ1c2VybmFtZSI6ImpvaG5kb2UiLCJsb2dpblJvbGUiOiJHZW0gYnVzaW5lc3Mgb3duZXIiLCJ0eXBlIjoiYnVzaW5lc3MiLCJpYXQiOjE3NDE0NDA0MDMsImV4cCI6MTc0MTUyNjgwM30.R__Woqu8KAMQHP8PHgroFfWCcMvw17ahlq-90BPkG1g"; // Hardcoded token for testing
-    //to fetch of the current user
-    // const token = await AsyncStorage.getItem('authToken'); 
+    
+    // Get the token from storage
+    const token = await AsyncStorage.getItem("authToken");
+    if (!token) {
+      throw new Error("Authentication token not found");
+    }
+
     try {
       //retrieve data from from specific api endpoint
-      const response = await axios.get('http://10.0.2.2:5000/api/auth/me', {
+      const response = await axios.get(`${API_URL}${ENDPOINTS.GET_USER_PROFILE}`, {
         headers: {
           'Authorization': `Bearer ${token}`,  //adding an authorized token
           'Content-Type': 'application/json'    //making content type json
@@ -53,9 +59,9 @@ const BusinessOwnerProfile = ({ navigation, route }) => {
 
   return (
     <GradientContainer>
- 
     <SafeAreaView style={[baseScreenStyles.container, styles.container]}>
       {/*Handling profile pic and edit button*/}
+      <Header_1 title="Profile" />
       <View style={styles.profileContainer}>
         <Image source={{ uri: user.image }} style={styles.profilePic} />
         <TouchableOpacity style={styles.editProfileButton} onPress={() => navigation.navigate("BusinessOwnerEditProfile", { user })}>

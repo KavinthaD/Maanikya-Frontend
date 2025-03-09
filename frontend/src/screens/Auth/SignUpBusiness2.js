@@ -15,6 +15,7 @@ import { baseScreenStyles } from "../../styles/baseStyles";
 import SuccessPopup from "../../components/SuccessPopup"; // You are using this, keep it
 import axios from 'axios'; // Import axios
 import GradientContainer from "../../components/GradientContainer";
+import { API_URL, ENDPOINTS } from '../../config/api'; // Add this import
 
 const SignUpScreen = () => {
   const navigation = useNavigation();
@@ -23,6 +24,7 @@ const SignUpScreen = () => {
   const [reEnterPassword, setReEnterPassword] = useState("");
   const [popupVisible, setPopupVisible] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  
 
   const handleCreateAccount = async () => { // Make async
     if (!username || !password || !reEnterPassword) {
@@ -42,7 +44,7 @@ const SignUpScreen = () => {
     setErrorMessage(""); // Clear previous errors
 
     try {
-      const response = await axios.post('http://10.0.2.2:5000/api/auth/register-step2', { // Step 2 endpoint
+      const response = await axios.post(`${API_URL}${ENDPOINTS.REGISTER_STEP2}`, { 
         username: username,
         password: password,
         confirmPassword: reEnterPassword,

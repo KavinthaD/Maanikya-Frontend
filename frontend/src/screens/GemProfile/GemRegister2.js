@@ -132,7 +132,7 @@ function GemRegister2Main() {
       ...form, // Data from GemRegister2
     };
 
-    console.log("Form Submitted combined with:", combinedForm);
+    console.log("Form Submitted");
 
     // Create FormData object
     const formDataToSend = new FormData();
@@ -162,9 +162,7 @@ function GemRegister2Main() {
       console.log("Form Data to Send:", formDataToSend);
 
       // Get the token from storage
-      // const token = await AsyncStorage.getItem("userToken");
-      const token =
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2N2M0NWRmMWZlYWFhMzc5YmQzYTMxOGQiLCJ1c2VybmFtZSI6ImpvaG5kb2UiLCJsb2dpblJvbGUiOiJHZW0gYnVzaW5lc3Mgb3duZXIiLCJ0eXBlIjoiYnVzaW5lc3MiLCJpYXQiOjE3NDE0OTI1MTQsImV4cCI6MTc0MTU3ODkxNH0.fD1f_x2TFwHCNFR3_jpTaNqjzvMPlR-acuuuiCZQme4";
+      const token = await AsyncStorage.getItem("authToken");
       if (!token) {
         throw new Error("Authentication token not found");
       }
@@ -182,7 +180,7 @@ function GemRegister2Main() {
       );
 
       if (response.status === 201) {
-        console.log("Gem registered successfully:", response.data);
+        console.log("Gem registered successfully:");
         await AsyncStorage.removeItem("gemRegister2Form");
         navigation.navigate("GemRegister3", {
           gemId: response.data.gem.gemId,

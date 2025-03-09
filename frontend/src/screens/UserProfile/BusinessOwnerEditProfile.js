@@ -6,6 +6,9 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons} from "@expo/vector-icons";
 import ImageCropPicker from "react-native-image-crop-picker";
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { API_URL, ENDPOINTS } from '../../config/api'; 
+import GradientContainer from "../../components/GradientContainer";
+import Header_1 from "../../components/Header_1";
 
 const BusinessOwnerEditProfile = ({ navigation, route }) => {
   //Destructuring the user data if available, other wise display null
@@ -101,8 +104,12 @@ const BusinessOwnerEditProfile = ({ navigation, route }) => {
   //handle saving profile data
   const handleSave = async () => {
     try {
-      //const token = await AsyncStorage.getItem('authToken'); // Get the auth token
-      const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2N2M0NWRmMWZlYWFhMzc5YmQzYTMxOGQiLCJ1c2VybmFtZSI6ImpvaG5kb2UiLCJsb2dpblJvbGUiOiJHZW0gYnVzaW5lc3Mgb3duZXIiLCJ0eXBlIjoiYnVzaW5lc3MiLCJpYXQiOjE3NDE0NDA0MDMsImV4cCI6MTc0MTUyNjgwM30.R__Woqu8KAMQHP8PHgroFfWCcMvw17ahlq-90BPkG1g";
+      // Get the token from storage
+      const token = await AsyncStorage.getItem("authToken");
+      if (!token) {
+        throw new Error("Authentication token not found");
+      }
+      
       
       const formData = new FormData();
 
@@ -123,7 +130,7 @@ const BusinessOwnerEditProfile = ({ navigation, route }) => {
       }
 
 
-      const response = await fetch('http://10.0.2.2:5000/api/auth/update-profile', {
+      const response = await fetch(`${API_URL}${ENDPOINTS.UPDATE_PROFILE}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'multipart/form-data',
@@ -146,7 +153,7 @@ const BusinessOwnerEditProfile = ({ navigation, route }) => {
         Alert.alert('Success', 'Profile updated successfully!');
 
         // Navigate back and pass 
-        navigation.navigate('BusinessOwnerProfile', { updatedUser: data.user }); // Pass the updated user data
+        navigation.navigate("BS_NavBar", { screen: "Profiles" });
       } else {
         console.error('Unexpected content type:', contentType);
         Alert.alert('Error', 'Unexpected response from server.');
@@ -158,7 +165,9 @@ const BusinessOwnerEditProfile = ({ navigation, route }) => {
   };
 
   return (
+    <GradientContainer>
     <SafeAreaView style={styles.container}>
+      <Header_1 title="Edit Profile" />
       <KeyboardAvoidingView
           behavior={Platform.OS === "ios" ? "padding" : "height"}
           style={{ flex: 1 }}
@@ -252,13 +261,13 @@ const BusinessOwnerEditProfile = ({ navigation, route }) => {
         </Modal>
       </KeyboardAvoidingView>  
     </SafeAreaView>
+    </GradientContainer>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#9CCDDB",
   },
 
   profileContainer: {

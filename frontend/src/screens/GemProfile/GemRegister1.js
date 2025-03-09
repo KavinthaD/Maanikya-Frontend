@@ -26,18 +26,19 @@ import { FormFieldStyles } from "../../styles/FormFields";
 import Modal from "react-native-modal";
 import ImageCropPicker from "react-native-image-crop-picker";
 import { gemTypeItems } from "./gemTypes"; // Import gem types from gemTypes.js
-import axios from 'axios';
-import { API_URL } from '../../config/api';
+import axios from "axios";
+import { API_URL } from "../../config/api";
 import GradientContainer from "../../components/GradientContainer";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // Update IMAGE_CONSTRAINTS
 const IMAGE_CONSTRAINTS = {
-  maxWidth: 2048,      // Maximum 2K resolution
-  maxHeight: 2048,     // Maximum 2K resolution
-  minWidth: 300,       // Minimum 300px for decent detail
-  minHeight: 300,      // Minimum 300px for decent detail
-  maxSizeMB: 15,       // Increased to 15MB before rejection
-  quality: 0.9,        // Initial quality
+  maxWidth: 2048, // Maximum 2K resolution
+  maxHeight: 2048, // Maximum 2K resolution
+  minWidth: 300, // Minimum 300px for decent detail
+  minHeight: 300, // Minimum 300px for decent detail
+  maxSizeMB: 15, // Increased to 15MB before rejection
+  quality: 0.9, // Initial quality
   allowedFormats: ["jpeg", "jpg", "png"],
   aspectRatio: [1, 1], // Square images for consistency
 };
@@ -89,107 +90,105 @@ function GemRegister1Main() {
   const validateImage = async (imageResult) => {
     try {
       const fileSizeMB = imageResult.size / (1024 * 1024);
-      
+
       const validationResults = {
         isValid: true,
         errors: [],
-        needsCompression: false
+        needsCompression: false,
       };
-  
+
       // Check minimum dimensions
-      if (imageResult.width < IMAGE_CONSTRAINTS.minWidth || 
-          imageResult.height < IMAGE_CONSTRAINTS.minHeight) {
+      if (
+        imageResult.width < IMAGE_CONSTRAINTS.minWidth ||
+        imageResult.height < IMAGE_CONSTRAINTS.minHeight
+      ) {
         validationResults.isValid = false;
         validationResults.errors.push(
           `Image must be at least ${IMAGE_CONSTRAINTS.minWidth}x${IMAGE_CONSTRAINTS.minHeight} pixels`
         );
       }
-  
+
       // Check if file is extremely large
       if (fileSizeMB > IMAGE_CONSTRAINTS.maxSizeMB) {
         validationResults.isValid = false;
         validationResults.errors.push(
-          `Image file is too large (${fileSizeMB.toFixed(1)}MB). Maximum allowed size is ${IMAGE_CONSTRAINTS.maxSizeMB}MB`
+          `Image file is too large (${fileSizeMB.toFixed(
+            1
+          )}MB). Maximum allowed size is ${IMAGE_CONSTRAINTS.maxSizeMB}MB`
         );
       }
-  
+
       return validationResults;
     } catch (error) {
-      console.error('Image validation error:', error);
+      console.error("Image validation error:", error);
       return {
         isValid: false,
-        errors: ['Failed to validate image'],
-        needsCompression: false
+        errors: ["Failed to validate image"],
+        needsCompression: false,
       };
     }
   };
 
-  // Add new function to handle AI analysis
-  const handleAIAnalysis = async (imagePath) => {
+  // Update handleAIAnalysis function
+  const handleAIAnalysis = async (imageInfo) => {
     try {
-      // Get file stats before sending
-      const imageInfo = await ImageCropPicker.openCropper({
-        path: imagePath,
-        ...imagePickerConfig
-      });
-      
-      console.log('Image Stats before API call:', {
+      console.log("Image Stats before API call:", {
         width: imageInfo.width,
         height: imageInfo.height,
         size: `${(imageInfo.size / (1024 * 1024)).toFixed(2)}MB`,
-        mime: imageInfo.mime
+        mime: imageInfo.mime,
       });
 
       // Validate image before processing
-      const validationResult = await validateImage(imagePath);
+      const validationResult = await validateImage(imageInfo); // Changed from imagePath to imageInfo
       if (!validationResult.isValid) {
-        Alert.alert(
-          "Invalid Image",
-          validationResult.errors.join('\n'),
-          [{ text: "OK" }]
-        );
+        Alert.alert("Invalid Image", validationResult.errors.join("\n"), [
+          { text: "OK" },
+        ]);
         return;
       }
 
-      // const token = await AsyncStorage.getItem('token');
-      const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2N2M0NWRmMWZlYWFhMzc5YmQzYTMxOGQiLCJ1c2VybmFtZSI6ImpvaG5kb2UiLCJsb2dpblJvbGUiOiJHZW0gYnVzaW5lc3Mgb3duZXIiLCJ0eXBlIjoiYnVzaW5lc3MiLCJpYXQiOjE3NDEzNjQwMzUsImV4cCI6MTc0MTQ1MDQzNX0.31cQSPkbqwLrE9qLBekOXzLLyqdUBiwmsPxSoHNkuV4"; // Temporary token for testing
+      const token = await AsyncStorage.getItem('authToken');
       if (!token) {
-        throw new Error('No authentication token found');
+        throw new Error("No authentication token found");
       }
-  
+
       const formData = new FormData();
-      formData.append('image', {
-        uri: Platform.OS === 'ios' ? imagePath.replace('file://', '') : imagePath,
-        type: 'image/jpeg',
-        name: 'gem_image.jpg',
+      formData.append("image", {
+        uri:
+          Platform.OS === "ios"
+            ? imageInfo.path.replace("file://", "")
+            : imageInfo.path, // Changed from imagePath to imageInfo.path
+        type: "image/jpeg",
+        name: "gem_image.jpg",
       });
-  
+
       const response = await axios.post(`${API_URL}/api/ai/analyze`, formData, {
         headers: {
-          'Content-Type': 'multipart/form-data',
-          'Authorization': `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${token}`,
         },
       });
-      
+
       // Log raw response data
-      console.log('Raw API Response:', JSON.stringify(response.data, null, 2));
+      console.log("Raw API Response:", JSON.stringify(response.data, null, 2));
 
       if (response.data.success) {
         const analysis = response.data.analysis;
-        
+
         // Find the matching gem type in gemTypeItems
-        const matchingGemType = gemTypeItems.find(
-          item => item.label === analysis.gemTypes[0]
-        )?.value || analysis.gemTypes[0];
+        const matchingGemType =
+          gemTypeItems.find((item) => item.label === analysis.gemTypes[0])
+            ?.value || analysis.gemTypes[0];
 
         // Auto-fill the form with AI analysis results
-        setForm(prev => ({
+        setForm((prev) => ({
           ...prev,
           color: analysis.color.name,
           gemShape: analysis.shape.toLowerCase(),
-          gemType: matchingGemType, // Use the matching value from gemTypeItems
+          gemType: matchingGemType,
           description: analysis.description,
-          photos: [imagePath],
+          photos: [imageInfo.path], // Changed from imagePath to imageInfo.path
         }));
 
         Alert.alert(
@@ -198,10 +197,11 @@ function GemRegister1Main() {
         );
       }
     } catch (error) {
-      console.error('AI Analysis error:', error);
+      console.error("AI Analysis error:", error);
       Alert.alert(
         "AI Analysis Failed",
-        error.response?.data?.message || "Could not analyze the image. Please fill the form manually."
+        error.response?.data?.message ||
+          "Could not analyze the image. Please fill the form manually."
       );
     }
   };
@@ -228,10 +228,10 @@ function GemRegister1Main() {
       if (result) {
         const validation = await validateImage(result);
         if (!validation.isValid) {
-          Alert.alert("Invalid Image", validation.errors.join('\n'));
+          Alert.alert("Invalid Image", validation.errors.join("\n"));
           return;
         }
-        await handleAIAnalysis(result.path);
+        await handleAIAnalysis(result);
       }
     } catch (error) {
       console.error("Error taking photo:", error);
@@ -246,10 +246,10 @@ function GemRegister1Main() {
       if (result) {
         const validation = await validateImage(result);
         if (!validation.isValid) {
-          Alert.alert("Invalid Image", validation.errors.join('\n'));
+          Alert.alert("Invalid Image", validation.errors.join("\n"));
           return;
         }
-        await handleAIAnalysis(result.path);
+        await handleAIAnalysis(result);
       }
     } catch (error) {
       console.error("Error choosing from gallery:", error);
@@ -290,9 +290,9 @@ function GemRegister1Main() {
 
     // Log image details before navigation
     if (form.photos[0]) {
-      console.log('Image Stats passed to GemRegister2:', {
+      console.log("Image Stats passed to GemRegister2:", {
         path: form.photos[0],
-        formData: form
+        formData: form,
       });
     }
 
@@ -305,144 +305,148 @@ function GemRegister1Main() {
   return (
     <GradientContainer>
       <Header_1 title="Add gem" />
-    <KeyboardAvoidingView
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-      style={[baseScreenStyles.container, { zIndex: 1 }]}
-      keyboardVerticalOffset={Platform.OS === "ios" ? 64 : 0}
-    >
-      <ScrollView
-        contentContainerStyle={{ flexGrow: 1 }}
-        nestedScrollEnabled={true}
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        style={[baseScreenStyles.container, { zIndex: 1 }]}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 64 : 0}
       >
-        <View style={[FormFieldStyles.innerContainer, { zIndex: 2 }]}>
-          <View style={styles.buttonContent}>
+        <ScrollView
+          contentContainerStyle={{ flexGrow: 1 }}
+          nestedScrollEnabled={true}
+        >
+          <View style={[FormFieldStyles.innerContainer, { zIndex: 2 }]}>
+            <View style={styles.buttonContent}>
+              <TouchableOpacity
+                style={styles.cameraButtonContainer}
+                onPress={handleCameraPress}
+              >
+                {form.photos.length > 0 ? (
+                  <Image
+                    source={{ uri: form.photos[0] }}
+                    style={styles.selectedImage}
+                  />
+                ) : (
+                  <Icon name="camera-alt" size={60} color="#000" />
+                )}
+              </TouchableOpacity>
+              <Text style={styles.addPhotoButtonText}>AI auto filler</Text>
+              <Text style={baseScreenStyles.helperText}>
+                Below details can be filled with image of the gem or by manually
+                (please beaware AI auto filler can make mistakes.)
+              </Text>
+            </View>
+            <TextInput
+              style={FormFieldStyles.input}
+              placeholder="Gem color *"
+              value={form.color}
+              onChangeText={(value) => handleInputChange("color", value)}
+            />
+            <DropDownPicker
+              open={openShape}
+              value={form.gemShape}
+              items={shapeItems}
+              setOpen={setOpenShape}
+              setValue={(callback) => handleInputChange("gemShape", callback())}
+              placeholder="Select Gem Shape *"
+              style={FormFieldStyles.dropdown}
+              dropDownContainerStyle={FormFieldStyles.dropdownContainer}
+              listItemContainerStyle={FormFieldStyles.listItemContainer}
+              listItemLabelStyle={FormFieldStyles.listItemLabel}
+              placeholderStyle={FormFieldStyles.placeholder}
+              textStyle={FormFieldStyles.dropdownText}
+              theme="LIGHT"
+              showArrowIcon={true}
+              showTickIcon={false}
+              zIndex={3000}
+              zIndexInverse={2000}
+              listMode="SCROLLVIEW"
+              scrollViewProps={{
+                nestedScrollEnabled: true,
+              }}
+            />
+            <DropDownPicker
+              open={openGemType}
+              value={form.gemType}
+              items={gemTypeItems}
+              setOpen={setOpenGemType}
+              setValue={(callback) => handleInputChange("gemType", callback())}
+              placeholder="Select Gem Type *"
+              style={FormFieldStyles.dropdown}
+              dropDownContainerStyle={FormFieldStyles.dropdownContainer}
+              listItemContainerStyle={FormFieldStyles.listItemContainer}
+              listItemLabelStyle={FormFieldStyles.listItemLabel}
+              placeholderStyle={FormFieldStyles.placeholder}
+              textStyle={FormFieldStyles.dropdownText}
+              theme="LIGHT"
+              showArrowIcon={true}
+              showTickIcon={false}
+              zIndex={2000}
+              zIndexInverse={3000}
+              listMode="SCROLLVIEW"
+              scrollViewProps={{
+                nestedScrollEnabled: true,
+              }}
+            />
+            <TextInput
+              style={[FormFieldStyles.input, FormFieldStyles.descriptionInput]}
+              placeholder="Description"
+              value={form.description}
+              onChangeText={(value) => handleInputChange("description", value)}
+              multiline={true}
+              numberOfLines={4}
+              textAlignVertical="top"
+            />
             <TouchableOpacity
-              style={styles.cameraButtonContainer}
-              onPress={handleCameraPress}
+              style={[
+                baseScreenStyles.Button1,
+                styles.Button1,
+                {
+                  opacity:
+                    form.color && form.gemShape && form.gemType ? 1 : 0.5,
+                },
+              ]}
+              onPress={handleContinue}
             >
-              {form.photos.length > 0 ? (
-                <Image
-                  source={{ uri: form.photos[0] }}
-                  style={styles.selectedImage}
-                />
-              ) : (
-                <Icon name="camera-alt" size={60} color="#000" />
-              )}
+              <Text style={baseScreenStyles.buttonText}>Continue</Text>
             </TouchableOpacity>
-            <Text style={styles.addPhotoButtonText}>AI auto filler</Text>
-            <Text style={baseScreenStyles.helperText}>
-              Below details can be filled with image of the gem or by manually (please beaware AI auto filler can make mistakes.)
-            </Text>
           </View>
-          <TextInput
-            style={FormFieldStyles.input}
-            placeholder="Gem color *"
-            value={form.color}
-            onChangeText={(value) => handleInputChange("color", value)}
-          />
-          <DropDownPicker
-            open={openShape}
-            value={form.gemShape}
-            items={shapeItems}
-            setOpen={setOpenShape}
-            setValue={(callback) => handleInputChange("gemShape", callback())}
-            placeholder="Select Gem Shape *"
-            style={FormFieldStyles.dropdown}
-            dropDownContainerStyle={FormFieldStyles.dropdownContainer}
-            listItemContainerStyle={FormFieldStyles.listItemContainer}
-            listItemLabelStyle={FormFieldStyles.listItemLabel}
-            placeholderStyle={FormFieldStyles.placeholder}
-            textStyle={FormFieldStyles.dropdownText}
-            theme="LIGHT"
-            showArrowIcon={true}
-            showTickIcon={false}
-            zIndex={3000}
-            zIndexInverse={2000}
-            listMode="SCROLLVIEW"
-            scrollViewProps={{
-              nestedScrollEnabled: true,
-            }}
-          />
-          <DropDownPicker
-            open={openGemType}
-            value={form.gemType}
-            items={gemTypeItems}
-            setOpen={setOpenGemType}
-            setValue={(callback) => handleInputChange("gemType", callback())}
-            placeholder="Select Gem Type *"
-            style={FormFieldStyles.dropdown}
-            dropDownContainerStyle={FormFieldStyles.dropdownContainer}
-            listItemContainerStyle={FormFieldStyles.listItemContainer}
-            listItemLabelStyle={FormFieldStyles.listItemLabel}
-            placeholderStyle={FormFieldStyles.placeholder}
-            textStyle={FormFieldStyles.dropdownText}
-            theme="LIGHT"
-            showArrowIcon={true}
-            showTickIcon={false}
-            zIndex={2000}
-            zIndexInverse={3000}
-            listMode="SCROLLVIEW"
-            scrollViewProps={{
-              nestedScrollEnabled: true,
-            }}
-          />
-          <TextInput
-            style={[FormFieldStyles.input, FormFieldStyles.descriptionInput]}
-            placeholder="Description"
-            value={form.description}
-            onChangeText={(value) => handleInputChange("description", value)}
-            multiline={true}
-            numberOfLines={4}
-            textAlignVertical="top"
-          />
-          <TouchableOpacity
-            style={[
-              baseScreenStyles.Button1,
-              styles.Button1,
-              { opacity: form.color && form.gemShape && form.gemType ? 1 : 0.5 },
-            ]}
-            onPress={handleContinue}
-          >
-            <Text style={baseScreenStyles.buttonText}>Continue</Text>
-          </TouchableOpacity>
-        </View>
-      </ScrollView>
-      <Modal
-        isVisible={isModalVisible}
-        onBackdropPress={() => setModalVisible(false)}
-        onSwipeComplete={() => setModalVisible(false)}
-        swipeDirection="down"
-        style={styles.modal}
-      >
-        <View style={styles.modalContent}>
-          <View style={styles.modalHeader}>
-            <View style={styles.modalIndicator} />
+        </ScrollView>
+        <Modal
+          isVisible={isModalVisible}
+          onBackdropPress={() => setModalVisible(false)}
+          onSwipeComplete={() => setModalVisible(false)}
+          swipeDirection="down"
+          style={styles.modal}
+        >
+          <View style={styles.modalContent}>
+            <View style={styles.modalHeader}>
+              <View style={styles.modalIndicator} />
+            </View>
+            <TouchableOpacity
+              style={styles.modalButton}
+              onPress={handleTakePhoto}
+            >
+              <Icon name="camera-alt" size={24} color="#170969" />
+              <Text style={styles.modalButtonText}>Take Photo</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.modalButton}
+              onPress={handleChooseFromGallery}
+            >
+              <Icon name="photo-library" size={24} color="#170969" />
+              <Text style={styles.modalButtonText}>Choose from Gallery</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.modalButton, styles.cancelButton]}
+              onPress={() => setModalVisible(false)}
+            >
+              <Text style={[styles.modalButtonText, styles.cancelButtonText]}>
+                Cancel
+              </Text>
+            </TouchableOpacity>
           </View>
-          <TouchableOpacity
-            style={styles.modalButton}
-            onPress={handleTakePhoto}
-          >
-            <Icon name="camera-alt" size={24} color="#170969" />
-            <Text style={styles.modalButtonText}>Take Photo</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.modalButton}
-            onPress={handleChooseFromGallery}
-          >
-            <Icon name="photo-library" size={24} color="#170969" />
-            <Text style={styles.modalButtonText}>Choose from Gallery</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[styles.modalButton, styles.cancelButton]}
-            onPress={() => setModalVisible(false)}
-          >
-            <Text style={[styles.modalButtonText, styles.cancelButtonText]}>
-              Cancel
-            </Text>
-          </TouchableOpacity>
-        </View>
-      </Modal>
-    </KeyboardAvoidingView>
+        </Modal>
+      </KeyboardAvoidingView>
     </GradientContainer>
   );
 }

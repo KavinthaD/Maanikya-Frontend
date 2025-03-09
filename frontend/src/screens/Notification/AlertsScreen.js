@@ -4,6 +4,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { baseScreenStyles } from "../../styles/baseStyles";
 import GradientContainer from "../../components/GradientContainer";
+import Header_1 from "../../components/Header_1";
 
 // Alert data
 const alerts = [
@@ -92,6 +93,7 @@ const alertStyles = StyleSheet.create({
 
 const AlertsScreen = ({ navigation }) => {
   const renderItem = ({ item }) => (
+
     <LinearGradient
       colors={['#ACB1B7', '#4C4E51']}
       start={{ x: 0, y: 0 }}
@@ -112,7 +114,7 @@ const AlertsScreen = ({ navigation }) => {
 
   return (
     <GradientContainer>
-    
+    <Header_1 title="Profile" />
       <StatusBar
         barStyle="light-content"
         backgroundColor="transparent"

@@ -15,6 +15,7 @@ import SuccessPopup from "../../components/SuccessPopup";
 import axios from 'axios'; // Import axios
 import { useNavigation } from "@react-navigation/native";
 import GradientContainer from "../../components/GradientContainer";
+import { API_URL, ENDPOINTS } from '../../config/api'; 
 
 const SignUpScreenCustomer = ({ navigation }) => {
   const [firstName, setFirstName] = useState("");
@@ -46,7 +47,8 @@ const SignUpScreenCustomer = ({ navigation }) => {
     setErrorMessage(""); // Clear previous errors
 
     try {
-      const response = await axios.post('http://10.0.2.2:5000/api/auth/register-customer', { // Customer register endpoint
+      const response = await axios.post(`${API_URL}${ENDPOINTS.REGISTER_CUSTOMER}`, { 
+        firstName: firstName,
         firstName: firstName,
         lastName: lastName,
         email: email,

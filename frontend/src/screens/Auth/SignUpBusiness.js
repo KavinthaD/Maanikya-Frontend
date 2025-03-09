@@ -7,6 +7,7 @@ import { useNavigation } from '@react-navigation/native';
 import { baseScreenStyles } from "../../styles/baseStyles";
 import axios from 'axios'; // Import axios
 import GradientContainer from '../../components/GradientContainer';
+import { API_URL, ENDPOINTS } from '../../config/api'; // Add this import
 
 const SignUpBusiness = () => {
     const navigation = useNavigation();
@@ -47,7 +48,8 @@ const SignUpBusiness = () => {
 
 
         try {
-            const response = await axios.post('http://10.0.2.2:5000/api/auth/register-step1', { 
+            const response = await axios.post(`${API_URL}${ENDPOINTS.REGISTER_STEP1}`, { 
+                firstName: firstName,
                 firstName: firstName,
                 lastName: lastName,
                 email: email,

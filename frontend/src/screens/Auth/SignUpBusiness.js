@@ -90,14 +90,14 @@ const SignUpBusiness = () => {
                     <TextInput
                         style={[styles.input, styles.inputHalf]}
                         placeholder="First Name"
-                        placeholderTextColor="#888"
+                        placeholderTextColor="#fff"
                         value={firstName}
                         onChangeText={setFirstName}
                     />
                     <TextInput
                         style={[styles.input, styles.inputHalf]}
                         placeholder="Last Name"
-                        placeholderTextColor="#888"
+                        placeholderTextColor="#fff"
                         value={lastName}
                         onChangeText={setLastName}
                     />
@@ -106,7 +106,7 @@ const SignUpBusiness = () => {
                 <TextInput
                     style={styles.input}
                     placeholder="email@domain.com"
-                    placeholderTextColor="#888"
+                    placeholderTextColor="#fff"
                     value={email}
                     onChangeText={setEmail}
                     keyboardType="email-address"
@@ -114,7 +114,7 @@ const SignUpBusiness = () => {
                 <TextInput
                     style={styles.input}
                     placeholder="Phone number"
-                    placeholderTextColor="#888"
+                    placeholderTextColor="#fff"
                     value={phoneNumber}
                     onChangeText={setPhoneNumber}
                     keyboardType="phone-pad"
@@ -181,12 +181,14 @@ const styles = StyleSheet.create({
     input: {
         width: '100%',
         height: 50,
-        borderColor: "#E0E0E0",
+        borderColor: 'rgba(92, 125, 134, 0.7) ',
         borderWidth: 1,
         borderRadius: 12,
         paddingHorizontal: 10,
         marginBottom: 10,
-        backgroundColor: 'rgba(255, 255, 255, 0.8)',
+        backgroundColor: 'rgba(92, 125, 134, 0.7) ',
+        
+       
     },
     inputHalf: {
         width: '48%',
@@ -194,16 +196,17 @@ const styles = StyleSheet.create({
     pickerContainer: {
         width: '100%',
         height: 50,
-        borderColor: '#E0E0E0',
+        borderColor: 'rgba(92, 125, 134, 0.7) ',
         borderWidth: 1,
         borderRadius: 12,
         marginBottom: 40,
         overflow: 'hidden',
-        backgroundColor: 'rgba(255, 255, 255, 0.8)',
+        backgroundColor: 'rgba(92, 125, 134, 0.7) ',
     },
     picker: {
         height: '100%',
         width: '100%',
+        color: '#FFFFFF',
     },
     pickerItem: {
         color: '#888',
@@ -213,7 +216,7 @@ const styles = StyleSheet.create({
         marginBottom: 10,
     },
     continueButton: {
-        backgroundColor: '#000080',
+        backgroundColor: '#7FACBB',
         borderRadius: 5,
         width: '100%',
         height: 40,
@@ -221,7 +224,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     continueButtonText: {
-        color: '#fff',
+        color: '#000',
         fontSize: 16,
     },
 

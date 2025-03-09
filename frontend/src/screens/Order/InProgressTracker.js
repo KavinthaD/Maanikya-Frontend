@@ -118,10 +118,10 @@ const styles = StyleSheet.create({
   },
   notificationItem: {
     flexDirection: "row",
-    backgroundColor: "#7B96AC",
+    backgroundColor: 'rgba(123, 150, 172, 0.4)',
     padding: 5,
     marginBottom: 15,
-    borderRadius: 12,
+    borderRadius: 8,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
@@ -132,6 +132,7 @@ const styles = StyleSheet.create({
   },
   textContainer: {
     flex: 1,
+    
   },
   imageContainer: {
     justifyContent: "center",

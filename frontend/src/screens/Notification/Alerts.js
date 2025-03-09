@@ -51,12 +51,17 @@ const styles = StyleSheet.create({
   alertItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: '#F2F8FF',
-    marginBottom: 10,
-    backgroundColor: '#ffffff',
+    padding: 8,
+    borderBottomWidth: 6,
+    borderBottomColor: 'rgba(0, 0, 0, 0.4)',
+    marginBottom: 7,
+    backgroundColor: 'rgba(123, 150, 172, 0.2)',
     marginTop: 15, 
+    borderRadius:12,
+    width:"96%",
+    alignSelf: 'center',
+    
+    
   },
   alertImage: {
     width: 50,
@@ -66,6 +71,8 @@ const styles = StyleSheet.create({
   },
   alertText: {
     fontSize: 16,
+    color: '#FFFFFF',
+    fontWeight: 'bold',
   },
 });
 

@@ -81,7 +81,7 @@ const SignUpScreen = () => {
         <TextInput
           style={styles.input}
           placeholder="Username"
-          placeholderTextColor="#888"
+          placeholderTextColor="#fff"
           value={username}
           onChangeText={setUsername}
         />
@@ -90,7 +90,7 @@ const SignUpScreen = () => {
           style={styles.input}
           placeholder="Password"
           secureTextEntry={true}
-          placeholderTextColor="#888"
+          placeholderTextColor="#fff"
           value={password}
           onChangeText={setPassword}
         />
@@ -98,7 +98,7 @@ const SignUpScreen = () => {
           style={styles.input}
           placeholder="Re-enter password"
           secureTextEntry={true}
-           placeholderTextColor="#888"
+           placeholderTextColor="#fff"
            value={reEnterPassword}
           onChangeText={setReEnterPassword}
         />
@@ -140,26 +140,26 @@ const styles = StyleSheet.create({
   input: {
     width: "130%",
     height: 50,
-    borderColor: "gray",
+    borderColor: 'rgba(92, 125, 134, 0.7) ',
     borderWidth: 1,
     borderRadius: 12,
     paddingHorizontal: 20,
-    marginTop:30,
-    backgroundColor: "rgba(255, 255, 255, 0.8)",
+    marginTop:20,
+    backgroundColor:'rgba(92, 125, 134, 0.7) ',
     opacity:0.8,
   },
 
   button: {
     width: "130%",
     height: 40,
-    backgroundColor: "#1a237e",
+    backgroundColor: '#7FACBB',
     borderRadius: 5,
     alignItems: "center",
     justifyContent: "center",
     marginTop: 70,
   },
   buttonText: {
-    color: "#fff",
+    color: "black",
     fontSize: 16,
   },
   errorText: {

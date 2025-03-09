@@ -20,6 +20,7 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import ViewShot from "react-native-view-shot";
 import { BackHandler } from "react-native";
 import GradientContainer from "../../components/GradientContainer";
+import Header_1 from "../../components/Header_1";
 
 export default function Gem_register_3() {
   const navigation = useNavigation();
@@ -158,16 +159,16 @@ export default function Gem_register_3() {
     const date = new Date(dateString);
     return date.toISOString().split("T")[0]; // This will return YYYY-MM-DD format
   };
+  const handleHome = async () => {
+    navigation.navigate("BS_NavBar", { screen: "Home" });
+  };
+  
 
   return (
     <GradientContainer>
+      <Header_1 title="Add gem succes" />
     <View style={baseScreenStyles.container}>
       <View style={styles.innerContainer}>
-        <View>
-          <Text style={baseScreenStyles.helperText}>
-            Gem Registered Successfully! Qr code is generated below
-          </Text>
-        </View>
         <ViewShot
           ref={qrContainerRef}
           options={{
@@ -195,7 +196,11 @@ export default function Gem_register_3() {
             </View>
           </View>
         </ViewShot>
-
+        <View>
+          <Text style={baseScreenStyles.helperText}>
+            Gem Registered Successfully! Qr code is generated
+          </Text>
+        </View>
         <View style={styles.infoContainer}>
           <View style={styles.infoBox}>
             <Text style={styles.infoText}>ID - {gemId || "Loading..."}</Text>
@@ -206,16 +211,21 @@ export default function Gem_register_3() {
             </Text>
           </View>
         </View>
+        <View style={styles.buttonContainer}>
+        <TouchableOpacity style={baseScreenStyles.Button3} onPress={handleHome}>
+          <Text style={baseScreenStyles.buttonText}>Go Back Home</Text>
+        </TouchableOpacity>
 
-        <TouchableOpacity style={styles.sendButton} onPress={handleShare}>
+        <TouchableOpacity style={baseScreenStyles.Button2} onPress={handleShare}>
           <Text style={baseScreenStyles.buttonText}>Share QR code</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          style={[baseScreenStyles.blueButton, styles.blueButton]}
+          style={[baseScreenStyles.Button1, styles.blueButton]}
           onPress={handleSaveToDevice}
         >
           <Text style={baseScreenStyles.buttonText}>Save to device</Text>
         </TouchableOpacity>
+        </View>
       </View>
     </View>
     </GradientContainer>
@@ -261,7 +271,7 @@ const styles = StyleSheet.create({
   buttonContainer: {
     width: "100%",
     marginTop: 30,
-    gap: 10,
+    
   },
   sendButton: {
     marginTop: 10,

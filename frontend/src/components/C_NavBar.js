@@ -103,7 +103,7 @@ export default function C_NavBar() {
         screenOptions={{
           headerShown: false,
           tabBarStyle: {
-            backgroundColor: "#072D44",
+            backgroundColor:"#c1e2f7",
             height: 60,
             position: "absolute",
             margin: 16,

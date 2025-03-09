@@ -64,7 +64,7 @@ export default function GemRegister1() {
         name="GemRegister1Main"
         component={GemRegister1Main}
         options={{
-          header: () => <Header_1 title="Add Gem" />,
+          headerShown: false,
         }}
       />
       <Stack.Screen
@@ -304,6 +304,7 @@ function GemRegister1Main() {
 
   return (
     <GradientContainer>
+      <Header_1 title="Add gem" />
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       style={[baseScreenStyles.container, { zIndex: 1 }]}
@@ -316,7 +317,7 @@ function GemRegister1Main() {
         <View style={[FormFieldStyles.innerContainer, { zIndex: 2 }]}>
           <View style={styles.buttonContent}>
             <TouchableOpacity
-              style={styles.buttonContainer}
+              style={styles.cameraButtonContainer}
               onPress={handleCameraPress}
             >
               {form.photos.length > 0 ? (
@@ -386,7 +387,7 @@ function GemRegister1Main() {
             }}
           />
           <TextInput
-            style={[FormFieldStyles.input, styles.descriptionInput]}
+            style={[FormFieldStyles.input, FormFieldStyles.descriptionInput]}
             placeholder="Description"
             value={form.description}
             onChangeText={(value) => handleInputChange("description", value)}
@@ -396,9 +397,9 @@ function GemRegister1Main() {
           />
           <TouchableOpacity
             style={[
-              baseScreenStyles.blueButton,
-              styles.blueButton,
-              { opacity: form.color && form.gemShape ? 1 : 0.5 },
+              baseScreenStyles.Button1,
+              styles.Button1,
+              { opacity: form.color && form.gemShape && form.gemType ? 1 : 0.5 },
             ]}
             onPress={handleContinue}
           >
@@ -447,13 +448,11 @@ function GemRegister1Main() {
 }
 
 const styles = StyleSheet.create({
-  finalizeButton: {
-    backgroundColor: "#170969",
-    padding: 10,
-    borderRadius: 5,
+  Button1: {
+    marginTop: 10,
   },
 
-  buttonContainer: {
+  cameraButtonContainer: {
     alignItems: "center",
     justifyContent: "center",
     marginVertical: 10,
@@ -479,14 +478,6 @@ const styles = StyleSheet.create({
     width: 80,
     height: 80,
     borderRadius: 5,
-  },
-  helperText: {
-    color: "grey",
-    fontSize: 15,
-    marginTop: 5,
-    textAlign: "center",
-    fontStyle: "italic",
-    fontWeight: "bold",
   },
   addPhotoButtonText: {
     fontSize: 20,

@@ -1,10 +1,9 @@
-//Screen Creator : Mehara
-
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { baseScreenStyles } from "../../styles/baseStyles";
 import Header_2 from "../../components/Header_2";
 import GradientContainer from "../../components/GradientContainer";
+import LinearGradient from "react-native-linear-gradient";
 
 const OwnerFinancialRecords = () => {
   return (
@@ -17,40 +16,37 @@ const OwnerFinancialRecords = () => {
             <Text style={styles.totalProfitAmount}>LKR. 780 000</Text>
           </View>
 
-          <View style={styles.recordList}>
-            <View style={styles.recordItem}>
-              <Text>Burner cs001</Text>
-              <Text>LKR. 100 000</Text>
-            </View>
-          </View>
+          {[ 
+            { title: "Buying cost", amount: "LKR. 100 000" },
+            { title: "Cutting cost", amount: "LKR. 20 000" },
+            { title: "Burning cost", amount: "LKR. 60 000" },
+            { title: "Sold price", amount: "LKR. 600 000" }
+          ].map((item, index) => (
+            <LinearGradient 
+              key={index} 
+              colors={["#7B96AC", "#323D46"]} 
+              start={{x: 0, y: 0}} 
+              end={{x: 0, y: 1}} 
+              style={styles.recordList}
+            >
+              <View style={styles.recordItem}>
+                <Text style={styles.recordText}>{item.title}</Text>
+                <Text style={styles.recordText}>{item.amount}</Text>
+              </View>
+            </LinearGradient>
+          ))}
 
-          <View style={styles.recordList}>
-            <View style={styles.recordItem}>
-              <Text>Cutter cs002</Text>
-              <Text>LKR. 20 000</Text>
-            </View>
-          </View>
-
-          <View style={styles.recordList}>
-            <View style={styles.recordItem}>
-              <Text>Cutter PJ004</Text>
-              <Text>LKR. 60 000</Text>
-            </View>
-          </View>
-
-          <View style={styles.recordList}>
-            <View style={styles.recordItem}>
-              <Text>Burner IHP006</Text>
-              <Text>LKR. 600 000</Text>
-            </View>
-          </View>
-
-          <View style={styles.recordList}>
+          <LinearGradient 
+            colors={["#7B96AC", "#323D46"]} 
+            start={{x: 0, y: 0}} 
+            end={{x: 0, y: 1}} 
+            style={styles.recordList}
+          >
             <View style={[styles.recordItem, styles.lastRecordItem]}>
-              <Text>Total</Text>
-              <Text>LKR. 780 000</Text>
+              <Text style={styles.recordText}>Total</Text>
+              <Text style={styles.recordText}>LKR. 780 000</Text>
             </View>
-          </View>
+          </LinearGradient>
         </View>
       </View>
     </GradientContainer>
@@ -62,36 +58,35 @@ const styles = StyleSheet.create({
     padding: 30,
   },
   totalProfitContainer: {
-    backgroundColor: "#000",
-    padding: 30,
+    backgroundColor: "#072D44",
+    padding: 15,
     marginBottom: 20,
-    alignItems: "center", // Center text horizontally
+    alignItems: "center",
+    borderRadius: 8,
   },
   totalProfitTitle: {
-    fontSize: 18,
-    color: "#0f0",
+    fontSize: 16,
+    color: "#00FF00",
+    marginBottom: 5,
   },
   totalProfitAmount: {
-    fontSize: 24,
+    fontSize: 20,
     fontWeight: "bold",
-    color: "#0f0",
+    color: "#00FF00",
   },
   recordList: {
-    backgroundColor: "#fff",
     borderRadius: 8,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
     marginBottom: 10,
   },
   recordItem: {
     flexDirection: "row",
     justifyContent: "space-between",
-    paddingHorizontal: 60,
-    paddingVertical: 20,
-    borderBottomWidth: 1,
-    borderBottomColor: "#ccc",
+    paddingHorizontal: 20,
+    paddingVertical: 16,
+  },
+  recordText: {
+    color: "#fff",
+    fontSize: 15,
   },
   lastRecordItem: {
     borderBottomWidth: 0,

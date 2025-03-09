@@ -13,8 +13,9 @@ import { Ionicons } from '@expo/vector-icons';
 import Header_2 from '../components/Header_2';
 import { baseScreenStyles } from '../styles/baseStyles';
 import GradientContainer from "../components/GradientContainer";
+import { LinearGradient } from 'expo-linear-gradient';
 
-const App = ({navigation}) => {
+const MySeller = ({navigation}) => {
   const [data, setData] = useState([
     {
       id: 1,
@@ -26,7 +27,7 @@ const App = ({navigation}) => {
     {
       id: 2,
       name: 'Subash Hettiarachchi',
-      company: 'Pixe; Gems',
+      company: 'Pixel Gems',
       rating: 3,
       image: require('../assets/seller.png'), 
     },
@@ -46,137 +47,105 @@ const App = ({navigation}) => {
     },
   ]);
 
-  const handleStarPress = (itemId, starIndex) => {
-    setData(prevData =>
-      prevData.map(item =>
-        item.id === itemId ? { ...item, rating: starIndex + 1 } : item
-      )
-    );
-  };
-
-  const renderStars = (itemId, rating) => {
-    const stars = [];
-    for (let i = 0; i < 5; i++) {
-      stars.push(
-        <TouchableOpacity key={i} onPress={() => handleStarPress(itemId, i)}>
-          <Ionicons
-            name={i < rating ? 'star' : 'star-outline'}
-            size={18}
-            color="#3b82f6"
-          />
-        </TouchableOpacity>
-      );
-    }
-    return <View style={styles.starContainer}>{stars}</View>;
-  };
-
   const renderItem = (item) => (
-    <View style={styles.itemContainer}>
+    <LinearGradient
+      colors={['#CDE3F9', '#798693']}
+      start={{ x: 0, y: 0 }}
+      end={{ x: 1, y: 0 }}
+      style={styles.itemContainer}
+    >
       <Image source={item.image} style={styles.itemImage} />
       <View style={styles.itemDetails}>
         <Text style={styles.itemName}>{item.name}</Text>
         <Text style={styles.itemCompany}>{item.company}</Text>
-        {renderStars(item.id, item.rating)}
       </View>
-      <TouchableOpacity style={styles.viewGemsButton} onPress={() => navigation.navigate("SellerProfile")}>
+      <TouchableOpacity 
+        style={styles.viewGemsButton} 
+        onPress={() => navigation.navigate("SellerProfile")}
+      >
         <Text style={styles.viewGemsText}>View gems</Text>
       </TouchableOpacity>
-    </View>
+    </LinearGradient>
   );
 
   return (
     <GradientContainer>
-    <SafeAreaView style={baseScreenStyles.container}>
-      <Header_2 title="My Sellers" />
-      <View style={styles.innercontainer}>
-      <View style={styles.header}>
-        <TextInput
-          style={styles.searchBar}
-          placeholder="Search person"
-          placeholderTextColor="#888"
-        />
-        <TouchableOpacity style={styles.filterButton}>
-          <Text style={styles.filterText}>Filter</Text>
-        </TouchableOpacity>
-      </View>
+      <SafeAreaView style={baseScreenStyles.container}>
+        <View style={styles.innerContainer}>
+          <View style={styles.headerContainer}>
+            <Text style={styles.recentText}>Recent</Text>
+            <View style={styles.searchContainer}>
+              <Ionicons name="search" size={20} color="#6B7280" style={styles.searchIcon} />
+              <TextInput
+                style={styles.searchInput}
+                placeholder="Search"
+                placeholderTextColor="#6B7280"
+              />
+            </View>
+          </View>
 
-      <TouchableOpacity style={styles.addButton}>
-        <Ionicons name="add" size={24} color="black" />
-      </TouchableOpacity>
-      <Text style={styles.addPersonText}>Add person</Text>
-
-      <ScrollView>
-        {data.map(item => (
-          <React.Fragment key={item.id}>
-            {renderItem(item)}
-          </React.Fragment>
-        ))}
-      </ScrollView>
-      </View>
-    </SafeAreaView>
+          <ScrollView style={styles.scrollContainer}>
+            {data.map(item => (
+              <View key={item.id} style={styles.itemWrapper}>
+                {renderItem(item)}
+              </View>
+            ))}
+          </ScrollView>
+        </View>
+      </SafeAreaView>
     </GradientContainer>
   );
 };
 
 const styles = StyleSheet.create({
-  innercontainer: {
+  innerContainer: {
     flex: 1,
-    backgroundColor: '#9CCDDB',
-    padding: 16,
+    paddingHorizontal: 16,
+    paddingTop: 10,
   },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+  headerContainer: {
     marginBottom: 20,
   },
-  searchBar: {
+  recentText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#E5E7EB',
+    marginBottom: 10,
+    marginLeft: 5,
+  },
+  searchContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'rgba(255, 255, 255, 0.9)',
+    borderRadius: 20,
+    paddingHorizontal: 12,
+    marginBottom: 10,
+  },
+  searchIcon: {
+    marginRight: 8,
+  },
+  searchInput: {
     flex: 1,
     height: 40,
-    backgroundColor: 'white',
-    borderRadius: 20,
-    paddingHorizontal: 16,
-    marginRight: 10,
     color: '#333',
   },
-  filterButton: {
-    backgroundColor: 'white',
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 20,
+  scrollContainer: {
+    flex: 1,
   },
-  filterText: {
-    color: '#333',
-    fontWeight: 'bold',
-  },
-  addButton: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    backgroundColor: 'white',
-    justifyContent: 'center',
-    alignItems: 'center',
-    alignSelf: 'center',
-    marginBottom: 5,
-  },
-  addPersonText: {
-    textAlign: 'center',
-    marginBottom: 20,
-    color: '#333',
+  itemWrapper: {
+    marginBottom: 16,
   },
   itemContainer: {
-    backgroundColor: 'white',
-    borderRadius: 25,
+    borderRadius: 12,
     padding: 16,
-    marginBottom: 16,
     flexDirection: 'row',
     alignItems: 'center',
   },
   itemImage: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    marginRight: 16,
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    marginRight: 12,
   },
   itemDetails: {
     flex: 1,
@@ -184,27 +153,23 @@ const styles = StyleSheet.create({
   itemName: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#333',
+    color: '#333', 
   },
   itemCompany: {
     fontSize: 14,
-    color: '#666',
+    color: '#4B5563', 
   },
   viewGemsButton: {
-    backgroundColor: '#938FEC',
+    backgroundColor: '#312E81',
     paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 20,
+    paddingVertical: 8,
+    borderRadius: 6,
   },
   viewGemsText: {
-    color: '#64748b',
+    color: '#FFFFFF',
     fontWeight: 'bold',
     fontSize: 12,
   },
-  starContainer: {
-    flexDirection: 'row',
-    marginTop: 4,
-  },
 });
 
-export default App;
+export default MySeller;

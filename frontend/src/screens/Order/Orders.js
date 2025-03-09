@@ -84,7 +84,8 @@ const OrderScreen = () => {
     <View style={baseScreenStyles.container}>
       <View style={styles.spacer} />
       <Text style={styles.header}>Orders</Text>
-      <View style={styles.tabContainer}>
+      <View style={{ flexWrap: "wrap", flexDirection: "row", justifyContent: "space-around", marginVertical: 15 }}>
+
         <TouchableOpacity
           onPress={() => setActiveTab("Requested")}
           style={styles.tab}
@@ -142,23 +143,26 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginBottom: 10,
   },
-  tabContainer: {
-    flexDirection: "row",
-    justifyContent: "space-around",
-    backgroundColor: "#fff",
-    paddingVertical: 10,
-  },
+ 
   tab: {
     flex: 1,
     alignItems: "center",
   },
   tabText: {
-    color: "#676765",
     fontWeight: "bold",
+    color: "#000", // Black text color for inactive tabs
+    backgroundColor: "#ffffff", // White background for inactive tabs
+    paddingVertical: 8,
+    paddingHorizontal: 15,
+    borderRadius: 20, // Rounded tabs
   },
   activeTabText: {
-    color: "#007bff",
     fontWeight: "bold",
+    color: "#ffffff", // White text color for the active tab
+    backgroundColor: "#170969", // Dark blue background for the active tab
+    paddingVertical: 8,
+    paddingHorizontal: 15,
+    borderRadius: 20, // Rounded tabs
   },
   scrollView: {
     flex: 1,

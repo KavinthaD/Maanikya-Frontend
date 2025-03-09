@@ -119,9 +119,9 @@ const AlertsScreen = ({ navigation }) => {
         translucent={true}
       />
       <SafeAreaView style={baseScreenStyles.container}>
-        {/* 🚀 Header removed here */}
         
-        {/* Alert List */}
+        
+        
         <FlatList
           data={alerts}
           keyExtractor={(item) => item.id}
@@ -131,7 +131,7 @@ const AlertsScreen = ({ navigation }) => {
           contentContainerStyle={alertStyles.alertListContent}
         />
 
-        {/* ✅ Ensure BS_NavBar is correctly placed */}
+        
         
       </SafeAreaView>
       </GradientContainer>

@@ -24,12 +24,28 @@ import WelcomePage from "./src/screens/WelcomePage";
 import PurposeSelectionPage from "./src/screens/Auth/PurposeSelectionPage";
 import OwnerOrderTrackDetails from "./src/screens/Order/OwnerOrderTrackDetails";
 import SellerProfile from "./src/screens/MySellerFullProfile";
+import { baseScreenStyles } from "./src/styles/baseStyles";
+import Tracker from "./src/screens/Order/Tracker";
+import CompletedTracker from "./src/screens/Order/CompletedTracker";
+import OngoingTracker from "./src/screens/Order/OngoingTracker";
 
 const Stack = createNativeStackNavigator();
 
 export default function App() {
   return (
     <SafeAreaProvider>
+      <SafeAreaView
+        style={{
+          flex: 1,
+          backgroundColor: 'black',
+          paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
+        }}
+      >
+        <StatusBar
+          barStyle="light-content"
+          backgroundColor={baseScreenStyles.container.backgroundColor}
+          translucent={true}
+        />
         <NavigationContainer>
           <Stack.Navigator>
             <Stack.Screen
@@ -37,12 +53,13 @@ export default function App() {
               options={{
                 headerShown: false,
               }}
-              component={SellerProfile}
+              component={CompletedTracker}
             />
            
             {/* Add other screens here */}
           </Stack.Navigator>
         </NavigationContainer>
+        </SafeAreaView>
     </SafeAreaProvider>
   );
 }

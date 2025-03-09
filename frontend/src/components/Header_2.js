@@ -27,15 +27,15 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: "bold",
     textAlign: "center",
-    marginBottom: 1,
     backgroundColor: "#072D44",
     color: "white",
     padding: 10,
+    marginTop: 20,
   },
   backButton: {
     position: "absolute",
     left: 10,
-    top: 15,
+    top: 30,
     zIndex: 1,
   },
 });

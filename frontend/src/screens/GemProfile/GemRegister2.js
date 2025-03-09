@@ -20,7 +20,6 @@ import {
   useFocusEffect,
 } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import Header_1 from "../../components/Header_1";
 import Header_2 from "../../components/Header_2";
 import Gem_register_3 from "./GemRegister3"; // Import GemRegister3
 import axios from "axios"; // Import axios
@@ -35,8 +34,8 @@ export default function GemRegister2({ route }) {
   const { formData } = route.params; // Destructure formData instead of name
 
   return (
-    <GradientContainer>
-    <Stack.Navigator screenOptions={{ headerShown: true }}>
+    
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen
         name="GemRegister2Main"
         component={GemRegister2Main}
@@ -53,7 +52,7 @@ export default function GemRegister2({ route }) {
         }}
       />
     </Stack.Navigator>
-    </GradientContainer>
+    
   );
 }
 
@@ -165,7 +164,7 @@ function GemRegister2Main() {
       // Get the token from storage
       // const token = await AsyncStorage.getItem("userToken");
       const token =
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2N2M0NWRmMWZlYWFhMzc5YmQzYTMxOGQiLCJ1c2VybmFtZSI6ImpvaG5kb2UiLCJsb2dpblJvbGUiOiJHZW0gYnVzaW5lc3Mgb3duZXIiLCJ0eXBlIjoiYnVzaW5lc3MiLCJpYXQiOjE3NDEyNjQzODAsImV4cCI6MTc0MTM1MDc4MH0.8wNR8MUovPVN7trO_BDfVj0IZRykZnQn_gYciKUQTV4";
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2N2M0NWRmMWZlYWFhMzc5YmQzYTMxOGQiLCJ1c2VybmFtZSI6ImpvaG5kb2UiLCJsb2dpblJvbGUiOiJHZW0gYnVzaW5lc3Mgb3duZXIiLCJ0eXBlIjoiYnVzaW5lc3MiLCJpYXQiOjE3NDE0OTI1MTQsImV4cCI6MTc0MTU3ODkxNH0.fD1f_x2TFwHCNFR3_jpTaNqjzvMPlR-acuuuiCZQme4";
       if (!token) {
         throw new Error("Authentication token not found");
       }
@@ -211,6 +210,8 @@ function GemRegister2Main() {
   };
 
   return (
+    <GradientContainer>
+      <Header_2 title="Add gem" />
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       style={[baseScreenStyles.container, { zIndex: 1 }]}
@@ -305,24 +306,26 @@ function GemRegister2Main() {
           />
 
           <TextInput
-            style={FormFieldStyles.input}
+            style={[FormFieldStyles.input, FormFieldStyles.descriptionInput]}
             placeholder="Extra Information"
             value={form.extraInfo}
             onChangeText={(value) => handleInputChange("extraInfo", value)}
             multiline={true}
+            numberOfLines={4}
+            textAlignVertical="top"
             onFocus={() => {
               setTimeout(() => {
                 scrollViewRef.current?.scrollToEnd({ animated: true });
               }, 200);
             }}
           />
-
-          <TouchableOpacity style={styles.backButton} onPress={handleBack}>
+          <View style={styles.buttonContainer}>
+          <TouchableOpacity style={baseScreenStyles.Button2} onPress={handleBack}>
             <Text style={baseScreenStyles.buttonText}>Back</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={[
-              baseScreenStyles.blueButton,
+              baseScreenStyles.Button1,
               {
                 opacity:
                   form.ownerName && form.contactNumber && form.purchasePrice
@@ -334,9 +337,11 @@ function GemRegister2Main() {
           >
             <Text style={baseScreenStyles.buttonText}>Finalize</Text>
           </TouchableOpacity>
+          </View>
         </View>
       </ScrollView>
     </KeyboardAvoidingView>
+    </GradientContainer>
   );
 }
 
@@ -350,7 +355,6 @@ const styles = StyleSheet.create({
   buttonContainer: {
     flexDirection: "column",
     justifyContent: "space-between",
-    marginTop: 20,
   },
   backButton: {
     marginTop: 15,

@@ -5,6 +5,7 @@ import { SafeAreaView,View, Text, Image, TouchableOpacity, StyleSheet } from "re
 
 import { Ionicons, FontAwesome5 } from '@expo/vector-icons'; 
 import { baseScreenStyles } from "../../styles/baseStyles";
+import GradientContainer from "../../components/GradientContainer";
 
 const BusinessOwnerProfile = ({ navigation }) => {
   //sample dataset
@@ -18,6 +19,7 @@ const BusinessOwnerProfile = ({ navigation }) => {
   };
 
   return (
+    <GradientContainer>
     <SafeAreaView style={[baseScreenStyles.container,styles.container]}>
       {/*Handling profile pic and edit button*/}
       <View style={styles.profileContainer}>
@@ -54,6 +56,7 @@ const BusinessOwnerProfile = ({ navigation }) => {
 
       
     </SafeAreaView>
+    </GradientContainer>
   );
 };
 
@@ -62,7 +65,6 @@ const BusinessOwnerProfile = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#A7D7E7",
   },
   profileContainer: {
     backgroundColor: '#ffffff', 

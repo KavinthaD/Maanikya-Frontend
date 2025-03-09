@@ -11,8 +11,6 @@ import * as ScreenOrientation from "expo-screen-orientation";
 import PurposeSelectionPage from "./src/screens/Auth/PurposeSelectionPage";
 import RegisterSelectionPage from "./src/screens/Auth/RegisterSelectionPage";
 import WelcomePage from "./src/screens/WelcomePage";
-import HomePageWorker from "./src/screens/Home/HomePageWorker";
-import HomePageBusiness from "./src/screens/Home/HomePageBusiness";
 import SignUpScreenCustomer from "./src/screens/Auth/SignUpCustomer";
 import GemstoneMarketplace from "./src/screens/Market";
 import OwnerFinancialRecords from "./src/screens/Financial/ownerFinancialRecords";
@@ -32,7 +30,7 @@ import W_NavBar from "./src/components/W_NavBar";
 import GemRegister1 from "./src/screens/GemProfile/GemRegister1";
 import Tracker from "./src/screens/Order/Tracker";
 import BusinessOwnerProfile from "./src/screens/UserProfile/BusinessOwnerProfile";
-import HomePageCustomer from "./src/screens/Home/HomePageCustomer";
+
 import BurnerFinancialRecords from "./src/screens/Financial/BurnerFinancialRecords";
 import CutterFinancialRecords from "./src/screens/Financial/CutterFinancialRecords";
 
@@ -110,23 +108,8 @@ const App = () => {
               options={{ headerShown: false }}
             />
             <Stack.Screen
-              name="HomePageBusiness"
-              component={HomePageBusiness}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="HomePageWorker"
-              component={HomePageWorker}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
               name="C_NavBar"
               component={C_NavBar}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="HomePageCustomer"
-              component={HomePageCustomer}
               options={{ headerShown: false }}
             />
             <Stack.Screen

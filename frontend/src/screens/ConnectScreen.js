@@ -148,7 +148,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     marginTop: 15,
     paddingHorizontal: 10,
-    marginBottom: 5 // Reduced margin at bottom of categories
+    marginBottom: 5 
   },
   categoryTab: {
     paddingVertical: 6,

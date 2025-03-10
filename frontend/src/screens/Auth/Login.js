@@ -148,39 +148,88 @@ const Login = () => {
         <Text style={styles.forgotPassword}>Forgot your password?</Text>
       </TouchableOpacity>
       <TouchableOpacity
-        style={[baseScreenStyles.blueButton, styles.loginButton]}
+        style={[baseScreenStyles.Button1, styles.loginButton]}
         onPress={handleLogin}
       >
         <Text style={styles.loginButtonText}>Log in</Text>
       </TouchableOpacity>
 
       {/* Test Login Buttons */}
-      <View style={styles.testLoginContainer}>
-        <TouchableOpacity
-          style={styles.testLoginButton}
-          onPress={() => handleTestLogin("gem_business_owner")}
-        >
-          <Text style={styles.testLoginButtonText}>B</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.testLoginButton}
-          onPress={() => handleTestLogin("cutter_burner")}
-        >
-          <Text style={styles.testLoginButtonText}>W</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.testLoginButton}
-          onPress={() => handleTestLogin("customer")}
-        >
-          <Text style={styles.testLoginButtonText}>C</Text>
-        </TouchableOpacity>
-      </View>
+      {__DEV__ && (
+        <View style={styles.developerSection}>
+          <Text style={styles.developerTitle}>Developer Buttons</Text>
+          <View style={styles.testLoginContainer}>
+            <TouchableOpacity
+              style={styles.devButton}
+              onPress={() => handleTestLogin("gem_business_owner")}
+            >
+              <Text style={styles.devButtonText}>B</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.devButton}
+              onPress={() => handleTestLogin("cutter_burner")}
+            >
+              <Text style={styles.devButtonText}>W</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.devButton}
+              onPress={() => handleTestLogin("customer")}
+            >
+              <Text style={styles.devButtonText}>C</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      )}
     </View>
     </GradientContainer>
   );
 };
 
 const styles = StyleSheet.create({
+
+  // Add these to your StyleSheet:
+  developerSection: {
+    width: '100%',
+    marginTop: 20,
+    padding: 10,
+    paddingBottom: 20,
+    backgroundColor: 'rgba(0, 0, 0, 0.3)',
+    borderRadius: 10,
+  },
+  developerTitle: {
+    fontSize: 14,
+    color: '#666',
+    textAlign: 'center',
+    marginBottom: 10,
+    fontWeight: '600',
+  },
+  testLoginContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    width: '100%',
+  },
+  devButton: {
+    width: 50,
+    height: 50,
+    borderRadius: 12,
+    backgroundColor: '#2196F3',
+    alignItems: 'center',
+    justifyContent: 'center',
+    elevation: 3,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+  },
+  devButtonText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+
   container: {
     alignItems: "center",
     justifyContent: "center",

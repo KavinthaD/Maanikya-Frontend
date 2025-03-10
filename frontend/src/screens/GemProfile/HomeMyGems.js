@@ -16,7 +16,7 @@ import {
 import { baseScreenStyles } from "../../styles/baseStyles";
 import Header_2 from "../../components/Header_2";
 import BS_NavBar from "../../components/BS_NavBar";
-import GradientContainer from "../../components/GradientContainer";
+import { LinearGradient } from 'expo-linear-gradient';
 
 const searchIcon =
   "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAABmJLR0QA/wD/AP+gvaeTAAAAqklEQVRYhe2UQQ6AIAwEWeL/v6wHY0QK3W0JiYns0VB2h1YUiDQD2oABGdAFaW+AAawR+ybXPQBJupO0SPq6FylBLyeXx56klSkqgCRJc+YARxvQzg1oxwW0E3+PMue8/BR/+wqSZ0B6CpLvgHYKktfAkT+h1eb1i3B1BrRjAO1fB2g/TNqJv0eZc15+ir99BckzID0FyXdAOwXJa+DIn9Bq83oAVx0DTyemB+GeqEUAAAAASUVORK5CYII=";
@@ -150,100 +150,121 @@ const GemCollectionScreen = ({ navigation }) => {
   );
 
   return (
-    <GradientContainer>
-    <SafeAreaView style={baseScreenStyles.container}>
-      <Header_2 title="My Gems" />
-      <View style={styles.header}>
-        <View style={styles.searchSection}>
-          <View style={styles.searchRow}>
-            <View style={styles.searchBar}>
-              <Image source={{ uri: searchIcon }} style={styles.searchIcon} />
-              <TextInput
-                placeholder="Search"
-                style={styles.searchInput}
-                value={searchQuery}
-                onChangeText={setSearchQuery}
+    <LinearGradient
+      colors={[
+        'rgba(107, 131, 145, 1)',
+        'rgba(67, 96, 114, 1)',
+        'rgba(37, 71, 91, 0.88)',
+        'rgba(22, 58, 79, 0.81)',
+        'rgba(7, 45, 68, 0.75)'
+      ]}
+      style={styles.gradientContainer}
+    >
+      <SafeAreaView style={styles.container}>
+        <Header_2 title="My Gems" />
+        <StatusBar barStyle="light-content" />
+
+        <View style={styles.header}>
+          <View style={styles.searchSection}>
+            <View style={styles.searchRow}>
+              <View style={styles.searchBar}>
+                <Image source={{ uri: searchIcon }} style={styles.searchIcon} />
+                <TextInput
+                  placeholder="Search"
+                  style={styles.searchInput}
+                  value={searchQuery}
+                  onChangeText={setSearchQuery}
+                />
+              </View>
+              <TouchableOpacity style={styles.sortButton} onPress={toggleSort}>
+                <Text style={styles.sortButtonText}>
+                  Sort {sortAscending ? "↑" : "↓"}
+                </Text>
+              </TouchableOpacity>
+            </View>
+            <View style={styles.selectButtonContainer}>
+              <TouchableOpacity
+                style={styles.selectButton}
+                onPress={toggleSelect}
+              >
+                <Text style={styles.selectButtonText}>
+                  {isSelectMode ? "Cancel" : "Select"}
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+
+        <FlatList
+          data={sortedGems}
+          renderItem={renderGemItem}
+          keyExtractor={(item) => item.id}
+          numColumns={3}
+          contentContainerStyle={styles.gemGrid}
+        />
+
+        <Modal visible={isSellModalVisible} transparent={true} animationType="fade">
+          <View style={styles.modalOverlay}>
+            <View style={styles.modalContent}>
+              <LinearGradient
+                colors={[
+                  'rgba(67, 96, 114, 1)',
+                  'rgba(7, 45, 68, 1)'
+                ]}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 0, y: 1 }}
+                style={styles.modalContentGradient}
               />
+              <FlatList
+                data={selectedGems}
+                renderItem={renderSelectedGemItem}
+                keyExtractor={(item) => item}
+                showsVerticalScrollIndicator={false}
+                contentContainerStyle={styles.modalGemList}
+              />
+              <View style={styles.modalActions}>
+                <TouchableOpacity
+                  style={[styles.modalButton, styles.cancelButton]}
+                  onPress={handleSellCancel}
+                >
+                  <Text style={styles.cancelButtonText}>Cancel</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[styles.modalButton, styles.confirmButton]}
+                  onPress={handleSellConfirm}
+                >
+                  <Text style={styles.confirmButtonText}>Confirm</Text>
+                </TouchableOpacity>
+              </View>
             </View>
-            <TouchableOpacity style={styles.sortButton} onPress={toggleSort}>
-              <Text style={styles.sortButtonText}>
-                Sort {sortAscending ? "↑" : "↓"}
-              </Text>
-            </TouchableOpacity>
           </View>
-          <View style={styles.selectButtonContainer}>
+        </Modal>
+
+        {isSelectMode && (
+          <View style={styles.selectionActions}>
+            <TouchableOpacity style={styles.sellButton} onPress={handleSellPress}>
+              <Text style={styles.actionButtonText}>Sell</Text>
+            </TouchableOpacity>
             <TouchableOpacity
-              style={styles.selectButton}
-              onPress={toggleSelect}
+              style={styles.sendOrderButton}
+              onPress={handleSendOrder}
             >
-              <Text style={styles.selectButtonText}>
-                {isSelectMode ? "Cancel" : "Select"}
-              </Text>
+              <Text style={styles.actionButtonText}>Send Order</Text>
             </TouchableOpacity>
           </View>
-        </View>
-      </View>
-
-      <FlatList
-        data={sortedGems}
-        renderItem={renderGemItem}
-        keyExtractor={(item) => item.id}
-        numColumns={3}
-        contentContainerStyle={styles.gemGrid}
-      />
-
-      <Modal
-        visible={isSellModalVisible}
-        transparent={true}
-        animationType="fade"
-      >
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
-            <FlatList
-              data={selectedGems}
-              renderItem={renderSelectedGemItem}
-              keyExtractor={(item) => item}
-              showsVerticalScrollIndicator={false}
-              contentContainerStyle={styles.modalGemList}
-            />
-            <View style={styles.modalActions}>
-              <TouchableOpacity
-                style={[styles.modalButton, styles.cancelButton]}
-                onPress={handleSellCancel}
-              >
-                <Text style={styles.cancelButtonText}>Cancel</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[styles.modalButton, styles.confirmButton]}
-                onPress={handleSellConfirm}
-              >
-                <Text style={styles.confirmButtonText}>Confirm</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </View>
-      </Modal>
-
-      {isSelectMode && (
-        <View style={styles.selectionActions}>
-          <TouchableOpacity style={styles.sellButton} onPress={handleSellPress}>
-            <Text style={styles.actionButtonText}>Sell</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.sendOrderButton}
-            onPress={handleSendOrder}
-          >
-            <Text style={styles.actionButtonText}>Send Order</Text>
-          </TouchableOpacity>
-        </View>
-      )}
-    </SafeAreaView>
-    </GradientContainer>
+        )}
+      </SafeAreaView>
+    </LinearGradient>
   );
 };
 
 const styles = StyleSheet.create({
-  
+  gradientContainer: {
+    flex: 1,
+  },
+  container: {
+    flex: 1,
+  },
   header: {
     padding: 16,
   },
@@ -311,7 +332,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   gemImage: {
-    width: "100%",
+    width: "80%",
     height: "80%",
     borderRadius: 4,
   },
@@ -337,30 +358,29 @@ const styles = StyleSheet.create({
   gemId: {
     marginTop: 4,
     fontSize: 12,
-    color: "#fff",
+    color: "#ffffff",
     fontWeight: "500",
   },
   selectionActions: {
     flexDirection: "row",
     padding: 16,
     paddingBottom: Platform.OS === "ios" ? 34 : 16,
-    backgroundColor: "white",
-    borderTopWidth: 1,
-    borderTopColor: "#E5E5E5",
+    backgroundColor: "#072D44",
+
   },
   sellButton: {
     flex: 1,
-    backgroundColor: "#003366",
+    backgroundColor: "#170969",
     padding: 16,
-    borderRadius: 8,
+    borderRadius: 25,
     marginRight: 8,
     alignItems: "center",
   },
   sendOrderButton: {
     flex: 1,
-    backgroundColor: "#003366",
+    backgroundColor: "#170969",
     padding: 16,
-    borderRadius: 8,
+    borderRadius: 25,
     marginLeft: 8,
     alignItems: "center",
   },
@@ -376,12 +396,20 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   modalContent: {
-    backgroundColor: "#457EA0",
-    borderRadius: 8,
+    width: 288,
+    height: 390,
+    borderRadius: 10,
     padding: 16,
-    width: "65%",
-    maxHeight: "50%",
     alignItems: "center",
+    background: "transparent", // Remove background color since we're using gradient
+  },
+  modalContentGradient: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    borderRadius: 10,
   },
   modalGemList: {
     paddingVertical: 8,
@@ -396,8 +424,8 @@ const styles = StyleSheet.create({
     width: "80%",
   },
   modalGemImage: {
-    width: 48,
-    height: 48,
+    width: 60,
+    height: 60,
     borderRadius: 8,
     backgroundColor: "white",
     marginRight: 12,

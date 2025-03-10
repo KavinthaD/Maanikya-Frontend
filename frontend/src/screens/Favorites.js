@@ -14,6 +14,8 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from 'expo-linear-gradient';
+import Header_2 from "../components/Header_2";
+import { baseScreenStyles } from "../styles/baseStyles";
 
 const OrderRequestModal = ({ visible, onClose, selectedPerson }) => {
   const [additionalMessage, setAdditionalMessage] = useState("");
@@ -219,22 +221,14 @@ const FavoritesScreen = () => {
   ];
 
   return (
-    <View style={styles.container}>
-      <StatusBar barStyle="light-content" />
+    <View style={[baseScreenStyles.container, styles.container]}>
+      <Header_2 title ="Favourites"/>
+
       <LinearGradient
         colors={gradientColors}
         style={styles.gradient}
       >
         <SafeAreaView style={styles.safeArea}>
-          {/* Header with increased top margin */}
-          <View style={styles.header}>
-            <TouchableOpacity style={styles.backButton}>
-              <Ionicons name="chevron-back" size={24} color="white" />
-            </TouchableOpacity>
-            <Text style={styles.headerTitle}>Favourites</Text>
-            <View style={styles.placeholder} />
-          </View>
-
           {/* Search Bar */}
           <View style={styles.search}>
             <Ionicons
@@ -319,24 +313,10 @@ const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
   },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    height: 50,
-    paddingHorizontal: 15,
-    backgroundColor: '#072D44',
-    marginTop: 10, // Added top margin to match the image
-  },
   backButton: {
     padding: 5,
   },
-  headerTitle: {
-    color: "#ffffff",
-    fontFamily: "Inter-Regular",
-    fontSize: 17,
-    fontWeight: "500",
-  },
+  
   placeholder: {
     width: 24,
   },

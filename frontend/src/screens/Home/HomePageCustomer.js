@@ -19,6 +19,7 @@ import { BarCodeScanner } from 'expo-barcode-scanner';
 import { baseScreenStyles } from "../../styles/baseStyles";
 import { useNavigation } from "@react-navigation/native";
 import Header_1 from "../../components/Header_1";
+import { LinearGradient } from 'expo-linear-gradient';
 
 const MenuItem = ({ image, title, onPress }) => (
   <TouchableOpacity style={styles.menuItem} onPress={onPress}>
@@ -90,21 +91,14 @@ const HomePageCustomer = ({ navigation }) => {
 
   const menuItems = [
     {
-      image: require("../../assets/menu-icons/financialRecords.png"),
-      title: "Financial\nRecords",
+      image: require("../../assets/menu-icons/8.png"),
     },
     {
-      image: require("../../assets/menu-icons/myGems.png"),
-      title: "Gems",
-    },
-    {
-      image: require("../../assets/menu-icons/scan.png"),
-      title: "Scan",
+      image: require("../../assets/menu-icons/2.png"),
       onPress: handleQrScan, // Add the scan handler
     },
     {
-      image: require("../../assets/menu-icons/connect.png"),
-      title: "My\nSellers",
+      image: require("../../assets/menu-icons/7.png"),
       screen: "Customeraddseller",
     },
   ];
@@ -118,7 +112,16 @@ const HomePageCustomer = ({ navigation }) => {
   };
 
   return (
-    <SafeAreaView style={baseScreenStyles.container}>
+    <LinearGradient
+      colors={[
+        'rgba(107, 131, 145, 1)',
+        'rgba(67, 96, 114, 1)',
+        'rgba(37, 71, 91, 0.88)',
+        'rgba(22, 58, 79, 0.81)',
+        'rgba(7, 45, 68, 0.75)'
+      ]}
+      style={styles.gradientContainer}
+    >
       {scanning ? (
         <CameraView
           style={StyleSheet.absoluteFillObject}
@@ -190,54 +193,59 @@ const HomePageCustomer = ({ navigation }) => {
       </TouchableOpacity>
     </View>
   </Modal>
-</SafeAreaView>
+</LinearGradient>
   );
 };
 
 const styles = StyleSheet.create({
-  content: {
+  gradientContainer: {
     flex: 1,
-    padding: 16,
-    paddingTop: StatusBar.currentHeight ? StatusBar.currentHeight + 16 : 32,
+  },
+  content: {
+    paddingHorizontal: 16,
+    paddingTop: StatusBar.currentHeight ? StatusBar.currentHeight + 16 : 16,
   },
   greeting: {
     fontSize: 16,
     marginBottom: 20,
-    color: "#000",
+    color: "#fff",
+    fontWeight: "500",
   },
   menuGrid: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    justifyContent: "flex-start",
-    gap: 16,
+    flexDirection: "column", // Changed from row to column
+    alignItems: "center", // Center items horizontally
+    justifyContent: 'flex-start',
+    rowGap: 50,
+    marginTop: 10,
+    paddingBottom: 20,
   },
   menuItem: {
-    width: "30%",
+    width: "80%", // Increased width for single column
     alignItems: "center",
-    marginBottom: 16,
+    borderRadius: 20,
+    paddingVertical: 25,
+    paddingHorizontal: 15,
+    aspectRatio: 2.5, // Changed aspect ratio for better horizontal layout
+    marginBottom: 16, // Added margin between items
   },
   iconContainer: {
-    width: 70,
-    height: 70,
-    backgroundColor: "white",
-    borderRadius: 16,
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: 8,
-    elevation: 2,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
+    marginBottom: 12,
+    height: 100,
+    width: "100%", // Added width to ensure full width usage
   },
   imageStyle: {
-    width: 40,
-    height: 40,
+    width: "100%", // Changed to use percentage
+    height: 150, // Adjusted height
+    resizeMode: "contain", // Ensure image fits properly
   },
   menuText: {
-    fontSize: 12,
+    fontSize: 14,
     textAlign: "center",
-    color: "#000",
+    color: "#fff",
+    fontWeight: "500",
+    marginTop: 5,
   },
   modal: {
     justifyContent: "flex-end",

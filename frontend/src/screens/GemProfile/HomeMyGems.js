@@ -153,8 +153,6 @@ const GemCollectionScreen = ({ navigation }) => {
     <GradientContainer>
     <SafeAreaView style={baseScreenStyles.container}>
       <Header_2 title="My Gems" />
-      <StatusBar barStyle="light-content" />
-
       <View style={styles.header}>
         <View style={styles.searchSection}>
           <View style={styles.searchRow}>
@@ -245,13 +243,9 @@ const GemCollectionScreen = ({ navigation }) => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#B2E6F0",
-  },
+  
   header: {
     padding: 16,
-    backgroundColor: "#B2E6F0",
   },
   searchSection: {
     marginBottom: 8,
@@ -343,7 +337,7 @@ const styles = StyleSheet.create({
   gemId: {
     marginTop: 4,
     fontSize: 12,
-    color: "#003366",
+    color: "#fff",
     fontWeight: "500",
   },
   selectionActions: {

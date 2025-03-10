@@ -59,7 +59,7 @@ const ConnectScreen = ({ navigation }) => {
   };
 
   const renderItem = ({ item }) => (
-    <TouchableOpacity onPress={() => navigation.navigate("Profile", { person: item })}>
+    <TouchableOpacity onPress={() => navigation.navigate("ConnectedUsers", { person: item })}>
       <LinearGradient 
         colors={["#4A6583", "#2D4155"]} 
         start={{x: 0, y: 0}} 
@@ -77,6 +77,7 @@ const ConnectScreen = ({ navigation }) => {
       </LinearGradient>
     </TouchableOpacity>
   );
+  
 
   return (
     <GradientContainer>

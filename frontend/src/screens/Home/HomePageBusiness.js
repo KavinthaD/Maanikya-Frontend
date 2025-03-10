@@ -14,6 +14,7 @@ import {
   StyleSheet,
   StatusBar,
   Alert,
+  Linking,
 } from "react-native";
 import { baseScreenStyles } from "../../styles/baseStyles";
 import Header_1 from "../../components/Header_1";
@@ -42,15 +43,32 @@ const HomeScreen = () => {
   const [scanning, setScanning] = useState(false);
   const [hasPermission, setHasPermission] = useState(null);
 
-  useEffect(() => {
-    (async () => {
+  const handleQrScan = async () => {
+    try {
       const { status } = await Camera.requestCameraPermissionsAsync();
+      if (status !== "granted") {
+        Alert.alert(
+          "Permission Required",
+          "This app needs camera and gallery access to scan QR codes. Pleasse go to settings and enable permissions for camera",
+          [
+            {
+              text: "Open Settings",
+              onPress: () => Linking.openSettings(),
+            },
+            { text: "Cancel", style: "cancel" }
+          ]
+        );
+        return;
+      }
       setHasPermission(status === "granted");
-    })();
-  }, []);
-
-  const handleQrScan = () => {
-    setModalVisible(true);
+      setModalVisible(true);
+    } catch (error) {
+      console.error("Error requesting camera permission:", error);
+      Alert.alert(
+        "Error",
+        "Failed to request camera permissions. Please try again."
+      );
+    }
   };
 
   const handleBarCodeScanned = ({ data }) => {

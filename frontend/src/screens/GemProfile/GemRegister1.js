@@ -30,6 +30,7 @@ import axios from "axios";
 import { API_URL } from "../../config/api";
 import GradientContainer from "../../components/GradientContainer";
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Camera } from "expo-camera";
 
 // Update IMAGE_CONSTRAINTS
 const IMAGE_CONSTRAINTS = {
@@ -80,10 +81,35 @@ export default function GemRegister1() {
 }
 
 function GemRegister1Main() {
+  const [hasPermission, setHasPermission] = useState(null);
   const [isModalVisible, setModalVisible] = useState(false);
 
-  const handleCameraPress = () => {
-    setModalVisible(true);
+  const handleCameraPress = async () => {
+    try {
+          const { status } = await Camera.requestCameraPermissionsAsync();
+          if (status !== "granted") {
+            Alert.alert(
+              "Permission Required",
+              "This app needs camera and gallery access to get Gem image. Pleasse go to settings and enable permissions for camera",
+              [
+                {
+                  text: "Open Settings",
+                  onPress: () => Linking.openSettings(),
+                },
+                { text: "Cancel", style: "cancel" }
+              ]
+            );
+            return;
+          }
+          setHasPermission(status === "granted");
+          setModalVisible(true);
+        } catch (error) {
+          console.error("Error requesting camera permission:", error);
+          Alert.alert(
+            "Error",
+            "Failed to request camera permissions. Please try again."
+          );
+        }
   };
 
   // Add image validation function

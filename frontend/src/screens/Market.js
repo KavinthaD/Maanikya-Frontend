@@ -11,6 +11,7 @@ import {
 } from "react-native";
 import { baseScreenStyles } from "../styles/baseStyles";
 import Header_1 from "../components/Header_1";
+import { LinearGradient } from 'expo-linear-gradient';
 
 const GemstoneMarketplace = () => {
   const [sortAscending, setSortAscending] = useState(true);
@@ -84,47 +85,57 @@ const GemstoneMarketplace = () => {
     });
 
   return (
-    <ScrollView style={baseScreenStyles.container}>
-      <Header_1 title="Market" />
-      <View style={styles.searchContainer}>
-        <View style={styles.searchBar}>
-          <TextInput
-            style={styles.searchInput}
-            placeholder="Search"
-            placeholderTextColor="#999"
-            value={searchQuery}
-            onChangeText={handleSearch}
-          />
-          <TouchableOpacity style={styles.sortButton} onPress={handleSort}>
-            <Text style={styles.sortButtonText}>
-              Sort {sortAscending ? "↓" : "↑"}
-            </Text>
-          </TouchableOpacity>
-        </View>
-
-        <Text style={styles.sectionTitle}>Popular</Text>
-
-        <View style={styles.gemstoneGrid}>
-          {filteredAndSortedGemstones.map((gem) => (
-            <TouchableOpacity key={gem.id} style={styles.gemstoneItem}>
-              <Image
-                source={gem.image}
-                style={styles.gemImage}
-                resizeMode="cover"
-              />
-              <Text style={styles.gemId}>{gem.id}</Text>
+    <LinearGradient
+      colors={[
+        'rgba(107, 131, 145, 1)',
+        'rgba(67, 96, 114, 1)',
+        'rgba(37, 71, 91, 0.88)',
+        'rgba(22, 58, 79, 0.81)',
+        'rgba(7, 45, 68, 0.75)'
+      ]}
+      style={styles.gradientContainer}
+    >
+      <ScrollView>
+        <Header_1 title="Market" />
+        <View style={styles.searchContainer}>
+          <View style={styles.searchBar}>
+            <TextInput
+              style={styles.searchInput}
+              placeholder="Search"
+              placeholderTextColor="#999"
+              value={searchQuery}
+              onChangeText={handleSearch}
+            />
+            <TouchableOpacity style={styles.sortButton} onPress={handleSort}>
+              <Text style={styles.sortButtonText}>
+                Sort {sortAscending ? "↓" : "↑"}
+              </Text>
             </TouchableOpacity>
-          ))}
+          </View>
+
+          <Text style={styles.sectionTitle}>Popular</Text>
+
+          <View style={styles.gemstoneGrid}>
+            {filteredAndSortedGemstones.map((gem) => (
+              <TouchableOpacity key={gem.id} style={styles.gemstoneItem}>
+                <Image
+                  source={gem.image}
+                  style={styles.gemImage}
+                  resizeMode="cover"
+                />
+                <Text style={styles.gemId}>{gem.id}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
         </View>
-      </View>
-    </ScrollView>
+      </ScrollView>
+    </LinearGradient>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
+  gradientContainer: {
     flex: 1,
-    backgroundColor: "#9CCDDB",
   },
   searchContainer: {
     padding: 16,
@@ -158,7 +169,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "600",
     marginBottom: 12,
-    color: "#333",
+    color: "#ffffff",
   },
   gemstoneGrid: {
     flexDirection: "row",
@@ -178,7 +189,7 @@ const styles = StyleSheet.create({
   gemId: {
     textAlign: "center",
     fontSize: 14,
-    color: "#333",
+    color: "#ffffff",
     marginTop: 4,
   },
 });

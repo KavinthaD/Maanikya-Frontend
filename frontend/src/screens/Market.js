@@ -11,7 +11,7 @@ import {
 } from "react-native";
 import { baseScreenStyles } from "../styles/baseStyles";
 import Header_1 from "../components/Header_1";
-import GradientContainer from "../components/GradientContainer";
+import { LinearGradient } from 'expo-linear-gradient';
 
 const GemstoneMarketplace = () => {
   const [sortAscending, setSortAscending] = useState(true);
@@ -85,8 +85,17 @@ const GemstoneMarketplace = () => {
     });
 
   return (
-    <GradientContainer>
-      <ScrollView style={baseScreenStyles.container}>
+    <LinearGradient
+      colors={[
+        'rgba(107, 131, 145, 1)',
+        'rgba(67, 96, 114, 1)',
+        'rgba(37, 71, 91, 0.88)',
+        'rgba(22, 58, 79, 0.81)',
+        'rgba(7, 45, 68, 0.75)'
+      ]}
+      style={styles.gradientContainer}
+    >
+      <ScrollView>
         <Header_1 title="Market" />
         <View style={styles.searchContainer}>
           <View style={styles.searchBar}>
@@ -120,14 +129,13 @@ const GemstoneMarketplace = () => {
           </View>
         </View>
       </ScrollView>
-    </GradientContainer>
+    </LinearGradient>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
+  gradientContainer: {
     flex: 1,
-    backgroundColor: "#9CCDDB",
   },
   searchContainer: {
     padding: 16,
@@ -161,7 +169,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "600",
     marginBottom: 12,
-    color: "#333",
+    color: "#ffffff",
   },
   gemstoneGrid: {
     flexDirection: "row",
@@ -181,7 +189,7 @@ const styles = StyleSheet.create({
   gemId: {
     textAlign: "center",
     fontSize: 14,
-    color: "#333",
+    color: "#ffffff",
     marginTop: 4,
   },
 });

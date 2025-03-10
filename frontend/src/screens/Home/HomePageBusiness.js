@@ -23,8 +23,8 @@ import { BarCodeScanner } from "expo-barcode-scanner";
 import GradientContainer from "../../components/GradientContainer";
 
 
-const MenuItem = ({ image, title, onPress }) => (
-  <TouchableOpacity style={styles.menuItem} onPress={onPress}>
+const MenuItem = ({ image, title, onPress, backgroundColor }) => (
+  <TouchableOpacity style={[styles.menuItem, { backgroundColor }]} onPress={onPress}>
     <View style={styles.iconContainer}>
       <Image
         source={image}
@@ -41,34 +41,30 @@ const HomeScreen = () => {
   const navigation = useNavigation();
   const [isModalVisible, setModalVisible] = useState(false);
   const [scanning, setScanning] = useState(false);
-  const [hasPermission, setHasPermission] = useState(null);
+  const [permission, requestPermission] = useCameraPermissions();
 
-  const handleQrScan = async () => {
-    try {
-      const { status } = await Camera.requestCameraPermissionsAsync();
-      if (status !== "granted") {
-        Alert.alert(
-          "Permission Required",
-          "This app needs camera and gallery access to scan QR codes. Pleasse go to settings and enable permissions for camera",
-          [
-            {
-              text: "Open Settings",
-              onPress: () => Linking.openSettings(),
-            },
-            { text: "Cancel", style: "cancel" }
-          ]
-        );
-        return;
-      }
-      setHasPermission(status === "granted");
-      setModalVisible(true);
-    } catch (error) {
-      console.error("Error requesting camera permission:", error);
-      Alert.alert(
-        "Error",
-        "Failed to request camera permissions. Please try again."
-      );
-    }
+  // Replace old useEffect with new permission check
+  if (!permission) {
+    // Camera permissions are still loading
+    return <View />;
+  }
+
+  if (!permission.granted) {
+    return (
+      <View style={styles.container}>
+        <Text style={styles.message}>We need your permission to use the camera</Text>
+        <TouchableOpacity
+          style={styles.permissionButton}
+          onPress={requestPermission}
+        >
+          <Text style={styles.buttonText}>Grant Permission</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  }
+
+  const handleQrScan = () => {
+    setModalVisible(true);
   };
 
   const handleBarCodeScanned = ({ data }) => {
@@ -82,7 +78,7 @@ const HomeScreen = () => {
     }
 
     navigation.navigate("MyGems", {
-      qrCodeImage: finalData,
+      qrCodeUrl: finalData // Changed from qrCodeImage to qrCodeUrl
     });
   };
 
@@ -121,11 +117,11 @@ const HomeScreen = () => {
 
           if (scannedBarcodes.length > 0) {
             const scannedUrl = scannedBarcodes[0].data;
-            console.log("Scanned URL:", scannedUrl);
+            console.log('Scanned URL:', scannedUrl);
 
             setModalVisible(false);
             navigation.navigate("MyGems", {
-              qrCodeUrl: scannedUrl, // Changed from qrCodeImage to qrCodeUrl
+              qrCodeUrl: scannedUrl // Changed from qrCodeImage to qrCodeUrl
             });
           } else {
             Alert.alert("Error", "No valid QR code found in the image");
@@ -141,41 +137,31 @@ const HomeScreen = () => {
     }
   };
 
+  // Updated menu items to match the screenshot
   const menuItems = [
     {
-      image: require("../../assets/menu-icons/addGem.png"),
-      title: "Add Gem",
-      screen: "GemRegister1",
-    },
-    {
-      image: require("../../assets/menu-icons/myGems.png"),
-      title: "My Gems",
+      image: require("../../assets/menu-icons/1.png"),
       screen: "HomeMyGems",
     },
     {
-      image: require("../../assets/menu-icons/scan.png"),
-      title: "Scan",
+      image: require("../../assets/menu-icons/2.png"),
       onPress: handleQrScan,
     },
     {
-      image: require("../../assets/menu-icons/financialRecords.png"),
-      title: "Financial\nRecords",
+      image: require("../../assets/menu-icons/3.png"),
       screen: "OwnerFinancialRecords",
     },
     {
-      image: require("../../assets/menu-icons/Tracker.png"),
-      title: "Tracker",
+      image: require("../../assets/menu-icons/4.png"),
       screen: "Tracker",
     },
     {
-      image: require("../../assets/menu-icons/connect.png"),
-      title: "Connect",
+      image: require("../../assets/menu-icons/5.png"),
       screen: "ConnectScreen",
     },
     {
-      image: require("../../assets/menu-icons/GemsOnDisplay.png"),
-      title: "Gems on\ndisplay",
-      screen: "GemOnDisplay",
+      image: require("../../assets/menu-icons/6.png"),
+      screen: "GemRegister1",
     },
   ];
 
@@ -193,12 +179,13 @@ const HomeScreen = () => {
     <GradientContainer>
     <View style={baseScreenStyles.container}>
       {scanning ? (
-        <Camera
+        <CameraView
           style={StyleSheet.absoluteFillObject}
-          onBarCodeScanned={handleBarCodeScanned}
-          barCodeScannerSettings={{
-            barCodeTypes: [BarCodeScanner.Constants.BarCodeType.qr],
+          facing="back"
+          barcodeScannerSettings={{
+            barCodeTypes: ["qr"],
           }}
+          onBarcodeScanned={handleBarCodeScanned}
         >
           <View style={styles.scannerOverlay}>
             <Text style={styles.scannerText}>Align QR code within frame</Text>
@@ -209,7 +196,7 @@ const HomeScreen = () => {
               <Text style={styles.cancelScanButtonText}>Cancel</Text>
             </TouchableOpacity>
           </View>
-        </Camera>
+        </CameraView>
       ) : (
         <>
           <Header_1 title="Home" />
@@ -222,6 +209,7 @@ const HomeScreen = () => {
                   image={item.image}
                   title={item.title}
                   onPress={() => handleMenuItemPress(item.screen, item.onPress)}
+                  backgroundColor={item.backgroundColor}
                 />
               ))}
             </View>
@@ -270,48 +258,54 @@ const HomeScreen = () => {
 };
 
 const styles = StyleSheet.create({
+  gradientContainer: {
+    flex: 1,
+  },
   content: {
-    padding: 16,
-    paddingTop: StatusBar.currentHeight ? StatusBar.currentHeight + 16 : 32,
+    paddingHorizontal: 16,
+    paddingTop: StatusBar.currentHeight ? StatusBar.currentHeight + 16 : 16,
   },
   greeting: {
     fontSize: 16,
     marginBottom: 20,
-    color: "#000",
+    color: "#fff", // Changed to white for better visibility on gradient
+    fontWeight: "500",
   },
   menuGrid: {
     flexDirection: "row",
+    justifyContent: 'space-between',
     flexWrap: "wrap",
-    justifyContent: "flex-start",
-    gap: 16,
+    rowGap: 16,
+    marginTop: 10,
+    paddingBottom: 20, // Space for bottom nav bar
   },
   menuItem: {
-    width: "30%",
+    width: "48%", // Two items per row with space in between
+    minWidth: '45%', // Minimum width for smaller screens
+    maxWidth: '48%', // Maximum width to maintain two columns
     alignItems: "center",
-    marginBottom: 16,
+    backgroundColor: '#172A4D', // Default background color, can be overridden by props
+    borderRadius: 20,
+    paddingVertical: 25, // Increased padding to accommodate larger image
+    paddingHorizontal: 15,
+    aspectRatio: 1.0, // Make menu items square
   },
   iconContainer: {
-    width: 70,
-    height: 70,
-    backgroundColor: "white",
-    borderRadius: 16,
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: 8,
-    elevation: 2,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
+    marginBottom: 12,
+    height: 80, // Fixed height for icon container
   },
   imageStyle: {
-    width: 40,
-    height: 40,
+    width: 400, // Larger image size to match the screenshot
+    height: 175, // Square aspect ratio
   },
   menuText: {
-    fontSize: 12,
+    fontSize: 14, 
     textAlign: "center",
-    color: "#000",
+    color: "#fff",
+    fontWeight: "500", // Medium weight for better readability
+    marginTop: 5,
   },
   modalContent: {
     backgroundColor: "white",
@@ -399,6 +393,28 @@ const styles = StyleSheet.create({
   cancelScanButtonText: {
     fontSize: 16,
     color: "#721c24",
+  },
+  permissionButton: {
+    backgroundColor: '#2196F3',
+     padding: 12,
+    borderRadius: 8,
+    marginTop: 20,
+  },
+  message: {
+    fontSize: 16,
+    textAlign: 'center',
+    marginBottom: 20,
+  },
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  buttonText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: 'bold',
   },
 });
 

@@ -13,6 +13,7 @@ import { FontAwesome, MaterialIcons } from "@expo/vector-icons";
 import GradientContainer from "../components/GradientContainer";
 import { baseScreenStyles } from "../styles/baseStyles";
 import LinearGradient from "react-native-linear-gradient";
+import Header_2 from "../components/Header_2";
 
 // Removed "Owner" from categories
 const categories = ["All", "Burner", "Elec. Burner", "Cutter"];
@@ -80,6 +81,7 @@ const ConnectScreen = ({ navigation }) => {
   return (
     <GradientContainer>
       <View style={baseScreenStyles.container}>
+        <Header_2 title="Connect" />
         <View style={styles.searchContainer}>
           <MaterialIcons name="search" size={24} color="#999" style={styles.searchIcon} />
           <TextInput

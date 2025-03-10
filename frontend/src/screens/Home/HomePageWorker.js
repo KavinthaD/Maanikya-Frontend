@@ -19,6 +19,7 @@ import Icon from "react-native-vector-icons/MaterialIcons";
 import * as ImagePicker from 'expo-image-picker';
 import { Camera } from 'expo-camera';
 import { BarCodeScanner } from 'expo-barcode-scanner';
+import { LinearGradient } from 'expo-linear-gradient';
 
 const MenuItem = ({ image, title, onPress }) => (
   <TouchableOpacity style={styles.menuItem} onPress={onPress}>
@@ -98,18 +99,15 @@ const HomeScreen = () => {
 
   const menuItems = [
     {
-      image: require("../../assets/menu-icons/Orders.png"),
-      title: "Orders",
+      image: require("../../assets/menu-icons/9.png"),
       screen: "Orders",
     },
     {
-      image: require("../../assets/menu-icons/financialRecords.png"),
-      title: "Financial\nRecords",
+      image: require("../../assets/menu-icons/10.png"),
       screen: "CutterFinancialRecords", 
     },
     {
-      image: require("../../assets/menu-icons/scan.png"),
-      title: "Scan",
+      image: require("../../assets/menu-icons/2.png"),
       onPress: handleQrScan,
     },
   ];
@@ -124,7 +122,16 @@ const HomeScreen = () => {
   };
 
   return (
-    <SafeAreaView style={baseScreenStyles.container}>
+    <LinearGradient
+      colors={[
+        'rgba(107, 131, 145, 1)',
+        'rgba(67, 96, 114, 1)',
+        'rgba(37, 71, 91, 0.88)',
+        'rgba(22, 58, 79, 0.81)',
+        'rgba(7, 45, 68, 0.75)'
+      ]}
+      style={styles.gradientContainer}
+    >
       {scanning ? (
         <Camera
           style={StyleSheet.absoluteFillObject}
@@ -199,79 +206,59 @@ const HomeScreen = () => {
           </TouchableOpacity>
         </View>
       </Modal>
-    </SafeAreaView>
+    </LinearGradient>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
+  gradientContainer: {
     flex: 1,
-    backgroundColor: "#9CCDDB",
   },
-
   content: {
-    flex: 1,
-    padding: 16,
-    paddingTop: StatusBar.currentHeight ? StatusBar.currentHeight + 16 : 32,
+    paddingHorizontal: 16,
+    paddingTop: StatusBar.currentHeight ? StatusBar.currentHeight + 16 : 16,
   },
   greeting: {
     fontSize: 16,
     marginBottom: 20,
-    color: "#000",
+    color: "#fff",
+    fontWeight: "500",
   },
   menuGrid: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    justifyContent: "flex-start",
-    gap: 16,
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: 'flex-start',
+    rowGap: 40,
+    marginTop: 10,
+    paddingBottom: 20,
   },
   menuItem: {
-    width: "30%",
+    width: "80%",
     alignItems: "center",
+    borderRadius: 20,
+    paddingVertical: 25,
+    paddingHorizontal: 15,
+    aspectRatio: 2.5,
     marginBottom: 16,
   },
   iconContainer: {
-    width: 70,
-    height: 70,
-    backgroundColor: "white",
-    borderRadius: 16,
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: 8,
-    elevation: 2,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
+    marginBottom: 12,
+    height: 100,
+    width: "100%",
   },
   imageStyle: {
-    width: 40,
-    height: 40,
+    width: "100%",
+    height: 150,
+    resizeMode: "contain",
   },
   menuText: {
-    fontSize: 12,
+    fontSize: 14,
     textAlign: "center",
-    color: "#000",
-  },
-  scannerOverlay: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-  },
-  scannerText: {
     color: "#fff",
-    fontSize: 18,
-    marginBottom: 20,
-  },
-  cancelScanButton: {
-    padding: 10,
-    backgroundColor: "#fff",
-    borderRadius: 5,
-  },
-  cancelScanButtonText: {
-    color: "#000",
-    fontSize: 16,
+    fontWeight: "500",
+    marginTop: 5,
   },
   modal: {
     justifyContent: "flex-end",
@@ -287,7 +274,7 @@ const styles = StyleSheet.create({
   modalHeader: {
     width: "100%",
     alignItems: "center",
-    marginBottom: 20,
+    marginBottom: 12,
   },
   modalIndicator: {
     width: 40,
@@ -298,30 +285,46 @@ const styles = StyleSheet.create({
   modalButton: {
     flexDirection: "row",
     alignItems: "center",
-    padding: 10,
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+    backgroundColor: "#E8F0FE",
     marginBottom: 10,
     width: "100%",
     justifyContent: "center",
   },
   modalButtonText: {
-    marginLeft: 10,
-    fontSize: 16,
+    fontSize: 18,
     color: "#170969",
+    marginLeft: 10,
   },
   cancelButton: {
-    backgroundColor: "#f5f5f5",
+    backgroundColor: "#f8d7da",
   },
   cancelButtonText: {
-    color: "#000",
+    color: "#721c24",
+  },
+  scannerOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  scannerText: {
+    color: 'white',
+    fontSize: 16,
+    marginBottom: 20,
+  },
+  cancelScanButton: {
+    padding: 12,
+    backgroundColor: '#f8d7da',
+    borderRadius: 8,
+    marginTop: 20,
+  },
+  cancelScanButtonText: {
+    fontSize: 16,
+    color: '#721c24',
   },
 });
 
-const App = () => {
-  return (
-    <>
-      <HomeScreen />
-    </>
-  );
-};
-
-export default App;
+export default HomeScreen;

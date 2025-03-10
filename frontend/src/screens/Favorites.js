@@ -13,7 +13,7 @@ import {
   Dimensions,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { LinearGradient } from 'expo-linear-gradient';
+import GradientContainer from "../components/GradientContainer";
 
 const OrderRequestModal = ({ visible, onClose, selectedPerson }) => {
   const [additionalMessage, setAdditionalMessage] = useState("");
@@ -27,6 +27,7 @@ const OrderRequestModal = ({ visible, onClose, selectedPerson }) => {
   ];
 
   return (
+    <GradientContainer>
     <Modal
       visible={visible}
       transparent={true}
@@ -35,15 +36,7 @@ const OrderRequestModal = ({ visible, onClose, selectedPerson }) => {
     >
       <View style={modalStyles.modalOverlay}>
         <View style={modalStyles.modalContent}>
-          <LinearGradient
-            colors={[
-              'rgba(67, 96, 114, 1)',
-              'rgba(7, 45, 68, 1)'
-            ]}
-            style={modalStyles.gradientBackground}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 0, y: 1 }}
-          />
+          
           <Text style={modalStyles.orderId}>Order#: NB01130</Text>
 
           <Text style={modalStyles.personName}>{selectedPerson.name}</Text>
@@ -80,6 +73,7 @@ const OrderRequestModal = ({ visible, onClose, selectedPerson }) => {
         </View>
       </View>
     </Modal>
+    </GradientContainer>
   );
 };
 
@@ -209,22 +203,12 @@ const FavoritesScreen = () => {
     </TouchableOpacity>
   );
 
-  // Updated gradient colors to match the image
-  const gradientColors = [
-    'rgba(71, 113, 135, 1)',
-    'rgba(53, 92, 115, 1)',
-    'rgba(40, 78, 103, 1)',
-    'rgba(28, 65, 88, 1)',
-    'rgba(19, 54, 78, 1)'
-  ];
+
 
   return (
+    <GradientContainer>
     <View style={styles.container}>
       <StatusBar barStyle="light-content" />
-      <LinearGradient
-        colors={gradientColors}
-        style={styles.gradient}
-      >
         <SafeAreaView style={styles.safeArea}>
           {/* Header with increased top margin */}
           <View style={styles.header}>
@@ -304,8 +288,8 @@ const FavoritesScreen = () => {
             selectedPerson={selectedPerson}
           />
         </SafeAreaView>
-      </LinearGradient>
     </View>
+    </GradientContainer>
   );
 };
 

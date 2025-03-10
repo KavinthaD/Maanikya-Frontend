@@ -20,7 +20,7 @@ import Icon from "react-native-vector-icons/MaterialIcons";
 import * as ImagePicker from 'expo-image-picker';
 import { Camera } from 'expo-camera';
 import { BarCodeScanner } from 'expo-barcode-scanner';
-import { LinearGradient } from 'expo-linear-gradient';
+
 
 const MenuItem = ({ image, title, onPress }) => (
   <TouchableOpacity style={styles.menuItem} onPress={onPress}>
@@ -123,16 +123,7 @@ const HomeScreen = () => {
   };
 
   return (
-    <LinearGradient
-      colors={[
-        'rgba(107, 131, 145, 1)',
-        'rgba(67, 96, 114, 1)',
-        'rgba(37, 71, 91, 0.88)',
-        'rgba(22, 58, 79, 0.81)',
-        'rgba(7, 45, 68, 0.75)'
-      ]}
-      style={styles.gradientContainer}
-    >
+    <GradientContainer>
       {scanning ? (
         <Camera
           style={StyleSheet.absoluteFillObject}
@@ -207,7 +198,7 @@ const HomeScreen = () => {
           </TouchableOpacity>
         </View>
       </Modal>
-    </LinearGradient>
+    </GradientContainer>
   );
 };
 

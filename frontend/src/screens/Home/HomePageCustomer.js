@@ -20,7 +20,7 @@ import { baseScreenStyles } from "../../styles/baseStyles";
 import { useNavigation } from "@react-navigation/native";
 import Header_1 from "../../components/Header_1";
 import GradientContainer from "../../components/GradientContainer";
-import { LinearGradient } from 'expo-linear-gradient';
+
 
 const MenuItem = ({ image, title, onPress }) => (
   <TouchableOpacity style={styles.menuItem} onPress={onPress}>
@@ -113,16 +113,7 @@ const HomePageCustomer = ({ navigation }) => {
   };
 
   return (
-    <LinearGradient
-      colors={[
-        'rgba(107, 131, 145, 1)',
-        'rgba(67, 96, 114, 1)',
-        'rgba(37, 71, 91, 0.88)',
-        'rgba(22, 58, 79, 0.81)',
-        'rgba(7, 45, 68, 0.75)'
-      ]}
-      style={styles.gradientContainer}
-    >
+    <GradientContainer>
       {scanning ? (
         <CameraView
           style={StyleSheet.absoluteFillObject}
@@ -194,7 +185,7 @@ const HomePageCustomer = ({ navigation }) => {
       </TouchableOpacity>
     </View>
   </Modal>
-</LinearGradient>
+</GradientContainer>
   );
 };
 

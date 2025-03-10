@@ -3,8 +3,9 @@ import Modal from "react-native-modal";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import React, { useState, useEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
-import * as ImagePicker from "expo-image-picker";
-import { encode as base64Encode } from "base-64";
+import * as ImagePicker from 'expo-image-picker';
+import { encode as base64Encode } from 'base-64';
+import GradientContainer from "../../components/GradientContainer";
 import {
   View,
   Text,
@@ -18,10 +19,8 @@ import {
 } from "react-native";
 import { baseScreenStyles } from "../../styles/baseStyles";
 import Header_1 from "../../components/Header_1";
-import { Camera } from "expo-camera";
-import { BarCodeScanner } from "expo-barcode-scanner";
-import GradientContainer from "../../components/GradientContainer";
-
+import { CameraView, useCameraPermissions } from 'expo-camera';
+import { BarCodeScanner } from 'expo-barcode-scanner';
 
 const MenuItem = ({ image, title, onPress, backgroundColor }) => (
   <TouchableOpacity style={[styles.menuItem, { backgroundColor }]} onPress={onPress}>
@@ -177,7 +176,6 @@ const HomeScreen = () => {
 
   return (
     <GradientContainer>
-    <View style={baseScreenStyles.container}>
       {scanning ? (
         <CameraView
           style={StyleSheet.absoluteFillObject}
@@ -252,7 +250,6 @@ const HomeScreen = () => {
           </TouchableOpacity>
         </View>
       </Modal>
-    </View>
     </GradientContainer>
   );
 };

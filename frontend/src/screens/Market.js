@@ -9,9 +9,8 @@ import {
   TouchableOpacity,
   ScrollView,
 } from "react-native";
-import { baseScreenStyles } from "../styles/baseStyles";
 import Header_1 from "../components/Header_1";
-import { LinearGradient } from 'expo-linear-gradient';
+import GradientContainer from "../components/GradientContainer";
 
 const GemstoneMarketplace = () => {
   const [sortAscending, setSortAscending] = useState(true);
@@ -85,16 +84,7 @@ const GemstoneMarketplace = () => {
     });
 
   return (
-    <LinearGradient
-      colors={[
-        'rgba(107, 131, 145, 1)',
-        'rgba(67, 96, 114, 1)',
-        'rgba(37, 71, 91, 0.88)',
-        'rgba(22, 58, 79, 0.81)',
-        'rgba(7, 45, 68, 0.75)'
-      ]}
-      style={styles.gradientContainer}
-    >
+    <GradientContainer>
       <ScrollView>
         <Header_1 title="Market" />
         <View style={styles.searchContainer}>
@@ -129,7 +119,7 @@ const GemstoneMarketplace = () => {
           </View>
         </View>
       </ScrollView>
-    </LinearGradient>
+    </GradientContainer>
   );
 };
 

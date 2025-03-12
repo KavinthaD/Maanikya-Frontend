@@ -3,8 +3,8 @@ import Modal from "react-native-modal";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import React, { useState, useEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
-import * as ImagePicker from 'expo-image-picker';
-import { encode as base64Encode } from 'base-64';
+import * as ImagePicker from "expo-image-picker";
+import { encode as base64Encode } from "base-64";
 import GradientContainer from "../../components/GradientContainer";
 import {
   View,
@@ -19,20 +19,27 @@ import {
 } from "react-native";
 import { baseScreenStyles } from "../../styles/baseStyles";
 import Header_1 from "../../components/Header_1";
-import { CameraView, useCameraPermissions } from 'expo-camera';
-import { BarCodeScanner } from 'expo-barcode-scanner';
+import { CameraView, useCameraPermissions } from "expo-camera";
+import { BarCodeScanner } from "expo-barcode-scanner";
 
 const MenuItem = ({ image, title, onPress, backgroundColor }) => (
-  <TouchableOpacity style={[styles.menuItem, { backgroundColor }]} onPress={onPress}>
-    <View style={styles.iconContainer}>
-      <Image
-        source={image}
-        style={styles.imageStyle}
-        resizeMode="contain"
-        onError={(error) => console.error("Image loading error:", error)}
-      />
+  <TouchableOpacity
+    style={[styles.menuItem, { backgroundColor }]}
+    onPress={onPress}
+    activeOpacity={0.7} // Add feedback when pressed
+    hitSlop={{ top: 0, bottom: 0, left: 0, right: 0 }} // Explicit hit area
+  >
+    <View style={styles.menuItemContent}>
+      <View style={styles.iconContainer}>
+        <Image
+          source={image}
+          style={styles.imageStyle}
+          resizeMode="contain"
+          onError={(error) => console.error("Image loading error:", error)}
+        />
+      </View>
+      <Text style={styles.menuText}>{title}</Text>
     </View>
-    <Text style={styles.menuText}>{title}</Text>
   </TouchableOpacity>
 );
 
@@ -51,7 +58,9 @@ const HomeScreen = () => {
   if (!permission.granted) {
     return (
       <View style={styles.container}>
-        <Text style={styles.message}>We need your permission to use the camera</Text>
+        <Text style={styles.message}>
+          We need your permission to use the camera
+        </Text>
         <TouchableOpacity
           style={styles.permissionButton}
           onPress={requestPermission}
@@ -77,7 +86,7 @@ const HomeScreen = () => {
     }
 
     navigation.navigate("MyGems", {
-      qrCodeUrl: finalData // Changed from qrCodeImage to qrCodeUrl
+      qrCodeUrl: finalData, // Changed from qrCodeImage to qrCodeUrl
     });
   };
 
@@ -116,11 +125,11 @@ const HomeScreen = () => {
 
           if (scannedBarcodes.length > 0) {
             const scannedUrl = scannedBarcodes[0].data;
-            console.log('Scanned URL:', scannedUrl);
+            console.log("Scanned URL:", scannedUrl);
 
             setModalVisible(false);
             navigation.navigate("MyGems", {
-              qrCodeUrl: scannedUrl // Changed from qrCodeImage to qrCodeUrl
+              qrCodeUrl: scannedUrl, // Changed from qrCodeImage to qrCodeUrl
             });
           } else {
             Alert.alert("Error", "No valid QR code found in the image");
@@ -160,7 +169,7 @@ const HomeScreen = () => {
     },
     {
       image: require("../../assets/menu-icons/6.png"),
-      screen: "GemRegister1",
+      screen: "Market",
     },
   ];
 
@@ -270,35 +279,37 @@ const styles = StyleSheet.create({
   },
   menuGrid: {
     flexDirection: "row",
-    justifyContent: 'space-between',
+    justifyContent: "space-between",
     flexWrap: "wrap",
     rowGap: 16,
+    columnGap: 16, // Add explicit gap between columns
     marginTop: 10,
     paddingBottom: 20, // Space for bottom nav bar
   },
   menuItem: {
-    width: "48%", // Two items per row with space in between
-    minWidth: '45%', // Minimum width for smaller screens
-    maxWidth: '48%', // Maximum width to maintain two columns
-    alignItems: "center",
-    backgroundColor: '#172A4D', // Default background color, can be overridden by props
+    width: "47%", // Slightly smaller to ensure proper spacing
+    aspectRatio: 1,
     borderRadius: 20,
-    paddingVertical: 25, // Increased padding to accommodate larger image
-    paddingHorizontal: 15,
-    aspectRatio: 1.0, // Make menu items square
+    overflow: "hidden", // Ensure touch events don't leak
   },
-  iconContainer: {
+  menuItemContent: {
+    flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: 12,
-    height: 80, // Fixed height for icon container
+  },
+  iconContainer: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    width: "100%",
   },
   imageStyle: {
-    width: 400, // Larger image size to match the screenshot
-    height: 175, // Square aspect ratio
+    width: "100%",
+    height: "100%",
+    aspectRatio: 1,
   },
   menuText: {
-    fontSize: 14, 
+    fontSize: 14,
     textAlign: "center",
     color: "#fff",
     fontWeight: "500", // Medium weight for better readability
@@ -392,26 +403,26 @@ const styles = StyleSheet.create({
     color: "#721c24",
   },
   permissionButton: {
-    backgroundColor: '#2196F3',
-     padding: 12,
+    backgroundColor: "#2196F3",
+    padding: 12,
     borderRadius: 8,
     marginTop: 20,
   },
   message: {
     fontSize: 16,
-    textAlign: 'center',
+    textAlign: "center",
     marginBottom: 20,
   },
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     padding: 20,
   },
   buttonText: {
-    color: 'white',
+    color: "white",
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
 });
 

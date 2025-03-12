@@ -16,10 +16,9 @@ import Icon from "react-native-vector-icons/MaterialIcons";
 import * as ImagePicker from 'expo-image-picker';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import { BarCodeScanner } from 'expo-barcode-scanner';
-import { baseScreenStyles } from "../../styles/baseStyles";
+import { baseScreenStylesNew } from "../../styles/baseStylesNew";
 import { useNavigation } from "@react-navigation/native";
-import Header_1 from "../../components/Header_1";
-import GradientContainer from "../../components/GradientContainer";
+
 
 
 const MenuItem = ({ image, title, onPress }) => (
@@ -113,7 +112,7 @@ const HomePageCustomer = ({ navigation }) => {
   };
 
   return (
-    <GradientContainer>
+    <View style={baseScreenStylesNew.container}>
       {scanning ? (
         <CameraView
           style={StyleSheet.absoluteFillObject}
@@ -135,8 +134,9 @@ const HomePageCustomer = ({ navigation }) => {
         </CameraView>
       ) : (
         <>
-          <Header_1 title="Home" />
+
           <View style={styles.content}>
+            <Image source={require("../../assets/logo-letter.png")} style={styles.logo}/>
             <Text style={styles.greeting}>Hello Rathnasiri,</Text>
             <View style={styles.menuGrid}>
               {menuItems.map((item, index) => (
@@ -185,22 +185,26 @@ const HomePageCustomer = ({ navigation }) => {
       </TouchableOpacity>
     </View>
   </Modal>
-</GradientContainer>
+</View>
   );
 };
 
 const styles = StyleSheet.create({
-  gradientContainer: {
-    flex: 1,
-  },
+
   content: {
     paddingHorizontal: 16,
-    paddingTop: StatusBar.currentHeight ? StatusBar.currentHeight + 16 : 16,
+    paddingTop: 25,
+  },
+  logo: {
+    width: 130,  
+    height: 70,  
+    resizeMode: "contain",
+    marginBottom: 5,
   },
   greeting: {
     fontSize: 16,
     marginBottom: 20,
-    color: "#fff",
+    color: "#000",
     fontWeight: "500",
   },
   menuGrid: {

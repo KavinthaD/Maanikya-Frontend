@@ -12,14 +12,13 @@ import {
   StatusBar,
   Alert,
 } from "react-native";
-import { baseScreenStyles } from "../../styles/baseStyles";
-import Header_1 from "../../components/Header_1";
-import GradientContainer from "../../components/GradientContainer"; // Import the GradientContainer
+import { baseScreenStylesNew } from "../../styles/baseStylesNew";
 import Modal from "react-native-modal";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import * as ImagePicker from 'expo-image-picker';
 import { Camera } from 'expo-camera';
 import { BarCodeScanner } from 'expo-barcode-scanner';
+
 
 
 const MenuItem = ({ image, title, onPress }) => (
@@ -123,7 +122,7 @@ const HomeScreen = () => {
   };
 
   return (
-    <GradientContainer>
+    <View style={baseScreenStylesNew.container}>
       {scanning ? (
         <Camera
           style={StyleSheet.absoluteFillObject}
@@ -144,8 +143,8 @@ const HomeScreen = () => {
         </Camera>
       ) : (
         <>
-          <Header_1 title="Home" />
           <View style={styles.content}>
+            <Image source={require("../../assets/logo-letter.png")} style={styles.logo}/>
             <Text style={styles.greeting}>Hello Sriyan,</Text>
             <View style={styles.menuGrid}>
               {menuItems.map((item, index) => (
@@ -198,22 +197,25 @@ const HomeScreen = () => {
           </TouchableOpacity>
         </View>
       </Modal>
-    </GradientContainer>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
-  gradientContainer: {
-    flex: 1,
-  },
   content: {
     paddingHorizontal: 16,
-    paddingTop: StatusBar.currentHeight ? StatusBar.currentHeight + 16 : 16,
+    paddingTop: 25,
+  },
+  logo: {
+    width: 130,  
+    height: 70,  
+    resizeMode: "contain",
+    marginBottom: 5,
   },
   greeting: {
     fontSize: 16,
     marginBottom: 20,
-    color: "#fff",
+    color: "#000",
     fontWeight: "500",
   },
   menuGrid: {

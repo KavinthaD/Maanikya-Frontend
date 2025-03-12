@@ -11,11 +11,10 @@ import {
   Alert,
 } from "react-native";
 import { Picker } from "@react-native-picker/picker";
-import { baseScreenStyles } from "../../styles/baseStyles";
+import { baseScreenStylesNew } from "../../styles/baseStylesNew";
 import { useNavigation } from "@react-navigation/native";
 import axios from "axios"; // Import axios
 import AsyncStorage from "@react-native-async-storage/async-storage"; // Import AsyncStorage
-import GradientContainer from "../../components/GradientContainer"; // Import the GradientContainer
 import { API_URL, ENDPOINTS } from '../../config/api'; 
 
 const Login = () => {
@@ -107,16 +106,15 @@ const Login = () => {
   };
 
   return (
-    <GradientContainer>
-    <View style={[baseScreenStyles.container, styles.container]}>
+    <View style={[baseScreenStylesNew.container, styles.container]}>
       <Image source={require("../../assets/logo.png")} style={styles.logo} />
       <Text style={styles.title}>Welcome Back</Text>
-      <Text style={styles.subtitle}>Login to your account</Text>
+      <Text style={styles.subtitle}>Enter your email to login</Text>
 
       <TextInput
         style={styles.input}
         placeholder="email@domain.com"
-        placeholderTextColor="#888"
+        placeholderTextColor="#B0B0B0"
         value={email}
         onChangeText={setEmail}
         keyboardType="email-address"
@@ -137,6 +135,7 @@ const Login = () => {
       <TextInput
         style={styles.input}
         placeholder="Password"
+        placeholderTextColor="#B0B0B0"
         secureTextEntry
         value={password}
         onChangeText={setPassword}
@@ -148,10 +147,10 @@ const Login = () => {
         <Text style={styles.forgotPassword}>Forgot your password?</Text>
       </TouchableOpacity>
       <TouchableOpacity
-        style={[baseScreenStyles.Button1, styles.loginButton]}
+        style={[baseScreenStylesNew.Button1, styles.loginButton]}
         onPress={handleLogin}
       >
-        <Text style={styles.loginButtonText}>Log in</Text>
+        <Text style={styles.loginButtonText}>Login</Text>
       </TouchableOpacity>
 
       {/* Test Login Buttons */}
@@ -181,7 +180,6 @@ const Login = () => {
         </View>
       )}
     </View>
-    </GradientContainer>
   );
 };
 
@@ -218,8 +216,8 @@ const styles = StyleSheet.create({
     elevation: 3,
     shadowColor: '#000',
     shadowOffset: {
-      width: 0,
-      height: 2,
+    width: 0,
+    height: 2,
     },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
@@ -241,14 +239,14 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   title: {
-    fontSize: 32,
-    fontWeight: "bold",
+    fontSize: 28,
     marginBottom: 10,
+    color: "black"
   },
   subtitle: {
-    fontSize: 20,
+    fontSize: 18,
     marginBottom: 15,
-    fontWeight: "bold",
+    color: "black"
   },
   input: {
     width: "100%",
@@ -258,7 +256,9 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     paddingHorizontal: 10,
     marginBottom: 10,
-    backgroundColor: "#fff",
+    backgroundColor: "rgba(130, 130, 130, 0.30)",
+    borderColor: "rgba(174, 168, 168, 1) ",
+    color: "black"
   },
   pickerContainer: {
     width: "100%",
@@ -268,11 +268,14 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     marginBottom: 15,
     overflow: "hidden",
-    backgroundColor: "rgba(255, 255, 255, 0.8)",
+    backgroundColor: "rgba(130, 130, 130, 0.30)",
+    borderColor: "rgba(174, 168, 168, 1)",
+    color: "black"
   },
   picker: {
     height: "100%",
     width: "100%",
+    color: "black"
   },
   pickerItem: {
     color: "#888",
@@ -284,8 +287,9 @@ const styles = StyleSheet.create({
     alignSelf: "flex-start",
   },
   forgotPassword: {
-    color: "#007bff",
+    color: "#000",
     marginBottom: 20,
+    fontWeight: "bold"
   },
   loginButton: {
     alignItems: "center",
@@ -313,6 +317,12 @@ const styles = StyleSheet.create({
     color: "white",
     fontWeight: "bold",
   },
+  errorText: {
+    color: "red", 
+    fontSize: 14,
+    marginBottom: 10,
+    fontWeight: "bold",
+  }
 });
 
 export default Login;

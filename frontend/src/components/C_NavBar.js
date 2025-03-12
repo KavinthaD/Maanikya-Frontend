@@ -88,7 +88,7 @@ const TabButton = (props) => {
           style={{
             width: 24,
             height: 24,
-            tintColor: focused ? "white" : "grey",
+            tintColor: focused ? "white" : "white",
           }} // Adjust size and color
         />
       </Animatable.View>
@@ -103,7 +103,7 @@ export default function C_NavBar() {
         screenOptions={{
           headerShown: false,
           tabBarStyle: {
-            backgroundColor:"#c1e2f7",
+            backgroundColor:"#072D44",
             height: 60,
             position: "absolute",
             margin: 16,

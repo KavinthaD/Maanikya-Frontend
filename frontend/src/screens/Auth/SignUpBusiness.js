@@ -92,14 +92,14 @@ const SignUpBusiness = () => {
                     <TextInput
                         style={[styles.input, styles.inputHalf]}
                         placeholder="First Name"
-                        placeholderTextColor="#fff"
+                        placeholderTextColor="#B0B0B0"
                         value={firstName}
                         onChangeText={setFirstName}
                     />
                     <TextInput
                         style={[styles.input, styles.inputHalf]}
                         placeholder="Last Name"
-                        placeholderTextColor="#fff"
+                        placeholderTextColor="#B0B0B0"
                         value={lastName}
                         onChangeText={setLastName}
                     />
@@ -108,7 +108,7 @@ const SignUpBusiness = () => {
                 <TextInput
                     style={styles.input}
                     placeholder="email@domain.com"
-                    placeholderTextColor="#fff"
+                    placeholderTextColor="#B0B0B0"
                     value={email}
                     onChangeText={setEmail}
                     keyboardType="email-address"
@@ -116,7 +116,7 @@ const SignUpBusiness = () => {
                 <TextInput
                     style={styles.input}
                     placeholder="Phone number"
-                    placeholderTextColor="#fff"
+                    placeholderTextColor="#B0B0B0"
                     value={phoneNumber}
                     onChangeText={setPhoneNumber}
                     keyboardType="phone-pad"
@@ -138,7 +138,7 @@ const SignUpBusiness = () => {
                 {errorMessage ? (
                     <Text style={styles.errorText}>{errorMessage}</Text>
                 ) : null}
-                <TouchableOpacity style={styles.continueButton} onPress={handleContinue}>
+                <TouchableOpacity style={[baseScreenStyles.Button1,styles.continueButton]} onPress={handleContinue}>
                     <Text style={styles.continueButtonText}>Continue</Text>
                 </TouchableOpacity>
             </KeyboardAvoidingView>
@@ -168,11 +168,13 @@ const styles = StyleSheet.create({
         fontSize: 30,
         marginBottom: 10,
         fontWeight: 'bold',
+        color: "#fff"
     },
     prompt: {
         fontSize: 16,
         marginBottom: 20,
         fontWeight: 'bold',
+        color: "#fff"
     },
     row: {
         flexDirection: 'row',
@@ -188,9 +190,8 @@ const styles = StyleSheet.create({
         borderRadius: 12,
         paddingHorizontal: 10,
         marginBottom: 10,
-        backgroundColor: 'rgba(92, 125, 134, 0.7) ',
-        
-       
+        backgroundColor: "#5C7D86",
+        color: "white"
     },
     inputHalf: {
         width: '48%',
@@ -203,12 +204,12 @@ const styles = StyleSheet.create({
         borderRadius: 12,
         marginBottom: 40,
         overflow: 'hidden',
-        backgroundColor: 'rgba(92, 125, 134, 0.7) ',
+        backgroundColor: '#5C7D86',
     },
     picker: {
         height: '100%',
         width: '100%',
-        color: '#FFFFFF',
+        color: '#B0B0B0',
     },
     pickerItem: {
         color: '#888',
@@ -218,15 +219,11 @@ const styles = StyleSheet.create({
         marginBottom: 10,
     },
     continueButton: {
-        backgroundColor: '#7FACBB',
-        borderRadius: 5,
-        width: '100%',
-        height: 40,
         alignItems: 'center',
         justifyContent: 'center',
     },
     continueButtonText: {
-        color: '#000',
+        color: '#170969',
         fontSize: 16,
     },
 

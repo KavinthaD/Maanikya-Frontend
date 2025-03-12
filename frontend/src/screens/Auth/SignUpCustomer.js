@@ -91,14 +91,14 @@ const SignUpScreenCustomer = ({ navigation }) => {
         <TextInput
           style={[styles.input, styles.halfInput]}
           placeholder="First Name"
-          placeholderTextColor="#888"
+          placeholderTextColor="#B0B0B0"
           value={firstName}
           onChangeText={setFirstName}
         />
         <TextInput
           style={[styles.input, styles.halfInput]}
           placeholder="Last Name"
-          placeholderTextColor="#888"
+          placeholderTextColor="#B0B0B0"
           value={lastName}
           onChangeText={setLastName}
         />
@@ -107,7 +107,7 @@ const SignUpScreenCustomer = ({ navigation }) => {
         style={styles.input}
         placeholder="email@domain.com"
         keyboardType="email-address"
-        placeholderTextColor="#888"
+        placeholderTextColor="#B0B0B0"
         value={email}
         onChangeText={setEmail}
       />
@@ -115,21 +115,21 @@ const SignUpScreenCustomer = ({ navigation }) => {
         style={styles.input}
         placeholder="Phone number"
         keyboardType="phone-pad"
-        placeholderTextColor="#888"
+        placeholderTextColor="#B0B0B0"
         value={phoneNumber}
         onChangeText={setPhoneNumber}
       />
       <TextInput
         style={styles.input}
         placeholder="User Name"
-        placeholderTextColor="#888"
+        placeholderTextColor="#B0B0B0"
         value={userName}
         onChangeText={setUserName}
       />
       <TextInput
         style={styles.input}
         placeholder="Password"
-        placeholderTextColor="#888"
+        placeholderTextColor="#B0B0B0"
         secureTextEntry
         value={password}
         onChangeText={setPassword}
@@ -137,7 +137,7 @@ const SignUpScreenCustomer = ({ navigation }) => {
       <TextInput
         style={styles.input}
         placeholder="Re-enter password"
-        placeholderTextColor="#888"
+        placeholderTextColor="#B0B0B0"
         secureTextEntry
         value={reEnterPassword}
         onChangeText={setReEnterPassword}
@@ -181,10 +181,11 @@ const styles = StyleSheet.create({
     fontSize: 30,
     marginBottom: 5,
     fontWeight: "bold",
+    color: "#fff"
   },
   instructions: {
     fontSize: 14,
-    color: "#555",
+    color: "#fff",
     marginBottom: 20,
     fontWeight: "bold",
   },
@@ -201,13 +202,17 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     paddingHorizontal: 10,
     marginBottom: 10,
-    backgroundColor: "rgba(255, 255, 255, 0.8)",
+    backgroundColor: "rgba(92, 125, 134, 0.7)",
+    borderColor: "rgba(92, 125, 134, 0.7) ",
     opacity: 0.8,
+    color: "white"
   },
   halfInput: {
     width: "48%",
+    
   },
   button: {
+    marginTop: 15,
     width: "100%",
     height: 40,
     backgroundColor: "#000080",

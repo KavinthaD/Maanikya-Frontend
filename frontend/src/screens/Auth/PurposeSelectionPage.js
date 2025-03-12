@@ -10,9 +10,8 @@ import {
   Modal,
   Animated,
 } from "react-native";
-import { baseScreenStyles } from "../../styles/baseStyles";
-import LinearGradient from "react-native-linear-gradient";
-import GradientContainer from "../../components/GradientContainer";
+import { baseScreenStylesNew } from "../../styles/baseStylesNew";
+
 
 const PurposeSelectionPage = ({ navigation }) => {
   const [modalVisible, setModalVisible] = useState(false);
@@ -35,8 +34,7 @@ const PurposeSelectionPage = ({ navigation }) => {
   }, []);
 
   return (
-    <GradientContainer>
-    <View style={baseScreenStyles.container}>
+    <View style={[baseScreenStylesNew.backgroundColor, baseScreenStylesNew.container]}>
       <Animated.Image
         source={require("../../assets/logo-gem.png")}
         style={[styles.logo, { transform: [{ scale: scaleValue }] }]}
@@ -48,13 +46,12 @@ const PurposeSelectionPage = ({ navigation }) => {
       <Text style={styles.title}>I'm here to,</Text>
       <View style={styles.card}>
         <TouchableOpacity
-          style={styles.button}
-          onPress={() => navigation.navigate("SignUpBusiness")}
-        >
+          style={styles.button1}
+          onPress={() => navigation.navigate("SignUpBusiness")}>
           <Text style={styles.buttonText}>Manage my business</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          style={styles.button}
+          style={styles.button2}
           onPress={() => navigation.navigate("RegisterSelectionPage")}
         >
           <Text style={styles.buttonText}>Look for gems</Text>
@@ -118,7 +115,6 @@ const PurposeSelectionPage = ({ navigation }) => {
       </Modal>
       
     </View>
-    </GradientContainer>
   );
 };
 
@@ -142,9 +138,10 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 28,
     fontWeight: "bold",
-    color: "#ffffff",
-    marginLeft: 120,
-    marginBottom: 48,
+    color: "#000",
+    marginLeft: 140,
+    marginTop: 30,
+    marginBottom: 13,
     marginBlockStart: 30,
   },
 
@@ -155,20 +152,24 @@ const styles = StyleSheet.create({
   },
 
   card: {
-    backgroundColor: "rgba(92, 125, 134, 0.51)",
-    marginTop: -36,
+    backgroundColor: "rgba(130, 130, 130, 0.30)",
     padding: 30,
     borderRadius: 25,
     width: "90%",
     alignItems: "center",
     marginLeft: 20,
-    elevation: 5,
-    shadowColor: " rgba(0, 0, 0, 0.46)",
-    shadowOpacity: 0.1,
-    shadowOffset: { width: 0, height: 2 },
+   
   },
-  button: {
-    backgroundColor: "#170969",
+  button1: {
+    backgroundColor: "#072D44",
+    paddingVertical: 12,
+    borderRadius: 50,
+    width: "100%",
+    marginVertical: 5,
+    marginBottom: 13,
+  },
+  button2: {
+    backgroundColor: "#02457A",
     paddingVertical: 12,
     borderRadius: 50,
     width: "100%",
@@ -189,28 +190,28 @@ const styles = StyleSheet.create({
   divider: {
     flex: 1,
     height: 1,
-    backgroundColor: "#ffffff",
+    backgroundColor: "#000",
   },
   orText: {
     marginHorizontal: 10,
-    color: "#ffffff",
-    fontWeight: "bold",
+    color: "#000",
+    
   },
   loginText: {
     fontSize: 14,
-    color: "#ffffff",
-    fontWeight: "b",
+    color: "#000",
+    fontWeight: "bold",
     marginTop: 2,
   },
   loginButton: {
-    backgroundColor: "#9CCDDB",
+    backgroundColor: "#170969",
     paddingVertical: 8,
     borderRadius: 70,
     width: "80%",
     marginTop: 10,
   },
   loginButtonText: {
-    color: "#170969",
+    color: "#fff",
     fontSize: 15,
     fontWeight: "semi-bold",
     textAlign: "center",
@@ -229,13 +230,13 @@ const styles = StyleSheet.create({
 
   languageText: {
     fontSize: 14,
-    color: "#ffffff",
+    color: "#000",
     marginRight: 8,
   },
   globeIcon: {
     width: 28,
     height: 28,
-    tintColor: "#ffffff",
+    tintColor: "#000",
   },
   logoContainer: {
     flex: 1,

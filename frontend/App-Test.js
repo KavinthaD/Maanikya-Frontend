@@ -49,11 +49,11 @@ export default function App() {
         <NavigationContainer>
           <Stack.Navigator>
             <Stack.Screen
-              name="SellerProfile"
+              name="WelcomePage"
               options={{
                 headerShown: false,
               }}
-              component={CompletedTracker}
+              component={Login}
             />
            
             {/* Add other screens here */}

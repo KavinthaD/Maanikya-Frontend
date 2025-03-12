@@ -5,7 +5,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
 import * as ImagePicker from "expo-image-picker";
 import { encode as base64Encode } from "base-64";
-import GradientContainer from "../../components/GradientContainer";
+import { baseScreenStylesNew } from "../../styles/baseStylesNew";
 import {
   View,
   Text,
@@ -18,7 +18,6 @@ import {
   Linking,
 } from "react-native";
 import { baseScreenStyles } from "../../styles/baseStyles";
-import Header_1 from "../../components/Header_1";
 import { CameraView, useCameraPermissions } from "expo-camera";
 import { BarCodeScanner } from "expo-barcode-scanner";
 
@@ -184,7 +183,7 @@ const HomeScreen = () => {
   };
 
   return (
-    <GradientContainer>
+    <View style={baseScreenStylesNew.container}>
       {scanning ? (
         <CameraView
           style={StyleSheet.absoluteFillObject}
@@ -206,9 +205,9 @@ const HomeScreen = () => {
         </CameraView>
       ) : (
         <>
-          <Header_1 title="Home" />
           <View style={styles.content}>
-            <Text style={styles.greeting}>Hello Rathnasiri,</Text>
+            <Image source={require("../../assets/logo-letter.png")} style={styles.logo}/>
+            
             <View style={styles.menuGrid}>
               {menuItems.map((item, index) => (
                 <MenuItem
@@ -259,23 +258,22 @@ const HomeScreen = () => {
           </TouchableOpacity>
         </View>
       </Modal>
-    </GradientContainer>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
-  gradientContainer: {
-    flex: 1,
-  },
+
   content: {
     paddingHorizontal: 16,
-    paddingTop: StatusBar.currentHeight ? StatusBar.currentHeight + 16 : 16,
+    paddingTop: 26,
   },
-  greeting: {
-    fontSize: 16,
-    marginBottom: 20,
-    color: "#fff", // Changed to white for better visibility on gradient
-    fontWeight: "500",
+
+  logo: {
+    width: 140,  // Adjust based on your logo size
+    height: 75,   // Adjust height accordingly
+    resizeMode: "contain",
+    marginBottom: 5,
   },
   menuGrid: {
     flexDirection: "row",

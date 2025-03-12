@@ -321,8 +321,6 @@ function GemRegister1Main() {
         formData: form,
       });
     }
-
-    console.log("Data passed to GemRegister1:", form);
     navigation.navigate("GemRegister2", {
       formData: { ...form, photo: form.photos[0] },
     }); // Pass the image path
@@ -358,7 +356,7 @@ function GemRegister1Main() {
               <Text style={styles.addPhotoButtonText}>AI auto filler</Text>
               <Text style={baseScreenStyles.helperText}>
                 Below details can be filled with image of the gem or by manually
-                (please beaware AI auto filler can make mistakes.)
+                (Please be aware, AI auto filler can make mistakes.)
               </Text>
             </View>
             <TextInput

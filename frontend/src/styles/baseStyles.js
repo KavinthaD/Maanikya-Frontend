@@ -47,6 +47,7 @@ const styles = StyleSheet.create({
     fontStyle: "italic",
     fontWeight: "bold",
   },
+  
 });
 
 export const baseScreenStyles = {

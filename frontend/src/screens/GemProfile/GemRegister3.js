@@ -29,6 +29,11 @@ export default function Gem_register_3() {
   const [gemData] = useState(null);
   const qrContainerRef = useRef();
 
+  // =============================================
+  // === LOGGING RETRIEVED DATA ===================
+  // console.log("Received Data from GemRegister2:", { gemId, createdAt, qrCode });
+  // =============================================
+  
   // Disable back navigation
   useEffect(() => {
     const backHandler = BackHandler.addEventListener(
@@ -120,11 +125,13 @@ export default function Gem_register_3() {
       console.log("Copied to:", tempFile);
 
       // Share the file using expo-sharing
-      await Sharing.shareAsync(tempFile, {
+      const shareResponse = await Sharing.shareAsync(tempFile, {
         mimeType: "image/png",
         dialogTitle: "Share QR Code",
         UTI: "public.png", // For iOS
       });
+
+      console.log("Share response:", shareResponse); // Log the share response
 
       // Clean up the temporary file after sharing
       try {
@@ -159,75 +166,81 @@ export default function Gem_register_3() {
     const date = new Date(dateString);
     return date.toISOString().split("T")[0]; // This will return YYYY-MM-DD format
   };
+
   const handleHome = async () => {
     navigation.navigate("BS_NavBar", { screen: "Home" });
   };
-  
 
   return (
     <GradientContainer>
-      <Header_1 title="Add gem succes" />
-    <View style={baseScreenStyles.container}>
-      <View style={styles.innerContainer}>
-        <ViewShot
-          ref={qrContainerRef}
-          options={{
-            format: "png",
-            quality: 1.0,
-            result: "tmpfile",
-            width: 1000,
-            height: 1000,
-          }}
-        >
-          <View style={styles.qrContainer}>
-            <View style={styles.qrPlaceholder}>
-              {qrCode ? (
-                <Image
-                  source={{ uri: qrCode }}
-                  style={styles.qrImage}
-                  resizeMode="contain"
-                />
-              ) : (
-                <Image
-                  source={require("../../assets/qr_test.png")}
-                  style={styles.testQRImage}
-                />
-              )}
+      <Header_1 title="Add gem success" />
+      <View style={baseScreenStyles.container}>
+        <View style={styles.innerContainer}>
+          <ViewShot
+            ref={qrContainerRef}
+            options={{
+              format: "png",
+              quality: 1.0,
+              result: "tmpfile",
+              width: 1000,
+              height: 1000,
+            }}
+          >
+            <View style={styles.qrContainer}>
+              <View style={styles.qrPlaceholder}>
+                {qrCode ? (
+                  <Image
+                    source={{ uri: qrCode }}
+                    style={styles.qrImage}
+                    resizeMode="contain"
+                  />
+                ) : (
+                  <Image
+                    source={require("../../assets/qr_test.png")}
+                    style={styles.testQRImage}
+                  />
+                )}
+              </View>
             </View>
-          </View>
-        </ViewShot>
-        <View>
-          <Text style={baseScreenStyles.helperText}>
-            Gem Registered Successfully! Qr code is generated
-          </Text>
-        </View>
-        <View style={styles.infoContainer}>
-          <View style={styles.infoBox}>
-            <Text style={styles.infoText}>ID - {gemId || "Loading..."}</Text>
-          </View>
-          <View style={styles.infoBox}>
-            <Text style={styles.infoText}>
-              Registered date: {formatDate(createdAt)}
+          </ViewShot>
+          <View>
+            <Text style={baseScreenStyles.helperText}>
+              Gem Registered Successfully! QR code is generated
             </Text>
           </View>
-        </View>
-        <View style={styles.buttonContainer}>
-        <TouchableOpacity style={baseScreenStyles.Button3} onPress={handleHome}>
-          <Text style={baseScreenStyles.buttonText}>Go Back Home</Text>
-        </TouchableOpacity>
+          <View style={styles.infoContainer}>
+            <View style={styles.infoBox}>
+              <Text style={styles.infoText}>ID - {gemId || "Loading..."}</Text>
+            </View>
+            <View style={styles.infoBox}>
+              <Text style={styles.infoText}>
+                Registered date: {formatDate(createdAt)}
+              </Text>
+            </View>
+          </View>
+          <View style={styles.buttonContainer}>
+            <TouchableOpacity
+              style={baseScreenStyles.Button3}
+              onPress={handleHome}
+            >
+              <Text style={baseScreenStyles.buttonText}>Go Back Home</Text>
+            </TouchableOpacity>
 
-        <TouchableOpacity style={baseScreenStyles.Button2} onPress={handleShare}>
-          <Text style={baseScreenStyles.buttonText}>Share QR code</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[baseScreenStyles.Button1, styles.blueButton]}
-          onPress={handleSaveToDevice}
-        >
-          <Text style={baseScreenStyles.buttonText}>Save to device</Text>
-        </TouchableOpacity>
+            <TouchableOpacity
+              style={baseScreenStyles.Button2}
+              onPress={handleShare}
+            >
+              <Text style={baseScreenStyles.buttonText}>Share QR code</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[baseScreenStyles.Button1, styles.blueButton]}
+              onPress={handleSaveToDevice}
+            >
+              <Text style={baseScreenStyles.buttonText}>Save to device</Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </View>
-    </View>
     </GradientContainer>
   );
 }
@@ -271,19 +284,6 @@ const styles = StyleSheet.create({
   buttonContainer: {
     width: "100%",
     marginTop: 30,
-    
-  },
-  sendButton: {
-    marginTop: 10,
-    marginBottom: 15,
-    backgroundColor: "#02457A",
-    width: "95%",
-    padding: 15,
-    borderRadius: 10,
-    color: "white",
-    textAlign: "center",
-    fontSize: 16,
-    fontWeight: "bold",
   },
   qrImage: {
     width: "100%",

@@ -1,7 +1,7 @@
 //Screen creator: Isum
 
 import React, { useState, useEffect } from "react";
-import {View, Text, TextInput,Image,TouchableOpacity,StyleSheet, Modal, KeyboardAvoidingView, Platform, Alert} from "react-native";
+import {View, Text, TextInput,Image,TouchableOpacity,StyleSheet, Modal, KeyboardAvoidingView, Platform, Alert,ScrollView} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons} from "@expo/vector-icons";
 import ImageCropPicker from "react-native-image-crop-picker";
@@ -9,6 +9,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { API_URL, ENDPOINTS } from '../../config/api'; 
 import GradientContainer from "../../components/GradientContainer";
 import Header_1 from "../../components/Header_1";
+import { baseScreenStyles } from "../../styles/baseStyles";
 
 const BusinessOwnerEditProfile = ({ navigation, route }) => {
   //Destructuring the user data if available, other wise display null
@@ -166,13 +167,19 @@ const BusinessOwnerEditProfile = ({ navigation, route }) => {
 
   return (
     <GradientContainer>
-    <SafeAreaView style={styles.container}>
       <Header_1 title="Edit Profile" />
-      <KeyboardAvoidingView
+    <SafeAreaView style={styles.container}>
+      
+      <KeyboardAvoidingView 
           behavior={Platform.OS === "ios" ? "padding" : "height"}
-          style={{ flex: 1 }}
+          style={{ 
+            flex: 1, 
+            margin: 0, // Adjust the margin as needed
+            padding: 0 // Adjust the padding as needed
+        }}
           keyboardVerticalOffset={Platform.OS === "ios" ? 64 : 0}
       >
+        <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
       {/* Profile photo */}
         <View style={styles.profileContainer}>
           <Image
@@ -236,7 +243,7 @@ const BusinessOwnerEditProfile = ({ navigation, route }) => {
         <TouchableOpacity style={styles.saveBtn} onPress={handleSave}>
           <Text style={styles.saveBtnText}>Save</Text>
         </TouchableOpacity>
-
+        </ScrollView>
         <Modal
           visible={isModalVisible}
           onRequestClose={() => setModalVisible(false)}
@@ -259,6 +266,7 @@ const BusinessOwnerEditProfile = ({ navigation, route }) => {
             </View>
           </View>
         </Modal>
+        
       </KeyboardAvoidingView>  
     </SafeAreaView>
     </GradientContainer>
@@ -268,17 +276,18 @@ const BusinessOwnerEditProfile = ({ navigation, route }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    margin:0,
+    padding:0,
   },
 
   profileContainer: {
     alignItems: "center",
-    marginTop: 20,
+    padding:"0",
   },
   profilePhoto: {
     width: 100,
     height: 100,
     borderRadius: 50,
-    marginBottom: 10,
   },
   editPhotoBtn: {
     position: "absolute",

@@ -38,6 +38,7 @@ import CompletedTrackerScreen from "./src/screens/Order/CompletedTracker";
 import Customeraddseller from "./src/screens/Customeraddseller";
 import SellerProfile from "./src/screens/MySellerFullProfile";
 import BusinessOwnerEditProfile from "./src/screens/UserProfile/BusinessOwnerEditProfile";
+import GemDetailsScreen from "./src/screens/GemDetailsScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -58,11 +59,11 @@ const App = () => {
       <SafeAreaView
         style={{
           flex: 1,
-          backgroundColor: "black",
+          backgroundColor: "white",
           paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
         }}
       >
-        <StatusBar barStyle="light-content" backgroundColor={baseScreenStyles.container.backgroundColor} translucent={true} />
+        <StatusBar barStyle="dark-content" backgroundColor={baseScreenStyles.container.backgroundColor} translucent={true} />
         <NavigationContainer>
           <Stack.Navigator initialRouteName={initialRouteName}>
             <Stack.Screen name="WelcomePage" component={WelcomePage} options={{ headerShown: false }} />
@@ -95,6 +96,7 @@ const App = () => {
             <Stack.Screen name="InProgressTrackerScreen" component={InProgressTrackerScreen} options={{ headerShown: false }} />
             <Stack.Screen name="CompletedTrackerScreen" component={CompletedTrackerScreen} options={{ headerShown: false }} />
             <Stack.Screen name="SellerProfile" component={SellerProfile} options={{ headerShown: false }} />
+            <Stack.Screen name="GemDetailsScreen" component={GemDetailsScreen} options={{ headerShown: false}} />
           </Stack.Navigator>
         </NavigationContainer>
       </SafeAreaView>

@@ -57,6 +57,7 @@ const shapeItems = [
   { label: "Round", value: "round" },
   { label: "Square", value: "square" },
   { label: "Triangle", value: "triangle" },
+  { label: "Uncut", value: "uncut" },
 ];
 
 export default function GemRegister1() {

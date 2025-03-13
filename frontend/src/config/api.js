@@ -28,5 +28,7 @@ export const ENDPOINTS = {
   GET_USER_PROFILE: "/api/auth/me",
   UPDATE_PROFILE: "/api/auth/update-profile",
   GET_MY_GEMS: "/api/gems/my-gems",
+  ADD_GEMS_TO_MARKET: "/api/market/add",
+  GET_GEMS_ON_MARKET: "/api/market/view",
   // Add other endpoints here
 };

@@ -25,21 +25,24 @@ const MyGems = ({ route, navigation }) => {
   const [error, setError] = useState(null);
   const [gemDetails, setGemDetails] = useState(null);
   const [modalVisible, setModalVisible] = useState(false); // State for modal visibility
-
+  const gemId = route.params?.gemId;
   const qrCodeUrl = route.params?.qrCodeUrl;
   console.log("Received QR URL:", qrCodeUrl);
 
   useEffect(() => {
     const fetchGemDetails = async () => {
       try {
-        console.log("Fetching with URL:", qrCodeUrl);
-
-        // Pass the qrCodeUrl as a route parameter instead of query parameter
-        const response = await axios.get(
-          `${API_URL}${ENDPOINTS.GEMS}/view/${encodeURIComponent(qrCodeUrl)}`
-        );
-
-        console.log("API Response:", response.data);
+        let response;
+        if (gemId) {
+          // Fetch gem details using gemId
+          response = await axios.get(
+            `${API_URL}${ENDPOINTS.GEMS}/view/id/${gemId}`
+          );
+        }else if(qrCodeUrl){
+          response = await axios.get(
+            `${API_URL}${ENDPOINTS.GEMS}/view/${encodeURIComponent(qrCodeUrl)}`
+          );
+        } 
         setGemDetails(response.data.gem);
       } catch (err) {
         console.error("Error fetching gem details:", err);
@@ -49,10 +52,10 @@ const MyGems = ({ route, navigation }) => {
       }
     };
 
-    if (qrCodeUrl) {
+    if (gemId || qrCodeUrl) {
       fetchGemDetails();
     }
-  }, [qrCodeUrl]);
+  }, [gemId, qrCodeUrl]);
 
   const handleCameraPress = () => {
     setModalVisible(true);
@@ -289,17 +292,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#9CCDDB",
-  },
-  topic: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "#082f4f",
-    padding: 15,
-  },
-  topicName: {
-    color: "white",
-    fontSize: 18,
-    fontWeight: "bold",
   },
   imageContainer: {
     alignItems: "center",

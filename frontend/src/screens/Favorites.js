@@ -15,7 +15,7 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from 'expo-linear-gradient';
 import Header_2 from "../components/Header_2";
-import { baseScreenStyles } from "../styles/baseStyles";
+import { baseScreenStylesNew } from "../styles/baseStylesNew";
 
 const OrderRequestModal = ({ visible, onClose, selectedPerson }) => {
   const [additionalMessage, setAdditionalMessage] = useState("");
@@ -100,56 +100,56 @@ const FavoritesScreen = () => {
       id: "1",
       name: "Dulith Wanigarathne",
       role: "Cutter",
-      image: require("../assets/gems/BS001.png"),
+      image: require("../assets/seller.png"),
       type: "Cutter",
     },
     {
       id: "2",
       name: "Isum Hansaja Perera",
       role: "Cutter",
-      image: require("../assets/gems/BS001.png"),
+      image: require("../assets/seller.png"),
       type: "Cutter",
     },
     {
       id: "3",
       name: "Kavintha Dinushan",
       role: "Cutter",
-      image: require("../assets/gems/BS001.png"),
+      image: require("../assets/seller.png"),
       type: "Cutter",
     },
     {
       id: "4",
       name: "Nihal Hewarthna",
       role: "Cutter",
-      image: require("../assets/gems/BS001.png"),
+      image: require("../assets/seller.png"),
       type: "Cutter",
     },
     {
       id: "5",
       name: "Rajitha Perera",
       role: "Burner",
-      image: require("../assets/gems/BS001.png"),
+      image: require("../assets/seller.png"),
       type: "Burner",
     },
     {
       id: "6",
       name: "Tharushi Silva",
       role: "Burner",
-      image: require("../assets/gems/BS001.png"),
+      image: require("../assets/seller.png"),
       type: "Burner",
     },
     {
       id: "7",
       name: "Kasun Fernando",
       role: "Elec. Burner",
-      image: require("../assets/gems/BS001.png"),
+      image: require("../assets/seller.png"),
       type: "Elec. Burner",
     },
     {
       id: "8",
       name: "Sampath Kumara",
       role: "Elec. Burner",
-      image: require("../assets/gems/BS001.png"),
+      image: require("../assets/seller.png"),
       type: "Elec. Burner",
     },
   ];
@@ -205,7 +205,7 @@ const FavoritesScreen = () => {
         ]}
       >
         {selectedPerson?.id === item.id && (
-          <Ionicons name="checkmark" size={20} color="white" />
+          <Ionicons name="checkmark" size={20} color="black" />
         )}
       </View>
     </TouchableOpacity>
@@ -221,26 +221,21 @@ const FavoritesScreen = () => {
   ];
 
   return (
-    <View style={[baseScreenStyles.container, styles.container]}>
+    <View style={[baseScreenStylesNew.container, styles.container]}>
       <Header_2 title ="Favourites"/>
-
-      <LinearGradient
-        colors={gradientColors}
-        style={styles.gradient}
-      >
         <SafeAreaView style={styles.safeArea}>
           {/* Search Bar */}
           <View style={styles.search}>
             <Ionicons
               name="search"
               size={20}
-              color="#828282"
+              color="#888"
               style={styles.searchIcon}
             />
             <TextInput
               style={styles.searchInput}
-              placeholder="Search"
-              placeholderTextColor="#828282"
+              placeholder="Send order to?"
+              placeholderTextColor="#888"
               value={searchQuery}
               onChangeText={setSearchQuery}
             />
@@ -284,8 +279,8 @@ const FavoritesScreen = () => {
 
           {/* Confirm Button with increased bottom margin for navbar */}
           <View style={styles.confirmButtonContainer}>
-            <TouchableOpacity style={styles.confirmButton} onPress={handleConfirm}>
-              <Text style={styles.confirmText}>Confirm</Text>
+            <TouchableOpacity style={baseScreenStylesNew.Button4} onPress={handleConfirm}>
+              <Text style={baseScreenStylesNew.buttonText4}>Confirm</Text>
             </TouchableOpacity>
           </View>
 
@@ -298,7 +293,6 @@ const FavoritesScreen = () => {
             selectedPerson={selectedPerson}
           />
         </SafeAreaView>
-      </LinearGradient>
     </View>
   );
 };
@@ -323,7 +317,7 @@ const styles = StyleSheet.create({
   search: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#ffffff',
+    backgroundColor:'rgba(172, 168, 168, 0.21)',
     borderRadius: 12,
     marginHorizontal: 20,
     marginTop: 15,
@@ -338,15 +332,16 @@ const styles = StyleSheet.create({
     flex: 1,
     height: 40,
     fontSize: 16,
-    color: '#333',
+    color: '#000',
   },
   tabBar: {
     flexDirection: 'row',
     paddingHorizontal: 20,
-    marginBottom: 15,
+    marginBottom: 30,
+    marginTop: 15
   },
   tabButton: {
-    borderRadius: 20,
+    borderRadius: 13,
     paddingVertical: 8,
     paddingHorizontal: 15,
     marginRight: 10,
@@ -354,17 +349,18 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   tabButtonActive: {
-    backgroundColor: '#170969',
+    backgroundColor: '#70B5DF',
   },
   tabButtonInactive: {
-    backgroundColor: '#ffffff',
+    backgroundColor: 'rgba(172, 168, 168, 0.21)',
+    
   },
   tabText: {
     fontSize: 14,
     fontWeight: '500',
   },
   tabTextActive: {
-    color: '#ffffff',
+    color: '#000',
   },
   tabTextInactive: {
     color: '#333333',
@@ -377,72 +373,61 @@ const styles = StyleSheet.create({
     paddingBottom: 10,
   },
   favoriteItem: {
-    backgroundColor: 'rgba(172, 177, 183, 0.21)',
+    backgroundColor: 'rgba(172, 168, 168, 0.31)',
     borderRadius: 15,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingVertical: 8,
     paddingHorizontal: 15,
-    marginBottom: 10,
-    height: 72,
+    marginBottom: 16,
+    height: 80,
+    
   },
   favoriteContent: {
     flexDirection: 'row',
     alignItems: 'center',
   },
   profileImage: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
+    width: 61,
+    height: 56,
+    borderRadius: 32,
     marginRight: 15,
   },
   textContainer: {
     justifyContent: 'center',
   },
   name: {
-    color: '#ffffff',
+    color: '#000',
     fontFamily: "Inter-Medium",
     fontSize: 14,
-    fontWeight: '500',
+    fontWeight: 'bold',
     marginBottom: 3,
   },
   role: {
-    color: '#ffffff',
+    color: '#000',
     fontFamily: "Inter-Medium",
     fontSize: 14,
-    fontWeight: '500',
+    fontWeight: 'bold',
     opacity: 0.8,
   },
   checkbox: {
-    width: 30,
-    height: 30,
-    borderRadius: 15,
-    backgroundColor: 'rgba(23, 9, 105, 0.6)',
+    width: 40,
+    height: 40,
+    borderRadius: 25,
+    backgroundColor: 'rgba(112, 181, 223, 0.66)',
     alignItems: 'center',
     justifyContent: 'center',
   },
   checkboxSelected: {
-    backgroundColor: '#170969',
+    backgroundColor: '#70B5DF',
   },
   confirmButtonContainer: {
     paddingHorizontal: 20,
     paddingBottom: 70, // Increased bottom padding to make space for the navigation bar
     marginTop: 10,
   },
-  confirmButton: {
-    backgroundColor: '#7daab8',
-    borderRadius: 8,
-    height: 40,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  confirmText: {
-    color: '#170969',
-    fontFamily: "Inter-Medium",
-    fontSize: 14,
-    fontWeight: '500',
-  },
+
 });
 
 const modalStyles = StyleSheet.create({

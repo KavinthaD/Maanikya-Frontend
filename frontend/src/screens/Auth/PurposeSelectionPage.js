@@ -46,15 +46,15 @@ const PurposeSelectionPage = ({ navigation }) => {
       <Text style={styles.title}>I'm here to,</Text>
       <View style={styles.card}>
         <TouchableOpacity
-          style={styles.button1}
+          style={baseScreenStylesNew.Button3}
           onPress={() => navigation.navigate("SignUpBusiness")}>
-          <Text style={styles.buttonText}>Manage my business</Text>
+          <Text style={baseScreenStylesNew.buttonText}>Manage my business</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          style={styles.button2}
+          style={baseScreenStylesNew.Button2}
           onPress={() => navigation.navigate("RegisterSelectionPage")}
         >
-          <Text style={styles.buttonText}>Look for gems</Text>
+          <Text style={baseScreenStylesNew.buttonText}>Look for gems</Text>
         </TouchableOpacity>
 
         <View style={styles.dividerContainer}>
@@ -65,10 +65,10 @@ const PurposeSelectionPage = ({ navigation }) => {
 
         <Text style={styles.loginText}>Already have an account?</Text>
         <TouchableOpacity
-          style={styles.loginButton}
+          style={baseScreenStylesNew.Button1}
           onPress={() => navigation.navigate("Login")}
         >
-          <Text style={styles.loginButtonText}>Log in</Text>
+          <Text style={baseScreenStylesNew.buttonText}>Log in</Text>
         </TouchableOpacity>
       </View>
       <View style={styles.footerContainer}>
@@ -145,12 +145,6 @@ const styles = StyleSheet.create({
     marginBlockStart: 30,
   },
 
-  subtitle: {
-    fontSize: 20,
-    color: "#000",
-    marginBottom: 20,
-  },
-
   card: {
     backgroundColor: "rgba(130, 130, 130, 0.30)",
     padding: 30,
@@ -158,30 +152,10 @@ const styles = StyleSheet.create({
     width: "90%",
     alignItems: "center",
     marginLeft: 20,
-   
-  },
-  button1: {
-    backgroundColor: "#072D44",
-    paddingVertical: 12,
-    borderRadius: 50,
-    width: "100%",
-    marginVertical: 5,
-    marginBottom: 13,
-  },
-  button2: {
-    backgroundColor: "#02457A",
-    paddingVertical: 12,
-    borderRadius: 50,
-    width: "100%",
-    marginVertical: 5,
+    borderColor: "rgba(174, 168, 168, 1)",
+    borderWidth: 2
   },
 
-  buttonText: {
-    color: "#FFF",
-    fontSize: 16,
-    fontWeight: "bold",
-    textAlign: "center",
-  },
   dividerContainer: {
     flexDirection: "row",
     alignItems: "center",
@@ -203,19 +177,6 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginTop: 2,
   },
-  loginButton: {
-    backgroundColor: "#170969",
-    paddingVertical: 8,
-    borderRadius: 70,
-    width: "80%",
-    marginTop: 10,
-  },
-  loginButtonText: {
-    color: "#fff",
-    fontSize: 15,
-    fontWeight: "semi-bold",
-    textAlign: "center",
-  },
   footerContainer: {
     flexDirection: "row",
     alignItems: "center",
@@ -227,7 +188,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
   },
-
   languageText: {
     fontSize: 14,
     color: "#000",

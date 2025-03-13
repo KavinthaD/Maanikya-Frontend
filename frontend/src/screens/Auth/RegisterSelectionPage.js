@@ -10,15 +10,13 @@ import {
   Modal,
 } from "react-native";
 import React, { useState } from "react";
-import { baseScreenStyles } from "../../styles/baseStyles";
-import LinearGradient from "react-native-linear-gradient";
-import GradientContainer from "../../components/GradientContainer";
+import { baseScreenStylesNew } from "../../styles/baseStylesNew";
+
 
 const RegisterSelectionPage = ({ navigation }) => {
   const [modalVisible, setModalVisible] = useState(false);
   return (
-    <GradientContainer>
-    <SafeAreaView style={[baseScreenStyles.container, styles.container]}>
+    <SafeAreaView style={[baseScreenStylesNew.container, styles.container]}>
       
         <View style={styles.logoContainer}>
           <Image
@@ -85,9 +83,7 @@ const RegisterSelectionPage = ({ navigation }) => {
             </View>
           </View>
         </Modal>
-      
     </SafeAreaView>
-    </GradientContainer>
   );
 };
 
@@ -125,14 +121,16 @@ const styles = StyleSheet.create({
   },
 
   guestButton: {
-    backgroundColor: "#004B78",
+    backgroundColor: "#fff",
     paddingVertical: 12,
     width: "100%",
     borderRadius: 8,
     marginBottom: 250,
+    borderColor: "#170969",
+    borderWidth: 2
   },
   guestText: {
-    color: "#FFF",
+    color: "#170969",
     textAlign: "center",
     fontSize: 16,
     fontWeight: "600",

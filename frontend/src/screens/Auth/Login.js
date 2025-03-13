@@ -112,28 +112,27 @@ const Login = () => {
       <Text style={styles.subtitle}>Enter your email to login</Text>
 
       <TextInput
-        style={styles.input}
+        style={baseScreenStylesNew.input}
         placeholder="email@domain.com"
         placeholderTextColor="#B0B0B0"
         value={email}
         onChangeText={setEmail}
         keyboardType="email-address"
       />
-      <View style={styles.pickerContainer}>
+      <View style={baseScreenStylesNew.pickerContainer}>
         <Picker
           selectedValue={role}
-          style={styles.picker}
+          style={[baseScreenStylesNew.picker, { color: role ? "black" : "#888" }]}
           onValueChange={(itemValue) => setRole(itemValue)}
-          itemStyle={styles.pickerItem}
         >
-          <Picker.Item label="Choose your role" value="" />
-          <Picker.Item label="Gem business owner" value="gem_business_owner" />
-          <Picker.Item label="Cutter/Burner" value="cutter_burner" />
-          <Picker.Item label="Customer" value="customer" />
+          <Picker.Item label="Choose your role" value="" color="#888"/>
+          <Picker.Item label="Gem business owner" value="gem_business_owner" color="black" />
+          <Picker.Item label="Cutter/Burner" value="cutter_burner" color="black"/>
+          <Picker.Item label="Customer" value="customer" color="black" />
         </Picker>
       </View>
       <TextInput
-        style={styles.input}
+        style={baseScreenStylesNew.input}
         placeholder="Password"
         placeholderTextColor="#B0B0B0"
         secureTextEntry
@@ -147,10 +146,10 @@ const Login = () => {
         <Text style={styles.forgotPassword}>Forgot your password?</Text>
       </TouchableOpacity>
       <TouchableOpacity
-        style={[baseScreenStylesNew.Button1, styles.loginButton]}
+        style={[baseScreenStylesNew.Button1,]}
         onPress={handleLogin}
       >
-        <Text style={styles.loginButtonText}>Login</Text>
+        <Text style={baseScreenStylesNew.buttonText}>Login</Text>
       </TouchableOpacity>
 
       {/* Test Login Buttons */}
@@ -248,38 +247,7 @@ const styles = StyleSheet.create({
     marginBottom: 15,
     color: "black"
   },
-  input: {
-    width: "100%",
-    height: 40,
-    borderColor: "#ccc",
-    borderWidth: 1,
-    borderRadius: 8,
-    paddingHorizontal: 10,
-    marginBottom: 10,
-    backgroundColor: "rgba(130, 130, 130, 0.30)",
-    borderColor: "rgba(174, 168, 168, 1) ",
-    color: "black"
-  },
-  pickerContainer: {
-    width: "100%",
-    height: 54,
-    borderColor: "gray",
-    borderWidth: 1,
-    borderRadius: 12,
-    marginBottom: 15,
-    overflow: "hidden",
-    backgroundColor: "rgba(130, 130, 130, 0.30)",
-    borderColor: "rgba(174, 168, 168, 1)",
-    color: "black"
-  },
-  picker: {
-    height: "100%",
-    width: "100%",
-    color: "black"
-  },
-  pickerItem: {
-    color: "#888",
-  },
+
   inputWithOpacity: {
     backgroundColor: "rgba(255, 255, 255, 0.8)",
   },
@@ -291,14 +259,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     fontWeight: "bold"
   },
-  loginButton: {
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  loginButtonText: {
-    color: "#fff",
-    fontSize: 16,
-  },
+  
   testLoginContainer: {
     flexDirection: "row",
     justifyContent: "space-around",

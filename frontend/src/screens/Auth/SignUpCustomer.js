@@ -10,11 +10,11 @@ import {
   Image,
   Alert, // Import Alert
 } from "react-native";
-import { baseScreenStyles } from "../../styles/baseStyles";
+import { baseScreenStylesNew } from "../../styles/baseStylesNew";
 import SuccessPopup from "../../components/SuccessPopup"; 
 import axios from 'axios'; // Import axios
 import { useNavigation } from "@react-navigation/native";
-import GradientContainer from "../../components/GradientContainer";
+
 import { API_URL, ENDPOINTS } from '../../config/api'; 
 
 const SignUpScreenCustomer = ({ navigation }) => {
@@ -82,21 +82,20 @@ const SignUpScreenCustomer = ({ navigation }) => {
     }
   };
   return (
-    <GradientContainer>
-    <View style={[baseScreenStyles.container, styles.container]}>
+    <View style={[baseScreenStylesNew.container, styles.container]}>
       <Image source={require("../../assets/logo.png")} style={styles.logo} />
       <Text style={styles.subtitle}>Sign Up</Text>
       <Text style={styles.instructions}>Create Your Customer Account</Text>
       <View style={styles.row}>
         <TextInput
-          style={[styles.input, styles.halfInput]}
+          style={[baseScreenStylesNew.input, styles.halfInput]}
           placeholder="First Name"
           placeholderTextColor="#B0B0B0"
           value={firstName}
           onChangeText={setFirstName}
         />
         <TextInput
-          style={[styles.input, styles.halfInput]}
+          style={[baseScreenStylesNew.input, styles.halfInput]}
           placeholder="Last Name"
           placeholderTextColor="#B0B0B0"
           value={lastName}
@@ -104,7 +103,7 @@ const SignUpScreenCustomer = ({ navigation }) => {
         />
       </View>
       <TextInput
-        style={styles.input}
+        style={baseScreenStylesNew.input}
         placeholder="email@domain.com"
         keyboardType="email-address"
         placeholderTextColor="#B0B0B0"
@@ -112,7 +111,7 @@ const SignUpScreenCustomer = ({ navigation }) => {
         onChangeText={setEmail}
       />
       <TextInput
-        style={styles.input}
+        style={baseScreenStylesNew.input}
         placeholder="Phone number"
         keyboardType="phone-pad"
         placeholderTextColor="#B0B0B0"
@@ -120,14 +119,14 @@ const SignUpScreenCustomer = ({ navigation }) => {
         onChangeText={setPhoneNumber}
       />
       <TextInput
-        style={styles.input}
+        style={baseScreenStylesNew.input}
         placeholder="User Name"
         placeholderTextColor="#B0B0B0"
         value={userName}
         onChangeText={setUserName}
       />
       <TextInput
-        style={styles.input}
+        style={baseScreenStylesNew.input}
         placeholder="Password"
         placeholderTextColor="#B0B0B0"
         secureTextEntry
@@ -135,7 +134,7 @@ const SignUpScreenCustomer = ({ navigation }) => {
         onChangeText={setPassword}
       />
       <TextInput
-        style={styles.input}
+        style={baseScreenStylesNew.input}
         placeholder="Re-enter password"
         placeholderTextColor="#B0B0B0"
         secureTextEntry
@@ -146,9 +145,9 @@ const SignUpScreenCustomer = ({ navigation }) => {
         <Text style={styles.errorText}>{errorMessage}</Text>
       ) : null}
       <TouchableOpacity
-        style={styles.button}
+        style={baseScreenStylesNew.Button1}
         onPress={handleCreateAccount}>
-        <Text style={styles.buttonText}>Create account</Text>
+        <Text style={baseScreenStylesNew.buttonText}>Create account</Text>
       </TouchableOpacity>
       
       {/* <SuccessPopup
@@ -157,73 +156,44 @@ const SignUpScreenCustomer = ({ navigation }) => {
         message="Account created successfully!"
       /> */}
     </View>
-    </GradientContainer>
+    
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: 'center',
+    justifyContent: 'center',
     padding: 20,
   },
   logo: {
-    width: 150,
-    height: 100,
-    marginBottom: 20,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: "bold",
-    marginBottom: 10,
-  },
+    paddingTop: 160,
+    width: 170,
+    height: 80,
+    marginTop: 90,
+    marginBottom: 8,
+},
   subtitle: {
     fontSize: 30,
     marginBottom: 5,
     fontWeight: "bold",
-    color: "#fff"
+    color: "#000"
   },
   instructions: {
-    fontSize: 14,
-    color: "#fff",
+    fontSize: 18,
     marginBottom: 20,
-    fontWeight: "bold",
+    fontWeight: 'bold',
+    color: "#000"
   },
   row: {
     flexDirection: "row",
     justifyContent: "space-between",
     width: "100%",
   },
-  input: {
-    width: "100%",
-    height: 50,
-    borderColor: "gray",
-    borderWidth: 1,
-    borderRadius: 12,
-    paddingHorizontal: 10,
-    marginBottom: 10,
-    backgroundColor: "rgba(92, 125, 134, 0.7)",
-    borderColor: "rgba(92, 125, 134, 0.7) ",
-    opacity: 0.8,
-    color: "white"
-  },
   halfInput: {
-    width: "48%",
-    
+    width: "48%", 
   },
-  button: {
-    marginTop: 15,
-    width: "100%",
-    height: 40,
-    backgroundColor: "#000080",
-    borderRadius: 5,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  buttonText: {
-    color: "#fff",
-    fontSize: 16,
-  },
+
   errorText: {
     color: 'red',
     marginBottom: 10,

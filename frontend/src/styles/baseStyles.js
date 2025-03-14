@@ -47,7 +47,20 @@ const styles = StyleSheet.create({
     fontStyle: "italic",
     fontWeight: "bold",
   },
-  
+  infoCard: {
+    backgroundColor: "#99f0ff",
+    borderRadius: 20,
+    padding: 20,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 10,
+    elevation: 5,
+  },
+  themeColor:{
+    backgroundColor: "#9CCDDB",
+    color: "9CCDDB",
+  }
 });
 
 export const baseScreenStyles = {

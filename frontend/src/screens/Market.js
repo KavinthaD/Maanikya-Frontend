@@ -1,68 +1,62 @@
 //Screen Creator Tilmi
-import React, { useState } from "react";
+
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
   Image,
-  StyleSheet,
-  TextInput,
   TouchableOpacity,
+  TextInput,
   ScrollView,
-} from "react-native";
-import Header_1 from "../components/Header_1";
-import GradientContainer from "../components/GradientContainer";
+  StyleSheet,
+  RefreshControl,
+  Dimensions,
+  ActivityIndicator,
+  SafeAreaView,
+  StatusBar
+} from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
+import axios from 'axios';
+import { API_URL } from '../config/api';
+import { Ionicons } from '@expo/vector-icons';
 
-const GemstoneMarketplace = () => {
+const { width } = Dimensions.get('window');
+const CARD_WIDTH = (width - 40) / 2; // 2 cards per row with margins
+const THEME_COLOR = '#9CCDDB'; // Light blue theme color
+
+const Market = ({ navigation }) => {
+  const [gemstones, setGemstones] = useState([]);
+  const [refreshing, setRefreshing] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [searchQuery, setSearchQuery] = useState('');
   const [sortAscending, setSortAscending] = useState(true);
-  const [searchQuery, setSearchQuery] = useState("");
 
-  const gemstones = [
-    {
-      id: "BS001",
-      image: require("../assets/gems/BS001.png"),
-      color: "#0033CC",
-    },
-    {
-      id: "EM001",
-      image: require("../assets/gems/EM001.png"),
-      color: "#50C878",
-    },
-    {
-      id: "RR001",
-      image: require("../assets/gems/RR001.png"),
-      color: "#E0115F",
-    },
-    {
-      id: "YS001",
-      image: require("../assets/gems/YS001.png"),
-      color: "#FFD700",
-    },
-    {
-      id: "BS002",
-      image: require("../assets/gems/BS002.png"),
-      color: "#0033CC",
-    },
-    {
-      id: "PS001",
-      image: require("../assets/gems/PS001.png"),
-      color: "#800080",
-    },
-    {
-      id: "PT001",
-      image: require("../assets/gems/PT001.png"),
-      color: "#FFC0CB",
-    },
-    {
-      id: "EM002",
-      image: require("../assets/gems/EM002.png"),
-      color: "#50C878",
-    },
-    {
-      id: "YS002",
-      image: require("../assets/gems/YS002.png"),
-      color: "#FFD700",
-    },
-  ];
+  const fetchGems = async () => {
+    try {
+      setRefreshing(true);
+      const response = await axios.get(`${API_URL}/api/market/view`);
+      
+      if (response.data.success) {
+        setGemstones(response.data.gems);
+        setError(null);
+      } else {
+        setError('Failed to load gems');
+      }
+    } catch (error) {
+      console.error('Error fetching gems:', error);
+      setError('Network error. Please try again.');
+    } finally {
+      setRefreshing(false);
+      setLoading(false);
+    }
+  };
+
+  useFocusEffect(
+    React.useCallback(() => {
+      fetchGems();
+    }, [])
+  );
 
   const handleSearch = (text) => {
     setSearchQuery(text);
@@ -72,116 +66,308 @@ const GemstoneMarketplace = () => {
     setSortAscending(!sortAscending);
   };
 
+  // Format price with commas
+  const formatPrice = (price) => {
+    return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  };
+
+  // Format gem details
+  const formatGemDetails = (weight, gemType) => {
+    const formattedWeight = weight ? `${weight} ct` : '';
+    const formattedType = gemType ? gemType.charAt(0).toUpperCase() + gemType.slice(1) : '';
+    
+    if (formattedWeight && formattedType) {
+      return `${formattedWeight} ${formattedType}`;
+    } else if (formattedWeight) {
+      return formattedWeight;
+    } else if (formattedType) {
+      return formattedType;
+    }
+    return '';
+  };
+
   // Filter and sort gemstones
   const filteredAndSortedGemstones = gemstones
-    .filter((gem) => gem.id.toLowerCase().includes(searchQuery.toLowerCase()))
+    .filter((gem) => {
+      const searchLower = searchQuery.toLowerCase();
+      return (
+        (gem.gemId && gem.gemId.toLowerCase().includes(searchLower)) ||
+        (gem.gemType && gem.gemType.toLowerCase().includes(searchLower)) ||
+        (gem.owner && gem.owner.toLowerCase().includes(searchLower))
+      );
+    })
     .sort((a, b) => {
       if (sortAscending) {
-        return a.id.localeCompare(b.id);
+        return a.price - b.price;
       } else {
-        return b.id.localeCompare(a.id);
+        return b.price - a.price;
       }
     });
 
   return (
-    <GradientContainer>
-      <ScrollView>
-        <Header_1 title="Market" />
+    <SafeAreaView style={styles.safeArea}>
+      <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
+      
+      <View style={styles.header}>
+        <Text style={styles.headerTitle}>Market</Text>
+      </View>
+      
+      <ScrollView
+        style={styles.scrollView}
+        contentContainerStyle={styles.contentContainer}
+        refreshControl={
+          <RefreshControl 
+            refreshing={refreshing} 
+            onRefresh={fetchGems}
+            colors={[THEME_COLOR]} 
+            tintColor={THEME_COLOR}
+          />
+        }
+      >
         <View style={styles.searchContainer}>
           <View style={styles.searchBar}>
+            <Ionicons name="search" size={20} color="#666" style={styles.searchIcon} />
             <TextInput
               style={styles.searchInput}
-              placeholder="Search"
+              placeholder="Search gems..."
               placeholderTextColor="#999"
               value={searchQuery}
               onChangeText={handleSearch}
             />
             <TouchableOpacity style={styles.sortButton} onPress={handleSort}>
-              <Text style={styles.sortButtonText}>
-                Sort {sortAscending ? "↓" : "↑"}
-              </Text>
+              <Ionicons name={sortAscending ? "arrow-up" : "arrow-down"} size={16} color="#FFF" />
+              <Text style={styles.sortButtonText}>Price</Text>
             </TouchableOpacity>
           </View>
 
-          <Text style={styles.sectionTitle}>Popular</Text>
+          <Text style={styles.sectionTitle}>Available Gems</Text>
 
-          <View style={styles.gemstoneGrid}>
-            {filteredAndSortedGemstones.map((gem) => (
-              <TouchableOpacity key={gem.id} style={styles.gemstoneItem}>
-                <Image
-                  source={gem.image}
-                  style={styles.gemImage}
-                  resizeMode="cover"
-                />
-                <Text style={styles.gemId}>{gem.id}</Text>
+          {loading ? (
+            <View style={styles.loadingContainer}>
+              <ActivityIndicator size="large" color={THEME_COLOR} />
+              <Text style={styles.loadingText}>Loading gems...</Text>
+            </View>
+          ) : error ? (
+            <View style={styles.errorContainer}>
+              <Text style={styles.errorText}>{error}</Text>
+              <TouchableOpacity style={styles.retryButton} onPress={fetchGems}>
+                <Text style={styles.retryButtonText}>Retry</Text>
               </TouchableOpacity>
-            ))}
-          </View>
+            </View>
+          ) : filteredAndSortedGemstones.length === 0 ? (
+            <View style={styles.emptyContainer}>
+              <Ionicons name="diamond-outline" size={64} color={THEME_COLOR} />
+              <Text style={styles.emptyText}>No gems available</Text>
+            </View>
+          ) : (
+            <View style={styles.gemstoneGrid}>
+              {filteredAndSortedGemstones.map((gem) => (
+                <TouchableOpacity
+                  key={gem._id}
+                  style={styles.gemstoneCard}
+                  onPress={() => navigation.navigate("GemDetailsScreen", { gemId: gem.gemId })}
+                >
+                  <View style={styles.gemImageContainer}>
+                    <Image
+                      source={{ uri: gem.photo || require("../assets/gems/no_gem.jpeg") }}
+                      style={styles.gemImage}
+                      resizeMode="cover"
+                    />
+                    <Text style={styles.gemId}>{gem.gemId}</Text>
+                  </View>
+                  <View style={styles.gemDetails}>
+                    <Text style={styles.gemSpecs} numberOfLines={1}>
+                      {formatGemDetails(gem.weight, gem.gemType)}
+                    </Text>
+                    <Text style={styles.gemOwner} numberOfLines={1}>
+                      Owner: {gem.owner}
+                    </Text>
+                    <Text style={styles.gemPrice}>
+                      LKR {formatPrice(gem.price)}
+                    </Text>
+                  </View>
+                </TouchableOpacity>
+              ))}
+            </View>
+          )}
         </View>
       </ScrollView>
-    </GradientContainer>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
-  gradientContainer: {
+  safeArea: {
     flex: 1,
+    backgroundColor: '#FFFFFF',
+  },
+  header: {
+    backgroundColor: '#FFFFFF',
+    paddingVertical: 16,
+    paddingHorizontal: 20,
+    borderBottomWidth: 1,
+    borderBottomColor: '#F0F0F0',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  headerTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#333333',
+  },
+  scrollView: {
+    backgroundColor: '#FFFFFF',
+  },
+  contentContainer: {
+    paddingBottom: 20,
   },
   searchContainer: {
-    padding: 16,
+    padding: 15,
   },
   searchBar: {
-    flexDirection: "row",
-    marginBottom: 16,
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#F5F5F5',
+    borderRadius: 12,
+    paddingHorizontal: 15,
+    marginBottom: 20,
+    borderWidth: 1,
+    borderColor: '#EEEEEE',
+  },
+  searchIcon: {
+    marginRight: 10,
   },
   searchInput: {
     flex: 1,
-    height: 40,
-    backgroundColor: "white",
-    borderRadius: 8,
-    paddingHorizontal: 12,
-    marginRight: 8,
+    height: 46,
+    color: '#333333',
     fontSize: 16,
   },
   sortButton: {
-    backgroundColor: "white",
-    paddingVertical: 8,
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: THEME_COLOR,
     paddingHorizontal: 12,
-    borderRadius: 8,
-    justifyContent: "center",
+    paddingVertical: 6,
+    borderRadius: 15,
+    marginLeft: 8,
   },
   sortButtonText: {
-    color: "#333",
-    fontSize: 16,
+    color: '#FFF',
+    marginLeft: 5,
+    fontSize: 14,
+    fontWeight: '500',
   },
   sectionTitle: {
-    fontSize: 16,
-    fontWeight: "600",
-    marginBottom: 12,
-    color: "#ffffff",
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#333333',
+    marginBottom: 15,
   },
   gemstoneGrid: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    justifyContent: "space-between",
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
   },
-  gemstoneItem: {
-    width: "31%",
+  gemstoneCard: {
+    width: CARD_WIDTH,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 12,
     marginBottom: 16,
-    alignItems: "center",
+    overflow: 'hidden',
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    borderWidth: 1,
+    borderColor: '#EEEEEE',
+  },
+  gemImageContainer: {
+    position: 'relative',
+    width: '100%',
+    height: CARD_WIDTH * 0.9,
+    overflow: 'hidden',
   },
   gemImage: {
-    width: "100%",
-    aspectRatio: 1,
-    borderRadius: 4,
+    width: '100%',
+    height: '100%',
+    borderTopLeftRadius: 12,
+    borderTopRightRadius: 12,
   },
   gemId: {
-    textAlign: "center",
-    fontSize: 14,
-    color: "#ffffff",
-    marginTop: 4,
+    position: 'absolute',
+    top: 8,
+    right: 8,
+    backgroundColor: 'rgba(0, 0, 0, 0.6)',
+    color: '#FFF',
+    fontSize: 12,
+    fontWeight: 'bold',
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 10,
+  },
+  gemDetails: {
+    padding: 12,
+  },
+  gemSpecs: {
+    fontSize: 15,
+    fontWeight: 'bold',
+    color: '#333333',
+    marginBottom: 3,
+  },
+  gemOwner: {
+    fontSize: 13,
+    color: '#666666',
+    marginBottom: 5,
+  },
+  gemPrice: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: THEME_COLOR,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: 50,
+  },
+  loadingText: {
+    color: '#333333',
+    marginTop: 12,
+    fontSize: 16,
+  },
+  errorContainer: {
+    alignItems: 'center',
+    paddingVertical: 50,
+  },
+  errorText: {
+    color: '#FF6B6B',
+    fontSize: 16,
+    textAlign: 'center',
+    marginBottom: 15,
+  },
+  retryButton: {
+    backgroundColor: THEME_COLOR,
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderRadius: 8,
+  },
+  retryButtonText: {
+    color: '#FFF',
+    fontWeight: 'bold',
+  },
+  emptyContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 50,
+  },
+  emptyText: {
+    color: '#333333',
+    fontSize: 16,
+    marginTop: 12,
   },
 });
 
-export default GemstoneMarketplace;
+export default Market;

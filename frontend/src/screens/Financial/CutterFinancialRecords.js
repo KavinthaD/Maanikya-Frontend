@@ -1,14 +1,13 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
-import { baseScreenStyles } from "../../styles/baseStyles";
+import { baseScreenStylesNew } from "../../styles/baseStylesNew";
 import Header_2 from "../../components/Header_2";
 import GradientContainer from "../../components/GradientContainer";
 import LinearGradient from "react-native-linear-gradient";
 
 const CutterFinancialRecords = () => {
   return (
-    <GradientContainer>
-      <View style={[baseScreenStyles.container]}>
+      <View style={[baseScreenStylesNew.container]}>
         <Header_2 title="Financial Records" />
         <View style={styles.container}>
           <View style={styles.totalProfitContainer}>
@@ -22,34 +21,23 @@ const CutterFinancialRecords = () => {
             { title: "Cutting CS003", amount: "LKR. 60 000" },
             { title: "Cutting CS004", amount: "LKR. 600 000" }
           ].map((item, index) => (
-            <LinearGradient 
+            <View 
               key={index} 
-              colors={["#7B96AC", "#323D46"]} 
-              start={{x: 0, y: 0}} 
-              end={{x: 0, y: 1}} 
               style={styles.recordList}
             >
               <View style={styles.recordItem}>
                 <Text style={styles.recordText}>{item.title}</Text>
                 <Text style={styles.recordText}>{item.amount}</Text>
               </View>
-            </LinearGradient>
-          ))}
-
-          <LinearGradient 
-            colors={["#7B96AC", "#323D46"]} 
-            start={{x: 0, y: 0}} 
-            end={{x: 0, y: 1}} 
-            style={styles.recordList}
-          >
-            <View style={[styles.recordItem, styles.lastRecordItem]}>
-              <Text style={styles.recordText}>Total</Text>
-              <Text style={styles.recordText}>LKR. 780 000</Text>
             </View>
-          </LinearGradient>
+          ))}
+            <View style={[styles.recordItem, styles.lastRecordItem]}>
+              <Text style={styles.lastRecordText}>Total</Text>
+              <Text style={styles.lastRecordText}>LKR. 780 000</Text>
+            </View>
+
         </View>
       </View>
-    </GradientContainer>
   );
 };
 
@@ -58,7 +46,7 @@ const styles = StyleSheet.create({
     padding: 30,
   },
   totalProfitContainer: {
-    backgroundColor: "#072D44",
+    backgroundColor: "#170969",
     padding: 15,
     marginBottom: 20,
     alignItems: "center",
@@ -66,17 +54,20 @@ const styles = StyleSheet.create({
   },
   totalProfitTitle: {
     fontSize: 16,
-    color: "#00FF00",
+    color: "#fff",
     marginBottom: 5,
   },
   totalProfitAmount: {
     fontSize: 20,
     fontWeight: "bold",
-    color: "#00FF00",
+    color: "#fff",
   },
   recordList: {
-    borderRadius: 8,
-    marginBottom: 10,
+    backgroundColor:'rgba(172, 168, 168, 0.21)',
+    borderWidth: 2,
+    borderColor: 'rgba(85, 84, 84, 0.21)',
+    borderRadius: 2,
+    marginBottom: 14,
   },
   recordItem: {
     flexDirection: "row",
@@ -85,11 +76,19 @@ const styles = StyleSheet.create({
     paddingVertical: 16,
   },
   recordText: {
-    color: "#fff",
+    color: "#000",
     fontSize: 15,
+  },
+  lastRecordText: {
+    color: "#000",
+    fontSize: 15,
+    fontWeight: "bold"
   },
   lastRecordItem: {
     borderBottomWidth: 0,
+    backgroundColor: "rgba(130, 130,130, 0.67)",
+    borderWidth: 2,
+    borderColor: "#AEA8A8",
   },
 });
 

@@ -145,7 +145,6 @@ const HomeScreen = () => {
         <>
           <View style={styles.content}>
             <Image source={require("../../assets/logo-letter.png")} style={styles.logo}/>
-            <Text style={styles.greeting}>Hello Sriyan,</Text>
             <View style={styles.menuGrid}>
               {menuItems.map((item, index) => (
                 <MenuItem
@@ -212,18 +211,12 @@ const styles = StyleSheet.create({
     resizeMode: "contain",
     marginBottom: 5,
   },
-  greeting: {
-    fontSize: 16,
-    marginBottom: 20,
-    color: "#000",
-    fontWeight: "500",
-  },
   menuGrid: {
     flexDirection: "column",
     alignItems: "center",
     justifyContent: 'flex-start',
     rowGap: 40,
-    marginTop: 10,
+    marginTop: 37,
     paddingBottom: 20,
   },
   menuItem: {

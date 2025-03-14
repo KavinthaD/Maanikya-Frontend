@@ -5,24 +5,22 @@ import {View, Text, Image, StyleSheet, TouchableOpacity, ScrollView, FlatList} f
 import {FontAwesome} from "@expo/vector-icons";
 import Header_2 from "../../components/Header_2";
 import { SafeAreaView } from "react-native-safe-area-context";
-import GradientContainer from "../../components/GradientContainer";
+import { baseScreenStylesNew } from "../../styles/baseStylesNew";
 
-const gems = [
-    { id: "BE002", image: require("../../assets/gem-images/gem1.jpeg")},
-    { id: "BS079", image: require("../../assets/gem-images/gem1.jpeg")},
-    { id: "RS305", image: require("../../assets/gem-images/gem1.jpeg")},
-    { id: "BS001", image: require("../../assets/gem-images/gem1.jpeg")},
-    { id: "BS002", image: require("../../assets/gem-images/gem1.jpeg")},
-    { id: "BS005", image: require("../../assets/gem-images/gem1.jpeg")},
-]
 const OwnerOrderTrackDetails = () => {
     const [orderConfirmed, setOrderConfirmed] = useState(false);
     const [orderCanceled, setOrderCanceled]= useState(false);
     const [rating, setRating] = useState(0);
-
+    const gems = [
+        { id: "BE002", image: require("../../assets/gem-images/gem1.jpeg")},
+        { id: "BS079", image: require("../../assets/gem-images/gem1.jpeg")},
+        { id: "RS305", image: require("../../assets/gem-images/gem1.jpeg")},
+        { id: "BS001", image: require("../../assets/gem-images/gem1.jpeg")},
+        { id: "BS002", image: require("../../assets/gem-images/gem1.jpeg")},
+        { id: "BS005", image: require("../../assets/gem-images/gem1.jpeg")},
+    ]
     return (
-        <GradientContainer>
-        <SafeAreaView style={styles.container}>
+        <View style={baseScreenStylesNew.container}>
         <Header_2 title=" Order#: NB01130"/>
         <ScrollView contentContainerStyle={styles.scrollContainer}>
                 <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.gemScroll}>
@@ -40,7 +38,7 @@ const OwnerOrderTrackDetails = () => {
                 <View style={styles.ratingContainer}>
                     {[1, 2, 3, 4, 5].map((star) => (
                     <TouchableOpacity key={star} onPress={() => setRating(star)}>
-                        <FontAwesome name="star" size={24} color={star <= rating ? "#170969" : "white"} />
+                        <FontAwesome name="star" size={24} color={star <= rating ? "#70B5DF" : "70B5DF"} />
                     </TouchableOpacity>
             ))}
           </View>
@@ -94,13 +92,13 @@ const OwnerOrderTrackDetails = () => {
             {!orderConfirmed && !orderCanceled && (
                 <View style={styles.buttonContainer}>
                     <TouchableOpacity
-                        style={styles.confirmButton}
+                        style={[baseScreenStylesNew.Button1, styles.confirmButton]}
                         onPress={() => {
                             setOrderConfirmed(true);
                             setOrderCanceled(false); // Ensure only one status is shown
                         }}
                     >
-                        <Text style={styles.confirmButtonText}>Confirm Order</Text>
+                        <Text style={baseScreenStylesNew.buttonText}>Confirm Order</Text>
                     </TouchableOpacity>
 
                     <TouchableOpacity
@@ -110,26 +108,21 @@ const OwnerOrderTrackDetails = () => {
                             setOrderConfirmed(false); // Ensure only one status is shown
                         }}
                     >
-                        <Text style={styles.cancelButtonText}>Cancel Order</Text>
+                        <Text style={baseScreenStylesNew.buttonText}>Cancel Order</Text>
                     </TouchableOpacity>
                 </View>
             )}
             </ScrollView>
-        </SafeAreaView>
-        </GradientContainer>
+        </View>
     );
 };
 
 const styles = StyleSheet.create ({
-    container: {
-        flex: 1,
-    },
     scrollContainer: {
         paddingHorizontal: 10,
-        paddingBottom: 20,
     },
     orderNumber: {
-        color: "white",
+        color: "black",
         fontSize: 18,
         fontWeight: "bold"
     },
@@ -145,17 +138,17 @@ const styles = StyleSheet.create ({
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center",
-        paddingHorizontal: 15
+        paddingHorizontal: 13
     },
     gemId: {
         fontSize: 18,
-        color: "white",
+        color: "black",
         fontWeight: "bold",
     },
 
     price: {
         fontSize: 18,
-        color: "white",
+        color: "black",
         fontWeight: "bold",
     },
     ratingContainer: {
@@ -173,7 +166,7 @@ const styles = StyleSheet.create ({
     orderDet: {
         fontSize: 18,
         fontWeight: "bold",
-        color: "#fff",
+        color: "#black",
         marginBottom: 15,
     },
 
@@ -200,25 +193,22 @@ const styles = StyleSheet.create ({
         marginBottom: 10,
         
     },
-    statusBoxConfirm: {
-        backgroundColor: "#185667",
-        flexDirection: "row",
-        alignItems: "center",
-        padding: 10,
-        borderRadius: 8,
-        marginBottom: 10,
-    },
-
     statusBoxCancel: {
         backgroundColor: "#620202",
         flexDirection: "row",
         alignItems: "center",
         padding: 10,
         borderRadius: 8,
-        marginBottom: 10,
-        
+        marginBottom: 10,        
     },
-
+    statusBoxConfirm: {
+        backgroundColor: "#185667",
+        flexDirection: "row",
+        alignItems: "center",
+        padding: 10,
+        borderRadius: 8,
+        marginBottom: 10,        
+    },
     statusIcon: {
         width: 50,
         height: 50,
@@ -239,35 +229,19 @@ const styles = StyleSheet.create ({
     },
 
     confirmButton: {
-        backgroundColor: "#02457A",
-        paddingVertical: 10,
-        borderRadius: 20,
-        width: "60%",
+        backgroundColor: "#170969",
+        borderRadius: 25,
+        width: "90%",
         marginTop: "35%",
-        marginLeft: 65,
+        marginLeft: 25,
     },
-
-    confirmButtonText: {
-         color: "white", 
-         fontSize: 16, 
-         fontWeight: "bold",
-         textAlign: "center"
-    },
-
     cancelButton: {
         backgroundColor: "#690909",
-        paddingVertical: 10,
-        borderRadius: 20,
-        width: "60%",
-        marginLeft: "18%",
+        borderRadius: 25,
+        width: "90%",
         marginTop: "5%",
-    },
-
-    cancelButtonText: {
-        color: "white", 
-        fontSize: 16, 
-        fontWeight: "bold",
-        textAlign: "center"
+        padding: 15,
+        marginLeft: 25,
     },
 
     dividerContainer: {
@@ -278,7 +252,7 @@ const styles = StyleSheet.create ({
     divider: {
         flex: 1,
         height: 1,
-        backgroundColor: 'white',
+        backgroundColor: 'black',
     }
 
 });

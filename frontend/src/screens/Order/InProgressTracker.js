@@ -8,10 +8,12 @@ import {
   FlatList,
   StyleSheet,
   Image,
+  TouchableOpacity
 } from "react-native";
-import { baseScreenStyles } from "../../styles/baseStyles";
+import { baseScreenStylesNew } from "../../styles/baseStylesNew";
 import Header_2 from "../../components/Header_2";
-import GradientContainer from "../../components/GradientContainer";
+import Ionicons from "react-native-vector-icons/Ionicons";
+import { useNavigation } from "@react-navigation/native";
 
 const InProgressTracker = [
   {
@@ -19,7 +21,7 @@ const InProgressTracker = [
     dateTime: "20-12-2024, 3:00 PM",
     type: "Burn",
     estimatedDate: "22/05/2025",
-    person: "Mehara",
+    person: "Mehara Wilfred",
     price: "Rs. 3000",
     gemImage: require("../../assets/gemimg/gem1.jpg"),
   },
@@ -28,7 +30,7 @@ const InProgressTracker = [
     dateTime: "12-01-2025, 7:00 PM",
     type: "Cut",
     estimatedDate: "23/02/2025",
-    person: "Tilmi",
+    person: "Tilmi Thishara",
     price: "Rs. 6000",
     gemImage: require("../../assets/gemimg/gem2.jpg"),
   },
@@ -37,29 +39,35 @@ const InProgressTracker = [
     dateTime: "06-11-2024, 9:00 AM",
     type: "Cut",
     estimatedDate: "13/03/2025",
-    person: "Kavintha",
+    person: "Kavintha Dinushan",
     price: "Rs. 2000",
     gemImage: require("../../assets/gemimg/gem3.jpg"),
   },
 ];
 
-const NotificationItem = ({ item }) => (
-  <View style={styles.notificationItem}>
+const NotificationItem = ({ item }) => {
+  const navigation = useNavigation();
+
+  return (
+    <TouchableOpacity onPress={() => navigation.navigate("OwnerOrderTrackDetails")}>
+    <View style={styles.notificationItem}>
     <View style={styles.textContainer}>
-     <Text style={[styles.text, { fontWeight: "bold", color: "#fff" }]}>{item.id}</Text>
-         <Text style={[styles.text,{ color: "#fff" }]}> {item.dateTime}</Text>   
-         <Text style={[styles.text,{ color: "#fff" }]}> {item.price}</Text>
-         <Text style={[styles.text,{ color: "#fff", fontWeight: "bold", }]}> {item.type}</Text>
-         <Text style={[styles.text, { color: "#00D4FF" }]}>
-        Estimated  Date: {item.estimatedDate}
-      </Text>
+      <Text style={[styles.personName,,{ color: "#000" }]}>{item.person}</Text>
+      <Text style={[styles.text,{ color: "#000" }]}> {item.price}</Text>
+      <Text style={[styles.text,{ color: "#000" }]}> {item.dateTime}</Text>   
+      <View style={styles.miniContainer}>
+      <Text style={[styles.text,{ color: "#000", fontWeight: "bold", }]}> {item.type}</Text>
+      <Text style={[styles.text, { color: "#170969", fontWeight: "bold" }]}>Estimated Date: {item.estimatedDate}</Text>
+      </View>
     </View>
     <View style={styles.imageContainer}>
       <Image source={item.gemImage} style={styles.gemImage} />
-      <Text style={[styles.personName,,{ color: "#fff" }]}>{item.person}</Text>
+      <Text style={[styles.text, { fontWeight: "bold", color: "#000" }]}>{item.id}</Text>
     </View>
   </View>
+  </TouchableOpacity>
 );
+};
 
 const InProgressTrackerScreen = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -68,16 +76,17 @@ const InProgressTrackerScreen = () => {
   );
 
   return (
-    <GradientContainer>
-    <View style={[baseScreenStyles.container]}>
+    <View style={[baseScreenStylesNew.container]}>
       <Header_2 title="In Progress"/>
       <View style={styles.container}>
-      <TextInput
-        style={styles.searchBar}
-        placeholder="Search Order ID"
-        value={searchQuery}
-        onChangeText={setSearchQuery}
-      />
+        <View style={baseScreenStylesNew.search}>
+          <Ionicons name="search" size={20} color="#888" style={baseScreenStylesNew.searchIcon} />
+          <TextInput
+            style={styles.searchData}
+            placeholder="Search Order ID"
+            value={searchQuery}
+            onChangeText={setSearchQuery}/>
+        </View>
       <FlatList
         data={filteredOrders}
         renderItem={({ item }) => <NotificationItem item={item} />}
@@ -85,7 +94,6 @@ const InProgressTrackerScreen = () => {
       />
     </View>
     </View>
-    </GradientContainer>
   );
 };
 
@@ -93,65 +101,57 @@ const styles = StyleSheet.create({
   container: {
     padding: 10,
   },
-  header: {
-    backgroundColor: "#072D44",
-    padding: 16,
-    alignItems: "center",
-    width: "100%", // Extend header width
-    marginBottom: 20,
-  },
-  headerText: {
-    color: "#fff",
-    fontSize: 18,
-    fontWeight: "bold",
-  },
-  searchBar: {
-    height: 40,
-    borderColor: "#ccc",
-    borderWidth: 1,
-    borderRadius: 12,
-    paddingHorizontal: 10,
-    marginBottom: 20,
-    backgroundColor: "rgba(255, 255, 255, 0.8)",
-    width: "95%", // Slightly reduce search bar width
-    alignSelf: "center",
+  searchData: {
+    flex: 1,
+    fontSize: 16
   },
   notificationItem: {
+    marginTop: 8,
     flexDirection: "row",
-    backgroundColor: 'rgba(123, 150, 172, 0.4)',
     padding: 5,
+    backgroundColor: "rgb(255, 255, 255)",
     marginBottom: 15,
     borderRadius: 8,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 5,
-    elevation: 2,
-    width: "100%", // Slightly reduce notification item width
+    borderWidth: 2,
+    borderColor: "rgba(228, 227, 227, 0.61)",
+    width: "100%",
     alignSelf: "center",
+    elevation: 9
   },
+  
   textContainer: {
     flex: 1,
-    
+  },
+  miniContainer: {
+    flex: 1,
+    marginTop: 9
   },
   imageContainer: {
     justifyContent: "center",
     alignItems: "center",
   },
   gemImage: {
-    width: 50,
-    height: 50,
-    marginBottom: 10,
+    width: 90,
+    height: 90,
+    marginTop: 8,
+    marginBottom: 6,
+    marginRight: 5,
     borderRadius: 12,
+    elevation: 9
   },
   personName: {
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: "bold",
+    color: "black",
+    marginLeft: 9
   },
   text: {
     fontSize: 14,
-    marginBottom: 5,
+    marginBottom: 2,
+    color: "black",
+    marginLeft: 6,
   },
+  
 });
 
 export default InProgressTrackerScreen;

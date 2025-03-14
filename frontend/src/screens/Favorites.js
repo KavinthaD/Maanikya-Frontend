@@ -39,8 +39,8 @@ const OrderRequestModal = ({ visible, onClose, selectedPerson }) => {
         <View style={modalStyles.modalContent}>
           <LinearGradient
             colors={[
-              'rgba(67, 96, 114, 1)',
-              'rgba(7, 45, 68, 1)'
+              'rgb(3, 15, 79)',
+              'rgb(11, 10, 43)'
             ]}
             style={modalStyles.gradientBackground}
             start={{ x: 0, y: 0 }}
@@ -205,35 +205,27 @@ const FavoritesScreen = () => {
         ]}
       >
         {selectedPerson?.id === item.id && (
-          <Ionicons name="checkmark" size={20} color="black" />
+          <Ionicons name="checkmark" size={20} color="white" />
         )}
       </View>
     </TouchableOpacity>
   );
 
-  // Updated gradient colors to match the image
-  const gradientColors = [
-    'rgba(71, 113, 135, 1)',
-    'rgba(53, 92, 115, 1)',
-    'rgba(40, 78, 103, 1)',
-    'rgba(28, 65, 88, 1)',
-    'rgba(19, 54, 78, 1)'
-  ];
 
   return (
     <View style={[baseScreenStylesNew.container, styles.container]}>
       <Header_2 title ="Favourites"/>
         <SafeAreaView style={styles.safeArea}>
           {/* Search Bar */}
-          <View style={styles.search}>
+          <View style={baseScreenStylesNew.search}>
             <Ionicons
               name="search"
               size={20}
               color="#888"
-              style={styles.searchIcon}
+              style={baseScreenStylesNew.searchIcon}
             />
             <TextInput
-              style={styles.searchInput}
+              style={baseScreenStylesNew.searchInput}
               placeholder="Send order to?"
               placeholderTextColor="#888"
               value={searchQuery}
@@ -279,8 +271,8 @@ const FavoritesScreen = () => {
 
           {/* Confirm Button with increased bottom margin for navbar */}
           <View style={styles.confirmButtonContainer}>
-            <TouchableOpacity style={baseScreenStylesNew.Button4} onPress={handleConfirm}>
-              <Text style={baseScreenStylesNew.buttonText4}>Confirm</Text>
+            <TouchableOpacity style={baseScreenStylesNew.Button1} onPress={handleConfirm}>
+              <Text style={baseScreenStylesNew.buttonText}>Confirm</Text>
             </TouchableOpacity>
           </View>
 
@@ -314,26 +306,7 @@ const styles = StyleSheet.create({
   placeholder: {
     width: 24,
   },
-  search: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor:'rgba(172, 168, 168, 0.21)',
-    borderRadius: 12,
-    marginHorizontal: 20,
-    marginTop: 15,
-    marginBottom: 15,
-    paddingHorizontal: 15,
-    height: 40,
-  },
-  searchIcon: {
-    marginRight: 10,
-  },
-  searchInput: {
-    flex: 1,
-    height: 40,
-    fontSize: 16,
-    color: '#000',
-  },
+  
   tabBar: {
     flexDirection: 'row',
     paddingHorizontal: 20,
@@ -349,18 +322,17 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   tabButtonActive: {
-    backgroundColor: '#70B5DF',
+    backgroundColor: '#170969',
   },
   tabButtonInactive: {
     backgroundColor: 'rgba(172, 168, 168, 0.21)',
-    
   },
   tabText: {
     fontSize: 14,
     fontWeight: '500',
   },
   tabTextActive: {
-    color: '#000',
+    color: '#fff',
   },
   tabTextInactive: {
     color: '#333333',
@@ -373,7 +345,7 @@ const styles = StyleSheet.create({
     paddingBottom: 10,
   },
   favoriteItem: {
-    backgroundColor: 'rgba(172, 168, 168, 0.31)',
+    backgroundColor:'rgba(172, 168, 168, 0.21)',
     borderRadius: 15,
     flexDirection: 'row',
     alignItems: 'center',
@@ -382,7 +354,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     marginBottom: 16,
     height: 80,
-    
   },
   favoriteContent: {
     flexDirection: 'row',
@@ -415,12 +386,12 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 25,
-    backgroundColor: 'rgba(112, 181, 223, 0.66)',
+    backgroundColor: 'rgba(23, 9, 105, 0.66)',
     alignItems: 'center',
     justifyContent: 'center',
   },
   checkboxSelected: {
-    backgroundColor: '#70B5DF',
+    backgroundColor: '#170969',
   },
   confirmButtonContainer: {
     paddingHorizontal: 20,
@@ -494,11 +465,13 @@ const modalStyles = StyleSheet.create({
     alignItems: "center",
   },
   cancelButton: {
-    backgroundColor: "#FF3B30",
+    backgroundColor: 'rgba(172, 168, 168, 0.21)',
     marginRight: 8,
+    borderWidth:2,
+    borderColor: 'rgba(172, 168, 168, 0.21)'
   },
   sendButton: {
-    backgroundColor: "#34C759",
+    backgroundColor: "#02457A",
     marginLeft: 8,
   },
   buttonText: {

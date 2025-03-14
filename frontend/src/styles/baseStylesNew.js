@@ -86,6 +86,27 @@ export const baseScreenStylesNew = StyleSheet.create({
     width: "100%",
     color: "black"
   },
+  search: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor:'rgba(172, 168, 168, 0.21)',
+    borderRadius: 12,
+    marginHorizontal: 20,
+    marginTop: 15,
+    marginBottom: 15,
+    paddingHorizontal: 15,
+    height: 40,
+    
+  },
+  searchIcon: {
+    marginRight: 10,
+  },
+  searchInput: {
+    flex: 1,
+    height: 40,
+    fontSize: 16,
+    color: '#000',
+  },
   
 
 });

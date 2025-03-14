@@ -13,13 +13,12 @@ import {
   StatusBar,
   Modal,
 } from "react-native";
-import { baseScreenStyles } from "../../styles/baseStyles";
+import { Ionicons } from "@expo/vector-icons";
+import { baseScreenStylesNew } from "../../styles/baseStylesNew";
 import Header_2 from "../../components/Header_2";
 import BS_NavBar from "../../components/BS_NavBar";
 import { LinearGradient } from 'expo-linear-gradient';
 
-const searchIcon =
-  "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAABmJLR0QA/wD/AP+gvaeTAAAAqklEQVRYhe2UQQ6AIAwEWeL/v6wHY0QK3W0JiYns0VB2h1YUiDQD2oABGdAFaW+AAawR+ybXPQBJupO0SPq6FylBLyeXx56klSkqgCRJc+YARxvQzg1oxwW0E3+PMue8/BR/+wqSZ0B6CpLvgHYKktfAkT+h1eb1i3B1BrRjAO1fB2g/TNqJv0eZc15+ir99BckzID0FyXdAOwXJa+DIn9Bq83oAVx0DTyemB+GeqEUAAAAASUVORK5CYII=";
 
 const gems = [
   { id: "BS001", image: require("../../assets/gems/BS001.png") },
@@ -58,8 +57,10 @@ const GemCollectionScreen = ({ navigation }) => {
   };
 
   const toggleGemSelection = (gemId) => {
-    if (!isSelectMode) return;
-
+    if (!isSelectMode) {
+      navigation.navigate("MyGems", { gemId });
+      return;
+    }
     setSelectedGems((prev) => {
       if (prev.includes(gemId)) {
         return prev.filter((id) => id !== gemId);
@@ -150,28 +151,17 @@ const GemCollectionScreen = ({ navigation }) => {
   );
 
   return (
-    <LinearGradient
-      colors={[
-        'rgba(107, 131, 145, 1)',
-        'rgba(67, 96, 114, 1)',
-        'rgba(37, 71, 91, 0.88)',
-        'rgba(22, 58, 79, 0.81)',
-        'rgba(7, 45, 68, 0.75)'
-      ]}
-      style={styles.gradientContainer}
-    >
-      <SafeAreaView style={styles.container}>
+      <SafeAreaView style={baseScreenStylesNew.container}>
         <Header_2 title="My Gems" />
         <StatusBar barStyle="light-content" />
-
         <View style={styles.header}>
-          <View style={styles.searchSection}>
+          <View style={styles.search}>
             <View style={styles.searchRow}>
               <View style={styles.searchBar}>
-                <Image source={{ uri: searchIcon }} style={styles.searchIcon} />
+                <Ionicons name="search" size={20} color="#888" style={baseScreenStylesNew.searchIcon}/>
                 <TextInput
-                  placeholder="Search"
-                  style={styles.searchInput}
+                  placeholder="Search gem id"
+                  style={baseScreenStylesNew.searchInput}
                   value={searchQuery}
                   onChangeText={setSearchQuery}
                 />
@@ -208,8 +198,8 @@ const GemCollectionScreen = ({ navigation }) => {
             <View style={styles.modalContent}>
               <LinearGradient
                 colors={[
-                  'rgba(67, 96, 114, 1)',
-                  'rgba(7, 45, 68, 1)'
+                  'rgb(3, 15, 79)',
+                  'rgb(11, 10, 43)'
                 ]}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 0, y: 1 }}
@@ -254,7 +244,6 @@ const GemCollectionScreen = ({ navigation }) => {
           </View>
         )}
       </SafeAreaView>
-    </LinearGradient>
   );
 };
 
@@ -279,37 +268,33 @@ const styles = StyleSheet.create({
   searchBar: {
     flex: 1,
     flexDirection: "row",
-    backgroundColor: "white",
-    borderRadius: 8,
+    backgroundColor: "rgba(172, 168, 168, 0.21)",
+    borderRadius: 12,
     padding: 8,
+    height: 40,
     marginRight: 8,
     alignItems: "center",
-  },
-  searchIcon: {
-    width: 20,
-    height: 20,
-    marginRight: 8,
-  },
-  searchInput: {
-    flex: 1,
-    fontSize: 16,
+    borderWidth: 2,
+    borderColor: "#AEA8A8"
   },
   sortButton: {
-    backgroundColor: "white",
+    backgroundColor: "rgba(130, 130, 130, 0.21)",
     padding: 8,
     borderRadius: 8,
     minWidth: 70,
     alignItems: "center",
+    borderWidth: 2,
+    borderColor: "#AEA8A8"
   },
   sortButtonText: {
-    color: "#003366",
+    color: "black",
     fontWeight: "500",
   },
   selectButtonContainer: {
     alignItems: "flex-end",
   },
   selectButton: {
-    backgroundColor: "#003366",
+    backgroundColor: "#170969",
     paddingVertical: 6,
     paddingHorizontal: 16,
     borderRadius: 8,
@@ -334,7 +319,7 @@ const styles = StyleSheet.create({
   gemImage: {
     width: "80%",
     height: "80%",
-    borderRadius: 4,
+    borderRadius: 7,
   },
   selectionCircle: {
     position: "absolute",
@@ -344,7 +329,7 @@ const styles = StyleSheet.create({
     height: 20,
     borderRadius: 10,
     borderWidth: 2,
-    borderColor: "#003366",
+    borderColor: "#170969",
     backgroundColor: "white",
     justifyContent: "center",
     alignItems: "center",
@@ -353,20 +338,19 @@ const styles = StyleSheet.create({
     width: 10,
     height: 10,
     borderRadius: 5,
-    backgroundColor: "#003366",
+    backgroundColor: "#170969",
   },
   gemId: {
     marginTop: 4,
     fontSize: 12,
-    color: "#ffffff",
+    color: "#000",
     fontWeight: "500",
   },
   selectionActions: {
     flexDirection: "row",
     padding: 16,
     paddingBottom: Platform.OS === "ios" ? 34 : 16,
-    backgroundColor: "#072D44",
-
+    backgroundColor: "rgba(152, 149, 149, 0.35)",
   },
   sellButton: {
     flex: 1,
@@ -451,10 +435,10 @@ const styles = StyleSheet.create({
     minWidth: 100,
   },
   cancelButton: {
-    backgroundColor: "#FF3B30",
+    backgroundColor: 'rgba(172, 168, 168, 0.21)',
   },
   confirmButton: {
-    backgroundColor: "#4CD964",
+    backgroundColor: "#02457A",
   },
   cancelButtonText: {
     color: "white",

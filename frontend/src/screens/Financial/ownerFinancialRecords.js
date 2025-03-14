@@ -44,7 +44,7 @@ const styles = StyleSheet.create({
     padding: 30,
   },
   totalProfitContainer: {
-    backgroundColor: "#170969",
+    backgroundColor: "#70B5DF",
     padding: 15,
     marginBottom: 20,
     alignItems: "center",

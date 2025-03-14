@@ -92,7 +92,7 @@ const OwnerOrderTrackDetails = () => {
             {!orderConfirmed && !orderCanceled && (
                 <View style={styles.buttonContainer}>
                     <TouchableOpacity
-                        style={[baseScreenStylesNew.Button1, styles.confirmButton]}
+                        style={baseScreenStylesNew.Button1}
                         onPress={() => {
                             setOrderConfirmed(true);
                             setOrderCanceled(false); // Ensure only one status is shown
@@ -123,6 +123,7 @@ const styles = StyleSheet.create ({
     },
     orderNumber: {
         color: "black",
+        color: "black",
         fontSize: 18,
         fontWeight: "bold"
     },
@@ -143,11 +144,13 @@ const styles = StyleSheet.create ({
     gemId: {
         fontSize: 18,
         color: "black",
+        color: "black",
         fontWeight: "bold",
     },
 
     price: {
         fontSize: 18,
+        color: "black",
         color: "black",
         fontWeight: "bold",
     },
@@ -200,13 +203,6 @@ const styles = StyleSheet.create ({
         padding: 10,
         borderRadius: 8,
         marginBottom: 10,        
-    },
-    statusBoxConfirm: {
-        backgroundColor: "#185667",
-        flexDirection: "row",
-        alignItems: "center",
-        padding: 10,
-        borderRadius: 8,
         marginBottom: 10,        
     },
     statusIcon: {

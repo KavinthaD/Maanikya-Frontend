@@ -24,7 +24,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { API_URL, ENDPOINTS } from "../../config/api";
 import { LinearGradient } from "expo-linear-gradient";
 
-
+const THEME_COLOR = '#9CCDDB'; // Light blue theme color
 const GemCollectionScreen = ({ navigation }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [gems, setGems] = useState([]);
@@ -34,6 +34,7 @@ const GemCollectionScreen = ({ navigation }) => {
   const [isSellModalVisible, setSellModalVisible] = useState(false);
   const [loading, setLoading] = useState(true); // Loading state
   const [gemPrices, setGemPrices] = useState({});
+  
 
   useEffect(() => {
     const fetchGems = async () => {
@@ -247,39 +248,36 @@ const GemCollectionScreen = ({ navigation }) => {
   );
 
   return (
-      <SafeAreaView style={baseScreenStylesNew.container}>
-        <Header_2 title="My Gems" />
-        <StatusBar barStyle="light-content" />
-        <View style={styles.header}>
-          <View style={styles.search}>
-            <View style={styles.searchRow}>
-              <View style={styles.searchBar}>
-                <Ionicons name="search" size={20} color="#888" style={baseScreenStylesNew.searchIcon}/>
-                <TextInput
-                  placeholder="Search gem id"
-                  style={baseScreenStylesNew.searchInput}
-                  value={searchQuery}
-                  onChangeText={setSearchQuery}
-                />
-              </View>
-              <TouchableOpacity style={styles.sortButton} onPress={toggleSort}>
-                <Text style={styles.sortButtonText}>
-                  Sort {sortAscending ? "↑" : "↓"}
-                </Text>
-              </TouchableOpacity>
-            </View>
-            <View style={styles.selectButtonContainer}>
-              <TouchableOpacity
-                style={styles.selectButton}
-                onPress={toggleSelect}
-              >
-                <Text style={styles.selectButtonText}>
-                  {isSelectMode ? "Cancel" : "Select"}
-                </Text>
-              </TouchableOpacity>
-            </View>
+    <SafeAreaView style={baseScreenStylesNew.container}>
+      <Header_2 title="My Gems" />
+      <StatusBar barStyle="light-content" />
+      <View style={styles.header}>
+        <View style={styles.searchContainer}>
+          <View style={styles.searchBar}>
+            <Ionicons name="search" size={20} color="#666" style={styles.searchIcon} />
+            <TextInput
+              style={styles.searchInput}
+              placeholder="Search gems..."
+              placeholderTextColor="#999"
+              value={searchQuery}
+              onChangeText={setSearchQuery}
+            />
+            <TouchableOpacity style={styles.sortButton} onPress={toggleSort}>
+              <Ionicons name={sortAscending ? "arrow-up" : "arrow-down"} size={16} color="#FFF" />
+              <Text style={styles.sortButtonText}>Sort</Text>
+            </TouchableOpacity>
           </View>
         </View>
+        
+        <TouchableOpacity
+          style={styles.selectButton}
+          onPress={toggleSelect}
+        >
+          <Text style={styles.selectButtonText}>
+            {isSelectMode ? "Cancel" : "Select"}
+          </Text>
+        </TouchableOpacity>
+      </View>
 
       {loading ? (
         <View style={styles.loadingContainer}>
@@ -288,37 +286,6 @@ const GemCollectionScreen = ({ navigation }) => {
         </View>
       ) : (
         <>
-          <View style={styles.header}>
-            <View style={styles.searchSection}>
-              <View style={styles.searchRow}>
-                <View style={styles.searchBar}>
-                  <Image source={{ uri: searchIcon }} style={styles.searchIcon} />
-                  <TextInput
-                    placeholder="Search"
-                    style={styles.searchInput}
-                    value={searchQuery}
-                    onChangeText={setSearchQuery}
-                  />
-                </View>
-                <TouchableOpacity style={styles.sortButton} onPress={toggleSort}>
-                  <Text style={styles.sortButtonText}>
-                    Sort {sortAscending ? "↑" : "↓"}
-                  </Text>
-                </TouchableOpacity>
-              </View>
-              <View style={styles.selectButtonContainer}>
-                <TouchableOpacity
-                  style={styles.selectButton}
-                  onPress={toggleSelect}
-                >
-                  <Text style={styles.selectButtonText}>
-                    {isSelectMode ? "Cancel" : "Select"}
-                  </Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          </View>
-
           {sortedGems.length === 0 ? (
             <View style={styles.noGemsContainer}>
               <Text style={styles.noGemsText}>No gems found</Text>
@@ -403,15 +370,61 @@ const GemCollectionScreen = ({ navigation }) => {
 };
 
 const styles = StyleSheet.create({
-  gradientContainer: {
-    flex: 1,
-  },
-  container: {
-    flex: 1,
-  },
   header: {
-    padding: 16,
-   
+    backgroundColor: '#FFFFFF',
+    paddingVertical: 16,
+    paddingHorizontal: 15,
+  },
+  searchContainer: {
+    width: '100%',
+    marginBottom: 15,
+  },
+  searchBar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#F5F5F5',
+    borderRadius: 12,
+    paddingHorizontal: 15,
+    height: 46,
+    borderWidth: 1,
+    borderColor: '#EEEEEE',
+  },
+  searchIcon: {
+    marginRight: 10,
+  },
+  searchInput: {
+    flex: 1,
+    height: 46,
+    color: '#333333',
+    fontSize: 16,
+  },
+  sortButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: THEME_COLOR,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 15,
+    marginLeft: 8,
+  },
+  sortButtonText: {
+    color: '#FFF',
+    marginLeft: 5,
+    fontSize: 14,
+    fontWeight: '500',
+  },
+  selectButton: {
+    backgroundColor: THEME_COLOR,
+    paddingVertical: 10,
+    paddingHorizontal: 15,
+    borderRadius: 10,
+    alignItems: 'center',
+    marginTop: 5,
+  },
+  selectButtonText: {
+    color: '#FFFFFF',
+    fontWeight: '600',
+    fontSize: 14,
   },
   
   // Search section styles
@@ -423,39 +436,16 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 8,
   },
-  searchBar: {
-    flex: 1,
-    flexDirection: "row",
-    backgroundColor: "#F5F5F5",
-    borderRadius: 8,
-    padding: 8,
-    height: 40,
-    marginRight: 8,
-    alignItems: "center",
-    borderWidth: 1,
-    borderColor: "#E0E0E0",
-  },
-  searchIcon: {
-    width: 20,
-    height: 20,
-    marginRight: 8,
-    tintColor: "#9CCDDB",
-  },
-  searchInput: {
-    flex: 1,
-    fontSize: 16,
-    color: "#333333",
-  },
   
   // Buttons
   sortButton: {
-    backgroundColor: "#9CCDDB",
-    padding: 8,
-    borderRadius: 8,
-    minWidth: 70,
-    alignItems: "center",
-    borderWidth: 2,
-    borderColor: "#AEA8A8"
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: THEME_COLOR,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 15,
+    marginLeft: 8,
   },
   sortButtonText: {
     color: "#FFFFFF",

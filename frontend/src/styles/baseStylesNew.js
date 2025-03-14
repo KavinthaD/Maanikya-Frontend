@@ -1,6 +1,18 @@
 import { StyleSheet } from "react-native";
 
 export const baseScreenStylesNew = StyleSheet.create({
+  themeColor: {
+    backgroundColor: '#170969'
+  },
+  themeText: {
+    color: '#170969',
+    //fontSize: 14,
+    //marginBottom: 2,
+    //marginLeft: 6,
+  },
+  popUp: {
+    backgroundColor: "white"
+  },
   backgroundColor: {
     backgroundColor: "white", // Default background color for all screens
   },
@@ -16,8 +28,8 @@ export const baseScreenStylesNew = StyleSheet.create({
     textAlign: "center",
     fontSize: 16,
   },
-  buttonText4: {
-    color: "black",
+  buttonText5: {
+    color: "#70B5DF",
     fontWeight: "bold",
     textAlign: "center",
     fontSize: 16,
@@ -38,6 +50,7 @@ export const baseScreenStylesNew = StyleSheet.create({
     width: "100%",
     alignItems: "center",
     justifyContent: "center",
+    marginTop: 8
   },
   Button3: {
     backgroundColor: "#072D44",
@@ -46,12 +59,23 @@ export const baseScreenStylesNew = StyleSheet.create({
     width: "100%",
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: 8
+    marginTop: 8
   },
   Button4: {
     backgroundColor: "#70B5DF",
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: 8,
+    padding: 12,
+    borderRadius: 50,
+    width: "100%",
+  },
+  Button5: {
+    backgroundColor: "#fff",
+    borderColor: "#70B5DF",
+    borderWidth:2, 
     padding: 15,
-    borderRadius: 13,
+    borderRadius: 24,
     width: "100%",
     alignItems: "center",
     justifyContent: "center",
@@ -108,5 +132,36 @@ export const baseScreenStylesNew = StyleSheet.create({
     color: '#000',
   },
   
+  // -------------- Tab ------------------
+  tabBar: {
+    flexDirection: 'row',
+    paddingHorizontal: 20,
+    marginBottom: 30,
+    marginTop: 15
+  },
+  tabButton: {
+    borderRadius: 13,
+    paddingVertical: 8,
+    paddingHorizontal: 15,
+    marginRight: 10,
+    minWidth: 70,
+    alignItems: 'center',
+  },
+  tabButtonActive: {
+    backgroundColor: '#170969',
+  },
+  tabButtonInactive: {
+    backgroundColor: 'rgba(172, 168, 168, 0.21)',
+  },
+  tabText: {
+    fontSize: 14,
+    fontWeight: '500',
+  },
+  tabTextActive: {
+    color: '#fff',
+  },
+  tabTextInactive: {
+    color: '#333333',
+  },
 
 });

@@ -10,10 +10,11 @@ import {
   Modal,
   Image,
 } from "react-native";
-import { baseScreenStyles } from "../../styles/baseStyles";
+import { baseScreenStylesNew } from "../../styles/baseStylesNew";
 import GradientContainer from "../../components/GradientContainer";
 import { LinearGradient } from "expo-linear-gradient";
 import { TextInput } from "react-native"
+import Header_1 from "../../components/Header_1";
 const Orders = [
   {
     id: "NB01130",
@@ -86,7 +87,7 @@ const OrderScreen = () => {
                 <View style={styles.orderDetails}>
                   <Text style={styles.orderId}>Order#: {order.id}</Text>
                   <Text style={styles.orderName}>{order.name}</Text>
-                  <Text style={styles.orderDate}>
+                  <Text style={[styles.orderDate, baseScreenStylesNew.themeText]}>
                     Order requested on {order.date}
                   </Text>
                 </View>
@@ -112,58 +113,40 @@ const OrderScreen = () => {
   };
 
   return (
-    <GradientContainer>
-    <View style={baseScreenStyles.container}>
-      <View style={styles.spacer} />
-      <Text style={styles.header}>Orders</Text>
-      <View style={{ flexWrap: "wrap", flexDirection: "row", justifyContent: "space-around", marginVertical: 15 }}>
+    
+    <View style={baseScreenStylesNew.container}>
+      <Header_1 title="Orders"/>
+      <View style={baseScreenStylesNew.tabBar}>
+  {["Requested", "Ongoing", "History"].map((tab) => (
+    <TouchableOpacity
+      key={tab}
+      style={[
+        baseScreenStylesNew.tabButton,
+        activeTab === tab
+          ? baseScreenStylesNew.tabButtonActive
+          : baseScreenStylesNew.tabButtonInactive,
+      ]}
+      onPress={() => setActiveTab(tab)}
+    >
+      <Text
+        style={[
+          baseScreenStylesNew.tabText,
+          activeTab === tab
+            ? baseScreenStylesNew.tabTextActive
+            : baseScreenStylesNew.tabTextInactive,
+        ]}
+      >
+        {tab}
+      </Text>
+    </TouchableOpacity>
+  ))}
+</View>
 
-        <TouchableOpacity
-          onPress={() => setActiveTab("Requested")}
-          style={styles.tab}
-        >
-          <Text
-            style={
-              activeTab === "Requested" ? styles.activeTabText : styles.tabText
-            }
-          >
-            Requested
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => setActiveTab("Ongoing")}
-          style={styles.tab}
-        >
-          <Text
-            style={
-              activeTab === "Ongoing" ? styles.activeTabText : styles.tabText
-            }
-          >
-            Ongoing
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => setActiveTab("History")}
-          style={styles.tab}
-        >
-          <Text
-            style={
-              activeTab === "History" ? styles.activeTabText : styles.tabText
-            }
-          >
-            History
-          </Text>
-        </TouchableOpacity>
-      </View>
       {renderContent()}
        {/* Modal for Accept/Decline */}
        <Modal visible={isModalVisible} transparent animationType="slide">
-       <LinearGradient
-    
-    colors={["#6B8391", "#072D44"]} 
-    style={styles.modalContainer}
-  >
-            <View style={styles.modalContent}>
+       <View style={styles.modalContainer}>
+            <View style={[styles.modalContent,]}>
               <Text style={styles.modalHeader}>Order#:</Text>
               {selectedOrder && (
                 <>
@@ -182,27 +165,24 @@ const OrderScreen = () => {
               )}
               <View style={styles.modalActions}>
                 <TouchableOpacity
-                  style={styles.declineButton}
+                  style={[baseScreenStylesNew.Button1,styles.declineButton]}
                   onPress={handleDecline}
                 >
-                  <Text style={styles.buttonText}>Decline</Text>
+                  <Text style={baseScreenStylesNew.buttonText}>Decline</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
-                  style={styles.acceptButton}
+                  style={[ baseScreenStylesNew.Button1, styles.acceptButton]}
                   onPress={handleAccept}
                 >
-                  <Text style={styles.buttonText}>Accept</Text>
+                  <Text style={baseScreenStylesNew.buttonText}>Accept</Text>
                 </TouchableOpacity>
               </View>
             </View>
-          </LinearGradient>
+          </View>
         </Modal>
  {/* Modal for Price Input */}
  <Modal visible={isPriceModalVisible} transparent animationType="slide">
-        <LinearGradient
-          colors={["#6B8391", "#072D44"]}
-          style={styles.modalContainer}
-        >
+        <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
             <Text style={styles.modalHeader}>Order#:</Text>
             {selectedOrder && (
@@ -228,7 +208,7 @@ const OrderScreen = () => {
                   onChangeText={setPrice}
                 />
                 <TouchableOpacity
-                  style={styles.sendButton}
+                  style={[baseScreenStylesNew.Button1,styles.sendButton]}
                   onPress={handleSendPrice}
                 >
                   <Text style={styles.buttonText}>Send</Text>
@@ -236,13 +216,9 @@ const OrderScreen = () => {
               </>
             )}
           </View>
-        </LinearGradient>
+        </View>
       </Modal>
-
-
-
     </View>
-    </GradientContainer>
   );
 };
 
@@ -297,10 +273,13 @@ const styles = StyleSheet.create({
   },
   orderContainer: {
     flexDirection: "row",
-    backgroundColor: 'rgba(123, 150, 172, 0.4)',
+    backgroundColor: "rgb(255, 255, 255)",
     margin: 13,
     padding: 10,
     borderRadius: 15,
+    borderWidth: 2,
+    borderColor: "rgba(228, 227, 227, 0.61)",
+    elevation: 9,
     alignItems: "center",
     width: "90%",
     alignSelf: "center",
@@ -316,42 +295,45 @@ const styles = StyleSheet.create({
   },
   orderId: {
     fontWeight: "bold",
-    color: "#fff",
-    fontSize: 20,
+    color: "#000",
+    fontSize: 18,
   },
   orderName: {
-    color: "#fff",
-    fontSize: 17,
+    color: "#000",
+    fontSize: 16,
   },
   orderDate: {
-    color: "rgba(255, 255, 255, 0.7)",
-    fontSize: 16,
+    fontSize: 15,
+    fontWeight: "bold"
   },
   modalContainer: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    backgroundColor: "white",
   },
   modalContent: {
+    backgroundColor: "rgb(220, 220, 220)",
+    borderWidth: 2,
+    borderColor: "rgba(228, 227, 227, 0.61)",
     width: "80%",
     height: "50%",
     padding: 20,
-    backgroundColor: "rgba(7, 45, 68, 0.5)",
     borderRadius: 15,
     alignItems: "center",
+
   },
   modalHeader: {
     fontSize: 20,
     fontWeight: "bold",
     marginBottom: 20,
-    color: "#fff",
+    color: "#000",
     
   },
   modalText: {
     fontSize: 16,
     marginBottom: 10,
-    color: "#fff", 
+    color: "#000", 
     marginBottom: 10,
     
   },
@@ -362,18 +344,12 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   declineButton: {
-    backgroundColor: "red",
-    padding: 10,
     borderRadius: 8,
     width: "40%",
-    alignItems: "center",
   },
   acceptButton: {
-    backgroundColor: "green",
-    padding: 10,
     borderRadius: 8,
     width: "40%",
-    alignItems: "center",
   },
   buttonText: {
     color: "#fff",
@@ -396,7 +372,6 @@ const styles = StyleSheet.create({
     backgroundColor:"#072D44"
   },
   sendButton: {
-    backgroundColor: "green",
     padding: 10,
     borderRadius: 8,
     width: "40%",

@@ -57,7 +57,7 @@ const NotificationItem = ({ item }) => {
       <Text style={[styles.text,{ color: "#000" }]}> {item.dateTime}</Text>   
       <View style={styles.miniContainer}>
       <Text style={[styles.text,{ color: "#000", fontWeight: "bold", }]}> {item.type}</Text>
-      <Text style={[styles.text, { color: "#170969", fontWeight: "bold" }]}>Estimated Date: {item.estimatedDate}</Text>
+      <Text style={[baseScreenStylesNew.themeText, styles.text,{ fontWeight: "bold" }]}>Estimated Date: {item.estimatedDate}</Text>
       </View>
     </View>
     <View style={styles.imageContainer}>
@@ -148,7 +148,6 @@ const styles = StyleSheet.create({
   text: {
     fontSize: 14,
     marginBottom: 2,
-    color: "black",
     marginLeft: 6,
   },
   

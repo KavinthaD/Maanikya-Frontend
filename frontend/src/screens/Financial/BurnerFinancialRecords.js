@@ -1,6 +1,6 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
-import { baseScreenStyles } from "../../styles/baseStyles";
+import { baseScreenStylesNew } from "../../styles/baseStylesNew";
 import Header_2 from "../../components/Header_2";
 import GradientContainer from "../../components/GradientContainer";
 import LinearGradient from "react-native-linear-gradient";
@@ -8,7 +8,7 @@ import LinearGradient from "react-native-linear-gradient";
 const BurnerFinancialRecords = () => {
   return (
     <GradientContainer>
-      <View style={[baseScreenStyles.container]}>
+      <View style={[baseScreenStylesNew.container]}>
         <Header_2 title="Financial Records" />
         <View style={styles.container}>
           <View style={styles.totalProfitContainer}>
@@ -22,31 +22,20 @@ const BurnerFinancialRecords = () => {
             { title: "Burning  BS003", amount: "LKR. 60 000" },
             { title: "Burning BS004", amount: "LKR. 600 000" }
           ].map((item, index) => (
-            <LinearGradient 
+            <View 
               key={index} 
-              colors={["#7B96AC", "#323D46"]} 
-              start={{x: 0, y: 0}} 
-              end={{x: 0, y: 1}} 
               style={styles.recordList}
             >
               <View style={styles.recordItem}>
                 <Text style={styles.recordText}>{item.title}</Text>
                 <Text style={styles.recordText}>{item.amount}</Text>
               </View>
-            </LinearGradient>
+            </View>
           ))}
-
-          <LinearGradient 
-            colors={["#7B96AC", "#323D46"]} 
-            start={{x: 0, y: 0}} 
-            end={{x: 0, y: 1}} 
-            style={styles.recordList}
-          >
             <View style={[styles.recordItem, styles.lastRecordItem]}>
               <Text style={styles.recordText}>Total</Text>
               <Text style={styles.recordText}>LKR. 780 000</Text>
             </View>
-          </LinearGradient>
         </View>
       </View>
     </GradientContainer>
@@ -58,7 +47,7 @@ const styles = StyleSheet.create({
     padding: 30,
   },
   totalProfitContainer: {
-    backgroundColor: "#072D44",
+    backgroundColor: baseScreenStylesNew.themeColor,
     padding: 15,
     marginBottom: 20,
     alignItems: "center",

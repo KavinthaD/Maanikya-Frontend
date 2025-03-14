@@ -92,7 +92,7 @@ const OwnerOrderTrackDetails = () => {
             {!orderConfirmed && !orderCanceled && (
                 <View style={styles.buttonContainer}>
                     <TouchableOpacity
-                        style={baseScreenStylesNew.Button1}
+                        style={[baseScreenStylesNew.Button1, styles.confirmButton]}
                         onPress={() => {
                             setOrderConfirmed(true);
                             setOrderCanceled(false); // Ensure only one status is shown
@@ -205,12 +205,21 @@ const styles = StyleSheet.create ({
         marginBottom: 10,        
         marginBottom: 10,        
     },
+    statusBoxConfirm: {
+        backgroundColor: "#185667",
+        flexDirection: "row",
+        alignItems: "center",
+        padding: 10,
+        borderRadius: 8,
+        marginBottom: 10,        
+        marginBottom: 10,        
+    },
     statusIcon: {
         width: 50,
         height: 50,
         marginLeft: 20,
         marginRight: 20,
-      },
+    },
 
     statusText: {
         color: "white", 

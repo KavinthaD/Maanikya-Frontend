@@ -3,14 +3,13 @@ import { View, Text, StyleSheet } from "react-native";
 import { baseScreenStylesNew } from "../../styles/baseStylesNew";
 import Header_2 from "../../components/Header_2";
 import BS_NavBar from "../../components/BS_NavBar";
-import LinearGradient from "react-native-linear-gradient";
 
 const OwnerFinancialRecords = () => {
   return (
       <View style={[baseScreenStylesNew.container]}>
         <Header_2 title="Financial Records" />
         <View style={styles.container}>
-          <View style={styles.totalProfitContainer}>
+          <View style={[styles.totalProfitContainer, baseScreenStylesNew.themeColor]}>
             <Text style={styles.totalProfitTitle}>Total profit</Text>
             <Text style={styles.totalProfitAmount}>LKR. 780 000</Text>
           </View>
@@ -44,7 +43,7 @@ const styles = StyleSheet.create({
     padding: 30,
   },
   totalProfitContainer: {
-    backgroundColor: "#70B5DF",
+
     padding: 15,
     marginBottom: 20,
     alignItems: "center",

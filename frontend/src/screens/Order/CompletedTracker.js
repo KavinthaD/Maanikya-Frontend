@@ -66,7 +66,7 @@ const CompletedTrackerItem = ({ item}) => {
       <Text style={styles.text}>{item.cost}</Text>
       <View style={styles.miniContainer}>
       <Text style={[styles.text,{fontWeight: "bold", }]}>{item.type}</Text>
-      <Text style={[styles.text, { color: "#170969", fontWeight: "bold" }]}>Completed Date: {item.completedDate}</Text>
+      <Text style={[styles.text,baseScreenStylesNew.themeText, {fontWeight: "bold" }]}>Completed Date: {item.completedDate}</Text>
       </View>
     </View>
     <View style={styles.imageContainer}>

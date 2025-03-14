@@ -28,6 +28,8 @@ import { baseScreenStyles } from "./src/styles/baseStyles";
 import Tracker from "./src/screens/Order/Tracker";
 import CompletedTracker from "./src/screens/Order/CompletedTracker";
 import OngoingTracker from "./src/screens/Order/OngoingTracker";
+import OrderScreen from "./src/screens/Order/Orders";
+import InProgressTrackerScreen from "./src/screens/Order/InProgressTracker";
 
 const Stack = createNativeStackNavigator();
 
@@ -53,7 +55,7 @@ export default function App() {
               options={{
                 headerShown: false,
               }}
-              component={Login}
+              component={OrderScreen}
             />
            
             {/* Add other screens here */}

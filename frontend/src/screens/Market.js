@@ -19,6 +19,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import axios from 'axios';
 import { API_URL } from '../config/api';
 import { Ionicons } from '@expo/vector-icons';
+import { baseScreenStylesNew } from '../styles/baseStylesNew';
 
 const { width } = Dimensions.get('window');
 const CARD_WIDTH = (width - 40) / 2; // 2 cards per row with margins
@@ -125,8 +126,8 @@ const Market = ({ navigation }) => {
         }
       >
         <View style={styles.searchContainer}>
-          <View style={styles.searchBar}>
-            <Ionicons name="search" size={20} color="#666" style={styles.searchIcon} />
+          <View style={baseScreenStylesNew.search}>
+            <Ionicons name="search" size={20} color="#666" style={baseScreenStylesNew.searchIcon} />
             <TextInput
               style={styles.searchInput}
               placeholder="Search gems..."
@@ -134,7 +135,7 @@ const Market = ({ navigation }) => {
               value={searchQuery}
               onChangeText={handleSearch}
             />
-            <TouchableOpacity style={styles.sortButton} onPress={handleSort}>
+            <TouchableOpacity style={[styles.sortButton, baseScreenStylesNew.themeColor]} onPress={handleSort}>
               <Ionicons name={sortAscending ? "arrow-up" : "arrow-down"} size={16} color="#FFF" />
               <Text style={styles.sortButtonText}>Price</Text>
             </TouchableOpacity>
@@ -225,19 +226,7 @@ const styles = StyleSheet.create({
   searchContainer: {
     padding: 15,
   },
-  searchBar: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#F5F5F5',
-    borderRadius: 12,
-    paddingHorizontal: 15,
-    marginBottom: 20,
-    borderWidth: 1,
-    borderColor: '#EEEEEE',
-  },
-  searchIcon: {
-    marginRight: 10,
-  },
+
   searchInput: {
     flex: 1,
     height: 46,
@@ -247,7 +236,6 @@ const styles = StyleSheet.create({
   sortButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: THEME_COLOR,
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 15,

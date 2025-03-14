@@ -24,7 +24,6 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { API_URL, ENDPOINTS } from "../../config/api";
 import { LinearGradient } from "expo-linear-gradient";
 
-const THEME_COLOR = '#9CCDDB'; // Light blue theme color
 const GemCollectionScreen = ({ navigation }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [gems, setGems] = useState([]);
@@ -262,7 +261,7 @@ const GemCollectionScreen = ({ navigation }) => {
               value={searchQuery}
               onChangeText={setSearchQuery}
             />
-            <TouchableOpacity style={styles.sortButton} onPress={toggleSort}>
+            <TouchableOpacity style={[styles.sortButton, baseScreenStylesNew.themeColor]} onPress={toggleSort}>
               <Ionicons name={sortAscending ? "arrow-up" : "arrow-down"} size={16} color="#FFF" />
               <Text style={styles.sortButtonText}>Sort</Text>
             </TouchableOpacity>
@@ -270,7 +269,7 @@ const GemCollectionScreen = ({ navigation }) => {
         </View>
         
         <TouchableOpacity
-          style={styles.selectButton}
+          style={[styles.selectButton, baseScreenStylesNew.themeColor]}
           onPress={toggleSelect}
         >
           <Text style={styles.selectButtonText}>
@@ -352,11 +351,11 @@ const GemCollectionScreen = ({ navigation }) => {
 
           {isSelectMode && (
             <View style={styles.selectionActions}>
-              <TouchableOpacity style={styles.sellButton} onPress={handleSellPress}>
+              <TouchableOpacity style={[styles.sellButton, baseScreenStylesNew.themeColor]} onPress={handleSellPress}>
                 <Text style={styles.actionButtonText}>Sell</Text>
               </TouchableOpacity>
               <TouchableOpacity
-                style={styles.sendOrderButton}
+                style={[styles.sendOrderButton, baseScreenStylesNew.themeColor]}
                 onPress={handleSendOrder}
               >
                 <Text style={styles.actionButtonText}>Send Order</Text>
@@ -401,7 +400,7 @@ const styles = StyleSheet.create({
   sortButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: THEME_COLOR,
+    backgroundColor: baseScreenStylesNew.themeColor,
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 15,
@@ -414,7 +413,6 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
   selectButton: {
-    backgroundColor: THEME_COLOR,
     paddingVertical: 10,
     paddingHorizontal: 15,
     borderRadius: 10,
@@ -441,7 +439,6 @@ const styles = StyleSheet.create({
   sortButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: THEME_COLOR,
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 15,
@@ -455,7 +452,6 @@ const styles = StyleSheet.create({
     alignItems: "flex-end",
   },
   selectButton: {
-    backgroundColor: "#9CCDDB",
     paddingVertical: 6,
     paddingHorizontal: 16,
     borderRadius: 8,
@@ -504,7 +500,6 @@ const styles = StyleSheet.create({
   },
   sellButton: {
     flex: 1,
-    backgroundColor: "#170969",
     padding: 16,
     borderRadius: 25,
     marginRight: 8,
@@ -512,7 +507,6 @@ const styles = StyleSheet.create({
   },
   sendOrderButton: {
     flex: 1,
-    backgroundColor: "#170969",
     padding: 16,
     borderRadius: 25,
     marginLeft: 8,

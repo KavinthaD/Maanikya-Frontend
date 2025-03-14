@@ -234,24 +234,24 @@ const FavoritesScreen = () => {
           </View>
 
           {/* Tab Bar */}
-          <View style={styles.tabBar}>
+          <View style={baseScreenStylesNew.tabBar}>
             {categories.map((category) => (
               <TouchableOpacity
                 key={category}
                 style={[
-                  styles.tabButton,
+                  baseScreenStylesNew.tabButton,
                   selectedCategory === category ? 
-                    styles.tabButtonActive : 
-                    styles.tabButtonInactive
+                    baseScreenStylesNew.tabButtonActive : 
+                    baseScreenStylesNew.tabButtonInactive
                 ]}
                 onPress={() => handleCategoryPress(category)}
               >
                 <Text 
                   style={[
-                    styles.tabText, 
+                    baseScreenStylesNew.tabText, 
                     selectedCategory === category ? 
-                      styles.tabTextActive : 
-                      styles.tabTextInactive
+                      baseScreenStylesNew.tabTextActive : 
+                      baseScreenStylesNew.tabTextInactive
                   ]}
                 >
                   {category}
@@ -271,7 +271,7 @@ const FavoritesScreen = () => {
 
           {/* Confirm Button with increased bottom margin for navbar */}
           <View style={styles.confirmButtonContainer}>
-            <TouchableOpacity style={baseScreenStylesNew.Button1} onPress={handleConfirm}>
+            <TouchableOpacity style={baseScreenStylesNew.Button4} onPress={handleConfirm}>
               <Text style={baseScreenStylesNew.buttonText}>Confirm</Text>
             </TouchableOpacity>
           </View>
@@ -307,36 +307,6 @@ const styles = StyleSheet.create({
     width: 24,
   },
   
-  tabBar: {
-    flexDirection: 'row',
-    paddingHorizontal: 20,
-    marginBottom: 30,
-    marginTop: 15
-  },
-  tabButton: {
-    borderRadius: 13,
-    paddingVertical: 8,
-    paddingHorizontal: 15,
-    marginRight: 10,
-    minWidth: 70,
-    alignItems: 'center',
-  },
-  tabButtonActive: {
-    backgroundColor: '#170969',
-  },
-  tabButtonInactive: {
-    backgroundColor: 'rgba(172, 168, 168, 0.21)',
-  },
-  tabText: {
-    fontSize: 14,
-    fontWeight: '500',
-  },
-  tabTextActive: {
-    color: '#fff',
-  },
-  tabTextInactive: {
-    color: '#333333',
-  },
   list: {
     flex: 1,
   },
@@ -386,12 +356,12 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 25,
-    backgroundColor: 'rgba(23, 9, 105, 0.66)',
+    backgroundColor: 'rgba(112, 181, 223, 0.45)',
     alignItems: 'center',
     justifyContent: 'center',
   },
   checkboxSelected: {
-    backgroundColor: '#170969',
+    backgroundColor: '#70B5DF',
   },
   confirmButtonContainer: {
     paddingHorizontal: 20,

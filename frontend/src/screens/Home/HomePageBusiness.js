@@ -168,7 +168,7 @@ const HomeScreen = () => {
     },
     {
       image: require("../../assets/menu-icons/6.png"),
-      screen: "Market",
+      screen: "GemOnDisplay",
     },
   ];
 

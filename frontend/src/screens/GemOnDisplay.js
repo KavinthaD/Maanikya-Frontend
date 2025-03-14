@@ -14,6 +14,7 @@ import {
   ScrollView,
   ActivityIndicator,
   Alert,
+  RefreshControl,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import Header_2 from "../components/Header_2";
@@ -34,6 +35,7 @@ const GemOnDisplay = ({}) => {
   const [price, setPrice] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [refreshing, setRefreshing] = useState(false);
 
   // Fetch market gems when component mounts
   useEffect(() => {
@@ -43,7 +45,7 @@ const GemOnDisplay = ({}) => {
   // Function to fetch market gems from API
   const fetchMarketGems = async () => {
     try {
-      setLoading(true);
+      if (!refreshing) setLoading(true);
       setError(null);
 
       // Get auth token
@@ -52,6 +54,7 @@ const GemOnDisplay = ({}) => {
       if (!token) {
         setError("Authentication required. Please login.");
         setLoading(false);
+        setRefreshing(false);
         return;
       }
 
@@ -95,7 +98,14 @@ const GemOnDisplay = ({}) => {
       setError("Network error. Please check your connection.");
     } finally {
       setLoading(false);
+      setRefreshing(false);
     }
+  };
+
+  // Handle refresh when user pulls down
+  const handleRefresh = () => {
+    setRefreshing(true);
+    fetchMarketGems();
   };
 
   // Open modal for marking gem as sold
@@ -166,164 +176,168 @@ const GemOnDisplay = ({}) => {
     <View style={{ height: 1, backgroundColor: "#e0e0e0", marginVertical: 5 }} />
   );
 
-  if (loading) {
+  if (loading && !refreshing) {
     return (
-    
-        <SafeAreaView style={styles.container}>
-          <Header_2 title="Gems On Display" />
-          <View style={styles.loadingContainer}>
-            <ActivityIndicator size="large" color="#051B41" />
-            <Text style={styles.loadingText}>Loading gems...</Text>
-          </View>
-        </SafeAreaView>
-      
+      <SafeAreaView style={styles.container}>
+        <Header_2 title="Gems On Display" />
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color="#051B41" />
+          <Text style={styles.loadingText}>Loading gems...</Text>
+        </View>
+      </SafeAreaView>
     );
   }
 
-  if (error) {
+  if (error && !refreshing) {
     return (
-      
-        <SafeAreaView style={styles.container}>
-          <Header_2 title="Gems On Display" />
-          <View style={styles.errorContainer}>
-            <Ionicons name="alert-circle-outline" size={60} color="#FF6B6B" />
-            <Text style={styles.errorText}>{error}</Text>
-            <TouchableOpacity style={styles.retryButton} onPress={fetchMarketGems}>
-              <Text style={styles.retryButtonText}>Retry</Text>
-            </TouchableOpacity>
-          </View>
-        </SafeAreaView>
-      
+      <SafeAreaView style={styles.container}>
+        <Header_2 title="Gems On Display" />
+        <View style={styles.errorContainer}>
+          <Ionicons name="alert-circle-outline" size={60} color="#FF6B6B" />
+          <Text style={styles.errorText}>{error}</Text>
+          <TouchableOpacity style={styles.retryButton} onPress={fetchMarketGems}>
+            <Text style={styles.retryButtonText}>Retry</Text>
+          </TouchableOpacity>
+        </View>
+      </SafeAreaView>
     );
   }
 
   return (
-      <SafeAreaView style={styles.container}>
-        <Header_2 title="Gems On Display" />
-        <ScrollView
-          contentContainerStyle={styles.scrollContainer}
-          keyboardShouldPersistTaps="handled"
-        >
-          <View style={styles.displayContainer}>
-            <View style={styles.header}>
-              <View style={styles.headerLine} />
-              <Text style={styles.subtopic}>On Display</Text>
-              <View style={styles.headerLine} />
-            </View>
-            {onDisplay.length === 0 ? (
-              <View style={styles.emptyState}>
-                <Ionicons name="diamond-outline" size={40} color="#CCCCCC" />
-                <Text style={styles.emptyStateText}>No gems on display</Text>
-              </View>
-            ) : (
-              <FlatList
-                data={onDisplay}
-                keyExtractor={(item) => item.id}
-                renderItem={({ item }) => (
-                  <View style={styles.gemDisplay}>
-                    <Image 
-                      source={item.image} 
-                      style={styles.gemImg} 
-                      defaultSource={require("../assets/logo.png")}
-                    />
-                    <View style={styles.gemInfo}>
-                      <Text style={styles.gemId}>{item.id}</Text>
-                      <Text style={styles.gemDetails}>
-                        {item.weight ? `${item.weight} ct ` : ''}{item.gemType || ''}
-                      </Text>
-                      <Text style={styles.gemPrice}>LKR {item.price}</Text>
-                    </View>
-                    <TouchableOpacity
-                      onPress={() => openModal(item)}
-                      style={styles.soldBtn}
-                    >
-                      <Text style={styles.soldBtnText}>Mark As Sold</Text>
-                    </TouchableOpacity>
-                  </View>
-                )}
-                ItemSeparatorComponent={ItemSeperator}
-                scrollEnabled={false}
-              />
-            )}
+    <SafeAreaView style={styles.container}>
+      <Header_2 title="Gems On Display" />
+      <ScrollView
+        contentContainerStyle={styles.scrollContainer}
+        keyboardShouldPersistTaps="handled"
+        refreshControl={
+          <RefreshControl 
+            refreshing={refreshing} 
+            onRefresh={handleRefresh}
+            colors={[THEME_COLOR]} 
+            tintColor={THEME_COLOR}
+          />
+        }
+      >
+        <View style={styles.displayContainer}>
+          <View style={styles.header}>
+            <View style={styles.headerLine} />
+            <Text style={styles.subtopic}>On Display</Text>
+            <View style={styles.headerLine} />
           </View>
-
-          <View style={styles.soldContainer}>
-            <View style={styles.header}>
-              <View style={styles.headerLine} />
-              <Text style={styles.subtopic}>Sold out</Text>
-              <View style={styles.headerLine} />
+          {onDisplay.length === 0 ? (
+            <View style={styles.emptyState}>
+              <Ionicons name="diamond-outline" size={40} color="#CCCCCC" />
+              <Text style={styles.emptyStateText}>No gems on display</Text>
             </View>
-            {sold.length === 0 ? (
-              <View style={styles.emptyState}>
-                <Ionicons name="cash-outline" size={40}  />
-                <Text style={styles.emptyStateText}>No sold gems</Text>
-              </View>
-            ) : (
-              <FlatList
-                data={sold}
-                keyExtractor={(item) => item.id}
-                renderItem={({ item }) => (
-                  <View style={styles.soldGems}>
-                    <Image 
-                      source={item.image} 
-                      style={styles.gemImg}
-                      defaultSource={require("../assets/logo.png")}
-                    />
-                    <View style={styles.gemInfo}>
-                      <Text style={styles.gemId }>{item.id}</Text>
-                      <Text style={styles.gemDetails}>
-                        {item.weight ? `${item.weight} ct ` : ''}{item.gemType || ''}
-                      </Text>
-                      <Text style={styles.soldDetails}>Buyer: {item.buyer}</Text>
-                      <Text style={styles.soldDetails}>Price: LKR {item.price}</Text>
-                    </View>
+          ) : (
+            <FlatList
+              data={onDisplay}
+              keyExtractor={(item) => item.id}
+              renderItem={({ item }) => (
+                <View style={styles.gemDisplay}>
+                  <Image 
+                    source={item.image} 
+                    style={styles.gemImg} 
+                    defaultSource={require("../assets/logo.png")}
+                  />
+                  <View style={styles.gemInfo}>
+                    <Text style={styles.gemId}>{item.id}</Text>
+                    <Text style={styles.gemDetails}>
+                      {item.weight ? `${item.weight} ct ` : ''}{item.gemType || ''}
+                    </Text>
+                    <Text style={styles.gemPrice}>LKR {item.price}</Text>
                   </View>
-                )}
-                ItemSeparatorComponent={ItemSeperator}
-                scrollEnabled={false}
-              />
-            )}
-          </View>
-
-          <Modal animationType="slide" transparent={true} visible={modalVisible}>
-            <View style={styles.modalContainer}>
-              <View style={styles.modalContent}>
-                <Text style={styles.modalTitle}>Confirm Sale</Text>
-                <TextInput
-                  style={styles.input}
-                  placeholder="Enter Buyer's Name"
-                  value={buyerName}
-                  onChangeText={setBuyerName}
-                  placeholderTextColor="#888"
-                />
-                <TextInput
-                  style={styles.input}
-                  placeholder="Enter Gem Price (LKR)"
-                  keyboardType="numeric"
-                  value={price}
-                  onChangeText={setPrice}
-                  placeholderTextColor="#888"
-                />
-                <View style={styles.modalBtn}>
                   <TouchableOpacity
-                    onPress={() => setModalVisible(false)}
-                    style={styles.cancelBtn}
+                    onPress={() => openModal(item)}
+                    style={styles.soldBtn}
                   >
-                    <Text style={styles.btnText}>Cancel</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity onPress={markSold} style={styles.confirmBtn}>
-                    <Text style={styles.btnText}>Confirm</Text>
+                    <Text style={styles.soldBtnText}>Mark As Sold</Text>
                   </TouchableOpacity>
                 </View>
+              )}
+              ItemSeparatorComponent={ItemSeperator}
+              scrollEnabled={false}
+            />
+          )}
+        </View>
+
+        <View style={styles.soldContainer}>
+          <View style={styles.header}>
+            <View style={styles.headerLine} />
+            <Text style={styles.subtopic}>Sold out</Text>
+            <View style={styles.headerLine} />
+          </View>
+          {sold.length === 0 ? (
+            <View style={styles.emptyState}>
+              <Ionicons name="cash-outline" size={40} />
+              <Text style={styles.emptyStateText}>No sold gems</Text>
+            </View>
+          ) : (
+            <FlatList
+              data={sold}
+              keyExtractor={(item) => item.id}
+              renderItem={({ item }) => (
+                <View style={styles.soldGems}>
+                  <Image 
+                    source={item.image} 
+                    style={styles.gemImg}
+                    defaultSource={require("../assets/logo.png")}
+                  />
+                  <View style={styles.gemInfo}>
+                    <Text style={styles.gemId}>{item.id}</Text>
+                    <Text style={styles.gemDetails}>
+                      {item.weight ? `${item.weight} ct ` : ''}{item.gemType || ''}
+                    </Text>
+                    <Text style={styles.soldDetails}>Buyer: {item.buyer}</Text>
+                    <Text style={styles.soldDetails}>Price: LKR {item.price}</Text>
+                  </View>
+                </View>
+              )}
+              ItemSeparatorComponent={ItemSeperator}
+              scrollEnabled={false}
+            />
+          )}
+        </View>
+
+        <Modal animationType="slide" transparent={true} visible={modalVisible}>
+          <View style={styles.modalContainer}>
+            <View style={styles.modalContent}>
+              <Text style={styles.modalTitle}>Confirm Sale</Text>
+              <TextInput
+                style={styles.input}
+                placeholder="Enter Buyer's Name"
+                value={buyerName}
+                onChangeText={setBuyerName}
+                placeholderTextColor="#888"
+              />
+              <TextInput
+                style={styles.input}
+                placeholder="Enter Gem Price (LKR)"
+                keyboardType="numeric"
+                value={price}
+                onChangeText={setPrice}
+                placeholderTextColor="#888"
+              />
+              <View style={styles.modalBtn}>
+                <TouchableOpacity
+                  onPress={() => setModalVisible(false)}
+                  style={styles.cancelBtn}
+                >
+                  <Text style={styles.btnText}>Cancel</Text>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={markSold} style={styles.confirmBtn}>
+                  <Text style={styles.btnText}>Confirm</Text>
+                </TouchableOpacity>
               </View>
             </View>
-          </Modal>
-        </ScrollView>
-      </SafeAreaView>
-    
+          </View>
+        </Modal>
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 
+// Styles remain the same
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -512,7 +526,6 @@ const styles = StyleSheet.create({
   emptyStateText: {
     marginTop: 10,
     fontSize: 16,
-    
   },
 });
 

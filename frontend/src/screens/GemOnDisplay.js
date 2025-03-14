@@ -79,9 +79,9 @@ const GemOnDisplay = ({}) => {
       >
         <View style={styles.displayContainer}>
           <View style={styles.header}>
-            <View style={styles.headerLine} />
-            <Text style={styles.subTopic}>On Display</Text>
-            <View style={styles.headerLine} />
+            <View style = {styles.headerLine} />
+              < Text style={styles.subtopic}>On Display</Text>
+            <View style = {styles.headerLine} />
           </View>
           <View style={styles.tableHeader}>
             <Text style={styles.tableHeaderText}>Code</Text>
@@ -214,15 +214,10 @@ const styles = StyleSheet.create({
     height: 1,
     backgroundColor: "#ccc",
   },
-  subTopic: {
-    fontSize: 18,
-    fontWeight: "600",
-    marginHorizontal: 10,
-  },
   subtopic: {
     fontSize: 18,
     fontWeight: "600",
-    color: "#ffff",
+    color: "#ffffff",
     marginHorizontal: 10,
   },
   tableHeader: {
@@ -253,10 +248,10 @@ const styles = StyleSheet.create({
     color: "#333",
     flex: 1,
     fontSize: 16,
-    color: "#333",
+    color: "#ffffff",
   },
   soldBtn: {
-    backgroundColor: "#007bff",
+    backgroundColor: "#051B41",
     paddingVertical: 8,
     paddingHorizontal: 10,
     borderRadius: 10,
@@ -269,7 +264,6 @@ const styles = StyleSheet.create({
   soldGems: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#9AC3FF",
     padding: 10,
     borderRadius: 10,
     marginVertical: 5,

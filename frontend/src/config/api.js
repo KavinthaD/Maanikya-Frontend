@@ -30,5 +30,6 @@ export const ENDPOINTS = {
   GET_MY_GEMS: "/api/gems/my-gems",
   ADD_GEMS_TO_MARKET: "/api/market/add",
   GET_GEMS_ON_MARKET: "/api/market/view",
+  GET_MY_MARKET_GEMS: "/api/gems/view/market-gems",
   // Add other endpoints here
 };

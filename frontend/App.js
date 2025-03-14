@@ -37,7 +37,7 @@ import InProgressTrackerScreen from "./src/screens/Order/InProgressTracker";
 import Customeraddseller from "./src/screens/Customeraddseller";
 import SellerProfile from "./src/screens/MySellerFullProfile";
 import BusinessOwnerEditProfile from "./src/screens/UserProfile/BusinessOwnerEditProfile";
-//import GemDetailsScreen from "./src/screens/GemDetailsScreen";
+import GemDetailsScreen from "./src/screens/GemDetailsScreen";
 import OwnerOrderTrackDetails from "./src/screens/Order/OwnerOrderTrackDetails";
 import NotificationScreen from "./src/screens/Order/CompletedTracker";
 
@@ -98,7 +98,7 @@ const App = () => {
             <Stack.Screen name="InProgressTrackerScreen" component={InProgressTrackerScreen} options={{ headerShown: false }} />
             <Stack.Screen name="CompletedTrackerScreen" component={NotificationScreen} options={{ headerShown: false }} />
             <Stack.Screen name="SellerProfile" component={SellerProfile} options={{ headerShown: false }} />
-            {/*<Stack.Screen name="GemDetailsScreen" component={GemDetailsScreen} options={{ headerShown: false}} />*/}
+            <Stack.Screen name="GemDetailsScreen" component={GemDetailsScreen} options={{ headerShown: false}} />
             <Stack.Screen name="OwnerOrderTrackDetails" component={OwnerOrderTrackDetails} options={{ headerShown: false}} />
           </Stack.Navigator>
         </NavigationContainer>

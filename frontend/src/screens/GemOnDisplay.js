@@ -1,6 +1,6 @@
 //Screen creator: Isum
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   SafeAreaView,
   Text,
@@ -12,173 +12,321 @@ import {
   Modal,
   TextInput,
   ScrollView,
+  ActivityIndicator,
+  Alert,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import Header_2 from "../components/Header_2";
 import GradientContainer from "../components/GradientContainer";
+import axios from "axios";
+import { API_URL, ENDPOINTS } from "../config/api";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
+const THEME_COLOR = '#9CCDDB'; // Light blue theme color
 const GemOnDisplay = ({}) => {
-  //Store gems on display
-  const [onDisplay, setOnDisplay] = useState([
-    { id: "Gem001", image: require("../assets/logo.png") },
-    { id: "Gem002", image: require("../assets/logo.png") },
-    { id: "Gem003", image: require("../assets/logo.png") },
-  ]);
-  //Store sold gems
-  const [sold, setSold] = useState([
-    {
-      id: "Gem004",
-      image: require("../assets/logo.png"),
-      buyer: "John Doe",
-      price: "5000",
-    },
-    {
-      id: "Gem005",
-      image: require("../assets/logo.png"),
-      buyer: "Jane Doe",
-      price: "8000",
-    },
-  ]);
+  // Store gems on display
+  const [onDisplay, setOnDisplay] = useState([]);
+  // Store sold gems
+  const [sold, setSold] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedGem, setSelectedGem] = useState(null);
   const [buyerName, setBuyerName] = useState("");
   const [price, setPrice] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  //open modal making gem as sold
+  // Fetch market gems when component mounts
+  useEffect(() => {
+    fetchMarketGems();
+  }, []);
+
+  // Function to fetch market gems from API
+  const fetchMarketGems = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      // Get auth token
+      const token = await AsyncStorage.getItem("authToken");
+      
+      if (!token) {
+        setError("Authentication required. Please login.");
+        setLoading(false);
+        return;
+      }
+
+      const response = await axios.get(`${API_URL}${ENDPOINTS.GET_MY_MARKET_GEMS}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      if (response.data.success) {
+        // Sort gems by status - separate available and sold gems
+        const availableGems = [];
+        const soldGems = [];
+        
+        response.data.gems.forEach(gem => {
+          if (gem.status === "Available") {
+            availableGems.push({
+              id: gem.gemId,
+              image: { uri: gem.photo },
+              gemType: gem.gemType || "",
+              weight: gem.weight || null,
+              price: gem.price.toString(),
+            });
+          } else if (gem.status === "Sold") {
+            soldGems.push({
+              id: gem.gemId,
+              image: { uri: gem.photo },
+              gemType: gem.gemType || "",
+              weight: gem.weight || null,
+              buyer: gem.buyer || "Unknown",
+              price: gem.price.toString(),
+            });
+          }
+        });
+        
+        setOnDisplay(availableGems);
+        setSold(soldGems);
+      } else {
+        setError("Failed to load gems");
+      }
+    } catch (error) {
+      console.error("Error fetching market gems:", error);
+      setError("Network error. Please check your connection.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Open modal for marking gem as sold
   const openModal = (gem) => {
     setSelectedGem(gem);
     setModalVisible(true);
   };
 
-  //making gem sold
-  const markSold = () => {
+  // Mark gem as sold
+  const markSold = async () => {
     if (selectedGem && buyerName && price) {
-      setOnDisplay(onDisplay.filter((item) => item.id !== selectedGem.id)); //remove gem from on display
-      setSold([...sold, { ...selectedGem, buyer: buyerName, price: price }]); //add gem to sold
-      setModalVisible(false); //close modal
-      setBuyerName("");
-      setPrice("");
+      try {
+        setModalVisible(false); // Close the modal first to show loading state if needed
+
+        // Get auth token
+        const token = await AsyncStorage.getItem("authToken");
+        
+        if (!token) {
+          Alert.alert("Error", "Authentication required. Please login.");
+          return;
+        }
+
+        // Call API to update gem status to sold
+        const response = await axios.put(
+          `${API_URL}/api/market/${selectedGem.id}/sell`, 
+          {
+            buyer: buyerName,
+            soldPrice: price  // Changed from price to soldPrice to match backend expectation
+          },
+          {
+            headers: { Authorization: `Bearer ${token}` }
+          }
+        );
+
+        if (response.data.success) {
+          // Update local state
+          setOnDisplay(onDisplay.filter((item) => item.id !== selectedGem.id));
+          setSold([...sold, { 
+            ...selectedGem, 
+            buyer: buyerName, 
+            price: price  // This is for UI display, so keep as price
+          }]);
+          
+          // Reset form fields
+          setBuyerName("");
+          setPrice("");
+          
+          Alert.alert("Success", "Gem marked as sold successfully!");
+        } else {
+          Alert.alert("Error", response.data.message || "Failed to update gem status");
+        }
+      } catch (error) {
+        console.error("Error marking gem as sold:", error);
+        
+        // Show specific error message if available
+        const errorMessage = error.response?.data?.message || 
+                            "Failed to update gem status. Please try again.";
+        
+        Alert.alert("Error", errorMessage);
+      }
     } else {
-      alert("Please enter buyer's name and gem price.");
+      Alert.alert("Required Fields", "Please enter buyer's name and gem price.");
     }
   };
 
-  //seperate the sold and displayed gems
-  const ItemSeperator = () => {
-    <View
-      style={{ height: 1, backgroundColor: "#e0e0e0", marginVertical: 5 }}
-    />;
-  };
+  // Item separator for FlatList
+  const ItemSeperator = () => (
+    <View style={{ height: 1, backgroundColor: "#e0e0e0", marginVertical: 5 }} />
+  );
+
+  if (loading) {
+    return (
+    
+        <SafeAreaView style={styles.container}>
+          <Header_2 title="Gems On Display" />
+          <View style={styles.loadingContainer}>
+            <ActivityIndicator size="large" color="#051B41" />
+            <Text style={styles.loadingText}>Loading gems...</Text>
+          </View>
+        </SafeAreaView>
+      
+    );
+  }
+
+  if (error) {
+    return (
+      
+        <SafeAreaView style={styles.container}>
+          <Header_2 title="Gems On Display" />
+          <View style={styles.errorContainer}>
+            <Ionicons name="alert-circle-outline" size={60} color="#FF6B6B" />
+            <Text style={styles.errorText}>{error}</Text>
+            <TouchableOpacity style={styles.retryButton} onPress={fetchMarketGems}>
+              <Text style={styles.retryButtonText}>Retry</Text>
+            </TouchableOpacity>
+          </View>
+        </SafeAreaView>
+      
+    );
+  }
+
   return (
-    <GradientContainer>
-    <SafeAreaView style={styles.container}>
-      <Header_2 title="Gems On Display" />
-      <ScrollView
-        contentContainerStyle={styles.scrollContainer}
-        keyboardShouldPersistTaps="handled"
-      >
-        <View style={styles.displayContainer}>
-          <View style={styles.header}>
-            <View style = {styles.headerLine} />
-              < Text style={styles.subtopic}>On Display</Text>
-            <View style = {styles.headerLine} />
-          </View>
-          <View style={styles.tableHeader}>
-            <Text style={styles.tableHeaderText}>Code</Text>
-            <View style={{ flex: 1 }} />
-          </View>
-          {/*Displayed as a list*/}
-          <FlatList
-            data={onDisplay}
-            keyExtractor={(item) => item.id}
-            renderItem={({ item }) => (
-              <View style={styles.gemDisplay}>
-                <Image source={item.image} style={styles.gemImg} />
-                <Text style={styles.gemId}>{item.id}</Text>
-                <TouchableOpacity
-                  onPress={() => openModal(item)}
-                  style={styles.soldBtn}
-                >
-                  <Text style={styles.soldBtnText}>Mark As Sold</Text>
-                </TouchableOpacity>
+      <SafeAreaView style={styles.container}>
+        <Header_2 title="Gems On Display" />
+        <ScrollView
+          contentContainerStyle={styles.scrollContainer}
+          keyboardShouldPersistTaps="handled"
+        >
+          <View style={styles.displayContainer}>
+            <View style={styles.header}>
+              <View style={styles.headerLine} />
+              <Text style={styles.subtopic}>On Display</Text>
+              <View style={styles.headerLine} />
+            </View>
+            {onDisplay.length === 0 ? (
+              <View style={styles.emptyState}>
+                <Ionicons name="diamond-outline" size={40} color="#CCCCCC" />
+                <Text style={styles.emptyStateText}>No gems on display</Text>
               </View>
+            ) : (
+              <FlatList
+                data={onDisplay}
+                keyExtractor={(item) => item.id}
+                renderItem={({ item }) => (
+                  <View style={styles.gemDisplay}>
+                    <Image 
+                      source={item.image} 
+                      style={styles.gemImg} 
+                      defaultSource={require("../assets/logo.png")}
+                    />
+                    <View style={styles.gemInfo}>
+                      <Text style={styles.gemId}>{item.id}</Text>
+                      <Text style={styles.gemDetails}>
+                        {item.weight ? `${item.weight} ct ` : ''}{item.gemType || ''}
+                      </Text>
+                      <Text style={styles.gemPrice}>LKR {item.price}</Text>
+                    </View>
+                    <TouchableOpacity
+                      onPress={() => openModal(item)}
+                      style={styles.soldBtn}
+                    >
+                      <Text style={styles.soldBtnText}>Mark As Sold</Text>
+                    </TouchableOpacity>
+                  </View>
+                )}
+                ItemSeparatorComponent={ItemSeperator}
+                scrollEnabled={false}
+              />
             )}
-            ItemSeparatorComponent={ItemSeperator}
-          />
-        </View>
+          </View>
 
-        {/* Sold Gems */}
-        <View style={styles.soldContainer}>
-          <View style={styles.header}>
-            <View style={styles.headerLine} />
-            <Text style={styles.subtopic}>Sold out</Text>
-            <View style={styles.headerLine} />
-          </View>
-          <View style={styles.tableHeader}>
-            <Text style={styles.tableHeaderText}>Code</Text>
-            <Text style={styles.tableHeaderText}>To</Text>
-            <Text style={styles.tableHeaderText}>Price(LKR)</Text>
-          </View>
-          {/*display sold gems as a list*/}
-          <FlatList
-            data={sold}
-            keyExtractor={(item) => item.id}
-            renderItem={({ item }) => (
-              <View style={styles.soldGems}>
-                <Image source={item.image} style={styles.gemImg} />
-                <Text style={styles.soldText}>{item.id} </Text>
-                <Text style={styles.soldText}>{item.buyer} </Text>
-                <Text style={styles.soldText}>{item.price}</Text>
+          <View style={styles.soldContainer}>
+            <View style={styles.header}>
+              <View style={styles.headerLine} />
+              <Text style={styles.subtopic}>Sold out</Text>
+              <View style={styles.headerLine} />
+            </View>
+            {sold.length === 0 ? (
+              <View style={styles.emptyState}>
+                <Ionicons name="cash-outline" size={40}  />
+                <Text style={styles.emptyStateText}>No sold gems</Text>
               </View>
+            ) : (
+              <FlatList
+                data={sold}
+                keyExtractor={(item) => item.id}
+                renderItem={({ item }) => (
+                  <View style={styles.soldGems}>
+                    <Image 
+                      source={item.image} 
+                      style={styles.gemImg}
+                      defaultSource={require("../assets/logo.png")}
+                    />
+                    <View style={styles.gemInfo}>
+                      <Text style={styles.gemId }>{item.id}</Text>
+                      <Text style={styles.gemDetails}>
+                        {item.weight ? `${item.weight} ct ` : ''}{item.gemType || ''}
+                      </Text>
+                      <Text style={styles.soldDetails}>Buyer: {item.buyer}</Text>
+                      <Text style={styles.soldDetails}>Price: LKR {item.price}</Text>
+                    </View>
+                  </View>
+                )}
+                ItemSeparatorComponent={ItemSeperator}
+                scrollEnabled={false}
+              />
             )}
-            ItemSeparatorComponent={ItemSeperator}
-          />
-        </View>
+          </View>
 
-        {/*modal making sold gem*/}
-        <Modal animationType="slide" transparent={true} visible={modalVisible}>
-          <View style={styles.modalContainer}>
-            <View style={styles.modalContent}>
-              <Text style={styles.modalTitle}>Confirm Sale</Text>
-              <TextInput
-                style={styles.input}
-                placeholder="Enter Buyer's Name"
-                value={buyerName}
-                onChangeText={setBuyerName}
-                placeholderTextColor="#888"
-              />
-              <TextInput
-                style={styles.input}
-                placeholder="Enter Gem Price (LKR)"
-                keyboardType="numeric"
-                value={price}
-                onChangeText={setPrice}
-                placeholderTextColor="#888"
-              />
-              <View style={styles.modalBtn}>
-                <TouchableOpacity
-                  onPress={() => setModalVisible(false)}
-                  style={styles.cancelBtn}
-                >
-                  <Text style={styles.btnText}>Cancel</Text>
-                </TouchableOpacity>
-                <TouchableOpacity onPress={markSold} style={styles.confirmBtn}>
-                  <Text style={styles.btnText}>Confirm</Text>
-                </TouchableOpacity>
+          <Modal animationType="slide" transparent={true} visible={modalVisible}>
+            <View style={styles.modalContainer}>
+              <View style={styles.modalContent}>
+                <Text style={styles.modalTitle}>Confirm Sale</Text>
+                <TextInput
+                  style={styles.input}
+                  placeholder="Enter Buyer's Name"
+                  value={buyerName}
+                  onChangeText={setBuyerName}
+                  placeholderTextColor="#888"
+                />
+                <TextInput
+                  style={styles.input}
+                  placeholder="Enter Gem Price (LKR)"
+                  keyboardType="numeric"
+                  value={price}
+                  onChangeText={setPrice}
+                  placeholderTextColor="#888"
+                />
+                <View style={styles.modalBtn}>
+                  <TouchableOpacity
+                    onPress={() => setModalVisible(false)}
+                    style={styles.cancelBtn}
+                  >
+                    <Text style={styles.btnText}>Cancel</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity onPress={markSold} style={styles.confirmBtn}>
+                    <Text style={styles.btnText}>Confirm</Text>
+                  </TouchableOpacity>
+                </View>
               </View>
             </View>
-          </View>
-        </Modal>
-      </ScrollView>
-    </SafeAreaView>
-    </GradientContainer>
+          </Modal>
+        </ScrollView>
+      </SafeAreaView>
+    
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#9CCDDB",
   },
   displayContainer: {
     marginHorizontal: 16,
@@ -195,7 +343,7 @@ const styles = StyleSheet.create({
   soldContainer: {
     marginHorizontal: 16,
     marginTop: 20,
-    backgroundColor: "#334D85",
+    backgroundColor: THEME_COLOR,
     borderRadius: 12,
     padding: 16,
     shadowColor: "#000",
@@ -212,24 +360,13 @@ const styles = StyleSheet.create({
   headerLine: {
     flex: 1,
     height: 1,
-    backgroundColor: "#ccc",
+    backgroundColor: "black",
   },
   subtopic: {
     fontSize: 18,
     fontWeight: "600",
-    color: "#ffffff",
+    color: "#333",
     marginHorizontal: 10,
-  },
-  tableHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    paddingHorizontal: 5,
-    marginBottom: 8,
-  },
-  tableHeaderText: {
-    fontSize: 14,
-    fontWeight: "500",
-    width: 100,
   },
   gemDisplay: {
     flexDirection: "row",
@@ -238,17 +375,26 @@ const styles = StyleSheet.create({
     paddingHorizontal: 5,
   },
   gemImg: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+    width: 50,
+    height: 50,
+    borderRadius: 25,
     marginRight: 20,
+  },
+  gemInfo: {
+    flex: 1,
   },
   gemId: {
     fontSize: 16,
+    fontWeight: "bold",
     color: "#333",
-    flex: 1,
-    fontSize: 16,
-    color: "#ffffff",
+  },
+  gemDetails: {
+    fontSize: 14,
+    color: "#666",
+  },
+  gemPrice: {
+    fontSize: 14,
+    color: "#333",
   },
   soldBtn: {
     backgroundColor: "#051B41",
@@ -264,15 +410,12 @@ const styles = StyleSheet.create({
   soldGems: {
     flexDirection: "row",
     alignItems: "center",
-    padding: 10,
-    borderRadius: 10,
-    marginVertical: 5,
+    paddingVertical: 8,
+    paddingHorizontal: 5,
   },
-  soldText: {
-    flex: 1,
-    fontSize: 16,
-    justifyContent: "center",
-    alignItems: "center",
+  soldDetails: {
+    fontSize: 14,
+    color: "#FFF",
   },
   modalContainer: {
     flex: 1,
@@ -327,6 +470,49 @@ const styles = StyleSheet.create({
   },
   scrollContainer: {
     flexGrow: 1,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  loadingText: {
+    marginTop: 10,
+    fontSize: 16,
+    color: "#051B41",
+  },
+  errorContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  errorText: {
+    marginTop: 10,
+    fontSize: 16,
+    color: "#FF6B6B",
+    textAlign: "center",
+  },
+  retryButton: {
+    marginTop: 20,
+    backgroundColor: "#FF6B6B",
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 8,
+  },
+  retryButtonText: {
+    color: "white",
+    fontWeight: "500",
+    fontSize: 16,
+  },
+  emptyState: {
+    justifyContent: "center",
+    alignItems: "center",
+    paddingVertical: 20,
+  },
+  emptyStateText: {
+    marginTop: 10,
+    fontSize: 16,
+    
   },
 });
 

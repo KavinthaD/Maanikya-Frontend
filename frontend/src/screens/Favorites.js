@@ -1,4 +1,3 @@
-//Screen Creator Tilmi
 import React, { useState } from "react";
 import {
   View,
@@ -10,11 +9,13 @@ import {
   TouchableOpacity,
   FlatList,
   Modal,
+  StatusBar,
+  Dimensions,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { baseScreenStyles } from "../styles/baseStyles";
-import Header_1 from "../components/Header_1";
-import BS_NavBar from "../components/BS_NavBar";
+import { LinearGradient } from 'expo-linear-gradient';
+import Header_2 from "../components/Header_2";
+import { baseScreenStylesNew } from "../styles/baseStylesNew";
 
 const OrderRequestModal = ({ visible, onClose, selectedPerson }) => {
   const [additionalMessage, setAdditionalMessage] = useState("");
@@ -34,20 +35,29 @@ const OrderRequestModal = ({ visible, onClose, selectedPerson }) => {
       animationType="fade"
       onRequestClose={onClose}
     >
-      <View style={styles.modalOverlay}>
-        <View style={styles.modalContent}>
-          <Text style={styles.orderId}>Order#: NB01130</Text>
+      <View style={modalStyles.modalOverlay}>
+        <View style={modalStyles.modalContent}>
+          <LinearGradient
+            colors={[
+              'rgb(3, 15, 79)',
+              'rgb(11, 10, 43)'
+            ]}
+            style={modalStyles.gradientBackground}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 0, y: 1 }}
+          />
+          <Text style={modalStyles.orderId}>Order#: NB01130</Text>
 
-          <Text style={styles.personName}>{selectedPerson.name}</Text>
+          <Text style={modalStyles.personName}>{selectedPerson.name}</Text>
 
-          <View style={styles.gemImagesContainer}>
+          <View style={modalStyles.gemImagesContainer}>
             {gemImages.map((gem) => (
-              <Image key={gem.id} source={gem.source} style={styles.gemImage} />
+              <Image key={gem.id} source={gem.source} style={modalStyles.gemImage} />
             ))}
           </View>
 
           <TextInput
-            style={styles.messageInput}
+            style={modalStyles.messageInput}
             placeholder="Additional messages (optional)"
             placeholderTextColor="#666"
             multiline
@@ -55,18 +65,18 @@ const OrderRequestModal = ({ visible, onClose, selectedPerson }) => {
             onChangeText={setAdditionalMessage}
           />
 
-          <View style={styles.buttonContainer}>
+          <View style={modalStyles.buttonContainer}>
             <TouchableOpacity
-              style={[styles.button, styles.cancelButton]}
+              style={[modalStyles.button, modalStyles.cancelButton]}
               onPress={onClose}
             >
-              <Text style={styles.buttonText}>Cancel</Text>
+              <Text style={modalStyles.buttonText}>Cancel</Text>
             </TouchableOpacity>
             <TouchableOpacity
-              style={[styles.button, styles.sendButton]}
+              style={[modalStyles.button, modalStyles.sendButton]}
               onPress={onClose}
             >
-              <Text style={styles.buttonText}>Send Request</Text>
+              <Text style={modalStyles.buttonText}>Send Request</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -81,60 +91,86 @@ const FavoritesScreen = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedPerson, setSelectedPerson] = useState(null);
 
-  const categories = ["Cutter", "Burner", "Elec. Burner"];
+  // All available categories
+  const categories = ["All", "Cutter", "Burner", "Elec. Burner"];
 
+  // Complete list of favorites with their respective types
   const allFavorites = [
     {
       id: "1",
       name: "Dulith Wanigarathne",
       role: "Cutter",
-      image: require("../assets/gems/BS001.png"),
+      image: require("../assets/seller.png"),
       type: "Cutter",
     },
     {
       id: "2",
       name: "Isum Hansaja Perera",
       role: "Cutter",
-      image: require("../assets/gems/BS001.png"),
+      image: require("../assets/seller.png"),
       type: "Cutter",
     },
     {
       id: "3",
       name: "Kavintha Dinushan",
-      role: "Burner",
-      image: require("../assets/gems/BS001.png"),
-      type: "Burner",
+      role: "Cutter",
+      image: require("../assets/seller.png"),
+      type: "Cutter",
     },
     {
       id: "4",
       name: "Nihal Hewarthna",
-      role: "Burner",
-      image: require("../assets/gems/BS001.png"),
-      type: "Burner",
+      role: "Cutter",
+      image: require("../assets/seller.png"),
+      type: "Cutter",
     },
     {
       id: "5",
-      name: "Samantha Silva",
-      role: "Elec. Burner",
-      image: require("../assets/gems/BS001.png"),
-      type: "Elec. Burner",
+      name: "Rajitha Perera",
+      role: "Burner",
+      image: require("../assets/seller.png"),
+      type: "Burner",
     },
     {
       id: "6",
-      name: "Rajitha Perera",
+      name: "Tharushi Silva",
+      role: "Burner",
+      image: require("../assets/seller.png"),
+      type: "Burner",
+    },
+    {
+      id: "7",
+      name: "Kasun Fernando",
       role: "Elec. Burner",
-      image: require("../assets/gems/BS001.png"),
+      image: require("../assets/seller.png"),
+      type: "Elec. Burner",
+    },
+    {
+      id: "8",
+      name: "Sampath Kumara",
+      role: "Elec. Burner",
+      image: require("../assets/seller.png"),
       type: "Elec. Burner",
     },
   ];
 
-  const filteredFavorites = allFavorites.filter((item) => {
-    const matchesCategory = item.type === selectedCategory;
-    const matchesSearch = item.name
-      .toLowerCase()
-      .includes(searchQuery.toLowerCase());
-    return matchesCategory && matchesSearch;
-  });
+  // Filter favorites based on selected category and search query
+  // Sort alphabetically when "All" category is selected
+  const filteredFavorites = allFavorites
+    .filter((item) => {
+      const matchesCategory = selectedCategory === "All" || item.type === selectedCategory;
+      const matchesSearch = item.name
+        .toLowerCase()
+        .includes(searchQuery.toLowerCase());
+      return matchesCategory && matchesSearch;
+    })
+    .sort((a, b) => {
+      // Only sort alphabetically if "All" category is selected
+      if (selectedCategory === "All") {
+        return a.name.localeCompare(b.name);
+      }
+      return 0; // Keep original order for other categories
+    });
 
   const handleCategoryPress = (category) => {
     setSelectedCategory(category);
@@ -175,176 +211,197 @@ const FavoritesScreen = () => {
     </TouchableOpacity>
   );
 
+
   return (
-    <SafeAreaView style={baseScreenStyles.container}>
-      <Header_1 title="Favourites" />
-      <View style={styles.searchContainer}>
-        <Ionicons
-          name="search"
-          size={20}
-          color="#666"
-          style={styles.searchIcon}
-        />
-        <TextInput
-          style={styles.searchInput}
-          placeholder="Search person"
-          placeholderTextColor="#666"
-          value={searchQuery}
-          onChangeText={setSearchQuery}
-        />
-      </View>
+    <View style={[baseScreenStylesNew.container, styles.container]}>
+      <Header_2 title ="Favourites"/>
+        <SafeAreaView style={styles.safeArea}>
+          {/* Search Bar */}
+          <View style={baseScreenStylesNew.search}>
+            <Ionicons
+              name="search"
+              size={20}
+              color="#888"
+              style={baseScreenStylesNew.searchIcon}
+            />
+            <TextInput
+              style={baseScreenStylesNew.searchInput}
+              placeholder="Send order to?"
+              placeholderTextColor="#888"
+              value={searchQuery}
+              onChangeText={setSearchQuery}
+            />
+          </View>
 
-      <View style={styles.categoriesContainer}>
-        {categories.map((category) => (
-          <TouchableOpacity
-            key={category}
-            style={[
-              styles.categoryButton,
-              selectedCategory === category && styles.categoryButtonActive,
-            ]}
-            onPress={() => handleCategoryPress(category)}
-          >
-            <Text
-              style={[
-                styles.categoryText,
-                selectedCategory === category && styles.categoryTextActive,
-              ]}
-            >
-              {category}
-            </Text>
-          </TouchableOpacity>
-        ))}
-      </View>
+          {/* Tab Bar */}
+          <View style={styles.tabBar}>
+            {categories.map((category) => (
+              <TouchableOpacity
+                key={category}
+                style={[
+                  styles.tabButton,
+                  selectedCategory === category ? 
+                    styles.tabButtonActive : 
+                    styles.tabButtonInactive
+                ]}
+                onPress={() => handleCategoryPress(category)}
+              >
+                <Text 
+                  style={[
+                    styles.tabText, 
+                    selectedCategory === category ? 
+                      styles.tabTextActive : 
+                      styles.tabTextInactive
+                  ]}
+                >
+                  {category}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </View>
 
-      <FlatList
-        data={filteredFavorites}
-        renderItem={renderFavoriteItem}
-        keyExtractor={(item) => item.id}
-        style={styles.list}
-      />
+          {/* Favorites List */}
+          <FlatList
+            data={filteredFavorites}
+            renderItem={renderFavoriteItem}
+            keyExtractor={(item) => item.id}
+            style={styles.list}
+            contentContainerStyle={styles.listContent}
+          />
 
-      <TouchableOpacity style={styles.confirmButton} onPress={handleConfirm}>
-        <Text style={styles.confirmButtonText}>Confirm</Text>
-      </TouchableOpacity>
+          {/* Confirm Button with increased bottom margin for navbar */}
+          <View style={styles.confirmButtonContainer}>
+            <TouchableOpacity style={baseScreenStylesNew.Button1} onPress={handleConfirm}>
+              <Text style={baseScreenStylesNew.buttonText}>Confirm</Text>
+            </TouchableOpacity>
+          </View>
 
-      <OrderRequestModal
-        visible={modalVisible}
-        onClose={() => {
-          setModalVisible(false);
-          setSelectedPerson(null);
-        }}
-        selectedPerson={selectedPerson}
-      />
-
-      <BS_NavBar />
-    </SafeAreaView>
+          <OrderRequestModal
+            visible={modalVisible}
+            onClose={() => {
+              setModalVisible(false);
+              setSelectedPerson(null);
+            }}
+            selectedPerson={selectedPerson}
+          />
+        </SafeAreaView>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#9CCDDB",
   },
-  searchContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "white",
-    margin: 16,
-    padding: 8,
-    borderRadius: 8,
-  },
-  searchIcon: {
-    marginHorizontal: 8,
-  },
-  searchInput: {
+  gradient: {
     flex: 1,
-    fontSize: 16,
-    color: "#333",
   },
-  categoriesContainer: {
-    flexDirection: "row",
-    paddingHorizontal: 16,
-    marginBottom: 16,
+  safeArea: {
+    flex: 1,
   },
-  categoryButton: {
-    paddingHorizontal: 16,
+  backButton: {
+    padding: 5,
+  },
+  
+  placeholder: {
+    width: 24,
+  },
+  
+  tabBar: {
+    flexDirection: 'row',
+    paddingHorizontal: 20,
+    marginBottom: 30,
+    marginTop: 15
+  },
+  tabButton: {
+    borderRadius: 13,
     paddingVertical: 8,
-    marginRight: 8,
-    borderRadius: 20,
-    backgroundColor: "white",
+    paddingHorizontal: 15,
+    marginRight: 10,
+    minWidth: 70,
+    alignItems: 'center',
   },
-  categoryButtonActive: {
-    backgroundColor: "#072D44",
+  tabButtonActive: {
+    backgroundColor: '#170969',
   },
-  categoryText: {
-    color: "#333",
+  tabButtonInactive: {
+    backgroundColor: 'rgba(172, 168, 168, 0.21)',
+  },
+  tabText: {
     fontSize: 14,
+    fontWeight: '500',
   },
-  categoryTextActive: {
-    color: "white",
+  tabTextActive: {
+    color: '#fff',
+  },
+  tabTextInactive: {
+    color: '#333333',
   },
   list: {
     flex: 1,
   },
+  listContent: {
+    paddingHorizontal: 20,
+    paddingBottom: 10,
+  },
   favoriteItem: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "white",
-    marginHorizontal: 16,
-    marginBottom: 8,
-    padding: 12,
-    borderRadius: 8,
-    justifyContent: "space-between",
+    backgroundColor:'rgba(172, 168, 168, 0.21)',
+    borderRadius: 15,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingVertical: 8,
+    paddingHorizontal: 15,
+    marginBottom: 16,
+    height: 80,
   },
   favoriteContent: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   profileImage: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    backgroundColor: "#ddd",
+    width: 61,
+    height: 56,
+    borderRadius: 32,
+    marginRight: 15,
   },
   textContainer: {
-    marginLeft: 12,
+    justifyContent: 'center',
   },
   name: {
-    fontSize: 16,
-    fontWeight: "500",
-    color: "#333",
+    color: '#000',
+    fontFamily: "Inter-Medium",
+    fontSize: 14,
+    fontWeight: 'bold',
+    marginBottom: 3,
   },
   role: {
+    color: '#000',
+    fontFamily: "Inter-Medium",
     fontSize: 14,
-    color: "#666",
-    marginTop: 4,
+    fontWeight: 'bold',
+    opacity: 0.8,
   },
   checkbox: {
-    width: 24,
-    height: 24,
-    borderRadius: 12,
-    borderWidth: 2,
-    borderColor: "#ccc",
-    alignItems: "center",
-    justifyContent: "center",
+    width: 40,
+    height: 40,
+    borderRadius: 25,
+    backgroundColor: 'rgba(23, 9, 105, 0.66)',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   checkboxSelected: {
-    backgroundColor: "#004B64",
-    borderColor: "#004B64",
+    backgroundColor: '#170969',
   },
-  confirmButton: {
-    backgroundColor: "#072D44",
-    margin: 16,
-    padding: 16,
-    borderRadius: 8,
-    alignItems: "center",
+  confirmButtonContainer: {
+    paddingHorizontal: 20,
+    paddingBottom: 70, // Increased bottom padding to make space for the navigation bar
+    marginTop: 10,
   },
-  confirmButtonText: {
-    color: "white",
-    fontSize: 16,
-    fontWeight: "600",
-  },
+
+});
+
+const modalStyles = StyleSheet.create({
   modalOverlay: {
     flex: 1,
     backgroundColor: "rgba(0, 0, 0, 0.5)",
@@ -353,11 +410,19 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   modalContent: {
-    backgroundColor: "#457EA0",
-    borderRadius: 12,
+    width: 288,
+    height: 390,
+    borderRadius: 10,
     padding: 20,
-    width: "100%",
-    maxWidth: 400,
+    backgroundColor: 'transparent', // Remove background color since we'll use gradient
+  },
+  gradientBackground: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+    borderRadius: 10,
   },
   orderId: {
     color: "white",
@@ -400,11 +465,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   cancelButton: {
-    backgroundColor: "#FF3B30",
+    backgroundColor: 'rgba(172, 168, 168, 0.21)',
     marginRight: 8,
+    borderWidth:2,
+    borderColor: 'rgba(172, 168, 168, 0.21)'
   },
   sendButton: {
-    backgroundColor: "#34C759",
+    backgroundColor: "#02457A",
     marginLeft: 8,
   },
   buttonText: {

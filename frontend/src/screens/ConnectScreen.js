@@ -1,5 +1,3 @@
-
-
 import React, { useState, useEffect } from "react";
 import {
   View,
@@ -15,6 +13,7 @@ import { FontAwesome, MaterialIcons } from "@expo/vector-icons";
 import GradientContainer from "../components/GradientContainer";
 import { baseScreenStyles } from "../styles/baseStyles";
 import LinearGradient from "react-native-linear-gradient";
+import Header_2 from "../components/Header_2";
 
 // Removed "Owner" from categories
 const categories = ["All", "Burner", "Elec. Burner", "Cutter"];
@@ -60,7 +59,7 @@ const ConnectScreen = ({ navigation }) => {
   };
 
   const renderItem = ({ item }) => (
-    <TouchableOpacity onPress={() => navigation.navigate("Profile", { person: item })}>
+    <TouchableOpacity onPress={() => navigation.navigate("ConnectedUsers", { person: item })}>
       <LinearGradient 
         colors={["#4A6583", "#2D4155"]} 
         start={{x: 0, y: 0}} 
@@ -78,10 +77,12 @@ const ConnectScreen = ({ navigation }) => {
       </LinearGradient>
     </TouchableOpacity>
   );
+  
 
   return (
     <GradientContainer>
       <View style={baseScreenStyles.container}>
+        <Header_2 title="Connect" />
         <View style={styles.searchContainer}>
           <MaterialIcons name="search" size={24} color="#999" style={styles.searchIcon} />
           <TextInput

@@ -4,8 +4,9 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, KeyboardAvoidingView, Platform, Alert } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import { useNavigation } from '@react-navigation/native';
-import { baseScreenStyles } from "../../styles/baseStyles";
+import { baseScreenStylesNew } from "../../styles/baseStylesNew";
 import axios from 'axios'; // Import axios
+import { API_URL, ENDPOINTS } from '../../config/api'; // Add this import
 
 const SignUpBusiness = () => {
     const navigation = useNavigation();
@@ -46,7 +47,8 @@ const SignUpBusiness = () => {
 
 
         try {
-            const response = await axios.post('http://10.0.2.2:5000/api/auth/register-step1', { 
+            const response = await axios.post(`${API_URL}${ENDPOINTS.REGISTER_STEP1}`, { 
+                firstName: firstName,
                 firstName: firstName,
                 lastName: lastName,
                 email: email,
@@ -79,64 +81,64 @@ const SignUpBusiness = () => {
     };
 
     return (
-        <View style={[baseScreenStyles.container]}>
+        <View style={[baseScreenStylesNew.container]}>
             <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.container}>
                 <Image source={require('../../assets/logo.png')} style={styles.logo} />
                 <Text style={styles.subtitle}>Sign Up</Text>
-                <Text style={styles.prompt}>Create your business Account</Text>
+                <Text style={styles.prompt}>Create Your Business Account</Text>
                 <View style={styles.row}>
                     <TextInput
-                        style={[styles.input, styles.inputHalf]}
+                        style={[baseScreenStylesNew.input, styles.inputHalf]}
                         placeholder="First Name"
-                        placeholderTextColor="#888"
+                        placeholderTextColor="#B0B0B0"
                         value={firstName}
                         onChangeText={setFirstName}
                     />
                     <TextInput
-                        style={[styles.input, styles.inputHalf]}
+                        style={[baseScreenStylesNew.input, styles.inputHalf]}
                         placeholder="Last Name"
-                        placeholderTextColor="#888"
+                        placeholderTextColor="#B0B0B0"
                         value={lastName}
                         onChangeText={setLastName}
                     />
                 </View>
 
                 <TextInput
-                    style={styles.input}
+                    style={baseScreenStylesNew.input}
                     placeholder="email@domain.com"
-                    placeholderTextColor="#888"
+                    placeholderTextColor="#B0B0B0"
                     value={email}
                     onChangeText={setEmail}
                     keyboardType="email-address"
                 />
                 <TextInput
-                    style={styles.input}
+                    style={baseScreenStylesNew.input}
                     placeholder="Phone number"
-                    placeholderTextColor="#888"
+                    placeholderTextColor="#B0B0B0"
                     value={phoneNumber}
                     onChangeText={setPhoneNumber}
                     keyboardType="phone-pad"
                 />
-                <View style={styles.pickerContainer}>
+                <View style={baseScreenStylesNew.pickerContainer}>
                     <Picker
                         selectedValue={role}
-                        style={styles.picker}
+                        style={[baseScreenStylesNew.picker, { color: role ? "black" : "#888" }]}
                         onValueChange={(itemValue) => setRole(itemValue)}
-                        itemStyle={styles.pickerItem}
                     >
-                        <Picker.Item label="Choose your role" value="" />
-                        <Picker.Item label="Gem business owner" value="gem_business_owner" />
-                        <Picker.Item label="Cutter" value="cutter" />
-                        <Picker.Item label="Burner" value="burner" />
-                        <Picker.Item label="Electric Burner" value="electric_burner" />
+                        <Picker.Item label="Choose your role" value="" color='#888' />
+                        <Picker.Item label="Gem business owner" value="gem_business_owner" color='black' />
+                        <Picker.Item label="Cutter" value="cutter" color='black'/>
+                        <Picker.Item label="Burner" value="burner" color='black'/>
+                        <Picker.Item label="Electric Burner" value="electric_burner" color='black' />
                     </Picker>
                 </View>
                 {errorMessage ? (
                     <Text style={styles.errorText}>{errorMessage}</Text>
                 ) : null}
-                <TouchableOpacity style={styles.continueButton} onPress={handleContinue}>
-                    <Text style={styles.continueButtonText}>Continue</Text>
+                <TouchableOpacity style={[baseScreenStylesNew.Button1]} onPress={handleContinue}>
+                    <Text style={baseScreenStylesNew.buttonText}>Continue</Text>
                 </TouchableOpacity>
+                
             </KeyboardAvoidingView>
         </View>
     );
@@ -152,22 +154,20 @@ const styles = StyleSheet.create({
         paddingTop: 160,
         width: 170,
         height: 80,
-        marginBottom: 20,
-    },
-    title: {
-        fontSize: 32,
-        fontWeight: 'bold',
-        marginBottom: 10,
+        marginTop: 90,
+        marginBottom: 8,
     },
     subtitle: {
         fontSize: 30,
         marginBottom: 10,
         fontWeight: 'bold',
+        color: "#000"
     },
     prompt: {
         fontSize: 16,
         marginBottom: 20,
         fontWeight: 'bold',
+        color: "#000"
     },
     row: {
         flexDirection: 'row',
@@ -175,52 +175,14 @@ const styles = StyleSheet.create({
         width: '100%',
         marginBottom: 10,
     },
-    input: {
-        width: '100%',
-        height: 50,
-        borderColor: "#E0E0E0",
-        borderWidth: 1,
-        borderRadius: 12,
-        paddingHorizontal: 10,
-        marginBottom: 10,
-        backgroundColor: 'rgba(255, 255, 255, 0.8)',
-    },
     inputHalf: {
         width: '48%',
-    },
-    pickerContainer: {
-        width: '100%',
-        height: 50,
-        borderColor: '#E0E0E0',
-        borderWidth: 1,
-        borderRadius: 12,
-        marginBottom: 40,
-        overflow: 'hidden',
-        backgroundColor: 'rgba(255, 255, 255, 0.8)',
-    },
-    picker: {
-        height: '100%',
-        width: '100%',
-    },
-    pickerItem: {
-        color: '#888',
     },
     errorText: {
         color: 'red',
         marginBottom: 10,
     },
-    continueButton: {
-        backgroundColor: '#000080',
-        borderRadius: 5,
-        width: '100%',
-        height: 40,
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    continueButtonText: {
-        color: '#fff',
-        fontSize: 16,
-    },
+
 
 });
 

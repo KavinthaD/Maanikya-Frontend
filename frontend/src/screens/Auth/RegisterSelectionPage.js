@@ -10,85 +10,90 @@ import {
   Modal,
 } from "react-native";
 import React, { useState } from "react";
-import { baseScreenStyles } from "../../styles/baseStyles";
+import { baseScreenStylesNew } from "../../styles/baseStylesNew";
+
 
 const RegisterSelectionPage = ({ navigation }) => {
   const [modalVisible, setModalVisible] = useState(false);
   return (
-    <SafeAreaView style={[baseScreenStyles.container, styles.container]}>
-      <View style={styles.logoContainer}>
-        <Image source={require("../../assets/logo.png")} style={styles.logo} />
-      </View>
-
-      <View style={styles.buttonContainer}>
-        <TouchableOpacity
-          style={styles.createAccountButton}
-          onPress={() => navigation.navigate("SignUpScreenCustomer")}
-        >
-          <Text style={styles.createAccountText}>Create an account</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={styles.guestButton}
-          onPress={() => navigation.navigate("Market")}
-        >
-          <Text style={styles.guestText}>Continue as a guest</Text>
-        </TouchableOpacity>
-      </View>
-
-      <View style={styles.footerContainer}>
-        <TouchableOpacity
-          style={styles.languageSelector}
-          onPress={() => setModalVisible(true)}
-        >
-          <Text style={styles.languageText}>ENG ▼</Text>
+    <SafeAreaView style={[baseScreenStylesNew.container, styles.container]}>
+      
+        <View style={styles.logoContainer}>
           <Image
-            source={require("../../assets/globe.png")}
-            style={styles.globeIcon}
+            source={require("../../assets/logo.png")}
+            style={styles.logo}
           />
-        </TouchableOpacity>
-      </View>
-
-      <Modal
-        transparent={true}
-        animationType="fade"
-        visible={modalVisible}
-        onRequestClose={() => setModalVisible(false)}
-      >
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
-            <TouchableOpacity
-              style={styles.languageOption}
-              onPress={() => {
-                console.log("Sinhala selected");
-                setModalVisible(false); // Close modal after selecting
-              }}
-            >
-              <Text style={styles.languageOptionText}>සිංහල</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.languageOption}
-              onPress={() => {
-                console.log("English selected");
-                setModalVisible(false); // Close modal after selecting
-              }}
-            >
-              <Text style={styles.languageOptionText}>English</Text>
-            </TouchableOpacity>
-          </View>
         </View>
-      </Modal>
+
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity
+            style={styles.createAccountButton}
+            onPress={() => navigation.navigate("SignUpScreenCustomer")}
+          >
+            <Text style={styles.createAccountText}>Create an account</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.guestButton}
+            onPress={() => navigation.navigate("Market")}
+          >
+            <Text style={styles.guestText}>Continue as a guest</Text>
+          </TouchableOpacity>
+        </View>
+
+        <View style={styles.footerContainer}>
+          <TouchableOpacity
+            style={styles.languageSelector}
+            onPress={() => setModalVisible(true)}
+          >
+            <Text style={styles.languageText}>ENG ▼</Text>
+            <Image
+              source={require("../../assets/globe.png")}
+              style={styles.globeIcon}
+            />
+          </TouchableOpacity>
+        </View>
+
+        <Modal
+          transparent={true}
+          animationType="fade"
+          visible={modalVisible}
+          onRequestClose={() => setModalVisible(false)}
+        >
+          <View style={styles.modalOverlay}>
+            <View style={styles.modalContent}>
+              <TouchableOpacity
+                style={styles.languageOption}
+                onPress={() => {
+                  console.log("Sinhala selected");
+                  setModalVisible(false); // Close modal after selecting
+                }}
+              >
+                <Text style={styles.languageOptionText}>සිංහල</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.languageOption}
+                onPress={() => {
+                  console.log("English selected");
+                  setModalVisible(false); // Close modal after selecting
+                }}
+              >
+                <Text style={styles.languageOptionText}>English</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
     </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    justifyContent: "space-between",
+    flex: 1,
+    justifyContent: "center",
     alignItems: "center",
-    paddingVertical: 50,
   },
-
+  
   logo: {
     marginTop: 100,
     width: 250,
@@ -116,14 +121,16 @@ const styles = StyleSheet.create({
   },
 
   guestButton: {
-    backgroundColor: "#09690F",
+    backgroundColor: "#fff",
     paddingVertical: 12,
     width: "100%",
     borderRadius: 8,
     marginBottom: 250,
+    borderColor: "#170969",
+    borderWidth: 2
   },
   guestText: {
-    color: "#FFF",
+    color: "#170969",
     textAlign: "center",
     fontSize: 16,
     fontWeight: "600",
@@ -143,16 +150,16 @@ const styles = StyleSheet.create({
 
   languageText: {
     fontSize: 14,
-    color: "#000",
+    color: "#ffffff",
     marginRight: 8,
   },
   globeIcon: {
     width: 28,
     height: 28,
-    tintColor: "#000",
+    tintColor: "#ffffff",
   },
   logoContainer: {
-    flex: 1,
+    marginBottom: 40,
   },
   modalOverlay: {
     flex: 1,

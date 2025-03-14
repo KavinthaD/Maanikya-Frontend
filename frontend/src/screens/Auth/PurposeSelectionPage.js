@@ -10,7 +10,8 @@ import {
   Modal,
   Animated,
 } from "react-native";
-import { baseScreenStyles } from "../../styles/baseStyles";
+import { baseScreenStylesNew } from "../../styles/baseStylesNew";
+
 
 const PurposeSelectionPage = ({ navigation }) => {
   const [modalVisible, setModalVisible] = useState(false);
@@ -33,7 +34,7 @@ const PurposeSelectionPage = ({ navigation }) => {
   }, []);
 
   return (
-    <View style={baseScreenStyles.container}>
+    <View style={[baseScreenStylesNew.backgroundColor, baseScreenStylesNew.container]}>
       <Animated.Image
         source={require("../../assets/logo-gem.png")}
         style={[styles.logo, { transform: [{ scale: scaleValue }] }]}
@@ -45,16 +46,15 @@ const PurposeSelectionPage = ({ navigation }) => {
       <Text style={styles.title}>I'm here to,</Text>
       <View style={styles.card}>
         <TouchableOpacity
-          style={styles.button}
-          onPress={() => navigation.navigate("SignUpBusiness")}
-        >
-          <Text style={styles.buttonText}>Manage my business</Text>
+          style={baseScreenStylesNew.Button3}
+          onPress={() => navigation.navigate("SignUpBusiness")}>
+          <Text style={baseScreenStylesNew.buttonText}>Manage my business</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          style={styles.button}
+          style={baseScreenStylesNew.Button2}
           onPress={() => navigation.navigate("RegisterSelectionPage")}
         >
-          <Text style={styles.buttonText}>Look for gems</Text>
+          <Text style={baseScreenStylesNew.buttonText}>Look for gems</Text>
         </TouchableOpacity>
 
         <View style={styles.dividerContainer}>
@@ -65,10 +65,10 @@ const PurposeSelectionPage = ({ navigation }) => {
 
         <Text style={styles.loginText}>Already have an account?</Text>
         <TouchableOpacity
-          style={styles.loginButton}
+          style={baseScreenStylesNew.Button1}
           onPress={() => navigation.navigate("Login")}
         >
-          <Text style={styles.loginButtonText}>Log in</Text>
+          <Text style={baseScreenStylesNew.buttonText}>Log in</Text>
         </TouchableOpacity>
       </View>
       <View style={styles.footerContainer}>
@@ -113,22 +113,22 @@ const PurposeSelectionPage = ({ navigation }) => {
           </View>
         </View>
       </Modal>
+      
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   logo: {
-    width: 190,
-    height: 90,
+    width: 139,
+    height: 93,
     alignSelf: "center",
     resizeMode: "contain",
     marginTop: 100,
   },
   logoLetter: {
-    width: "60%",
     aspectRatio: 2,
-    height: 128,
+    height: 118,
     alignSelf: "center",
     resizeMode: "contain",
     marginTop: -20,
@@ -139,44 +139,23 @@ const styles = StyleSheet.create({
     fontSize: 28,
     fontWeight: "bold",
     color: "#000",
-    marginLeft: 120,
-    marginBottom: 48,
+    marginLeft: 140,
+    marginTop: 30,
+    marginBottom: 13,
     marginBlockStart: 30,
   },
 
-  subtitle: {
-    fontSize: 20,
-    color: "#000",
-    marginBottom: 20,
-  },
-
   card: {
-    backgroundColor: "#C2E9FF",
-    marginTop: -36,
+    backgroundColor: "rgba(130, 130, 130, 0.30)",
     padding: 30,
-    borderRadius: 20,
+    borderRadius: 25,
     width: "90%",
     alignItems: "center",
     marginLeft: 20,
-    elevation: 5,
-    shadowColor: "#000",
-    shadowOpacity: 0.1,
-    shadowOffset: { width: 0, height: 2 },
-  },
-  button: {
-    backgroundColor: "#170969",
-    paddingVertical: 12,
-    borderRadius: 50,
-    width: "100%",
-    marginVertical: 5,
+    borderColor: "rgba(174, 168, 168, 1)",
+    borderWidth: 2
   },
 
-  buttonText: {
-    color: "#FFF",
-    fontSize: 16,
-    fontWeight: "bold",
-    textAlign: "center",
-  },
   dividerContainer: {
     flexDirection: "row",
     alignItems: "center",
@@ -185,31 +164,18 @@ const styles = StyleSheet.create({
   divider: {
     flex: 1,
     height: 1,
-    backgroundColor: "#A0A0A0",
+    backgroundColor: "#000",
   },
   orText: {
     marginHorizontal: 10,
     color: "#000",
-    fontWeight: "bold",
+    
   },
   loginText: {
     fontSize: 14,
     color: "#000",
     fontWeight: "bold",
     marginTop: 2,
-  },
-  loginButton: {
-    backgroundColor: "#02457A",
-    paddingVertical: 8,
-    borderRadius: 70,
-    width: "80%",
-    marginTop: 10,
-  },
-  loginButtonText: {
-    color: "#FFF",
-    fontSize: 15,
-    fontWeight: "",
-    textAlign: "center",
   },
   footerContainer: {
     flexDirection: "row",
@@ -222,7 +188,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
   },
-
   languageText: {
     fontSize: 14,
     color: "#000",

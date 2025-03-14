@@ -42,7 +42,7 @@ const TabArr = [
     inActiveIcon: marketIconOutline,
     component: Market,
   },
-  {
+  { 
     route: "AddGem",
     label: "Gem",
     activeIcon: gemIcon,
@@ -75,13 +75,13 @@ const TabButton = (props) => {
   useEffect(() => {
     if (focused) {
       viewRef.current.animate({
-        0: { scale: 1.4 },
-        1: { scale: 1.7 },
+        0: { scale: 1.2 },
+        1: { scale: 1.5 },
       });
     } else {
       viewRef.current.animate({
-        0: { scale: 1.7 },
-        1: { scale: 1.4 },
+        0: { scale: 1.5 },
+        1: { scale: 1.2 },
       });
     }
   }, [focused]);
@@ -98,7 +98,7 @@ const TabButton = (props) => {
           style={{
             width: 24,
             height: 24,
-            tintColor: focused ? "black" : "grey",
+            tintColor: focused ? "#fff" : "#fff",
           }} // Adjust size and color
         />
       </Animatable.View>
@@ -110,9 +110,11 @@ export default function BS_NavBar() {
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <Tab.Navigator
+       initialRouteName="Home"
         screenOptions={{
           headerShown: false,
           tabBarStyle: {
+            backgroundColor:"#072D44",
             height: 60,
             position: "absolute",
             margin: 16,
@@ -140,6 +142,7 @@ export default function BS_NavBar() {
 
 const styles = StyleSheet.create({
   container: {
+    
     flex: 1,
     justifyContent: "center",
     alignItems: "center",

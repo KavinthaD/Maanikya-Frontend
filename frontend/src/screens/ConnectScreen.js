@@ -161,7 +161,7 @@ const ConnectScreen = ({ navigation }) => {
           value={searchText}
           onChangeText={(text) => setSearchText(text)} // Update searchText state
         />
-        <MaterialIcons name="search" size={24} color="#6646ee" />{" "}
+        <MaterialIcons name="search" size={24} color="#6646ee" />
         {/* Changed to search icon */}
       </View>
 

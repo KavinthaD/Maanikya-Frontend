@@ -48,7 +48,7 @@ export default function App() {
               options={{
                 headerShown: false,
               }}
-              component={GemRegister1}
+              component={ConnectScreen}
             />
           </Stack.Navigator>
         </NavigationContainer>

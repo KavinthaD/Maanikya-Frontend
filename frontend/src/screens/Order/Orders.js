@@ -11,23 +11,26 @@ import {
   Image,
 } from "react-native";
 import { baseScreenStylesNew } from "../../styles/baseStylesNew";
-import GradientContainer from "../../components/GradientContainer";
-import { LinearGradient } from "expo-linear-gradient";
 import { TextInput } from "react-native"
-import Header_1 from "../../components/Header_1";
-const Orders = [
+import Header_2 from "../../components/Header_2";
+import { useNavigation } from "@react-navigation/native";
+
+const Orders = {
+  Requested: [
   {
     id: "NB01130",
     name: "M.D Rathnasiri Navasighe",
     date: "20-12-2024",
-    image: require("../../assets/gemimg/user3.jpg"),
+    image: require("../../assets/gemimg/user1.jpg"),
   },
   {
     id: "NB01129",
     name: "K.D Piyasiri Gunasinghe",
     date: "20-11-2024",
-    image: require("../../assets/gemimg/user3.jpg"),
+    image: require("../../assets/gemimg/user2.jpg"),
   },
+],
+  Ongoing: [
   {
     id: "NB01128",
     name: "P.D Supunsiri Subasinghe",
@@ -38,11 +41,27 @@ const Orders = [
     id: "NB01127",
     name: "U.D Gunasiri Lokusighe",
     date: "20-09-2024",
-    image: require("../../assets/gemimg/user3.jpg"),
+    image: require("../../assets/gemimg/user2.jpg"),
   },
-];
+  ],
+  History: [
+    {
+      id: "NB01124",
+      name: "W.D Perera",
+      date: "15-02-2025",
+      image: require("../../assets/gemimg/user1.jpg"),
+    },
+    {
+      id: "NB01123",
+      name: "S.R Dissanayake",
+      date: "10-02-2025",
+      image: require("../../assets/gemimg/user3.jpg"),
+    },
+  ],
+};
 
 const OrderScreen = () => {
+  const navigation = useNavigation();
   const [activeTab, setActiveTab] = useState("Requested");
   const [selectedOrder, setSelectedOrder] = useState(null); 
   const [isModalVisible, setIsModalVisible] = useState(false); 
@@ -50,15 +69,18 @@ const OrderScreen = () => {
   const [price, setPrice] = useState(""); // Price state
 
   const handleOrderClick = (order) => {
-    setSelectedOrder(order); 
-    setIsModalVisible(true); 
+    if (activeTab === "Ongoing" || activeTab === "History") {
+      navigation.navigate("WorkerOrderTrackDetails", { order });
+    } else {
+      setSelectedOrder(order);
+      setIsModalVisible(true);
+    }
   };
+
   const handleAccept = () => {
     setIsModalVisible(false); // Close the first modal
     setIsPriceModalVisible(true); // Open the price input modal
   };
-
-  
 
   const handleDecline = () => {
     console.log(`Declined Order: ${selectedOrder.id}`);
@@ -71,12 +93,9 @@ const OrderScreen = () => {
   };
 
   const renderContent = () => {
-    switch (activeTab) {
-      case "Requested":
         return (
-          
           <ScrollView style={styles.scrollView}>
-            {Orders.map((order) => (
+            {Orders[activeTab].map((order) => (
                <TouchableOpacity
                key={order.id}
                style={styles.orderContainer}
@@ -88,34 +107,22 @@ const OrderScreen = () => {
                   <Text style={styles.orderId}>Order#: {order.id}</Text>
                   <Text style={styles.orderName}>{order.name}</Text>
                   <Text style={[styles.orderDate, baseScreenStylesNew.themeText]}>
-                    Order requested on {order.date}
+                  {activeTab === "Requested" || activeTab === "Ongoing"
+                ? `Order requested on ${order.date}`
+                : activeTab === "History"
+                ? `Order completed on ${order.date}`
+                : ""}
                   </Text>
                 </View>
               </TouchableOpacity>
             ))}
           </ScrollView>
         );
-      case "Ongoing":
-        return (
-          <View style={styles.contentContainer}>
-            <Text>Ongoing orders will be displayed here.</Text>
-          </View>
-        );
-      case "History":
-        return (
-          <View style={styles.contentContainer}>
-            <Text>Order history will be displayed here.</Text>
-          </View>
-        );
-      default:
-        return null;
-    }
-  };
-
+      };
   return (
     
     <View style={baseScreenStylesNew.container}>
-      <Header_1 title="Orders"/>
+      <Header_2 title="Orders"/>
       <View style={baseScreenStylesNew.tabBar}>
   {["Requested", "Ongoing", "History"].map((tab) => (
     <TouchableOpacity

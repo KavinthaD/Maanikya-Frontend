@@ -18,7 +18,7 @@ import GemOnDisplay from "./src/screens/GemOnDisplay";
 import Market from "./src/screens/GemOnDisplay";
 import BusinessOwnerProfile from "./src/screens/UserProfile/BusinessOwnerProfile";
 import Login from "./src/screens/Auth/Login";
-import AlertsScreen from "./src/screens/Notification/AlertsScreen";
+import AlertsScreen from "./src/screens/Notification/Alerts";
 import WorkerOrderTrackDetails from "./src/screens/Order/WorkerOrderTrackDetails";
 import WelcomePage from "./src/screens/WelcomePage";
 import PurposeSelectionPage from "./src/screens/Auth/PurposeSelectionPage";
@@ -55,7 +55,7 @@ export default function App() {
               options={{
                 headerShown: false,
               }}
-              component={OrderScreen}
+              component={AlertsScreen}
             />
            
             {/* Add other screens here */}

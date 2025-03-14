@@ -40,7 +40,7 @@ import BusinessOwnerEditProfile from "./src/screens/UserProfile/BusinessOwnerEdi
 import GemDetailsScreen from "./src/screens/GemDetailsScreen";
 import OwnerOrderTrackDetails from "./src/screens/Order/OwnerOrderTrackDetails";
 import NotificationScreen from "./src/screens/Order/CompletedTracker";
-
+import WorkerOrderTrackDetails from "./src/screens/Order/WorkerOrderTrackDetails";
 
 const Stack = createNativeStackNavigator();
 
@@ -100,6 +100,7 @@ const App = () => {
             <Stack.Screen name="SellerProfile" component={SellerProfile} options={{ headerShown: false }} />
             <Stack.Screen name="GemDetailsScreen" component={GemDetailsScreen} options={{ headerShown: false}} />
             <Stack.Screen name="OwnerOrderTrackDetails" component={OwnerOrderTrackDetails} options={{ headerShown: false}} />
+            <Stack.Screen name="WorkerOrderTrackDetails" component={WorkerOrderTrackDetails} options={{ headerShown: false}} />
           </Stack.Navigator>
         </NavigationContainer>
       </SafeAreaView>

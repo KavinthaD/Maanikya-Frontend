@@ -47,7 +47,7 @@ const OwnerFinancialRecords = () => {
       
       // Make API request
       const response = await axios.get(
-        `${API_URL}${ENDPOINTS.GET_OWNER_FINANCIAL_ANALYSIS}?period=${period}`,
+        `${API_URL}${ENDPOINTS.GET_OWNER_FINANCIAL}?period=${period}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,

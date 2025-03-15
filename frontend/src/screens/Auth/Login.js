@@ -68,7 +68,9 @@ const Login = () => {
       // **Navigate based on user role after successful login:**
       if (response.data.user.loginRole === "Gem business owner") {
         navigation.navigate("BS_NavBar");
-      } else if (response.data.user.loginRole === "Cutter/Burner") {
+      } else if (response.data.user.loginRole === "Burner" || 
+        response.data.user.loginRole === "Cutter" || 
+        response.data.user.loginRole === "Electric Burner") {
         navigation.navigate("W_NavBar");
       } else if (response.data.user.loginRole === "Customer") {
         navigation.navigate("C_NavBar");

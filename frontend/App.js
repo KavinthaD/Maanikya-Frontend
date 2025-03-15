@@ -30,8 +30,6 @@ import W_NavBar from "./src/components/W_NavBar";
 import GemRegister1 from "./src/screens/GemProfile/GemRegister1";
 import Tracker from "./src/screens/Order/Tracker";
 import BusinessOwnerProfile from "./src/screens/UserProfile/BusinessOwnerProfile";
-import BurnerFinancialRecords from "./src/screens/Financial/BurnerFinancialRecords";
-import CutterFinancialRecords from "./src/screens/Financial/CutterFinancialRecords";
 import FavoritesScreen from "./src/screens/Favorites";
 import InProgressTrackerScreen from "./src/screens/Order/InProgressTracker";
 import Customeraddseller from "./src/screens/Customeraddseller";
@@ -40,7 +38,7 @@ import BusinessOwnerEditProfile from "./src/screens/UserProfile/BusinessOwnerEdi
 import GemDetailsScreen from "./src/screens/GemDetailsScreen";
 import OwnerOrderTrackDetails from "./src/screens/Order/OwnerOrderTrackDetails";
 import NotificationScreen from "./src/screens/Order/CompletedTracker";
-import workerFinancialRecords from "./src/screens/Financial/workerFinancialRecords";
+import WorkerFinancialRecords from "./src/screens/Financial/WorkerFinancialRecords";
 import WorkerOrderTrackDetails from "./src/screens/Order/WorkerOrderTrackDetails";
 
 const Stack = createNativeStackNavigator();
@@ -79,8 +77,6 @@ const App = () => {
             <Stack.Screen name="C_NavBar" component={C_NavBar} options={{ headerShown: false }} />
             <Stack.Screen name="GemstoneMarketplace" component={GemstoneMarketplace} options={{ headerShown: false }} />
             <Stack.Screen name="OwnerFinancialRecords" component={OwnerFinancialRecords} options={{ headerShown: false }} />
-            <Stack.Screen name="BurnerFinancialRecords" component={BurnerFinancialRecords} options={{ headerShown: false }} />
-            <Stack.Screen name="CutterFinancialRecords" component={CutterFinancialRecords} options={{ headerShown: false }} />
             <Stack.Screen name="ConnectScreen" component={ConnectScreen} options={{ headerShown: false }} />
             <Stack.Screen name="ConnectedUsers" component={ConnectedUsers} options={{ headerShown: false }} /> 
             <Stack.Screen name="GemOnDisplay" component={GemOnDisplay} options={{ headerShown: false }} />
@@ -101,7 +97,7 @@ const App = () => {
             <Stack.Screen name="SellerProfile" component={SellerProfile} options={{ headerShown: false }} />
             <Stack.Screen name="GemDetailsScreen" component={GemDetailsScreen} options={{ headerShown: false}} />
             <Stack.Screen name="OwnerOrderTrackDetails" component={OwnerOrderTrackDetails} options={{ headerShown: false}} />
-            <Stack.Screen name="workerFinancialRecords" component={workerFinancialRecords} options={{ headerShown: false }} />
+            <Stack.Screen name="WorkerFinancialRecords" component={WorkerFinancialRecords} options={{ headerShown: false }} />
             <Stack.Screen name="WorkerOrderTrackDetails" component={WorkerOrderTrackDetails} options={{ headerShown: false}} />
           </Stack.Navigator>
         </NavigationContainer>

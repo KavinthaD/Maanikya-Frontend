@@ -16,6 +16,7 @@ import {
   StatusBar,
   Alert,
   Linking,
+  ScrollView, // Add this import
 } from "react-native";
 import { baseScreenStyles } from "../../styles/baseStyles";
 import { CameraView, useCameraPermissions } from "expo-camera";
@@ -170,6 +171,10 @@ const HomeScreen = () => {
       image: require("../../assets/menu-icons/6.png"),
       screen: "GemOnDisplay",
     },
+    {
+      image: require("../../assets/menu-icons/chat.jpeg"),
+      screen: "MessageInbox",
+    },
   ];
 
   const handleMenuItemPress = (screenName, customOnPress) => {
@@ -205,21 +210,29 @@ const HomeScreen = () => {
         </CameraView>
       ) : (
         <>
-          <View style={styles.content}>
-            <Image source={require("../../assets/logo-letter.png")} style={styles.logo}/>
-            
-            <View style={styles.menuGrid}>
-              {menuItems.map((item, index) => (
-                <MenuItem
-                  key={index}
-                  image={item.image}
-                  title={item.title}
-                  onPress={() => handleMenuItemPress(item.screen, item.onPress)}
-                  backgroundColor={item.backgroundColor}
-                />
-              ))}
+          {/* Replace the View with ScrollView here */}
+          <ScrollView 
+            style={styles.scrollView}
+            showsVerticalScrollIndicator={false}
+          >
+            <View style={styles.content}>
+              <Image source={require("../../assets/logo-letter.png")} style={styles.logo}/>
+              
+              <View style={styles.menuGrid}>
+                {menuItems.map((item, index) => (
+                  <MenuItem
+                    key={index}
+                    image={item.image}
+                    title={item.title}
+                    onPress={() => handleMenuItemPress(item.screen, item.onPress)}
+                    backgroundColor={item.backgroundColor}
+                  />
+                ))}
+              </View>
             </View>
-          </View>
+            {/* Add some padding at the bottom for better scrolling */}
+            <View style={{ height: 20 }} />
+          </ScrollView>
         </>
       )}
 
@@ -294,6 +307,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
+    
   },
   iconContainer: {
     flex: 1,
@@ -305,6 +319,7 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
     aspectRatio: 1,
+    borderRadius: 15,
   },
   menuText: {
     fontSize: 14,
@@ -421,6 +436,10 @@ const styles = StyleSheet.create({
     color: "white",
     fontSize: 16,
     fontWeight: "bold",
+  },
+  scrollView: {
+    flex: 1,
+    width: '100%',
   },
 });
 

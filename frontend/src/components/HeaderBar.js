@@ -9,6 +9,7 @@ import { Ionicons } from '@expo/vector-icons';
  * @param {boolean} showBack - Whether to show back button (default: false)
  * @param {Function} onBackPress - Custom back action (optional)
  * @param {React.ReactNode} rightComponent - Optional component to render on the right side
+ * @param {React.ReactNode} customContent - Custom content to replace the title
  * @param {Object} style - Additional styles for the header container
  */
 const HeaderBar = ({ 
@@ -17,6 +18,7 @@ const HeaderBar = ({
   showBack = false, 
   onBackPress,
   rightComponent,
+  customContent,
   style 
 }) => {
   
@@ -42,12 +44,18 @@ const HeaderBar = ({
         ) : null}
       </View>
       
-      {/* Middle - Title (always centered) */}
-      <View style={styles.titleContainer}>
-        <Text style={styles.headerTitle} numberOfLines={1}>
-          {title}
-        </Text>
-      </View>
+      {/* Middle - Title or custom content */}
+      {customContent ? (
+        <View style={styles.contentContainer}>
+          {customContent}
+        </View>
+      ) : (
+        <View style={styles.titleContainer}>
+          <Text style={styles.headerTitle} numberOfLines={1}>
+            {title}
+          </Text>
+        </View>
+      )}
       
       {/* Right side - Component or empty space */}
       <View style={styles.sideContainer}>
@@ -76,6 +84,11 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  contentContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    paddingHorizontal: 10,
   },
   headerTitle: {
     fontSize: 20,

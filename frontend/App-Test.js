@@ -12,8 +12,6 @@ import CustomHomePage from "./src/screens/Home/HomePageCustomer";
 import GemRegister1 from "./src/screens/GemProfile/GemRegister1";
 import GemRegister2 from "./src/screens/GemProfile/GemRegister2";
 import HomeMyGems from "./src/screens/GemProfile/HomeMyGems";
-import ConnectScreen from "./src/screens/ConnectScreen";
-import ConnectedUser from "./src/screens/ConnectedUsers";
 import GemOnDisplay from "./src/screens/GemOnDisplay";
 import Market from "./src/screens/GemOnDisplay";
 import BusinessOwnerProfile from "./src/screens/UserProfile/BusinessOwnerProfile";

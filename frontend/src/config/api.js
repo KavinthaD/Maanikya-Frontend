@@ -35,6 +35,15 @@ export const ENDPOINTS = {
   GET_WORKER_FINANCIAL: "/api/financial/worker/analysis",
   ALERTS: "/api/alerts",
   MARK_ALERT_READ: "/api/alerts/read",
-  MARK_ALL_ALERTS_READ: "/api/alerts/read-all"
+  MARK_ALL_ALERTS_READ: "/api/alerts/read-all",
+   // contacts endpoints
+   GET_CONTACTS: "/api/contacts",
+   ADD_CONTACT: "/api/contacts/add",
+   REMOVE_CONTACT: "/api/contacts/remove",
+   CONTACT_DETAILS: "/api/contacts/details",
+   SEARCH_USERS: "/api/contacts/search",
+   GET_FAVORITES: '/api/contacts/favorites',
+   ADD_FAVORITE: '/api/contacts/favorite',
+   REMOVE_FAVORITE: '/api/contacts/favorite'
   // Add other endpoints here
 };

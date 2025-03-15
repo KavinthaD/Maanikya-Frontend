@@ -164,7 +164,7 @@ const HomeScreen = () => {
     },
     {
       image: require("../../assets/menu-icons/5.png"),
-      screen: "ConnectScreen",
+      screen: "Contacts",
     },
     {
       image: require("../../assets/menu-icons/6.png"),

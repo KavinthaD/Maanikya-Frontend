@@ -6,20 +6,15 @@ export const baseScreenStylesNew = StyleSheet.create({
   },
   themeText: {
     color: '#170969',
-    //fontSize: 14,
-    //marginBottom: 2,
-    //marginLeft: 6,
   },
-  popUp: {
-    backgroundColor: "white"
-  },
+
   backgroundColor: {
     backgroundColor: "white", // Default background color for all screens
   },
   container: {
     flex: 1,
     backgroundColor: "white", // Default background color for all screens
-    position: "relative", // Set position to relative to contain absolutely positioned children
+    position: "relative",
   },
 
   buttonText: {
@@ -132,7 +127,7 @@ export const baseScreenStylesNew = StyleSheet.create({
     color: '#000',
   },
   
-  // -------------- Tab ------------------
+  // -------------- Tabs ------------------
   tabBar: {
     flexDirection: 'row',
     paddingHorizontal: 20,

@@ -4,8 +4,7 @@ import React, {useState} from "react";
 import {View, Text, Image, StyleSheet, TouchableOpacity, ScrollView} from "react-native";
 import {FontAwesome} from "@expo/vector-icons";
 import Header_2 from "../../components/Header_2";
-import { baseScreenStyles } from "../../styles/baseStyles";
-import GradientContainer from "../../components/GradientContainer";
+import { baseScreenStylesNew } from "../../styles/baseStylesNew";
 
 const WorkerOrderTrackDetails = () => {
     const [orderCompleted, setOrderCompleted] = useState(false);
@@ -20,8 +19,7 @@ const WorkerOrderTrackDetails = () => {
     ]
     
     return (
-        <GradientContainer>
-        <View style={baseScreenStyles.container}>
+        <View style={baseScreenStylesNew.container}>
             <Header_2 title="Order#: NB01130"/>
             <ScrollView contentContainerStyle={styles.scrollContainer}>
                     <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.gemScroll}>
@@ -38,7 +36,7 @@ const WorkerOrderTrackDetails = () => {
                         <View style={styles.ratingSection}>
                             <View style={styles.ratingContainer}>
                                     {[1, 2, 3, 4, 5].map((star) => (
-                                        <FontAwesome key={star} name="star" size={24} color="#170969"/>
+                                        <FontAwesome key={star} name="star" size={24} color="#70B5DF"/>
                                 ))}
                               </View>
                             </View>
@@ -107,16 +105,11 @@ const WorkerOrderTrackDetails = () => {
             )}
             </ScrollView>
         </View>
-        </GradientContainer>
     );
 };
 
 
 const styles = StyleSheet.create ({
-    container: {
-        flex:1,
-        backgroundColor: "#6B8391",
-    },
     scrollContainer: {
         paddingHorizontal: 10,
         paddingBottom: 20,
@@ -129,12 +122,6 @@ const styles = StyleSheet.create ({
     gemContainer: {
         alignItems: "center",
         marginRight: 10,
-    },
-
-    orderNumber: {
-        color: "white",
-        fontSize: 18,
-        fontWeight: "bold"
     },
 
     orderDetails: {
@@ -151,12 +138,12 @@ const styles = StyleSheet.create ({
     gemId: {
         fontSize: 18,
         fontWeight: "bold",
-        color: "#fff"
+        color: "#000"
     },
 
     price: {
         fontSize: 18,
-        color: "#fff",
+        color: "#000",
         fontWeight: "bold"
     },
 
@@ -177,7 +164,7 @@ const styles = StyleSheet.create ({
     orderDet: {
         fontSize: 18,
         fontWeight: "bold",
-        color: "#fff",
+        color: "#000",
         marginBottom: 14,
         marginLeft: 10,
     },

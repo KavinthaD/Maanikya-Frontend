@@ -41,6 +41,7 @@ import GemDetailsScreen from "./src/screens/GemDetailsScreen";
 import OwnerOrderTrackDetails from "./src/screens/Order/OwnerOrderTrackDetails";
 import NotificationScreen from "./src/screens/Order/CompletedTracker";
 import workerFinancialRecords from "./src/screens/Financial/workerFinancialRecords";
+import WorkerOrderTrackDetails from "./src/screens/Order/WorkerOrderTrackDetails";
 
 const Stack = createNativeStackNavigator();
 
@@ -101,6 +102,7 @@ const App = () => {
             <Stack.Screen name="GemDetailsScreen" component={GemDetailsScreen} options={{ headerShown: false}} />
             <Stack.Screen name="OwnerOrderTrackDetails" component={OwnerOrderTrackDetails} options={{ headerShown: false}} />
             <Stack.Screen name="workerFinancialRecords" component={workerFinancialRecords} options={{ headerShown: false }} />
+            <Stack.Screen name="WorkerOrderTrackDetails" component={WorkerOrderTrackDetails} options={{ headerShown: false}} />
           </Stack.Navigator>
         </NavigationContainer>
       </SafeAreaView>

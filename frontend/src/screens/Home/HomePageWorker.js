@@ -104,7 +104,7 @@ const HomeScreen = () => {
     },
     {
       image: require("../../assets/menu-icons/10.png"),
-      screen: "CutterFinancialRecords", 
+      screen: "workerFinancialRecords", 
     },
     {
       image: require("../../assets/menu-icons/2.png"),

@@ -47,7 +47,7 @@ const OwnerFinancialRecords = () => {
       
       // Make API request
       const response = await axios.get(
-        `${API_URL}${ENDPOINTS.GET_FINANCIAL_ANALYSIS}?period=${period}`,
+        `${API_URL}${ENDPOINTS.GET_OWNER_FINANCIAL_ANALYSIS}?period=${period}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -56,6 +56,7 @@ const OwnerFinancialRecords = () => {
       );
       
       if (response.data && response.data.success) {
+        console.log(`Received ${period} financial data:`, response.data);
         setFinancialData(response.data);
         setSelectedPeriod(period);
       } else {
@@ -140,7 +141,10 @@ const OwnerFinancialRecords = () => {
   }
 
   // Calculate the financial data to display
-  const dataToShow = financialData?.periodData || {};
+  const dataToShow = selectedPeriod === "alltime" 
+    ? (financialData?.financialData || {}) 
+    : (financialData?.periodData || {});
+
   const totalProfit = financialData?.totalProfit || 0;
   
   // Use periodData for the current period and totalProfit for all-time

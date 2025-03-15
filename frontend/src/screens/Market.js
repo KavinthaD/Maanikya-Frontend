@@ -20,10 +20,11 @@ import axios from 'axios';
 import { API_URL } from '../config/api';
 import { Ionicons } from '@expo/vector-icons';
 import { baseScreenStylesNew } from '../styles/baseStylesNew';
+import Header_1 from '../components/Header_1';
 
 const { width } = Dimensions.get('window');
 const CARD_WIDTH = (width - 40) / 2; // 2 cards per row with margins
-const THEME_COLOR = '#9CCDDB'; // Light blue theme color
+const THEME_COLOR = '#170969'; // Light blue theme color
 
 const Market = ({ navigation }) => {
   const [gemstones, setGemstones] = useState([]);
@@ -106,13 +107,9 @@ const Market = ({ navigation }) => {
     });
 
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <SafeAreaView style={baseScreenStylesNew.container}>
       <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
-      
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>Market</Text>
-      </View>
-      
+      <Header_1 title="Market"/>
       <ScrollView
         style={styles.scrollView}
         contentContainerStyle={styles.contentContainer}
@@ -127,11 +124,10 @@ const Market = ({ navigation }) => {
       >
         <View style={styles.searchContainer}>
           <View style={baseScreenStylesNew.search}>
-            <Ionicons name="search" size={20} color="#666" style={baseScreenStylesNew.searchIcon} />
+            <Ionicons name="search" style={baseScreenStylesNew.searchIcon} />
             <TextInput
-              style={styles.searchInput}
+              style={baseScreenStylesNew.searchInput}
               placeholder="Search gems..."
-              placeholderTextColor="#999"
               value={searchQuery}
               onChangeText={handleSearch}
             />
@@ -198,25 +194,7 @@ const Market = ({ navigation }) => {
 };
 
 const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: '#FFFFFF',
-  },
-  header: {
-    backgroundColor: '#FFFFFF',
-    paddingVertical: 16,
-    paddingHorizontal: 20,
-    borderBottomWidth: 1,
-    borderBottomColor: '#F0F0F0',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  headerTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#333333',
-  },
+
   scrollView: {
     backgroundColor: '#FFFFFF',
   },
@@ -225,13 +203,6 @@ const styles = StyleSheet.create({
   },
   searchContainer: {
     padding: 15,
-  },
-
-  searchInput: {
-    flex: 1,
-    height: 46,
-    color: '#333333',
-    fontSize: 16,
   },
   sortButton: {
     flexDirection: 'row',

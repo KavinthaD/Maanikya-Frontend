@@ -246,7 +246,7 @@ const GemCollectionScreen = ({ navigation }) => {
   );
 
   return (
-    <SafeAreaView style={baseScreenStylesNew.container}>
+    <SafeAreaView style={[baseScreenStylesNew.backgroundColor, baseScreenStylesNew.container]}>
       <Header_2 title="My Gems" />
       <StatusBar barStyle="light-content" />
       <View style={styles.header}>

@@ -15,7 +15,7 @@ import {
   ScrollView,
   Platform,
 } from "react-native";
-import { baseScreenStyles } from "../../styles/baseStyles";
+import { baseScreenStylesNew } from "../../styles/baseStylesNew";
 import { useNavigation } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Header_1 from "../../components/Header_1";
@@ -28,7 +28,6 @@ import ImageCropPicker from "react-native-image-crop-picker";
 import { gemTypeItems } from "./gemTypes"; // Import gem types from gemTypes.js
 import axios from "axios";
 import { API_URL } from "../../config/api";
-import GradientContainer from "../../components/GradientContainer";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Camera } from "expo-camera";
 
@@ -346,7 +345,7 @@ function GemRegister1Main() {
   };
   
   return (
-    <GradientContainer>
+    <View style={[baseScreenStylesNew.backgroundColor, baseScreenStylesNew.container]}>
       <Header_1 title="Add gem" />
       
       {/* Dev bypass button (only in dev) */}
@@ -361,7 +360,7 @@ function GemRegister1Main() {
       
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
-        style={[baseScreenStyles.container, { zIndex: 1 }]}
+        style={[baseScreenStylesNew.container, { zIndex: 1 }]}
         keyboardVerticalOffset={Platform.OS === "ios" ? 64 : 0}
       >
         <ScrollView
@@ -371,7 +370,7 @@ function GemRegister1Main() {
           <View style={[FormFieldStyles.innerContainer, { zIndex: 2 }]}>
             <View style={styles.buttonContent}>
               <TouchableOpacity
-                style={styles.cameraButtonContainer}
+                style={[styles.cameraButtonContainer, baseScreenStylesNew.themeColor]}
                 onPress={handleCameraPress}
               >
                 {form.photos.length > 0 ? (
@@ -380,20 +379,23 @@ function GemRegister1Main() {
                     style={styles.selectedImage}
                   />
                 ) : (
-                  <Icon name="camera-alt" size={60} color="#000" />
+                  <Icon name="camera-alt" size={60} style={baseScreenStylesNew.whiteText} />
                 )}
               </TouchableOpacity>
-              <Text style={styles.addPhotoButtonText}>AI auto filler</Text>
-              <Text style={baseScreenStyles.helperText}>
+              <Text style={[baseScreenStylesNew.blackText,styles.addPhotoButtonText]}>AI auto filler</Text>
+              <Text style={baseScreenStylesNew.helperText}>
                 Below details can be filled with image of the gem or by manually
                 (Please be aware, AI auto filler can make mistakes.)
               </Text>
             </View>
             <TextInput
-              style={FormFieldStyles.input}
+              style={[FormFieldStyles.input, baseScreenStylesNew.item, baseScreenStylesNew.blackText]}
               placeholder="Gem color *"
+              placeholderTextColor={FormFieldStyles.placeholder.color}
               value={form.color}
+              placeholderStyle={FormFieldStyles.placeholder}
               onChangeText={(value) => handleInputChange("color", value)}
+              
             />
             <DropDownPicker
               open={openShape}
@@ -402,12 +404,12 @@ function GemRegister1Main() {
               setOpen={setOpenShape}
               setValue={(callback) => handleInputChange("gemShape", callback())}
               placeholder="Select Gem Shape *"
-              style={FormFieldStyles.dropdown}
+              style={[FormFieldStyles.dropdown, baseScreenStylesNew.item]}
               dropDownContainerStyle={FormFieldStyles.dropdownContainer}
               listItemContainerStyle={FormFieldStyles.listItemContainer}
               listItemLabelStyle={FormFieldStyles.listItemLabel}
               placeholderStyle={FormFieldStyles.placeholder}
-              textStyle={FormFieldStyles.dropdownText}
+              textStyle={[FormFieldStyles.dropdownText, baseScreenStylesNew.blackText]}
               theme="LIGHT"
               showArrowIcon={true}
               showTickIcon={false}
@@ -425,12 +427,12 @@ function GemRegister1Main() {
               setOpen={setOpenGemType}
               setValue={(callback) => handleInputChange("gemType", callback())}
               placeholder="Select Gem Type *"
-              style={FormFieldStyles.dropdown}
+              style={[FormFieldStyles.dropdown, baseScreenStylesNew.item]}
               dropDownContainerStyle={FormFieldStyles.dropdownContainer}
               listItemContainerStyle={FormFieldStyles.listItemContainer}
               listItemLabelStyle={FormFieldStyles.listItemLabel}
               placeholderStyle={FormFieldStyles.placeholder}
-              textStyle={FormFieldStyles.dropdownText}
+              textStyle={[FormFieldStyles.dropdownText, baseScreenStylesNew.blackText]}
               theme="LIGHT"
               showArrowIcon={true}
               showTickIcon={false}
@@ -442,8 +444,9 @@ function GemRegister1Main() {
               }}
             />
             <TextInput
-              style={[FormFieldStyles.input, FormFieldStyles.descriptionInput]}
+              style={[FormFieldStyles.input, FormFieldStyles.descriptionInput, baseScreenStylesNew.item, baseScreenStylesNew.blackText]}
               placeholder="Description"
+              placeholderTextColor={FormFieldStyles.placeholder.color}
               value={form.description}
               onChangeText={(value) => handleInputChange("description", value)}
               multiline={true}
@@ -452,8 +455,7 @@ function GemRegister1Main() {
             />
             <TouchableOpacity
               style={[
-                baseScreenStyles.Button1,
-                styles.Button1,
+                baseScreenStylesNew.Button1,
                 {
                   opacity:
                     form.color && form.gemShape && form.gemType ? 1 : 0.5,
@@ -461,7 +463,7 @@ function GemRegister1Main() {
               ]}
               onPress={handleContinue}
             >
-              <Text style={baseScreenStyles.buttonText}>Continue</Text>
+              <Text style={baseScreenStylesNew.buttonText}>Continue</Text>
             </TouchableOpacity>
           </View>
         </ScrollView>
@@ -501,14 +503,11 @@ function GemRegister1Main() {
           </View>
         </Modal>
       </KeyboardAvoidingView>
-    </GradientContainer>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  Button1: {
-    marginTop: 10,
-  },
 
   cameraButtonContainer: {
     alignItems: "center",
@@ -516,7 +515,6 @@ const styles = StyleSheet.create({
     marginVertical: 10,
     borderRadius: 10,
     padding: 3,
-    backgroundColor: "#E8F0FE",
     width: 120,
     height: 120,
     overflow: "hidden",

@@ -47,6 +47,9 @@ export const baseScreenStylesNew = StyleSheet.create({
   // ---- text container
   item: {
     backgroundColor:'rgba(172, 168, 168, 0.21)',
+    borderWidth:2,
+    borderColor: 'rgba(72, 72, 72, 0.21)',
+
   },
 
   // ---- Buttons ------
@@ -197,6 +200,16 @@ export const baseScreenStylesNew = StyleSheet.create({
     color: '#333333',
   },
 
+  // others
+  helperText: {
+    color: "#a6a6a6",
+    fontSize: 15,
+    marginTop: 5,
+    textAlign: "center",
+    fontStyle: "italic",
+    fontWeight: "bold",
+  },
+  
   // ---- Pop Up gradient
 /* 
 <LinearGradient

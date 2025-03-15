@@ -15,11 +15,10 @@ import {
   SafeAreaView,
   StatusBar
 } from "react-native";
-import { Ionicons, MaterialCommunityIcons, FontAwesome5 } from "@expo/vector-icons";
+import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import axios from "axios";
 import { API_URL } from "../config/api";
-import { LinearGradient } from "expo-linear-gradient";
-import { baseScreenStyles } from "../styles/baseStyles";
+import { baseScreenStylesNew } from "../styles/baseStylesNew";
 
 const { width } = Dimensions.get("window");
 const THEME_COLOR = "#9CCDDB"; // Light blue theme color
@@ -160,7 +159,7 @@ const GemDetailsScreen = ({ route, navigation }) => {
   }
 
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <SafeAreaView style={baseScreenStylesNew.container}>
       <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
       
       <View style={styles.header}>
@@ -190,8 +189,8 @@ const GemDetailsScreen = ({ route, navigation }) => {
             resizeMode="contain"
           />
           <View style={styles.badgeContainer}>
-            <View style={styles.badge}>
-              <Text style={styles.badgeText}>{gem.gemType || "Unknown Type"}</Text>
+            <View style={[baseScreenStylesNew.themeColor,styles.badge]}>
+              <Text style={[baseScreenStylesNew.whiteText,styles.badgeText]}>{gem.gemType || "Unknown Type"}</Text>
             </View>
           </View>
         </View>
@@ -205,9 +204,9 @@ const GemDetailsScreen = ({ route, navigation }) => {
                   {gem.weight ? `${gem.weight} ct ${gem.gemType || ""}` : gem.gemType || "Unknown Type"}
                 </Text>
               </View>
-              <View style={styles.priceTag}>
+              <View style={[baseScreenStylesNew.themeColor,styles.priceTag]}>
                 <MaterialCommunityIcons name="tag" size={20} color="#fff" />
-                <Text style={styles.priceText}>
+                <Text style={[baseScreenStylesNew.whiteText,styles.priceText]}>
                   LKR {gem.price?.toLocaleString() || "Not for sale"}
                 </Text>
               </View>
@@ -228,9 +227,9 @@ const GemDetailsScreen = ({ route, navigation }) => {
               
               <View style={styles.infoRow}>
                 <Ionicons name="call" size={20} color="#555" />
-                <Text style={styles.infoLabel}>Contact:</Text>
+                <Text style={[styles.infoLabel]}>Contact:</Text>
                 <TouchableOpacity onPress={handleContact}>
-                  <Text style={[styles.infoValue, styles.contactLink]}>
+                  <Text style={[styles.infoValue, styles.contactLink,,baseScreenStylesNew.themeText]}>
                     {gem.owner?.phone || "Not available"}
                   </Text>
                 </TouchableOpacity>
@@ -293,9 +292,9 @@ const GemDetailsScreen = ({ route, navigation }) => {
             <View style={styles.divider} />
             
             <View style={styles.actionSection}>
-              <TouchableOpacity style={styles.actionButton} onPress={handleContact}>
+              <TouchableOpacity style={[baseScreenStylesNew.Button1,styles.actionButton]} onPress={handleContact}>
                 <Ionicons name="call-outline" size={20} color="#fff" />
-                <Text style={styles.actionButtonText}>Contact Owner</Text>
+                <Text style={[baseScreenStylesNew.buttonText,styles.actionButtonText]}>Contact Owner</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -306,10 +305,7 @@ const GemDetailsScreen = ({ route, navigation }) => {
 };
 
 const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: '#FFFFFF',
-  },
+
   scrollView: {
     backgroundColor: '#FFFFFF',
     flex: 1,
@@ -357,13 +353,11 @@ const styles = StyleSheet.create({
     right: 15,
   },
   badge: {
-    backgroundColor: THEME_COLOR,
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 20,
   },
   badgeText: {
-    color: "#fff",
     fontWeight: "bold",
     fontSize: 14,
   },
@@ -403,13 +397,11 @@ const styles = StyleSheet.create({
   priceTag: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: THEME_COLOR,
     paddingHorizontal: 12,
     paddingVertical: 8,
     borderRadius: 15,
   },
   priceText: {
-    color: "#fff",
     fontWeight: "bold",
     marginLeft: 5,
     fontSize: 16,
@@ -471,7 +463,6 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   actionButton: {
-    backgroundColor: THEME_COLOR,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
@@ -479,9 +470,6 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
   },
   actionButtonText: {
-    color: "#fff",
-    fontSize: 16,
-    fontWeight: "bold",
     marginLeft: 10,
   },
   loadingContainer: {

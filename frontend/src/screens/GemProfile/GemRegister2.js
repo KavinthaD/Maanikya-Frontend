@@ -1,4 +1,5 @@
 //Screen creator: Kavintha
+//dev button search "dev bypass"
 
 import React, { useState, useEffect, useRef } from "react";
 import {
@@ -200,9 +201,32 @@ function GemRegister2Main() {
     navigation.goBack();
   };
 
+  // Add dev bypass function
+  const handleDevBypass = () => {
+    // Create mock response data
+    const mockGemData = {
+      gemId: "DEV" + Math.floor(Math.random() * 10000),
+      createdAt: new Date().toISOString(),
+      qrCode: "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=DEV-SAMPLE-QR"
+    };
+    
+    navigation.navigate("GemRegister3", mockGemData);
+  };
+  
   return (
     <GradientContainer>
       <Header_2 title="Add gem" />
+      
+      {/* Dev bypass button (only in dev) */}
+      {__DEV__ && (
+        <TouchableOpacity 
+          style={styles.devBypassButton} 
+          onPress={handleDevBypass}
+        >
+          <Text style={styles.devBypassText}>DEV</Text>
+        </TouchableOpacity>
+      )}
+      
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={[baseScreenStyles.container, { zIndex: 1 }]}
@@ -333,5 +357,25 @@ const styles = StyleSheet.create({
     padding: 15,
     borderRadius: 10,
     alignSelf: "center",
+  },
+
+  //dev bypass button styles
+  devBypassButton: {
+    position: 'absolute',
+    right: 15,
+    top: 15,
+    zIndex: 1000,
+    backgroundColor: '#FF6B6B',
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 5,
+    borderWidth: 1,
+    borderColor: '#721c24',
+    borderStyle: 'dashed',
+  },
+  devBypassText: {
+    color: 'white',
+    fontWeight: 'bold',
+    fontSize: 12,
   },
 });

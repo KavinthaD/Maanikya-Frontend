@@ -1,5 +1,5 @@
 //Screen creator: Kavintha
-
+//dev button search "dev bypass"
 import React, { useState, useEffect } from "react";
 import {
   Linking,
@@ -327,9 +327,38 @@ function GemRegister1Main() {
     }); // Pass the image path
   };
 
+  // Add dev bypass function (dev bypass)
+  const handleDevBypass = () => {
+    // Create mock data
+    const mockFormData = {
+      color: form.color || "Blue",
+      gemShape: form.gemShape || "round",
+      gemType: form.gemType || "sapphire",
+      description: form.description || "Development test gem",
+      photos: form.photos.length > 0 ? form.photos : [],
+      photo: form.photos.length > 0 ? form.photos[0] : null
+    };
+    
+    // Navigate to next screen
+    navigation.navigate("GemRegister2", {
+      formData: mockFormData,
+    });
+  };
+  
   return (
     <GradientContainer>
       <Header_1 title="Add gem" />
+      
+      {/* Dev bypass button (only in dev) */}
+      {__DEV__ && (
+        <TouchableOpacity 
+          style={styles.devBypassButton} 
+          onPress={handleDevBypass}
+        >
+          <Text style={styles.devBypassText}>DEV</Text>
+        </TouchableOpacity>
+      )}
+      
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={[baseScreenStyles.container, { zIndex: 1 }]}
@@ -567,5 +596,25 @@ const styles = StyleSheet.create({
   },
   cancelButtonText: {
     color: "#721c24",
+  },
+
+  //dev bypass button styles
+  devBypassButton: {
+    position: 'absolute',
+    right: 15,
+    top: 15,
+    zIndex: 1000,
+    backgroundColor: '#FF6B6B',
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 5,
+    borderWidth: 1,
+    borderColor: '#721c24',
+    borderStyle: 'dashed',
+  },
+  devBypassText: {
+    color: 'white',
+    fontWeight: 'bold',
+    fontSize: 12,
   },
 });

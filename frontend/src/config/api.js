@@ -33,5 +33,8 @@ export const ENDPOINTS = {
   GET_MY_MARKET_GEMS: "/api/gems/view/market-gems",
   GET_OWNER_FINANCIAL: "/api/financial/owner/analysis",
   GET_WORKER_FINANCIAL: "/api/financial/worker/analysis",
+  ALERTS: "/api/alerts",
+  MARK_ALERT_READ: "/api/alerts/read",
+  MARK_ALL_ALERTS_READ: "/api/alerts/read-all"
   // Add other endpoints here
 };

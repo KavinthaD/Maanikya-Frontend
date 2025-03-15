@@ -12,7 +12,7 @@ import * as Animatable from "react-native-animatable";
 import HomePageBusiness from "../screens/Home/HomePageBusiness";
 import Market from "../screens/Market";
 import AddGem from "../screens/GemProfile/GemRegister1";
-import AlertsScreen from "../screens/Notification/AlertsScreen";
+import Alerts from "../screens/Notification/Alerts";
 import Profiles from "../screens/UserProfile/BusinessOwnerProfile";
 
 // Import your custom icons
@@ -50,11 +50,11 @@ const TabArr = [
     component: AddGem,
   },
   {
-    route: "AlertsScreen",
+    route: "Alerts",
     label: "Bell",
     activeIcon: notificationIcon,
     inActiveIcon: notificationIconOutline,
-    component: AlertsScreen,
+    component: Alerts,
   },
   {
     route: "Profiles",

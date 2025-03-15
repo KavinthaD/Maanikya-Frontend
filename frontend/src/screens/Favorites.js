@@ -9,8 +9,6 @@ import {
   TouchableOpacity,
   FlatList,
   Modal,
-  StatusBar,
-  Dimensions,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from 'expo-linear-gradient';
@@ -67,13 +65,13 @@ const OrderRequestModal = ({ visible, onClose, selectedPerson }) => {
 
           <View style={modalStyles.buttonContainer}>
             <TouchableOpacity
-              style={[modalStyles.button, modalStyles.cancelButton]}
+              style={[baseScreenStylesNew.cancelButton, modalStyles.button, modalStyles.cancelButton]}
               onPress={onClose}
             >
               <Text style={modalStyles.buttonText}>Cancel</Text>
             </TouchableOpacity>
             <TouchableOpacity
-              style={[modalStyles.button, modalStyles.sendButton]}
+              style={[baseScreenStylesNew.Button3, modalStyles.button, modalStyles.sendButton]}
               onPress={onClose}
             >
               <Text style={modalStyles.buttonText}>Send Request</Text>
@@ -188,20 +186,21 @@ const FavoritesScreen = () => {
 
   const renderFavoriteItem = ({ item }) => (
     <TouchableOpacity
-      style={styles.favoriteItem}
+      style={[ baseScreenStylesNew.item,styles.favoriteItem]}
       onPress={() => handleFavoriteSelect(item)}
     >
       <View style={styles.favoriteContent}>
         <Image source={item.image} style={styles.profileImage} />
-        <View style={styles.textContainer}>
+        <View style={[baseScreenStylesNew.blackText, styles.textContainer]}>
           <Text style={styles.name}>{item.name}</Text>
           <Text style={styles.role}>{item.role}</Text>
         </View>
       </View>
       <View
         style={[
+          baseScreenStylesNew.checkBox,
           styles.checkbox,
-          selectedPerson?.id === item.id && styles.checkboxSelected,
+          selectedPerson?.id === item.id && baseScreenStylesNew.themeColor,
         ]}
       >
         {selectedPerson?.id === item.id && (
@@ -221,13 +220,11 @@ const FavoritesScreen = () => {
             <Ionicons
               name="search"
               size={20}
-              color="#888"
               style={baseScreenStylesNew.searchIcon}
             />
             <TextInput
               style={baseScreenStylesNew.searchInput}
               placeholder="Send order to?"
-              placeholderTextColor="#888"
               value={searchQuery}
               onChangeText={setSearchQuery}
             />
@@ -271,7 +268,7 @@ const FavoritesScreen = () => {
 
           {/* Confirm Button with increased bottom margin for navbar */}
           <View style={styles.confirmButtonContainer}>
-            <TouchableOpacity style={baseScreenStylesNew.Button4} onPress={handleConfirm}>
+            <TouchableOpacity style={baseScreenStylesNew.Button1} onPress={handleConfirm}>
               <Text style={baseScreenStylesNew.buttonText}>Confirm</Text>
             </TouchableOpacity>
           </View>
@@ -315,7 +312,6 @@ const styles = StyleSheet.create({
     paddingBottom: 10,
   },
   favoriteItem: {
-    backgroundColor:'rgba(172, 168, 168, 0.21)',
     borderRadius: 15,
     flexDirection: 'row',
     alignItems: 'center',
@@ -339,14 +335,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   name: {
-    color: '#000',
     fontFamily: "Inter-Medium",
     fontSize: 14,
     fontWeight: 'bold',
     marginBottom: 3,
   },
   role: {
-    color: '#000',
     fontFamily: "Inter-Medium",
     fontSize: 14,
     fontWeight: 'bold',
@@ -356,13 +350,10 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 25,
-    backgroundColor: 'rgba(112, 181, 223, 0.45)',
     alignItems: 'center',
     justifyContent: 'center',
   },
-  checkboxSelected: {
-    backgroundColor: '#70B5DF',
-  },
+
   confirmButtonContainer: {
     paddingHorizontal: 20,
     paddingBottom: 70, // Increased bottom padding to make space for the navigation bar
@@ -435,13 +426,9 @@ const modalStyles = StyleSheet.create({
     alignItems: "center",
   },
   cancelButton: {
-    backgroundColor: 'rgba(172, 168, 168, 0.21)',
     marginRight: 8,
-    borderWidth:2,
-    borderColor: 'rgba(172, 168, 168, 0.21)'
   },
   sendButton: {
-    backgroundColor: "#02457A",
     marginLeft: 8,
   },
   buttonText: {

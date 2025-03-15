@@ -22,7 +22,6 @@ import BS_NavBar from "../../components/BS_NavBar";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { API_URL, ENDPOINTS } from "../../config/api";
-import { LinearGradient } from "expo-linear-gradient";
 
 const GemCollectionScreen = ({ navigation }) => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -252,24 +251,23 @@ const GemCollectionScreen = ({ navigation }) => {
       <StatusBar barStyle="light-content" />
       <View style={styles.header}>
         <View style={styles.searchContainer}>
-          <View style={styles.searchBar}>
-            <Ionicons name="search" size={20} color="#666" style={styles.searchIcon} />
+          <View style={baseScreenStylesNew.search}>
+            <Ionicons name="search" style={baseScreenStylesNew.searchIcon} />
             <TextInput
-              style={styles.searchInput}
+              style={baseScreenStylesNew.searchInput}
               placeholder="Search gems..."
-              placeholderTextColor="#999"
               value={searchQuery}
               onChangeText={setSearchQuery}
             />
             <TouchableOpacity style={[styles.sortButton, baseScreenStylesNew.themeColor]} onPress={toggleSort}>
-              <Ionicons name={sortAscending ? "arrow-up" : "arrow-down"} size={16} color="#FFF" />
-              <Text style={styles.sortButtonText}>Sort</Text>
+              <Ionicons name={sortAscending ? "arrow-up" : "arrow-down"} size={16} color="#fff" />
+              <Text style={[baseScreenStylesNew.whiteText, styles.sortButtonText]}>Sort</Text>
             </TouchableOpacity>
           </View>
         </View>
         
         <TouchableOpacity
-          style={[styles.selectButton, baseScreenStylesNew.themeColor]}
+          style={[baseScreenStylesNew.Button1,styles.selectButton]}
           onPress={toggleSelect}
         >
           <Text style={styles.selectButtonText}>
@@ -400,14 +398,12 @@ const styles = StyleSheet.create({
   sortButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: baseScreenStylesNew.themeColor,
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 15,
     marginLeft: 8,
   },
   sortButtonText: {
-    color: '#FFF',
     marginLeft: 5,
     fontSize: 14,
     fontWeight: '500',
@@ -419,22 +415,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: 5,
   },
-  selectButtonText: {
-    color: '#FFFFFF',
-    fontWeight: '600',
-    fontSize: 14,
-  },
-  
-  // Search section styles
-  searchSection: {
-    marginBottom: 8,
-  },
-  searchRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 8,
-  },
-  
+
+
   // Buttons
   sortButton: {
     flexDirection: 'row',

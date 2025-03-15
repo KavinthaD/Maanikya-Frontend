@@ -18,10 +18,11 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import Header_2 from "../components/Header_2";
-import GradientContainer from "../components/GradientContainer";
+import LinearGradient from "react-native-linear-gradient";
 import axios from "axios";
 import { API_URL, ENDPOINTS } from "../config/api";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { baseScreenStylesNew } from "../styles/baseStylesNew";
 
 const THEME_COLOR = '#9CCDDB'; // Light blue theme color
 const GemOnDisplay = ({}) => {
@@ -204,7 +205,7 @@ const GemOnDisplay = ({}) => {
   }
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={baseScreenStylesNew.container}>
       <Header_2 title="Gems On Display" />
       <ScrollView
         contentContainerStyle={styles.scrollContainer}
@@ -249,9 +250,9 @@ const GemOnDisplay = ({}) => {
                   </View>
                   <TouchableOpacity
                     onPress={() => openModal(item)}
-                    style={styles.soldBtn}
+                    style={[baseScreenStylesNew.themeColor, styles.soldBtn]}
                   >
-                    <Text style={styles.soldBtnText}>Mark As Sold</Text>
+                    <Text style={[baseScreenStylesNew.whiteText,styles.soldBtnText]}>Mark As Sold</Text>
                   </TouchableOpacity>
                 </View>
               )}
@@ -261,10 +262,16 @@ const GemOnDisplay = ({}) => {
           )}
         </View>
 
-        <View style={styles.soldContainer}>
+        
+        <LinearGradient
+      colors={['rgb(3, 15, 79)', 'rgb(11, 10, 43)']}
+      style={[styles.soldContainer,styles.gradientBackground]}
+      start={{ x: 0, y: 0 }}
+      end={{ x: 0, y: 1 }}
+    >
           <View style={styles.header}>
             <View style={styles.headerLine} />
-            <Text style={styles.subtopic}>Sold out</Text>
+            <Text style={[baseScreenStylesNew.whiteText,styles.subtopic]}>Sold out</Text>
             <View style={styles.headerLine} />
           </View>
           {sold.length === 0 ? (
@@ -284,8 +291,8 @@ const GemOnDisplay = ({}) => {
                     defaultSource={require("../assets/logo.png")}
                   />
                   <View style={styles.gemInfo}>
-                    <Text style={styles.gemId}>{item.id}</Text>
-                    <Text style={styles.gemDetails}>
+                    <Text style={[baseScreenStylesNew.whiteText,styles.gemId]}>{item.id}</Text>
+                    <Text style={[baseScreenStylesNew.whiteText,styles.gemDetails]}>
                       {item.weight ? `${item.weight} ct ` : ''}{item.gemType || ''}
                     </Text>
                     <Text style={styles.soldDetails}>Buyer: {item.buyer}</Text>
@@ -297,10 +304,17 @@ const GemOnDisplay = ({}) => {
               scrollEnabled={false}
             />
           )}
-        </View>
+          </LinearGradient>
+       
 
         <Modal animationType="slide" transparent={true} visible={modalVisible}>
           <View style={styles.modalContainer}>
+          <LinearGradient
+      colors={['rgb(3, 15, 79)', 'rgb(11, 10, 43)']}
+      style={styles.gradientBackground}
+      start={{ x: 0, y: 0 }}
+      end={{ x: 0, y: 1 }}
+    >
             <View style={styles.modalContent}>
               <Text style={styles.modalTitle}>Confirm Sale</Text>
               <TextInput
@@ -312,7 +326,7 @@ const GemOnDisplay = ({}) => {
               />
               <TextInput
                 style={styles.input}
-                placeholder="Enter Gem Price (LKR)"
+                placeholder="Enter Sold Price (LKR)"
                 keyboardType="numeric"
                 value={price}
                 onChangeText={setPrice}
@@ -321,15 +335,16 @@ const GemOnDisplay = ({}) => {
               <View style={styles.modalBtn}>
                 <TouchableOpacity
                   onPress={() => setModalVisible(false)}
-                  style={styles.cancelBtn}
+                  style={[baseScreenStylesNew.cancelButton, styles.cancelBtn]}
                 >
                   <Text style={styles.btnText}>Cancel</Text>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={markSold} style={styles.confirmBtn}>
+                <TouchableOpacity onPress={markSold} style={[baseScreenStylesNew.Button2, styles.confirmBtn]}>
                   <Text style={styles.btnText}>Confirm</Text>
                 </TouchableOpacity>
               </View>
             </View>
+            </LinearGradient>
           </View>
         </Modal>
       </ScrollView>
@@ -357,7 +372,6 @@ const styles = StyleSheet.create({
   soldContainer: {
     marginHorizontal: 16,
     marginTop: 20,
-    backgroundColor: THEME_COLOR,
     borderRadius: 12,
     padding: 16,
     shadowColor: "#000",
@@ -374,12 +388,11 @@ const styles = StyleSheet.create({
   headerLine: {
     flex: 1,
     height: 1,
-    backgroundColor: "black",
+    backgroundColor: "white",
   },
   subtopic: {
     fontSize: 18,
     fontWeight: "600",
-    color: "#333",
     marginHorizontal: 10,
   },
   gemDisplay: {
@@ -400,24 +413,21 @@ const styles = StyleSheet.create({
   gemId: {
     fontSize: 16,
     fontWeight: "bold",
-    color: "#333",
   },
   gemDetails: {
     fontSize: 14,
-    color: "#666",
+
   },
   gemPrice: {
     fontSize: 14,
     color: "#333",
   },
   soldBtn: {
-    backgroundColor: "#051B41",
     paddingVertical: 8,
     paddingHorizontal: 10,
     borderRadius: 10,
   },
   soldBtnText: {
-    color: "white",
     fontSize: 14,
     fontWeight: "500",
   },
@@ -435,11 +445,16 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "rgba(0,0,0,0.5)",
+    backgroundColor: "rgba(255, 255, 255, 0.85)",
   },
+gradientBackground: {
+  width: "90%",
+  padding: 24,
+  borderRadius: 12,
+  maxWidth: 400,
+},
   modalContent: {
-    width: "80%",
-    backgroundColor: "white",
+    width: "100%",
     padding: 24,
     borderRadius: 12,
     maxWidth: 400,
@@ -447,12 +462,13 @@ const styles = StyleSheet.create({
   modalTitle: {
     fontSize: 20,
     fontWeight: "600",
-    color: "#333",
+    color: "#fff",
     marginBottom: 15,
     textAlign: "center",
   },
   input: {
     borderWidth: 1,
+    color: "white",
     borderColor: "#ccc",
     borderRadius: 8,
     paddingHorizontal: 12,
@@ -465,16 +481,18 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   cancelBtn: {
-    backgroundColor: "#6c757d",
     paddingVertical: 10,
     paddingHorizontal: 16,
     borderRadius: 8,
+    width: "45%",
+    marginRight: 6,
   },
   confirmBtn: {
-    backgroundColor: "#28a745",
     paddingVertical: 10,
     paddingHorizontal: 16,
     borderRadius: 8,
+    width: "45%",
+    
   },
   btnText: {
     color: "white",

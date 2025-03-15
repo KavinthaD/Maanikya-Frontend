@@ -465,9 +465,9 @@ const styles = StyleSheet.create({
     borderColor: '#EEEEEE',
   },
   avatar: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
+    width: 70,
+    height: 70,
+    borderRadius: 40,
   },
   contactInfo: {
     flex: 1,

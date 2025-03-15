@@ -4,7 +4,7 @@ const getBaseUrl = () => {
   if (__DEV__) {
     // Development environment
     if (Platform.OS === "android") {
-      return "http://10.0.2.2:5000"; // Primary IP
+      return "http://192.168.1.3:5000"; // Primary IP
       // andorid emulator ip : 10.0.2.2
     } else if (Platform.OS === "ios") {
       return "http://localhost:5000"; // iOS simulator
@@ -44,6 +44,12 @@ export const ENDPOINTS = {
    SEARCH_USERS: "/api/contacts/search",
    GET_FAVORITES: '/api/contacts/favorites',
    ADD_FAVORITE: '/api/contacts/favorite',
-   REMOVE_FAVORITE: '/api/contacts/favorite'
+   REMOVE_FAVORITE: '/api/contacts/favorite',
+    // Message endpoints
+  GET_CONVERSATIONS: '/api/messages',
+  GET_MESSAGES: '/api/messages', // Will append contactId
+  SEND_MESSAGE: '/api/messages', // Will append contactId
+  GET_UNREAD: '/api/messages/unread',
+  GET_BASIC_USER: '/api/userProfile/basic', // Will append userId
   // Add other endpoints here
 };

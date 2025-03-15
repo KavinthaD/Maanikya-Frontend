@@ -84,20 +84,24 @@ const OwnerFinancialRecords = () => {
 
   // Period selector buttons
   const PeriodSelector = () => (
-    <View style={styles.periodSelectorContainer}>
+    <View style={baseScreenStylesNew.tabBar}> 
       {["daily", "weekly", "yearly", "alltime"].map((period) => (
         <TouchableOpacity
           key={period}
           style={[
-            styles.periodButton,
-            selectedPeriod === period && styles.selectedPeriodButton
+            baseScreenStylesNew.tabButton,
+            selectedPeriod === period 
+              ? baseScreenStylesNew.tabButtonActive 
+              : baseScreenStylesNew.tabButtonInactive
           ]}
           onPress={() => fetchFinancialData(period)}
         >
-          <Text 
+          <Text
             style={[
-              styles.periodButtonText,
-              selectedPeriod === period && styles.selectedPeriodText
+              baseScreenStylesNew.tabText,
+              selectedPeriod === period 
+                ? baseScreenStylesNew.tabTextActive 
+                : baseScreenStylesNew.tabTextInactive
             ]}
           >
             {period.charAt(0).toUpperCase() + period.slice(1)}
@@ -106,6 +110,7 @@ const OwnerFinancialRecords = () => {
       ))}
     </View>
   );
+  
 
   if (loading && !refreshing) {
     return (
@@ -204,9 +209,9 @@ const OwnerFinancialRecords = () => {
           ].map((item, index) => (
             <View
               key={index} 
-              style={styles.recordList}
+              style={[baseScreenStylesNew.item, styles.recordList]}
             >
-              <View style={styles.recordItem}>
+              <View style={[styles.recordItem]}>
                 <Text style={styles.recordText}>{item.title}</Text>
                 <Text style={styles.recordText}>{item.amount}</Text>
               </View>
@@ -262,19 +267,19 @@ const OwnerFinancialRecords = () => {
           )}
 
           {/* Inventory Section */}
-          <View style={styles.inventoryContainer}>
-            <Text style={styles.inventoryTitle}>Inventory</Text>
+          <View style={[baseScreenStylesNew.justBox,styles.inventoryContainer]}>
+            <Text style={[baseScreenStylesNew.themeText,styles.inventoryTitle]}>Inventory</Text>
             
             <View style={styles.inventoryRow}>
               <Text style={styles.inventoryLabel}>Value:</Text>
-              <Text style={styles.inventoryValue}>
+              <Text style={[baseScreenStylesNew.themeText,styles.inventoryValue]}>
                 {formatCurrency(dataToShow.inventoryValue || 0)}
               </Text>
             </View>
             
             <View style={styles.inventoryRow}>
               <Text style={styles.inventoryLabel}>Items:</Text>
-              <Text style={styles.inventoryValue}>
+              <Text style={[baseScreenStylesNew.themeText,styles.inventoryValue]}>
                 {dataToShow.inventoryGemsCount || 0}
               </Text>
             </View>
@@ -311,31 +316,7 @@ const styles = StyleSheet.create({
     padding: 20,
     paddingBottom: 80, // Add padding at bottom for navbar
   },
-  periodSelectorContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginBottom: 20,
-  },
-  periodButton: {
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-    borderRadius: 20,
-    backgroundColor: "#f0f0f0",
-    minWidth: 70,
-    alignItems: "center",
-  },
-  selectedPeriodButton: {
-    backgroundColor: "#007BFF",
-  },
-  periodButtonText: {
-    color: "#555",
-    fontSize: 12,
-    fontWeight: "500",
-  },
-  selectedPeriodText: {
-    color: "#fff",
-    fontWeight: "bold",
-  },
+
   periodInfo: {
     textAlign: "center",
     marginBottom: 10,
@@ -359,7 +340,6 @@ const styles = StyleSheet.create({
     color: "#fff",
   },
   recordList: {
-    backgroundColor:'rgba(172, 168, 168, 0.21)',
     borderWidth: 2,
     borderColor: 'rgba(85, 84, 84, 0.21)',
     borderRadius: 2,
@@ -461,7 +441,6 @@ const styles = StyleSheet.create({
   },
   inventoryContainer: {
     marginTop: 20,
-    backgroundColor: "#f0f8ff", // Light blue background
     padding: 15,
     borderRadius: 8,
     borderWidth: 1,
@@ -471,7 +450,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "bold",
     marginBottom: 10,
-    color: "#2c75b8",
+    
   },
   inventoryRow: {
     flexDirection: "row",
@@ -483,7 +462,6 @@ const styles = StyleSheet.create({
   },
   inventoryValue: {
     fontWeight: "bold",
-    color: "#2c75b8",
   },
   statusBreakdown: {
     marginTop: 10,

@@ -1,13 +1,10 @@
 import { StyleSheet } from "react-native";
 
 export const baseScreenStylesNew = StyleSheet.create({
+  // ----- backgrounds
   themeColor: {
-    backgroundColor: '#170969'
+    backgroundColor: '#170969'   
   },
-  themeText: {
-    color: '#170969',
-  },
-
   backgroundColor: {
     backgroundColor: "white", // Default background color for all screens
   },
@@ -17,6 +14,7 @@ export const baseScreenStylesNew = StyleSheet.create({
     position: "relative",
   },
 
+// ---- texts -----------
   buttonText: {
     color: "white",
     fontWeight: "bold",
@@ -29,8 +27,31 @@ export const baseScreenStylesNew = StyleSheet.create({
     textAlign: "center",
     fontSize: 16,
   },
+  themeText: {
+    color: '#170969',    //theme color letters
+  },
+  blackText: {
+    color: "black"
+  },
+  whiteText: {
+    color: "white"
+  },
+// --------------check box
+  checkBox: {
+    backgroundColor: 'rgba(155, 140, 245, 0.75)',
+  },
+  justBox: {
+    backgroundColor: 'rgba(215, 208, 254, 0.75)',
+  },
+
+  // ---- text container
+  item: {
+    backgroundColor:'rgba(172, 168, 168, 0.21)',
+  },
+
+  // ---- Buttons ------
   Button1: {
-    backgroundColor: "#170969",
+    backgroundColor: "#170969",   //theme color button 
     padding: 15,
     borderRadius: 24,
     width: "100%",
@@ -76,6 +97,19 @@ export const baseScreenStylesNew = StyleSheet.create({
     justifyContent: "center",
     marginTop: 8
   },
+  cancelButton: {
+    backgroundColor: 'rgba(172, 168, 168, 0.21)',
+    borderWidth:2,
+    borderColor: 'rgba(172, 168, 168, 0.21)',
+    padding: 12,
+    borderRadius: 50,
+    width: "100%",
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: 8
+  },
+
+  // --------- auth forms ---------------
   input: {
     width: "100%",
     height: 40,
@@ -105,6 +139,8 @@ export const baseScreenStylesNew = StyleSheet.create({
     width: "100%",
     color: "black"
   },
+
+  // -------- search bar --------------
   search: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -119,6 +155,8 @@ export const baseScreenStylesNew = StyleSheet.create({
   },
   searchIcon: {
     marginRight: 10,
+    color: "#999",
+    fontSize: 24
   },
   searchInput: {
     flex: 1,
@@ -159,4 +197,25 @@ export const baseScreenStylesNew = StyleSheet.create({
     color: '#333333',
   },
 
+  // ---- Pop Up gradient
+/* 
+<LinearGradient
+            colors={[
+              'rgb(3, 15, 79)',
+              'rgb(11, 10, 43)'
+            ]}
+            style={styles.gradientBackground}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 0, y: 1 }}
+          />
+  
+  gradientBackground: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+    borderRadius: 10,
+  },
+*/
 });

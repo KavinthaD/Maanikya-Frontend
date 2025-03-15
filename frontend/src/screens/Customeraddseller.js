@@ -11,8 +11,7 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import Header_2 from '../components/Header_2';
-import { baseScreenStyles } from '../styles/baseStyles';
-import GradientContainer from "../components/GradientContainer";
+import { baseScreenStylesNew } from '../styles/baseStylesNew';
 import { LinearGradient } from 'expo-linear-gradient';
 
 const MySeller = ({navigation}) => {
@@ -48,40 +47,35 @@ const MySeller = ({navigation}) => {
   ]);
 
   const renderItem = (item) => (
-    <LinearGradient
-      colors={['#CDE3F9', '#798693']}
-      start={{ x: 0, y: 0 }}
-      end={{ x: 1, y: 0 }}
-      style={styles.itemContainer}
-    >
+    <View style={[baseScreenStylesNew.item,styles.itemContainer]}>
       <Image source={item.image} style={styles.itemImage} />
       <View style={styles.itemDetails}>
         <Text style={styles.itemName}>{item.name}</Text>
         <Text style={styles.itemCompany}>{item.company}</Text>
       </View>
       <TouchableOpacity 
-        style={styles.viewGemsButton} 
+        style={[baseScreenStylesNew.themeColor,styles.viewGemsButton]} 
         onPress={() => navigation.navigate("SellerProfile")}
       >
-        <Text style={styles.viewGemsText}>View gems</Text>
+        <Text style={[baseScreenStylesNew.whiteText, styles.viewGemsText]}>View gems</Text>
       </TouchableOpacity>
-    </LinearGradient>
+    </View>
   );
 
   return (
-    <GradientContainer>
-      <SafeAreaView style={baseScreenStyles.container}>
+      <SafeAreaView style={baseScreenStylesNew.container}>
+        <Header_2 title="My Sellers"/>
         <View style={styles.innerContainer}>
           <View style={styles.headerContainer}>
-            <Text style={styles.recentText}>Recent</Text>
-            <View style={styles.searchContainer}>
-              <Ionicons name="search" size={20} color="#6B7280" style={styles.searchIcon} />
+            <View style={baseScreenStylesNew.search}>
+              <Ionicons name="search" style={baseScreenStylesNew.searchIcon} />
               <TextInput
-                style={styles.searchInput}
+                style={baseScreenStylesNew.searchInput}
                 placeholder="Search"
                 placeholderTextColor="#6B7280"
               />
             </View>
+            <Text style={[baseScreenStylesNew.blackText, styles.recentText]}>Recent</Text>
           </View>
 
           <ScrollView style={styles.scrollContainer}>
@@ -93,7 +87,6 @@ const MySeller = ({navigation}) => {
           </ScrollView>
         </View>
       </SafeAreaView>
-    </GradientContainer>
   );
 };
 
@@ -109,8 +102,7 @@ const styles = StyleSheet.create({
   recentText: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#E5E7EB',
-    marginBottom: 10,
+    marginTop: 8,
     marginLeft: 5,
   },
   searchContainer: {
@@ -160,13 +152,11 @@ const styles = StyleSheet.create({
     color: '#4B5563', 
   },
   viewGemsButton: {
-    backgroundColor: '#312E81',
     paddingHorizontal: 12,
     paddingVertical: 8,
     borderRadius: 6,
   },
   viewGemsText: {
-    color: '#FFFFFF',
     fontWeight: 'bold',
     fontSize: 12,
   },

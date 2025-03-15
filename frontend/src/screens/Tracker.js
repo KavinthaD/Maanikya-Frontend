@@ -1,10 +1,11 @@
 import React, { useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { View, Text, FlatList, StyleSheet, Image, TextInput, SafeAreaView, TouchableOpacity } from "react-native";
-import { baseScreenStyles } from "../../styles/baseStyles";
+import { baseScreenStyles } from "../styles/baseStyles";
 import Header_2 from "../components/Header_2";
+import GradientContainer from "../components/GradientContainer";
 
-const Tracker = ({navigation}) => {
+const Tracker = () => {
   const navigation = useNavigation();
   //manage the search option
   const [search, setSearch] = useState("");
@@ -44,6 +45,7 @@ const Tracker = ({navigation}) => {
   );
 
   return (
+    <GradientContainer>
     <SafeAreaView style={[baseScreenStyles.container]}>
       <Header_2 title="Tracker"/>
       {/*Search Bar */}
@@ -77,6 +79,7 @@ const Tracker = ({navigation}) => {
         />
       </TouchableOpacity>
     </SafeAreaView>
+    </GradientContainer>
   );
 };
 

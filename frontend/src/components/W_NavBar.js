@@ -80,7 +80,7 @@ const TabButton = (props) => {
           style={{
             width: 24,
             height: 24,
-            tintColor: focused ? "black" : "grey",
+            tintColor: focused ? "white" : "white",
           }} // Adjust size and color
         />
       </Animatable.View>
@@ -88,13 +88,14 @@ const TabButton = (props) => {
   );
 };
 
-export default function C_NavBar() {
+export default function W_NavBar() {
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <Tab.Navigator
         screenOptions={{
           headerShown: false,
           tabBarStyle: {
+            backgroundColor:"#072D44",
             height: 60,
             position: "absolute",
             margin: 16,

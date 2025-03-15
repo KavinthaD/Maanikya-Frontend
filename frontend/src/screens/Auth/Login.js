@@ -11,10 +11,11 @@ import {
   Alert,
 } from "react-native";
 import { Picker } from "@react-native-picker/picker";
-import { baseScreenStyles } from "../../styles/baseStyles";
+import { baseScreenStylesNew } from "../../styles/baseStylesNew";
 import { useNavigation } from "@react-navigation/native";
-import axios from 'axios'; // Import axios
-import AsyncStorage from '@react-native-async-storage/async-storage'; // Import AsyncStorage
+import axios from "axios"; // Import axios
+import AsyncStorage from "@react-native-async-storage/async-storage"; // Import AsyncStorage
+import { API_URL, ENDPOINTS } from '../../config/api'; 
 
 const Login = () => {
   const navigation = useNavigation();
@@ -23,7 +24,8 @@ const Login = () => {
   const [role, setRole] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
 
-  const handleLogin = async () => { // Make handleLogin async
+  const handleLogin = async () => {
+    // Make handleLogin async
     if (!email || !password || !role) {
       Alert.alert("Please fill all fields.");
       return;
@@ -49,7 +51,8 @@ const Login = () => {
     }
 
     try {
-      const response = await axios.post('http://10.0.2.2:5000/api/auth/login', { // Replace with your backend URL if different
+      const response = await axios.post(`${API_URL}${ENDPOINTS.LOGIN}`, { 
+        // Replace with your backend URL if different
         email: email,
         password: password,
         loginRole: backendLoginRole, // Use the mapped backend role
@@ -60,79 +63,172 @@ const Login = () => {
       Alert.alert("Login Successful!", response.data.message);
 
       // **Store the JWT token securely (using AsyncStorage):**
-      await AsyncStorage.setItem('authToken', response.data.token);
+      await AsyncStorage.setItem("authToken", response.data.token);
 
       // **Navigate based on user role after successful login:**
       if (response.data.user.loginRole === "Gem business owner") {
         navigation.navigate("BS_NavBar");
-      } else if (response.data.user.loginRole === "Cutter/Burner") {
+      } else if (response.data.user.loginRole === "Burner" || 
+        response.data.user.loginRole === "Cutter" || 
+        response.data.user.loginRole === "Electric Burner") {
         navigation.navigate("W_NavBar");
       } else if (response.data.user.loginRole === "Customer") {
         navigation.navigate("C_NavBar");
       }
-
     } catch (error) {
       // **Login Error:**
-      console.error("Login failed:", error.response ? error.response.data : error.message);
+      console.error(
+        "Login failed:",
+        error.response ? error.response.data : error.message
+      );
       if (error.response && error.response.data && error.response.data.error) {
         setErrorMessage(error.response.data.error); // Display backend error message
       } else {
-        setErrorMessage("Login failed. Please check your credentials and try again."); // Generic error message
+        setErrorMessage(
+          "Login failed. Please check your credentials and try again."
+        ); // Generic error message
       }
     }
   };
 
+  // New function to bypass backend for testing
+  const handleTestLogin = (testRole) => {
+    // Set the role based on the test role
+    setRole(testRole);
+    // Navigate based on the test role
+    if (testRole === "gem_business_owner") {
+      navigation.navigate("BS_NavBar");
+    } else if (testRole === "cutter_burner") {
+      navigation.navigate("W_NavBar");
+    } else if (testRole === "customer") {
+      navigation.navigate("C_NavBar");
+    } else {
+      Alert.alert("Invalid role for testing.");
+    }
+  };
+
   return (
-    <View style={[baseScreenStyles.container, styles.container]}>
-      <Image
-        source={require("../../assets/logo.png")}
-        style={styles.logo}
-      />
+    <View style={[baseScreenStylesNew.container, styles.container]}>
+      <Image source={require("../../assets/logo.png")} style={styles.logo} />
       <Text style={styles.title}>Welcome Back</Text>
-      <Text style={styles.subtitle}>Login to your account</Text>
+      <Text style={styles.subtitle}>Enter your email to login</Text>
 
       <TextInput
-        style={styles.input}
+        style={baseScreenStylesNew.input}
         placeholder="email@domain.com"
-        placeholderTextColor="#888"
+        placeholderTextColor="#B0B0B0"
         value={email}
         onChangeText={setEmail}
         keyboardType="email-address"
       />
-      <View style={styles.pickerContainer}>
+      <View style={baseScreenStylesNew.pickerContainer}>
         <Picker
           selectedValue={role}
-          style={styles.picker}
+          style={[baseScreenStylesNew.picker, { color: role ? "black" : "#888" }]}
           onValueChange={(itemValue) => setRole(itemValue)}
-          itemStyle={styles.pickerItem}
         >
-          <Picker.Item label="Choose your role" value="" />
-          <Picker.Item label="Gem business owner" value="gem_business_owner" />
-          <Picker.Item label="Cutter/Burner" value="cutter_burner" />
-          <Picker.Item label="Customer" value="customer" />
+          <Picker.Item label="Choose your role" value="" color="#888"/>
+          <Picker.Item label="Gem business owner" value="gem_business_owner" color="black" />
+          <Picker.Item label="Cutter/Burner" value="cutter_burner" color="black"/>
+          <Picker.Item label="Customer" value="customer" color="black" />
         </Picker>
       </View>
       <TextInput
-        style={styles.input}
+        style={baseScreenStylesNew.input}
         placeholder="Password"
+        placeholderTextColor="#B0B0B0"
         secureTextEntry
         value={password}
         onChangeText={setPassword}
       />
-       {errorMessage ? (
+      {errorMessage ? (
         <Text style={styles.errorText}>{errorMessage}</Text>
       ) : null}
       <TouchableOpacity style={styles.forgotPasswordContainer}>
         <Text style={styles.forgotPassword}>Forgot your password?</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={[baseScreenStyles.blueButton,styles.loginButton]} onPress={handleLogin}>
-        <Text style={styles.loginButtonText}>Log in</Text>
+      <TouchableOpacity
+        style={[baseScreenStylesNew.Button1,]}
+        onPress={handleLogin}
+      >
+        <Text style={baseScreenStylesNew.buttonText}>Login</Text>
       </TouchableOpacity>
+
+      {/* Test Login Buttons */}
+      {__DEV__ && (
+        <View style={styles.developerSection}>
+          <Text style={styles.developerTitle}>Developer Buttons</Text>
+          <View style={styles.testLoginContainer}>
+            <TouchableOpacity
+              style={styles.devButton}
+              onPress={() => handleTestLogin("gem_business_owner")}
+            >
+              <Text style={styles.devButtonText}>B</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.devButton}
+              onPress={() => handleTestLogin("cutter_burner")}
+            >
+              <Text style={styles.devButtonText}>W</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.devButton}
+              onPress={() => handleTestLogin("customer")}
+            >
+              <Text style={styles.devButtonText}>C</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      )}
     </View>
   );
 };
 
 const styles = StyleSheet.create({
+
+  // Add these to your StyleSheet:
+  developerSection: {
+    width: '100%',
+    marginTop: 20,
+    padding: 10,
+    paddingBottom: 20,
+    backgroundColor: 'rgba(0, 0, 0, 0.3)',
+    borderRadius: 10,
+  },
+  developerTitle: {
+    fontSize: 14,
+    color: '#666',
+    textAlign: 'center',
+    marginBottom: 10,
+    fontWeight: '600',
+  },
+  testLoginContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    width: '100%',
+  },
+  devButton: {
+    width: 50,
+    height: 50,
+    borderRadius: 12,
+    backgroundColor: '#2196F3',
+    alignItems: 'center',
+    justifyContent: 'center',
+    elevation: 3,
+    shadowColor: '#000',
+    shadowOffset: {
+    width: 0,
+    height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+  },
+  devButtonText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+
   container: {
     alignItems: "center",
     justifyContent: "center",
@@ -144,46 +240,16 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   title: {
-    fontSize: 32,
-    fontWeight: "bold",
+    fontSize: 28,
     marginBottom: 10,
+    color: "black"
   },
   subtitle: {
-    fontSize: 20,
-    marginBottom: 15,
-    fontWeight: "bold",
-  },
-  prompt: {
     fontSize: 18,
-    marginBottom: 20,
-  },
-  input: {
-    width: "100%",
-    height: 40,
-    borderColor: "#ccc",
-    borderWidth: 1,
-    borderRadius: 8,
-    paddingHorizontal: 10,
-    marginBottom: 10,
-    backgroundColor: "#fff",
-  },
-  pickerContainer: {
-    width: "100%",
-    height: 54,
-    borderColor: "gray",
-    borderWidth: 1,
-    borderRadius: 12,
     marginBottom: 15,
-    overflow: "hidden",
-    backgroundColor: "rgba(255, 255, 255, 0.8)",
+    color: "black"
   },
-  picker: {
-    height: "100%",
-    width: "100%",
-  },
-  pickerItem: {
-    color: "#888",
-  },
+
   inputWithOpacity: {
     backgroundColor: "rgba(255, 255, 255, 0.8)",
   },
@@ -191,17 +257,35 @@ const styles = StyleSheet.create({
     alignSelf: "flex-start",
   },
   forgotPassword: {
-    color: "#007bff",
+    color: "#000",
     marginBottom: 20,
+    fontWeight: "bold"
   },
-  loginButton: {
+  
+  testLoginContainer: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    marginTop: 20,
+    width: "100%",
+  },
+  testLoginButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: "red",
     alignItems: "center",
     justifyContent: "center",
   },
-  loginButtonText: {
-    color: "#fff",
-    fontSize: 16,
+  testLoginButtonText: {
+    color: "white",
+    fontWeight: "bold",
   },
+  errorText: {
+    color: "red", 
+    fontSize: 14,
+    marginBottom: 10,
+    fontWeight: "bold",
+  }
 });
 
 export default Login;

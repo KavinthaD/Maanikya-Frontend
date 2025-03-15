@@ -10,10 +10,12 @@ import {
   Image,
   Alert, // Import Alert
 } from "react-native";
-import { baseScreenStyles } from "../../styles/baseStyles";
+import { baseScreenStylesNew } from "../../styles/baseStylesNew";
 import SuccessPopup from "../../components/SuccessPopup"; 
 import axios from 'axios'; // Import axios
 import { useNavigation } from "@react-navigation/native";
+
+import { API_URL, ENDPOINTS } from '../../config/api'; 
 
 const SignUpScreenCustomer = ({ navigation }) => {
   const [firstName, setFirstName] = useState("");
@@ -40,12 +42,13 @@ const SignUpScreenCustomer = ({ navigation }) => {
       setErrorMessage("Password must be at least 8 characters long.");
       return;
     }
-    // Password regex validation - consider adding this if you have specific password requirements
+    
 
     setErrorMessage(""); // Clear previous errors
 
     try {
-      const response = await axios.post('http://10.0.2.2:5000/api/auth/register-customer', { // Customer register endpoint
+      const response = await axios.post(`${API_URL}${ENDPOINTS.REGISTER_CUSTOMER}`, { 
+        firstName: firstName,
         firstName: firstName,
         lastName: lastName,
         email: email,
@@ -79,61 +82,61 @@ const SignUpScreenCustomer = ({ navigation }) => {
     }
   };
   return (
-    <View style={[baseScreenStyles.container, styles.container]}>
+    <View style={[baseScreenStylesNew.container, styles.container]}>
       <Image source={require("../../assets/logo.png")} style={styles.logo} />
       <Text style={styles.subtitle}>Sign Up</Text>
       <Text style={styles.instructions}>Create Your Customer Account</Text>
       <View style={styles.row}>
         <TextInput
-          style={[styles.input, styles.halfInput]}
+          style={[baseScreenStylesNew.input, styles.halfInput]}
           placeholder="First Name"
-          placeholderTextColor="#888"
+          placeholderTextColor="#B0B0B0"
           value={firstName}
           onChangeText={setFirstName}
         />
         <TextInput
-          style={[styles.input, styles.halfInput]}
+          style={[baseScreenStylesNew.input, styles.halfInput]}
           placeholder="Last Name"
-          placeholderTextColor="#888"
+          placeholderTextColor="#B0B0B0"
           value={lastName}
           onChangeText={setLastName}
         />
       </View>
       <TextInput
-        style={styles.input}
+        style={baseScreenStylesNew.input}
         placeholder="email@domain.com"
         keyboardType="email-address"
-        placeholderTextColor="#888"
+        placeholderTextColor="#B0B0B0"
         value={email}
         onChangeText={setEmail}
       />
       <TextInput
-        style={styles.input}
+        style={baseScreenStylesNew.input}
         placeholder="Phone number"
         keyboardType="phone-pad"
-        placeholderTextColor="#888"
+        placeholderTextColor="#B0B0B0"
         value={phoneNumber}
         onChangeText={setPhoneNumber}
       />
       <TextInput
-        style={styles.input}
+        style={baseScreenStylesNew.input}
         placeholder="User Name"
-        placeholderTextColor="#888"
+        placeholderTextColor="#B0B0B0"
         value={userName}
         onChangeText={setUserName}
       />
       <TextInput
-        style={styles.input}
+        style={baseScreenStylesNew.input}
         placeholder="Password"
-        placeholderTextColor="#888"
+        placeholderTextColor="#B0B0B0"
         secureTextEntry
         value={password}
         onChangeText={setPassword}
       />
       <TextInput
-        style={styles.input}
+        style={baseScreenStylesNew.input}
         placeholder="Re-enter password"
-        placeholderTextColor="#888"
+        placeholderTextColor="#B0B0B0"
         secureTextEntry
         value={reEnterPassword}
         onChangeText={setReEnterPassword}
@@ -142,78 +145,55 @@ const SignUpScreenCustomer = ({ navigation }) => {
         <Text style={styles.errorText}>{errorMessage}</Text>
       ) : null}
       <TouchableOpacity
-        style={styles.button}
+        style={baseScreenStylesNew.Button1}
         onPress={handleCreateAccount}>
-        <Text style={styles.buttonText}>Create account</Text>
+        <Text style={baseScreenStylesNew.buttonText}>Create account</Text>
       </TouchableOpacity>
-      {/* SuccessPopup - you can keep this if you want a popup in addition to the Alert, or remove if you just want the Alert */}
+      
       {/* <SuccessPopup
         visible={popupVisible}
         onClose={() => setPopupVisible(false)}
         message="Account created successfully!"
       /> */}
     </View>
+    
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: 'center',
+    justifyContent: 'center',
     padding: 20,
   },
   logo: {
-    width: 150,
-    height: 100,
-    marginBottom: 20,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: "bold",
-    marginBottom: 10,
-  },
+    paddingTop: 160,
+    width: 170,
+    height: 80,
+    marginTop: 90,
+    marginBottom: 8,
+},
   subtitle: {
     fontSize: 30,
     marginBottom: 5,
     fontWeight: "bold",
+    color: "#000"
   },
   instructions: {
-    fontSize: 14,
-    color: "#555",
+    fontSize: 18,
     marginBottom: 20,
-    fontWeight: "bold",
+    fontWeight: 'bold',
+    color: "#000"
   },
   row: {
     flexDirection: "row",
     justifyContent: "space-between",
     width: "100%",
   },
-  input: {
-    width: "100%",
-    height: 50,
-    borderColor: "gray",
-    borderWidth: 1,
-    borderRadius: 12,
-    paddingHorizontal: 10,
-    marginBottom: 10,
-    backgroundColor: "rgba(255, 255, 255, 0.8)",
-    opacity: 0.8,
-  },
   halfInput: {
-    width: "48%",
+    width: "48%", 
   },
-  button: {
-    width: "100%",
-    height: 40,
-    backgroundColor: "#000080",
-    borderRadius: 5,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  buttonText: {
-    color: "#fff",
-    fontSize: 16,
-  },
+
   errorText: {
     color: 'red',
     marginBottom: 10,

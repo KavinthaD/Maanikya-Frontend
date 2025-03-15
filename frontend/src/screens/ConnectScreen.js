@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react"; // Import useEffect
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -10,146 +10,74 @@ import {
   ScrollView,
 } from "react-native";
 import { FontAwesome, MaterialIcons } from "@expo/vector-icons";
+import GradientContainer from "../components/GradientContainer";
+import { baseScreenStyles } from "../styles/baseStyles";
+import LinearGradient from "react-native-linear-gradient";
+import Header_2 from "../components/Header_2";
 
-// Updated categories to match the image
-const categories = ["All", "Burner", "Elec. Burner", "Cutter", "Owner"];
+// Removed "Owner" from categories
+const categories = ["All", "Burner", "Elec. Burner", "Cutter"];
 
 const initialPeople = [
-  // Renamed to initialPeople
-  {
-    id: "1",
-    name: "Dulith Wanigarathne",
-    role: "Cutter",
-    rating: 4,
-    avatar: require("../assets/seller.png"),
-  },
-  {
-    id: "2",
-    name: "Isum Hansaja Perera",
-    role: "Burner",
-    rating: 3,
-    avatar: require("../assets/seller.png"),
-  },
-  {
-    id: "3",
-    name: "Kavintha Dinushan",
-    role: "Electric Burner/Cutter",
-    rating: 5,
-    avatar: require("../assets/seller.png"),
-  },
-  {
-    id: "4",
-    name: "Sriyanka Sansidu",
-    role: "Business Owner - Leo Gems",
-    rating: 4,
-    avatar: require("../assets/seller.png"),
-  },
-  {
-    id: "5",
-    name: "Amal Perera", // Added a name starting with 'A' for testing search
-    role: "Burner",
-    rating: 3,
-    avatar: require("../assets/seller.png"),
-  },
-  {
-    id: "6",
-    name: "Buddika Silva", // Added a name starting with 'B' for testing search
-    role: "Owner",
-    rating: 5,
-    avatar: require("../assets/seller.png"),
-  },
+  { id: "1", name: "Dulith Wanigarathne", role: "Cutter", rating: 4, avatar: require("../assets/seller.png") },
+  { id: "2", name: "Isum Hansaja Perera", role: "Burner", rating: 3, avatar: require("../assets/seller.png") },
+  { id: "3", name: "Kavintha Dinushan", role: "Electric Burner", rating: 5, avatar: require("../assets/seller.png") },
+  { id: "4", name: "Sriyanka Sansidu", role: "Business Owner", rating: 4, avatar: require("../assets/seller.png") },
 ];
 
 const ConnectScreen = ({ navigation }) => {
-  const [selectedCategory, setSelectedCategory] = useState("All"); // Default to 'All'
-  const [favorites, setFavorites] = useState({});
-  const [people, setPeople] = useState(initialPeople); // State for people, initialized with initialPeople
-  const [personRatings, setPersonRatings] = useState(() => {
-    // Initialize personRatings state
-    const ratings = {};
-    initialPeople.forEach((person) => {
-      ratings[person.id] = person.rating;
-    });
-    return ratings;
+  const [selectedCategory, setSelectedCategory] = useState("All");
+  const [favorites, setFavorites] = useState({
+    "1": true,
+    "2": true,
+    "3": true,
+    "4": true,
   });
-  const [searchText, setSearchText] = useState(""); // State for search text
-  const [filteredPeople, setFilteredPeople] = useState(people); // State for filtered people
+  const [personRatings, setPersonRatings] = useState(
+    initialPeople.reduce((acc, person) => ({ ...acc, [person.id]: person.rating }), {})
+  );
+  const [searchText, setSearchText] = useState("");
+  const [filteredPeople, setFilteredPeople] = useState(initialPeople);
 
   useEffect(() => {
-    // Function to filter people based on search text and category
-    const filterData = () => {
-      let currentPeople = initialPeople; // Start with the initial list
+    let filteredList = initialPeople;
 
-      if (selectedCategory !== "All") {
-        currentPeople = currentPeople.filter((p) =>
-          p.role.includes(selectedCategory)
-        );
-      }
+    if (selectedCategory !== "All") {
+      filteredList = filteredList.filter((p) => p.role.includes(selectedCategory));
+    }
 
-      if (searchText) {
-        const lowerSearchText = searchText.toLowerCase();
-        currentPeople = currentPeople.filter((person) =>
-          person.name.toLowerCase().startsWith(lowerSearchText)
-        );
-      }
-      setFilteredPeople(currentPeople);
-    };
+    if (searchText) {
+      const lowerSearchText = searchText.toLowerCase();
+      filteredList = filteredList.filter((p) => p.name.toLowerCase().startsWith(lowerSearchText));
+    }
 
-    filterData(); // Call filterData whenever searchText or selectedCategory changes
+    setFilteredPeople(filteredList);
   }, [searchText, selectedCategory]);
 
   const toggleFavorite = (id) => {
     setFavorites((prev) => ({ ...prev, [id]: !prev[id] }));
   };
 
-  const handleStarRating = (personId, rating) => {
-    setPersonRatings((prevRatings) => ({
-      ...prevRatings,
-      [personId]: rating,
-    }));
-
-    // Optionally update the people array if you want to persist rating in the people data
-    setPeople((prevPeople) =>
-      prevPeople.map((person) =>
-        person.id === personId ? { ...person, rating: rating } : person
-      )
-    );
-  };
-
   const renderItem = ({ item }) => (
-    <TouchableOpacity
-      onPress={() => navigation.navigate("Profile", { person: item })}
-    >
-      <View style={styles.card}>
+    <TouchableOpacity onPress={() => navigation.navigate("ConnectedUsers", { person: item })}>
+      <LinearGradient 
+        colors={["#4A6583", "#2D4155"]} 
+        start={{x: 0, y: 0}} 
+        end={{x: 1, y: 0}} 
+        style={styles.card}
+      >
         <Image source={item.avatar} style={styles.avatar} />
         <View style={styles.textContainer}>
           <Text style={styles.name}>{item.name}</Text>
           <Text style={styles.role}>{item.role}</Text>
-          <View style={styles.rating}>
-            {[...Array(5)].map((_, index) => (
-              <TouchableOpacity
-                key={index}
-                onPress={() => handleStarRating(item.id, index + 1)}
-              >
-                <FontAwesome
-                  name={index < personRatings[item.id] ? "star" : "star-o"} // Use personRatings for star display
-                  size={16}
-                  color="#334D85"
-                />
-              </TouchableOpacity>
-            ))}
-          </View>
         </View>
         <TouchableOpacity onPress={() => toggleFavorite(item.id)}>
-          <FontAwesome
-            name={favorites[item.id] ? "heart" : "heart-o"}
-            size={26}
-            color="#6646ee"
-          />
+          <FontAwesome name={favorites[item.id] ? "heart" : "heart-o"} size={26} color="#170969" />
         </TouchableOpacity>
-      </View>
+      </LinearGradient>
     </TouchableOpacity>
   );
+  
 
   return (
     <View style={styles.container}>
@@ -171,149 +99,124 @@ const ConnectScreen = ({ navigation }) => {
             <FontAwesome name="plus" size={15} color="#C1E8FF" />
           </TouchableOpacity>
         </View>
-        <Text style={styles.addPersonLabel}>Add person</Text>
-      </View>
 
-      {/* Category Filter Tabs */}
-      <View style={{ height: 50 }}>
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          style={styles.tabs}
-        >
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.categoryContainer}>
           {categories.map((category) => (
             <TouchableOpacity
               key={category}
               style={[
-                styles.tab,
-                selectedCategory === category && styles.activeTab,
+                styles.categoryTab, 
+                selectedCategory === category && styles.activeCategoryTab
               ]}
               onPress={() => setSelectedCategory(category)}
             >
-              <Text
-                style={[
-                  styles.tabText,
-                  selectedCategory === category && styles.activeTabText,
-                ]}
-              >
+              <Text style={[
+                styles.categoryText, 
+                selectedCategory === category && styles.activeCategoryText
+              ]}>
                 {category}
               </Text>
             </TouchableOpacity>
           ))}
         </ScrollView>
-      </View>
 
-      {/* People List */}
-      <FlatList
-        data={filteredPeople} // Use filteredPeople for data
-        keyExtractor={(item) => item.id}
-        renderItem={renderItem}
-        showsVerticalScrollIndicator={false}
-      />
-    </View>
+        <Text style={styles.sectionTitle}>Favourites</Text>
+
+        <FlatList 
+          data={filteredPeople} 
+          keyExtractor={(item) => item.id} 
+          renderItem={renderItem} 
+          contentContainerStyle={styles.listContainer}
+        />
+      </View>
+    
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    width: "100%",
-    height: "100%",
-    backgroundColor: "#9CCDDB",
-    paddingTop: 10,
+  searchContainer: { 
+    flexDirection: "row", 
+    backgroundColor: "#fff", 
+    borderRadius: 20, 
+    paddingHorizontal: 12, 
+    alignItems: "center", 
+    marginHorizontal: 15,
+    marginTop: 10,
+    height: 40, 
+    elevation: 2 
   },
-  searchContainer: {
+  searchIcon: {
+    marginRight: 6
+  },
+  searchInput: { 
+    flex: 1, 
+    paddingVertical: 5,
+    color: "#000"
+  },
+  categoryContainer: {
     flexDirection: "row",
-    backgroundColor: "#fff",
+    marginTop: 15,
+    paddingHorizontal: 10,
+    marginBottom: 5 
+  },
+  categoryTab: {
+    paddingVertical: 6,
+    paddingHorizontal: 16,
     borderRadius: 20,
-    paddingHorizontal: 12,
-    alignItems: "center",
-    marginHorizontal: 15,
-    height: 40,
-    elevation: 2,
-  },
-  searchInput: {
-    flex: 1,
-    paddingVertical: 5,
-  },
-  addPersonContainer: {
-    alignItems: "center",
-    marginVertical: 10,
-  },
-  addPersonButtonContainer: {
-    width: 50,
-    height: 50,
-    borderRadius: 29,
-    backgroundColor: "#C1E8FF",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  addPersonButton: {
-    width: 27,
-    height: 27,
-    borderRadius: 25,
-    backgroundColor: "black",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  addPersonLabel: {
-    fontSize: 14,
-    marginTop: 5,
-  },
-  tabs: {
-    flexDirection: "row",
-    marginHorizontal: 15,
-    marginTop: 10,
-    backgroundColor: "#fff",
-    borderRadius: 10,
-    paddingVertical: 2,
-    elevation: 2,
-    height: 30,
-  },
-  tab: {
-    paddingVertical: 5,
-    paddingHorizontal: 12,
-    borderRadius: 8,
     marginRight: 8,
-  },
-  activeTab: {
-    borderBottomWidth: 2,
-    borderBottomColor: "#6646ee",
-  },
-  activeTabText: {
-    color: "#6646ee",
-    fontWeight: "bold",
-  },
-  card: {
-    flexDirection: "row",
     backgroundColor: "#fff",
-    marginHorizontal: 15,
-    marginTop: 10,
-    borderRadius: 12,
-    padding: 10,
-    alignItems: "center",
-    elevation: 3,
+    height: 32,
+    justifyContent: "center",
   },
-  avatar: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
+  activeCategoryTab: {
+    backgroundColor: "#0E2A57"
   },
-  textContainer: {
-    flex: 1,
-    marginLeft: 12,
+  categoryText: {
+    color: "#000",
+    fontSize: 14
   },
-  name: {
+  activeCategoryText: {
+    color: "#fff",
+    fontWeight: "500"
+  },
+  sectionTitle: {
+    color: "#fff",
     fontSize: 16,
     fontWeight: "bold",
+    marginTop: 10, // Reduced from 20 to 10
+    marginBottom: 10,
+    marginLeft: 15
   },
-  role: {
-    fontSize: 14,
-    color: "#666",
+  listContainer: {
+    paddingBottom: 20
   },
-  rating: {
-    flexDirection: "row",
-    marginTop: 5,
+  card: { 
+    flexDirection: "row", 
+    marginHorizontal: 15, 
+    marginVertical: 5, 
+    borderRadius: 12, 
+    padding: 12, 
+    alignItems: "center", 
   },
+  avatar: { 
+    width: 44, 
+    height: 44, 
+    borderRadius: 22 
+  },
+  textContainer: { 
+    flex: 1, 
+    marginLeft: 12 
+  },
+  name: { 
+    fontSize: 15, 
+    fontWeight: "500",
+    color: "#fff"
+  },
+  role: { 
+    fontSize: 13, 
+    color: "#B5C7D8",
+    marginTop: 2
+  }
 });
 
 export default ConnectScreen;

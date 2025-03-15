@@ -14,6 +14,8 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from 'expo-linear-gradient';
+import Header_2 from "../components/Header_2";
+import { baseScreenStylesNew } from "../styles/baseStylesNew";
 
 const OrderRequestModal = ({ visible, onClose, selectedPerson }) => {
   const [additionalMessage, setAdditionalMessage] = useState("");
@@ -37,8 +39,8 @@ const OrderRequestModal = ({ visible, onClose, selectedPerson }) => {
         <View style={modalStyles.modalContent}>
           <LinearGradient
             colors={[
-              'rgba(67, 96, 114, 1)',
-              'rgba(7, 45, 68, 1)'
+              'rgb(3, 15, 79)',
+              'rgb(11, 10, 43)'
             ]}
             style={modalStyles.gradientBackground}
             start={{ x: 0, y: 0 }}
@@ -98,56 +100,56 @@ const FavoritesScreen = () => {
       id: "1",
       name: "Dulith Wanigarathne",
       role: "Cutter",
-      image: require("../assets/gems/BS001.png"),
+      image: require("../assets/seller.png"),
       type: "Cutter",
     },
     {
       id: "2",
       name: "Isum Hansaja Perera",
       role: "Cutter",
-      image: require("../assets/gems/BS001.png"),
+      image: require("../assets/seller.png"),
       type: "Cutter",
     },
     {
       id: "3",
       name: "Kavintha Dinushan",
       role: "Cutter",
-      image: require("../assets/gems/BS001.png"),
+      image: require("../assets/seller.png"),
       type: "Cutter",
     },
     {
       id: "4",
       name: "Nihal Hewarthna",
       role: "Cutter",
-      image: require("../assets/gems/BS001.png"),
+      image: require("../assets/seller.png"),
       type: "Cutter",
     },
     {
       id: "5",
       name: "Rajitha Perera",
       role: "Burner",
-      image: require("../assets/gems/BS001.png"),
+      image: require("../assets/seller.png"),
       type: "Burner",
     },
     {
       id: "6",
       name: "Tharushi Silva",
       role: "Burner",
-      image: require("../assets/gems/BS001.png"),
+      image: require("../assets/seller.png"),
       type: "Burner",
     },
     {
       id: "7",
       name: "Kasun Fernando",
       role: "Elec. Burner",
-      image: require("../assets/gems/BS001.png"),
+      image: require("../assets/seller.png"),
       type: "Elec. Burner",
     },
     {
       id: "8",
       name: "Sampath Kumara",
       role: "Elec. Burner",
-      image: require("../assets/gems/BS001.png"),
+      image: require("../assets/seller.png"),
       type: "Elec. Burner",
     },
   ];
@@ -209,68 +211,47 @@ const FavoritesScreen = () => {
     </TouchableOpacity>
   );
 
-  // Updated gradient colors to match the image
-  const gradientColors = [
-    'rgba(71, 113, 135, 1)',
-    'rgba(53, 92, 115, 1)',
-    'rgba(40, 78, 103, 1)',
-    'rgba(28, 65, 88, 1)',
-    'rgba(19, 54, 78, 1)'
-  ];
 
   return (
-    <View style={styles.container}>
-      <StatusBar barStyle="light-content" />
-      <LinearGradient
-        colors={gradientColors}
-        style={styles.gradient}
-      >
+    <View style={[baseScreenStylesNew.container, styles.container]}>
+      <Header_2 title ="Favourites"/>
         <SafeAreaView style={styles.safeArea}>
-          {/* Header with increased top margin */}
-          <View style={styles.header}>
-            <TouchableOpacity style={styles.backButton}>
-              <Ionicons name="chevron-back" size={24} color="white" />
-            </TouchableOpacity>
-            <Text style={styles.headerTitle}>Favourites</Text>
-            <View style={styles.placeholder} />
-          </View>
-
           {/* Search Bar */}
-          <View style={styles.search}>
+          <View style={baseScreenStylesNew.search}>
             <Ionicons
               name="search"
               size={20}
-              color="#828282"
-              style={styles.searchIcon}
+              color="#888"
+              style={baseScreenStylesNew.searchIcon}
             />
             <TextInput
-              style={styles.searchInput}
-              placeholder="Search"
-              placeholderTextColor="#828282"
+              style={baseScreenStylesNew.searchInput}
+              placeholder="Send order to?"
+              placeholderTextColor="#888"
               value={searchQuery}
               onChangeText={setSearchQuery}
             />
           </View>
 
           {/* Tab Bar */}
-          <View style={styles.tabBar}>
+          <View style={baseScreenStylesNew.tabBar}>
             {categories.map((category) => (
               <TouchableOpacity
                 key={category}
                 style={[
-                  styles.tabButton,
+                  baseScreenStylesNew.tabButton,
                   selectedCategory === category ? 
-                    styles.tabButtonActive : 
-                    styles.tabButtonInactive
+                    baseScreenStylesNew.tabButtonActive : 
+                    baseScreenStylesNew.tabButtonInactive
                 ]}
                 onPress={() => handleCategoryPress(category)}
               >
                 <Text 
                   style={[
-                    styles.tabText, 
+                    baseScreenStylesNew.tabText, 
                     selectedCategory === category ? 
-                      styles.tabTextActive : 
-                      styles.tabTextInactive
+                      baseScreenStylesNew.tabTextActive : 
+                      baseScreenStylesNew.tabTextInactive
                   ]}
                 >
                   {category}
@@ -290,8 +271,8 @@ const FavoritesScreen = () => {
 
           {/* Confirm Button with increased bottom margin for navbar */}
           <View style={styles.confirmButtonContainer}>
-            <TouchableOpacity style={styles.confirmButton} onPress={handleConfirm}>
-              <Text style={styles.confirmText}>Confirm</Text>
+            <TouchableOpacity style={baseScreenStylesNew.Button4} onPress={handleConfirm}>
+              <Text style={baseScreenStylesNew.buttonText}>Confirm</Text>
             </TouchableOpacity>
           </View>
 
@@ -304,7 +285,6 @@ const FavoritesScreen = () => {
             selectedPerson={selectedPerson}
           />
         </SafeAreaView>
-      </LinearGradient>
     </View>
   );
 };
@@ -319,76 +299,14 @@ const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
   },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    height: 50,
-    paddingHorizontal: 15,
-    backgroundColor: '#072D44',
-    marginTop: 10, // Added top margin to match the image
-  },
   backButton: {
     padding: 5,
   },
-  headerTitle: {
-    color: "#ffffff",
-    fontFamily: "Inter-Regular",
-    fontSize: 17,
-    fontWeight: "500",
-  },
+  
   placeholder: {
     width: 24,
   },
-  search: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#ffffff',
-    borderRadius: 12,
-    marginHorizontal: 20,
-    marginTop: 15,
-    marginBottom: 15,
-    paddingHorizontal: 15,
-    height: 40,
-  },
-  searchIcon: {
-    marginRight: 10,
-  },
-  searchInput: {
-    flex: 1,
-    height: 40,
-    fontSize: 16,
-    color: '#333',
-  },
-  tabBar: {
-    flexDirection: 'row',
-    paddingHorizontal: 20,
-    marginBottom: 15,
-  },
-  tabButton: {
-    borderRadius: 20,
-    paddingVertical: 8,
-    paddingHorizontal: 15,
-    marginRight: 10,
-    minWidth: 70,
-    alignItems: 'center',
-  },
-  tabButtonActive: {
-    backgroundColor: '#170969',
-  },
-  tabButtonInactive: {
-    backgroundColor: '#ffffff',
-  },
-  tabText: {
-    fontSize: 14,
-    fontWeight: '500',
-  },
-  tabTextActive: {
-    color: '#ffffff',
-  },
-  tabTextInactive: {
-    color: '#333333',
-  },
+  
   list: {
     flex: 1,
   },
@@ -397,72 +315,60 @@ const styles = StyleSheet.create({
     paddingBottom: 10,
   },
   favoriteItem: {
-    backgroundColor: 'rgba(172, 177, 183, 0.21)',
+    backgroundColor:'rgba(172, 168, 168, 0.21)',
     borderRadius: 15,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingVertical: 8,
     paddingHorizontal: 15,
-    marginBottom: 10,
-    height: 72,
+    marginBottom: 16,
+    height: 80,
   },
   favoriteContent: {
     flexDirection: 'row',
     alignItems: 'center',
   },
   profileImage: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
+    width: 61,
+    height: 56,
+    borderRadius: 32,
     marginRight: 15,
   },
   textContainer: {
     justifyContent: 'center',
   },
   name: {
-    color: '#ffffff',
+    color: '#000',
     fontFamily: "Inter-Medium",
     fontSize: 14,
-    fontWeight: '500',
+    fontWeight: 'bold',
     marginBottom: 3,
   },
   role: {
-    color: '#ffffff',
+    color: '#000',
     fontFamily: "Inter-Medium",
     fontSize: 14,
-    fontWeight: '500',
+    fontWeight: 'bold',
     opacity: 0.8,
   },
   checkbox: {
-    width: 30,
-    height: 30,
-    borderRadius: 15,
-    backgroundColor: 'rgba(23, 9, 105, 0.6)',
+    width: 40,
+    height: 40,
+    borderRadius: 25,
+    backgroundColor: 'rgba(112, 181, 223, 0.45)',
     alignItems: 'center',
     justifyContent: 'center',
   },
   checkboxSelected: {
-    backgroundColor: '#170969',
+    backgroundColor: '#70B5DF',
   },
   confirmButtonContainer: {
     paddingHorizontal: 20,
     paddingBottom: 70, // Increased bottom padding to make space for the navigation bar
     marginTop: 10,
   },
-  confirmButton: {
-    backgroundColor: '#7daab8',
-    borderRadius: 8,
-    height: 40,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  confirmText: {
-    color: '#170969',
-    fontFamily: "Inter-Medium",
-    fontSize: 14,
-    fontWeight: '500',
-  },
+
 });
 
 const modalStyles = StyleSheet.create({
@@ -529,11 +435,13 @@ const modalStyles = StyleSheet.create({
     alignItems: "center",
   },
   cancelButton: {
-    backgroundColor: "#FF3B30",
+    backgroundColor: 'rgba(172, 168, 168, 0.21)',
     marginRight: 8,
+    borderWidth:2,
+    borderColor: 'rgba(172, 168, 168, 0.21)'
   },
   sendButton: {
-    backgroundColor: "#34C759",
+    backgroundColor: "#02457A",
     marginLeft: 8,
   },
   buttonText: {

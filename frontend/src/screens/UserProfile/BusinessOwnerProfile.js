@@ -1,18 +1,22 @@
 //Screen creator: Isum
 
 import React, { useState, useEffect } from "react";
-import { SafeAreaView, View, Text, Image, TouchableOpacity, StyleSheet } from "react-native";
+import { SafeAreaView, View, Text, Image, TouchableOpacity, StyleSheet, Pressable } from "react-native";
 import axios from "axios";
-import { Ionicons, FontAwesome5 } from '@expo/vector-icons';
-import { baseScreenStyles } from "../../styles/baseStyles";
-import GradientContainer from "../../components/GradientContainer";
+import { Ionicons } from "@expo/vector-icons";
+import { MaterialIcons } from '@expo/vector-icons';
+import { baseScreenStylesNew } from "../../styles/baseStylesNew";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { API_URL, ENDPOINTS } from '../../config/api'; 
 import HeaderBar from "../../components/HeaderBar";
+import { useNavigation } from '@react-navigation/native';
 
-const BusinessOwnerProfile = ({ navigation, route }) => {
+const BusinessOwnerProfile = ({ route }) => {
   //state holds user data
   const [user, setUser] = useState(null);
+  const [menuVisible, setMenuVisible] = useState(false);
+  
+  const navigation = useNavigation();
 
   async function getCurrentUser() {
     
@@ -55,46 +59,78 @@ const BusinessOwnerProfile = ({ navigation, route }) => {
     return <Text>Loading...</Text>;
   }
 
+  const toggleMenu = () => {
+    setMenuVisible(!menuVisible);
+  };
+
+  const navigateToEditProfile = () => {
+    setMenuVisible(false);
+    navigation.navigate("BusinessOwnerEditProfile", { user });
+  };
+
 
   return (
-    <GradientContainer>
-    <SafeAreaView style={[baseScreenStyles.container, styles.container]}>
+    <SafeAreaView style={[baseScreenStylesNew.container, styles.container]}>
       {/*Handling profile pic and edit button*/}
       <HeaderBar 
         title="Profile" 
+        rightComponent={
+          <Pressable onPress={toggleMenu}>
+            <MaterialIcons name="settings" size={28} color="black" />
+          </Pressable>
+        }
       />
-      <View style={styles.profileContainer}>
-        <Image source={{ uri: user.image }} style={styles.profilePic} />
-        <TouchableOpacity style={styles.editProfileButton} onPress={() => navigation.navigate("BusinessOwnerEditProfile", { user })}>
-          <Text style={styles.editProfileButtonText}>Edit Profile</Text>
-        </TouchableOpacity>
+      {menuVisible && (
+        <View style={styles.dropdownMenu}>
+          <TouchableOpacity style={styles.menuItem} onPress={navigateToEditProfile}>
+            <Text>Edit Profile</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.menuItem} onPress={navigateToEditProfile}>
+            <Text>Help Center</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.menuItem} onPress={navigateToEditProfile}>
+            <Text>Logout</Text>
+          </TouchableOpacity>
+        </View>
+      )}
+
+      <Image source={{ uri: user.image }} style={styles.profilePic} />
+      <View  style={styles.nameContainer}>
+          <Text style={[styles.nameText, baseScreenStylesNew.blackText]}>{user.firstName} {user.lastName}</Text>
       </View>
 
       {/*displaying information*/}
       <View style={styles.info}>
-        <View style={styles.infoContainer}>
-          <Text style={styles.label}>NAME</Text>
-          <Text style={styles.infoText}>{user.firstName} {user.lastName}</Text>
+        <View style={[baseScreenStylesNew.Button7, styles.infoContainer]}>
+          <View style={styles.iconLabelContainer}>
+            <Ionicons name="mail" size={22} style={baseScreenStylesNew.themeText}/>
+            <Text style={[styles.label, baseScreenStylesNew.blackText]}>Email</Text>
+          </View>
+          <Text style={[styles.infoText, baseScreenStylesNew.blackText]}>{user.email}</Text>
         </View>
-        <View style={styles.infoContainer}>
-          <Text style={styles.label}>EMAIL</Text>
-          <Text style={styles.infoText}>{user.email}</Text>
+        <View style={[baseScreenStylesNew.Button7, styles.infoContainer]}>
+          <View style={styles.iconLabelContainer}>
+            <Ionicons name="call" size={22} style={baseScreenStylesNew.themeText} />
+            <Text style={[styles.label, baseScreenStylesNew.blackText]}>Contact No</Text>
+          </View>
+          <Text style={[styles.infoText, baseScreenStylesNew.blackText]}>{user.phone}</Text>
         </View>
-        <View style={styles.infoContainer}>
-          <Text style={styles.label}>Contact No</Text>
-          <Text style={styles.infoText}>{user.phone}</Text>
+        <View style={[baseScreenStylesNew.Button7, styles.infoContainer]}>
+          <View style={styles.iconLabelContainer}>
+            <Ionicons name="person" size={22} style={baseScreenStylesNew.themeText} />
+            <Text style={[styles.label, baseScreenStylesNew.blackText]}>Title</Text>
+          </View>
+          <Text style={[styles.infoText, baseScreenStylesNew.blackText]}>{user.role}</Text>
         </View>
-        <View style={styles.infoContainer}>
-          <Text style={styles.label}>TITLE</Text>
-          <Text style={styles.infoText}>{user.role}</Text>
-        </View>
-        <View style={styles.infoContainer}>
-          <Text style={styles.label}>Address</Text>
-          <Text style={styles.infoText}>{user.address}</Text>
+        <View style={[baseScreenStylesNew.Button7, styles.infoContainer]}>
+          <View style={styles.iconLabelContainer}>
+            <Ionicons name="location" size={22} style={baseScreenStylesNew.themeText} />
+            <Text style={[styles.label, baseScreenStylesNew.blackText]}>Address</Text>
+          </View>
+          <Text style={[styles.infoText, baseScreenStylesNew.blackText]}>{user.address}</Text>
         </View>
       </View>
     </SafeAreaView>
-    </GradientContainer>
   );
 };
 
@@ -103,13 +139,12 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   profileContainer: {
-    backgroundColor: '#4C697E',
     padding: 20,
     alignItems: 'center',
     borderBottomWidth: 1,
     borderBottomColor: '#e0e0e0',
     marginTop: 20,
-    marginHorizontal: 16,
+    marginHorizontal: 80,
     borderRadius: 12,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
@@ -121,7 +156,9 @@ const styles = StyleSheet.create({
     width: 120,
     height: 120,
     borderRadius: 60,
-    marginBottom: 15,
+    marginBottom: 6,
+    marginTop: 30,
+    marginLeft: 140,
   },
   editProfileButton: {
     backgroundColor: "#29abe2",
@@ -138,27 +175,52 @@ const styles = StyleSheet.create({
     marginTop: 20,
     marginHorizontal: 16,
   },
-  infoContainer: {
-    backgroundColor: '#4C697E',
-    paddingVertical: 15,
-    paddingHorizontal: 20,
-    borderRadius: 12,
+  nameContainer: {
+    paddingHorizontal: 150,
     marginBottom: 10,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3
+  },
+  nameText: {
+    fontSize: 17,
+    fontWeight: "bold"
+  },
+  infoContainer: {
+    paddingVertical: 15,
+    paddingHorizontal: 3,
+    marginBottom: 8,
+    gap: 7,
   },
   label: {
-    fontSize: 14,
-    fontWeight: '600',
+    fontSize: 16,
+    fontWeight: 'bold',
     color: '#000',
     marginBottom: 5,
   },
   infoText: {
     fontSize: 16,
-    color: '#fff',
+    color: '#000',
+  },
+  dropdownMenu: {
+    position: 'absolute',
+    top: 46,
+    right: 16,
+    backgroundColor: 'white',
+    borderRadius: 5,
+    paddingVertical: 5,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+    zIndex: 2,  // Add a higher zIndex
+  },
+  iconLabelContainer: {
+    flexDirection: 'row',
+    gap: 12,
+  },
+  menuItem: {
+    paddingHorizontal: 15,
+    paddingVertical: 10,
+    alignItems: 'flex-start',
   },
 });
 

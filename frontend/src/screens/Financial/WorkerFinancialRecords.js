@@ -146,20 +146,22 @@ const WorkerFinancialRecords = ({ navigation }) => {
 
   // Period selector buttons
   const PeriodSelector = () => (
-    <View style={styles.periodSelectorContainer}>
+    <View style={baseScreenStylesNew.tabBar}>
       {["daily", "weekly", "monthly", "yearly", "alltime"].map((period) => (
         <TouchableOpacity
           key={period}
           style={[
-            styles.periodButton,
-            selectedPeriod === period && styles.selectedPeriodButton
+            baseScreenStylesNew.tabButton,
+            selectedPeriod === period ? baseScreenStylesNew.tabButtonActive : baseScreenStylesNew.tabButtonInactive
           ]}
           onPress={() => fetchFinancialData(period)}
         >
           <Text 
             style={[
-              styles.periodButtonText,
-              selectedPeriod === period && styles.selectedPeriodText
+              baseScreenStylesNew.tabText,
+              selectedPeriod === period 
+                ? baseScreenStylesNew.tabTextActive 
+                : baseScreenStylesNew.tabTextInactive
             ]}
           >
             {period.charAt(0).toUpperCase() + period.slice(1)}
@@ -227,7 +229,6 @@ const WorkerFinancialRecords = ({ navigation }) => {
       />
       
       <ScrollView
-        contentContainerStyle={styles.scrollViewContent}
         showsVerticalScrollIndicator={false}
         refreshControl={
           <RefreshControl
@@ -269,44 +270,44 @@ const WorkerFinancialRecords = ({ navigation }) => {
           
           {/* Revenue section */}
           <View style={styles.sectionContainer}>
-            <Text style={styles.sectionTitle}>Revenue</Text>
+            <Text style={[styles.sectionTitle, baseScreenStylesNew.blackText]}>Revenue</Text>
             <View style={styles.recordList}>
-              <View style={styles.recordItem}>
-                <Text style={styles.recordText}>Total Orders</Text>
-                <Text style={styles.recordText}>{dataToShow.orderCount || 0}</Text>
+              <View style={[styles.recordItem, baseScreenStylesNew.item]}>
+                <Text style={[styles.recordText, baseScreenStylesNew.blackText]}>Total Orders</Text>
+                <Text style={[styles.recordText, baseScreenStylesNew.blackText]}>{dataToShow.orderCount || 0}</Text>
               </View>
             </View>
             <View style={styles.recordList}>
-              <View style={styles.recordItem}>
-                <Text style={styles.recordText}>Revenue from Orders</Text>
-                <Text style={styles.recordText}>{formatCurrency(totalRevenue)}</Text>
+              <View style={[styles.recordItem, baseScreenStylesNew.item]}>
+                <Text style={[styles.recordText, baseScreenStylesNew.blackText]}>Revenue from Orders</Text>
+                <Text style={[styles.recordText, baseScreenStylesNew.blackText]}>{formatCurrency(totalRevenue)}</Text>
               </View>
             </View>
           </View>
           
           {/* Expenses section - Different for cutter vs burner */}
           <View style={styles.sectionContainer}>
-            <Text style={styles.sectionTitle}>Expenses</Text>
+            <Text style={[styles.sectionTitle, baseScreenStylesNew.blackText]}>Expenses</Text>
             
             {workerType === "cutter" ? (
               // Cutter-specific expenses
               <>
                 <View style={styles.recordList}>
-                  <View style={styles.recordItem}>
-                    <Text style={styles.recordText}>Tool Maintenance</Text>
-                    <Text style={styles.recordText}>{formatCurrency(dataToShow.toolCosts || 0)}</Text>
+                  <View style={[styles.recordItem, baseScreenStylesNew.item]}>
+                    <Text style={[styles.recordText, baseScreenStylesNew.blackText]}>Tool Maintenance</Text>
+                    <Text style={[styles.recordText, baseScreenStylesNew.blackText]}>{formatCurrency(dataToShow.toolCosts || 0)}</Text>
                   </View>
                 </View>
                 <View style={styles.recordList}>
-                  <View style={styles.recordItem}>
-                    <Text style={styles.recordText}>Equipment Wear</Text>
-                    <Text style={styles.recordText}>{formatCurrency(dataToShow.equipmentCosts || 0)}</Text>
+                  <View style={[styles.recordItem, baseScreenStylesNew.item]}>
+                    <Text style={[styles.recordText, baseScreenStylesNew.blackText]}>Equipment Wear</Text>
+                    <Text style={[styles.recordText, baseScreenStylesNew.blackText]}>{formatCurrency(dataToShow.equipmentCosts || 0)}</Text>
                   </View>
                 </View>
                 <View style={styles.recordList}>
-                  <View style={styles.recordItem}>
-                    <Text style={styles.recordText}>Other Expenses</Text>
-                    <Text style={styles.recordText}>{formatCurrency(dataToShow.otherCosts || 0)}</Text>
+                  <View style={[styles.recordItem, baseScreenStylesNew.item]}>
+                    <Text style={[styles.recordText, baseScreenStylesNew.blackText]}>Other Expenses</Text>
+                    <Text style={[styles.recordText, baseScreenStylesNew.blackText]}>{formatCurrency(dataToShow.otherCosts || 0)}</Text>
                   </View>
                 </View>
               </>
@@ -314,21 +315,21 @@ const WorkerFinancialRecords = ({ navigation }) => {
               // Burner-specific expenses
               <>
                 <View style={styles.recordList}>
-                  <View style={styles.recordItem}>
-                    <Text style={styles.recordText}>Gas/Fuel Costs</Text>
-                    <Text style={styles.recordText}>{formatCurrency(dataToShow.fuelCosts || 0)}</Text>
+                  <View style={[styles.recordItem, baseScreenStylesNew.item]}>
+                    <Text style={[styles.recordText, baseScreenStylesNew.blackText]}>Gas/Fuel Costs</Text>
+                    <Text style={[styles.recordText, baseScreenStylesNew.blackText]}>{formatCurrency(dataToShow.fuelCosts || 0)}</Text>
                   </View>
                 </View>
                 <View style={styles.recordList}>
-                  <View style={styles.recordItem}>
-                    <Text style={styles.recordText}>Equipment Maintenance</Text>
-                    <Text style={styles.recordText}>{formatCurrency(dataToShow.maintenanceCosts || 0)}</Text>
+                  <View style={[styles.recordItem, baseScreenStylesNew.item]}>
+                    <Text style={[styles.recordText, baseScreenStylesNew.blackText]}>Equipment Maintenance</Text>
+                    <Text style={[styles.recordText, baseScreenStylesNew.blackText]}>{formatCurrency(dataToShow.maintenanceCosts || 0)}</Text>
                   </View>
                 </View>
                 <View style={styles.recordList}>
-                  <View style={styles.recordItem}>
-                    <Text style={styles.recordText}>Other Expenses</Text>
-                    <Text style={styles.recordText}>{formatCurrency(dataToShow.otherCosts || 0)}</Text>
+                  <View style={[styles.recordItem, baseScreenStylesNew.item]}>
+                    <Text style={[styles.recordText, baseScreenStylesNew.blackText]}>Other Expenses</Text>
+                    <Text style={[styles.recordText, baseScreenStylesNew.blackText]}>{formatCurrency(dataToShow.otherCosts || 0)}</Text>
                   </View>
                 </View>
               </>
@@ -336,14 +337,14 @@ const WorkerFinancialRecords = ({ navigation }) => {
             
             {/* Total expenses row */}
             <View style={[styles.recordItem, styles.lastRecordItem]}>
-              <Text style={styles.lastRecordText}>Total Expenses</Text>
-              <Text style={styles.lastRecordText}>{formatCurrency(totalCosts)}</Text>
+              <Text style={[styles.lastRecordText, baseScreenStylesNew.blackText]}>Total Expenses</Text>
+              <Text style={[styles.lastRecordText, baseScreenStylesNew.blackText]}>{formatCurrency(totalCosts)}</Text>
             </View>
           </View>
           
           {/* Order stats section */}
-          <View style={styles.statsContainer}>
-            <Text style={styles.statsTitle}>Order Statistics</Text>
+          <View style={[styles.statsContainer, baseScreenStylesNew.justBox]}>
+            <Text style={[styles.statsTitle, baseScreenStylesNew.themeText]}>Order Statistics</Text>
             <View style={styles.statsRow}>
               <Text style={styles.statsLabel}>Completed Orders:</Text>
               <Text style={styles.statsValue}>{dataToShow.completedOrders || 0}</Text>
@@ -363,10 +364,10 @@ const WorkerFinancialRecords = ({ navigation }) => {
           </View>
           
           {/* Efficiency metrics */}
-          <View style={styles.efficiencyContainer}>
-            <Text style={styles.efficiencyTitle}>Efficiency Metrics</Text>
+          <View style={[styles.efficiencyContainer, baseScreenStylesNew.justBox]}>
+            <Text style={[styles.efficiencyTitle, baseScreenStylesNew.themeText]}>Efficiency Metrics</Text>
             <View style={styles.progressBarContainer}>
-              <Text style={styles.progressLabel}>Profit Margin</Text>
+              <Text style={[styles.progressLabel, baseScreenStylesNew.blackText]}>Profit Margin</Text>
               <View style={styles.progressBarBackground}>
                 <View 
                   style={[
@@ -418,11 +419,9 @@ const getMarginColor = (netProfit, totalRevenue) => {
 };
 
 const styles = StyleSheet.create({
-  scrollViewContent: {
-    flexGrow: 1,
-  },
+  
   container: {
-    padding: 20,
+    padding: 15,
     paddingBottom: 80, // Add padding at bottom for navbar
   },
   periodSelectorContainer: {
@@ -566,13 +565,13 @@ const styles = StyleSheet.create({
     padding: 15,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: "#eee",
+    borderColor: "#e0e0e0",
   },
   statsTitle: {
     fontSize: 16,
     fontWeight: "bold",
     marginBottom: 10,
-    color: "#333",
+    color: "#000",
   },
   statsRow: {
     flexDirection: "row",
@@ -580,11 +579,11 @@ const styles = StyleSheet.create({
     paddingVertical: 5,
   },
   statsLabel: {
-    color: "#555",
+    color: "#000",
   },
   statsValue: {
     fontWeight: "bold",
-    color: "#333",
+    color: "#000",
   },
   efficiencyContainer: {
     marginBottom: 20,
@@ -598,14 +597,14 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "bold",
     marginBottom: 15,
-    color: "#333",
+    color: "#000",
   },
   progressBarContainer: {
     marginBottom: 15,
   },
   progressLabel: {
     marginBottom: 5,
-    color: "#555",
+    color: "#000",
     fontSize: 14,
   },
   progressBarBackground: {
@@ -621,7 +620,8 @@ const styles = StyleSheet.create({
   progressValue: {
     textAlign: "right",
     fontSize: 12,
-    color: "#666",
+    color: "#000",
+    fontWeight: "bold"
   },
   greenProgress: {
     backgroundColor: "#4CAF50", // Green

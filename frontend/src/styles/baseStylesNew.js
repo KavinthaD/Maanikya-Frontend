@@ -101,6 +101,14 @@ export const baseScreenStylesNew = StyleSheet.create({
     justifyContent: "center",
     marginTop: 8
   },
+  Button6: {     ///used in edit profile
+    borderBottomColor: "#170969",
+    borderBottomWidth: 2
+  },
+  Button7: {     ///used in user profile
+    borderBottomColor: "#888",
+    borderBottomWidth: 2
+  },
   cancelButton: {
     backgroundColor: 'rgba(172, 168, 168, 0.21)',
     borderWidth:2,
@@ -172,15 +180,15 @@ export const baseScreenStylesNew = StyleSheet.create({
   // -------------- Tabs ------------------
   tabBar: {
     flexDirection: 'row',
-    paddingHorizontal: 20,
+    paddingHorizontal: 12,
     marginBottom: 30,
     marginTop: 15
   },
   tabButton: {
     borderRadius: 13,
     paddingVertical: 8,
-    paddingHorizontal: 15,
-    marginRight: 10,
+    paddingHorizontal: 12,
+    marginRight: 5,
     minWidth: 70,
     alignItems: 'center',
   },

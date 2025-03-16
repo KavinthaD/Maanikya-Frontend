@@ -7,9 +7,8 @@ import { Ionicons} from "@expo/vector-icons";
 import ImageCropPicker from "react-native-image-crop-picker";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { API_URL, ENDPOINTS } from '../../config/api'; 
-import GradientContainer from "../../components/GradientContainer";
 import HeaderBar from "../../components/HeaderBar";
-import { baseScreenStyles } from "../../styles/baseStyles";
+import { baseScreenStylesNew } from "../../styles/baseStylesNew";
 
 const BusinessOwnerEditProfile = ({ navigation, route }) => {
   //Destructuring the user data if available, other wise display null
@@ -166,13 +165,13 @@ const BusinessOwnerEditProfile = ({ navigation, route }) => {
   };
 
   return (
-    <GradientContainer>
+    <View style={baseScreenStylesNew.container}>
       <HeaderBar 
         title="Edit Profile" 
         navigation={navigation} 
         showBack={true} 
       />
-    <SafeAreaView style={styles.container}>
+
       
       <KeyboardAvoidingView 
           behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -192,51 +191,52 @@ const BusinessOwnerEditProfile = ({ navigation, route }) => {
           />
           {/*edit photo button*/}
           <TouchableOpacity style={styles.editPhotoBtn} onPress={handleCameraPress}>
-            <Ionicons name="pencil" size={20} color ="#0a3a5d" />
+            <Ionicons name="camera" size={22} color ="#0a3a5d" />
           </TouchableOpacity>
         </View>
         {/*edit fields*/}    
         <View style={styles.inputContainer}>
-          <Text style={styles.label}>First NAME</Text>
+          <Text style={[styles.label, baseScreenStylesNew.blackText]}>First name</Text>
           <TextInput
-            style={styles.input}
+            style={[baseScreenStylesNew.themeText, baseScreenStylesNew.Button6, styles.input]}
             value={firstName} 
             onChangeText={setFirstName}
             placeholderTextColor="#777"
           />
 
-          <Text style={styles.label}>Last NAME</Text>
+          <Text style={[styles.label, baseScreenStylesNew.blackText]}>Last name</Text>
           <TextInput
-            style={styles.input}
+            style={[baseScreenStylesNew.themeText, baseScreenStylesNew.Button6, styles.input]}
             value={lastName}
             onChangeText={setLastName}
             placeholderTextColor="#777"
           />
 
-          <Text style={styles.label}>EMAIL</Text>
+          <Text style={[styles.label, baseScreenStylesNew.blackText]}>Email</Text>
           <TextInput
-            style={styles.input}
+            style={[baseScreenStylesNew.themeText, baseScreenStylesNew.Button6, styles.input]}
             value={email}
             onChangeText={setEmail}
             keyboardType="email-address"
             placeholderTextColor="#777"
           />
 
-          <Text style={styles.label}>Contact No</Text>
+          <Text style={[styles.label, baseScreenStylesNew.blackText]}>Contact no</Text>
           <TextInput
-            style={styles.input}
+            style={[baseScreenStylesNew.themeText, baseScreenStylesNew.Button6, styles.input]}
             value={contact}
             onChangeText={setContact}
             keyboardType="phone-pad"
             placeholderTextColor="#777"
           />
 
-          <Text style={styles.label}>TITLE</Text>
-          <TextInput style={styles.input} value={title} onChangeText={setTitle} />
+          <Text style={[styles.label, baseScreenStylesNew.blackText]}>Title</Text>
+          <TextInput style={[baseScreenStylesNew.themeText, baseScreenStylesNew.Button6, styles.input]}
+           value={title} onChangeText={setTitle} />
 
-          <Text style={styles.label}>Address</Text>
+          <Text style={[styles.label, baseScreenStylesNew.blackText]}>Address</Text>
           <TextInput
-            style={[styles.input, styles.textArea]}
+            style={[baseScreenStylesNew.themeText, baseScreenStylesNew.Button6, styles.input]}
             value={address}
             onChangeText={setAddress}
             multiline
@@ -244,7 +244,7 @@ const BusinessOwnerEditProfile = ({ navigation, route }) => {
           />
         </View>
         {/*save button*/}    
-        <TouchableOpacity style={styles.saveBtn} onPress={handleSave}>
+        <TouchableOpacity style={[baseScreenStylesNew.Button1,styles.saveBtn]} onPress={handleSave}>
           <Text style={styles.saveBtnText}>Save</Text>
         </TouchableOpacity>
         </ScrollView>
@@ -272,17 +272,11 @@ const BusinessOwnerEditProfile = ({ navigation, route }) => {
         </Modal>
         
       </KeyboardAvoidingView>  
-    </SafeAreaView>
-    </GradientContainer>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    margin:0,
-    padding:0,
-  },
 
   profileContainer: {
     alignItems: "center",
@@ -295,8 +289,8 @@ const styles = StyleSheet.create({
   },
   editPhotoBtn: {
     position: "absolute",
-    bottom: 10,
-    right: 120,
+    bottom: 0,
+    right: 150,
     backgroundColor: "#dbe9fa",
     borderRadius: 15,
     padding: 5,
@@ -309,34 +303,26 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   label: {
-    fontSize: 14,
+    fontSize: 15,
     fontWeight: "bold",
     color: "#333",
     marginTop: 15,
     marginBottom: 3,
   },
   input: {
-    backgroundColor: "#4C697E",
-    paddingVertical: 10,
-    paddingHorizontal: 12,
-    borderRadius: 8,
-    marginTop: 5,
+    paddingVertical: 6,
+    paddingHorizontal: 2,
     fontSize: 16,
-    color: "#fff", 
-    borderWidth: 1,
-    borderColor: "#ccc",
   },
   textArea: {
     height: 80,
     textAlignVertical: "top",
   },
   saveBtn: {
-    backgroundColor: "#29abe2",
-    padding: 12,
     borderRadius: 8,
-    alignItems: "center",
-    marginHorizontal: 20,
-    marginTop: 25,
+    marginHorizontal: 40,
+    width: "80%",
+    marginTop: 85,
     marginBottom:20
   },
   saveBtnText: {

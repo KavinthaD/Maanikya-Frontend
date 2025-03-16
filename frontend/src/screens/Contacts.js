@@ -202,7 +202,7 @@ const Contacts = ({ navigation }) => {
     return (
       <TouchableOpacity 
         style={styles.contactCard}
-        onPress={() => navigation.navigate("ConnectedUsers", { contactId: item.id })}
+        onPress={() => navigation.navigate("ContactProfiles", { contactId: item.id })}
       >
         <Image source={avatarSource} style={styles.avatar} />
         <View style={styles.contactInfo}>

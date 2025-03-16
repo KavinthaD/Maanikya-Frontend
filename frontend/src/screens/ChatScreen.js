@@ -222,7 +222,7 @@ const sendMessage = async () => {
   const renderHeader = () => (
     <TouchableOpacity
       style={styles.headerContainer}
-      onPress={() => navigation.navigate('ConnectedUsers', { contactId })}
+      onPress={() => navigation.navigate('ContactProfiles', { contactId })}
     >
       <Image
         source={

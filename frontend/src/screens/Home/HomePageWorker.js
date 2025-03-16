@@ -22,11 +22,19 @@ import { BarCodeScanner } from 'expo-barcode-scanner';
 
 
 const MenuItem = ({ image, title, onPress }) => (
-  <TouchableOpacity style={styles.menuItem} onPress={onPress}>
+  <TouchableOpacity 
+    style={styles.menuItem} 
+    onPress={onPress}
+    activeOpacity={0.7} // Added feedback when pressed
+  >
     <View style={styles.iconContainer}>
-      <Image source={image} style={styles.imageStyle} resizeMode="contain" />
+      <Image 
+        source={image} 
+        style={styles.imageStyle} 
+        resizeMode="contain"
+      />
+      <Text style={styles.menuText}>{title}</Text>
     </View>
-    <Text style={styles.menuText}>{title}</Text>
   </TouchableOpacity>
 );
 
@@ -109,6 +117,10 @@ const HomeScreen = () => {
     {
       image: require("../../assets/menu-icons/2.png"),
       onPress: handleQrScan,
+    },
+    {
+      image: require("../../assets/menu-icons/chat.jpeg"),
+      screen: "MessageInbox",
     },
   ];
 
@@ -212,32 +224,33 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
   menuGrid: {
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: 'flex-start',
-    rowGap: 40,
-    marginTop: 37,
+    flexDirection: "row",           // Changed from "column" to "row"
+    justifyContent: "space-between", // Added to space items evenly
+    flexWrap: "wrap",               // Added to wrap items to next row
+    rowGap: 16,                     // Adjusted from 40
+    columnGap: 16,                  // Added column gap
+    marginTop: 20,                  // Adjusted from 37
     paddingBottom: 20,
   },
   menuItem: {
-    width: "80%",
-    alignItems: "center",
+    width: "47%",                   // Changed from "80%" to "47%"
+    aspectRatio: 1,                 // Changed from 2.5 to 1 (square)
     borderRadius: 20,
-    paddingVertical: 25,
-    paddingHorizontal: 15,
-    aspectRatio: 2.5,
-    marginBottom: 16,
+    overflow: "hidden",             // Added to clip content at borders
+    marginBottom: 0,                // Removed marginBottom (using rowGap instead)
   },
   iconContainer: {
+    flex: 1,                        // Changed to use flex
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: 12,
-    height: 100,
-    width: "100%",
+    width: "100%",                  // Added full width
+    marginBottom: 0,                // Removed bottom margin
   },
   imageStyle: {
-    width: "100%",
-    height: 150,
+    width: "100%",                  // Changed to full width
+    height: "100%",                 // Changed to full height
+    aspectRatio: 1,                 // Added to maintain aspect ratio
+    borderRadius: 15,               // Added border radius
     resizeMode: "contain",
   },
   menuText: {
@@ -246,6 +259,9 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontWeight: "500",
     marginTop: 5,
+    position: "absolute",           // Added to position text at bottom
+    bottom: 10,                     // Added to position text at bottom
+    width: "100%",                  // Added full width for text
   },
   modal: {
     justifyContent: "flex-end",

@@ -15,7 +15,7 @@ import SignUpScreenCustomer from "./src/screens/Auth/SignUpCustomer";
 import GemstoneMarketplace from "./src/screens/Market";
 import OwnerFinancialRecords from "./src/screens/Financial/ownerFinancialRecords";
 import GemOnDisplay from "./src/screens/GemOnDisplay";
-//import ConnectedUsers from "./src/screens/ContactProfiles";
+import ContactProfiles from "./src/screens/ContactProfiles";
 import Orders from "./src/screens/Order/Orders";
 import Login from "./src/screens/Auth/Login";
 import SignUpBusiness from "./src/screens/Auth/SignUpBusiness";
@@ -76,6 +76,7 @@ const App = () => {
             <Stack.Screen name="BusinessOwnerProfile" component={BusinessOwnerProfile} options={{ headerShown: false }} />
             <Stack.Screen name="C_NavBar" component={C_NavBar} options={{ headerShown: false }} />
             <Stack.Screen name="CompletedTrackerScreen" component={NotificationScreen} options={{ headerShown: false }} />
+            <Stack.Screen name="ContactProfiles" component={ContactProfiles} options={{ headerShown: false }} />
             <Stack.Screen name="ChatScreen" component={ChatScreen} options={{ headerShown: false }} />
             <Stack.Screen name="Contacts" component={Contacts} options={{ headerShown: false }} />
             <Stack.Screen name="Customeraddseller" component={Customeraddseller} options={{ headerShown: false }} />

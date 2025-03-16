@@ -14,12 +14,11 @@ import {
 import * as MediaLibrary from "expo-media-library";
 import * as FileSystem from "expo-file-system";
 import * as Sharing from "expo-sharing";
-import { baseScreenStyles } from "../../styles/baseStyles";
+import { baseScreenStylesNew } from "../../styles/baseStylesNew";
 import QRCode from "react-native-qrcode-svg";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import ViewShot from "react-native-view-shot";
 import { BackHandler } from "react-native";
-import GradientContainer from "../../components/GradientContainer";
 import Header_1 from "../../components/Header_1";
 
 export default function Gem_register_3() {
@@ -172,9 +171,8 @@ export default function Gem_register_3() {
   };
 
   return (
-    <GradientContainer>
+    <View style={[baseScreenStylesNew.backgroundColor,baseScreenStylesNew.container]}>
       <Header_1 title="Add gem success" />
-      <View style={baseScreenStyles.container}>
         <View style={styles.innerContainer}>
           <ViewShot
             ref={qrContainerRef}
@@ -204,49 +202,47 @@ export default function Gem_register_3() {
             </View>
           </ViewShot>
           <View>
-            <Text style={baseScreenStyles.helperText}>
+            <Text style={baseScreenStylesNew.helperText}>
               Gem Registered Successfully! QR code is generated
             </Text>
           </View>
           <View style={styles.infoContainer}>
-            <View style={styles.infoBox}>
-              <Text style={styles.infoText}>ID - {gemId || "Loading..."}</Text>
+            <View style={[styles.infoBox, baseScreenStylesNew.item]}>
+              <Text style={[styles.infoText, baseScreenStylesNew.blackText]}>ID - {gemId || "Loading..."}</Text>
             </View>
-            <View style={styles.infoBox}>
-              <Text style={styles.infoText}>
+            <View style={[styles.infoBox, baseScreenStylesNew.item]}>
+              <Text style={[styles.infoText, baseScreenStylesNew.blackText]}>
                 Registered date: {formatDate(createdAt)}
               </Text>
             </View>
           </View>
           <View style={styles.buttonContainer}>
             <TouchableOpacity
-              style={baseScreenStyles.Button3}
+              style={baseScreenStylesNew.Button5}
               onPress={handleHome}
             >
-              <Text style={baseScreenStyles.buttonText}>Go Back Home</Text>
+              <Text style={baseScreenStylesNew.buttonText5}>Go Back Home</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
-              style={baseScreenStyles.Button2}
+              style={baseScreenStylesNew.Button1}
               onPress={handleShare}
             >
-              <Text style={baseScreenStyles.buttonText}>Share QR code</Text>
+              <Text style={baseScreenStylesNew.buttonText}>Share QR code</Text>
             </TouchableOpacity>
             <TouchableOpacity
-              style={[baseScreenStyles.Button1, styles.blueButton]}
+              style={baseScreenStylesNew.Button5}
               onPress={handleSaveToDevice}
             >
-              <Text style={baseScreenStyles.buttonText}>Save to device</Text>
+              <Text style={baseScreenStylesNew.buttonText5}>Save to device</Text>
             </TouchableOpacity>
           </View>
         </View>
       </View>
-    </GradientContainer>
   );
 }
 
 const styles = StyleSheet.create({
-  blueButton: {},
   innerContainer: {
     padding: 20,
     alignItems: "center",
@@ -278,7 +274,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   infoText: {
-    color: "#072D44",
     fontSize: 16,
   },
   buttonContainer: {

@@ -15,6 +15,7 @@ import {
   KeyboardAvoidingView,
   Platform
 } from "react-native";
+import { baseScreenStylesNew } from "../../styles/baseStylesNew";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import axios from "axios";
 import { API_URL, ENDPOINTS } from "../../config/api";
@@ -87,7 +88,7 @@ const SignUpScreen = () => {
   };
 
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <SafeAreaView style={baseScreenStylesNew.container}>
       <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
       
       <ScrollView 
@@ -102,14 +103,14 @@ const SignUpScreen = () => {
             source={require("../../assets/logo.png")}
             style={styles.logo}
           />
-          <Text style={styles.subtitle}>Create Account</Text>
-          <Text style={styles.prompt}>Enter your details to complete registration</Text>
+          <Text style={[styles.subtitle, baseScreenStylesNew.blackText]}>Create Account</Text>
+          <Text style={[styles.prompt, baseScreenStylesNew.blackText]}>Enter your details to complete registration</Text>
           
           <View style={styles.formContainer}>
             <View style={styles.inputContainer}>
               <Text style={styles.inputLabel}>Username</Text>
               <TextInput
-                style={styles.input}
+                style={baseScreenStylesNew.input}
                 placeholder="Choose a username"
                 placeholderTextColor="#999"
                 value={username}
@@ -121,7 +122,7 @@ const SignUpScreen = () => {
             <View style={styles.inputContainer}>
               <Text style={styles.inputLabel}>Password</Text>
               <TextInput
-                style={styles.input}
+                style={baseScreenStylesNew.input}
                 placeholder="Create a password"
                 placeholderTextColor="#999"
                 secureTextEntry={true}
@@ -133,7 +134,7 @@ const SignUpScreen = () => {
             <View style={styles.inputContainer}>
               <Text style={styles.inputLabel}>Confirm Password</Text>
               <TextInput
-                style={styles.input}
+                style={baseScreenStylesNew.input}
                 placeholder="Re-enter your password"
                 placeholderTextColor="#999"
                 secureTextEntry={true}
@@ -147,10 +148,10 @@ const SignUpScreen = () => {
             ) : null}
             
             <TouchableOpacity
-              style={styles.continueButton}
+              style={baseScreenStylesNew.Button1}
               onPress={handleCreateAccount}
             >
-              <Text style={styles.continueButtonText}>Create Account</Text>
+              <Text style={baseScreenStylesNew.buttonText}>Create Account</Text>
             </TouchableOpacity>
           </View>
         </KeyboardAvoidingView>
@@ -162,7 +163,6 @@ const SignUpScreen = () => {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: "#FFFFFF",
   },
   scrollViewContent: {
     flexGrow: 1,
@@ -192,7 +192,7 @@ const styles = StyleSheet.create({
   },
   formContainer: {
     width: "100%",
-    backgroundColor: "#FFFFFF",
+
     borderRadius: 12,
     padding: 5,
   },
@@ -223,25 +223,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     fontSize: 14,
   },
-  continueButton: {
-    backgroundColor: THEME_COLOR,
-    borderRadius: 8,
-    width: "100%",
-    height: 50,
-    alignItems: "center",
-    justifyContent: "center",
-    marginTop: 16,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  continueButtonText: {
-    color: "#FFFFFF",
-    fontSize: 16,
-    fontWeight: "600",
-  },
+  
 });
 
 export default SignUpScreen;

@@ -249,12 +249,13 @@ const GemCollectionScreen = ({ navigation }) => {
     <SafeAreaView style={[baseScreenStylesNew.backgroundColor, baseScreenStylesNew.container]}>
       <Header_2 title="My Gems" />
       <StatusBar barStyle="light-content" />
-      <View style={styles.header}>
+      <View style={[baseScreenStylesNew.container.backgroundColor,styles.header]}>
         <View style={styles.searchContainer}>
           <View style={baseScreenStylesNew.search}>
             <Ionicons name="search" style={baseScreenStylesNew.searchIcon} />
             <TextInput
               style={baseScreenStylesNew.searchInput}
+              placeholderTextColor={baseScreenStylesNew.searchIcon.color}
               placeholder="Search gems..."
               value={searchQuery}
               onChangeText={setSearchQuery}
@@ -368,7 +369,6 @@ const GemCollectionScreen = ({ navigation }) => {
 
 const styles = StyleSheet.create({
   header: {
-    backgroundColor: '#FFFFFF',
     paddingVertical: 16,
     paddingHorizontal: 15,
   },

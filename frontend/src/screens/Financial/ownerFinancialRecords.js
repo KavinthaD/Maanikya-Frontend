@@ -163,7 +163,7 @@ const OwnerFinancialRecords = () => {
   };
 
   return (
-    <SafeAreaView style={baseScreenStylesNew.container}>
+    <SafeAreaView style={[baseScreenStylesNew.backgroundColor,baseScreenStylesNew.container]}>
       <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
       <Header_2 title="Financial Records" />
       
@@ -212,22 +212,22 @@ const OwnerFinancialRecords = () => {
               style={[baseScreenStylesNew.item, styles.recordList]}
             >
               <View style={[styles.recordItem]}>
-                <Text style={styles.recordText}>{item.title}</Text>
-                <Text style={styles.recordText}>{item.amount}</Text>
+                <Text style={[styles.recordText, baseScreenStylesNew.blackText]}>{item.title}</Text>
+                <Text style={[styles.recordText, baseScreenStylesNew.blackText]}>{item.amount}</Text>
               </View>
             </View>
           ))}
           
           {/* Total row */}
           <View style={[styles.recordItem, styles.lastRecordItem]}>
-            <Text style={styles.lastRecordText}>Total</Text>
-            <Text style={styles.lastRecordText}>{formatCurrency(displayProfit)}</Text>
+            <Text style={[styles.lastRecordText, baseScreenStylesNew.blackText]}>Total</Text>
+            <Text style={[styles.lastRecordText, baseScreenStylesNew.blackText]}>{formatCurrency(displayProfit)}</Text>
           </View>
           
           {/* Display all-time profit if not on all-time view */}
           {selectedPeriod !== "alltime" && (
             <View style={styles.allTimeContainer}>
-              <Text style={styles.allTimeLabel}>All-time Profit:</Text>
+              <Text style={[styles.allTimeLabel, baseScreenStylesNew.blackText]}>All-time Profit:</Text>
               <Text style={[
                 styles.allTimeValue,
                 { color: getProfitColor(totalProfit) } // Apply color dynamically here
@@ -352,7 +352,6 @@ const styles = StyleSheet.create({
     paddingVertical: 16,
   },
   recordText: {
-    color: "#000",
     fontSize: 15,
   },
   lastRecordText: {

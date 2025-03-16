@@ -43,7 +43,7 @@ const PurposeSelectionPage = ({ navigation }) => {
         source={require("../../assets/logo-letter.png")}
         style={styles.logoLetter}
       />
-      <Text style={styles.title}>I'm here to,</Text>
+      <Text style={[styles.title, baseScreenStylesNew.blackText]}>I'm here to,</Text>
       <View style={styles.card}>
         <TouchableOpacity
           style={baseScreenStylesNew.Button3}
@@ -59,11 +59,11 @@ const PurposeSelectionPage = ({ navigation }) => {
 
         <View style={styles.dividerContainer}>
           <View style={styles.divider} />
-          <Text style={styles.orText}>or</Text>
+          <Text style={[styles.orText, baseScreenStylesNew.blackText]}>or</Text>
           <View style={styles.divider} />
         </View>
 
-        <Text style={styles.loginText}>Already have an account?</Text>
+        <Text style={[styles.loginText, baseScreenStylesNew.blackText]}>Already have an account?</Text>
         <TouchableOpacity
           style={baseScreenStylesNew.Button1}
           onPress={() => navigation.navigate("Login")}

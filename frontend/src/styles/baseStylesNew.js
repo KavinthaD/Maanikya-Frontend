@@ -22,7 +22,7 @@ export const baseScreenStylesNew = StyleSheet.create({
     fontSize: 16,
   },
   buttonText5: {
-    color: "#70B5DF",
+    color: "#170969",
     fontWeight: "bold",
     textAlign: "center",
     fontSize: 16,
@@ -34,7 +34,8 @@ export const baseScreenStylesNew = StyleSheet.create({
     color: "black"
   },
   whiteText: {
-    color: "white"
+    color: "white",
+
   },
 // --------------check box
   checkBox: {
@@ -91,7 +92,7 @@ export const baseScreenStylesNew = StyleSheet.create({
   },
   Button5: {
     backgroundColor: "#fff",
-    borderColor: "#70B5DF",
+    borderColor: "#170969", //theme color
     borderWidth:2, 
     padding: 15,
     borderRadius: 24,

@@ -14,7 +14,7 @@ import {
   Platform,
 } from "react-native";
 import DropDownPicker from "react-native-dropdown-picker"; // Import DropDownPicker
-import { baseScreenStyles } from "../../styles/baseStyles"; // Import base styles
+import { baseScreenStylesNew } from "../../styles/baseStylesNew"; // Import base styles
 import {
   useNavigation,
   useRoute,
@@ -27,7 +27,7 @@ import axios from "axios"; // Import axios
 import { FormFieldStyles } from "../../styles/FormFields";
 import { API_URL, ENDPOINTS } from "../../config/api"; //change api path here
 import AsyncStorage from "@react-native-async-storage/async-storage"; // Import AsyncStorage
-import GradientContainer from "../../components/GradientContainer";
+
 
 const Stack = createNativeStackNavigator();
 
@@ -214,7 +214,7 @@ function GemRegister2Main() {
   };
   
   return (
-    <GradientContainer>
+    <View style={[baseScreenStylesNew.backgroundColor,baseScreenStylesNew.container]}>
       <Header_2 title="Add gem" />
       
       {/* Dev bypass button (only in dev) */}
@@ -229,7 +229,7 @@ function GemRegister2Main() {
       
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
-        style={[baseScreenStyles.container, { zIndex: 1 }]}
+        style={[baseScreenStylesNew.container, { zIndex: 1 }]}
         keyboardVerticalOffset={Platform.OS === "ios" ? 90 : 0}
       >
         <ScrollView
@@ -240,15 +240,17 @@ function GemRegister2Main() {
         >
           <View style={[styles.innerContainer, { zIndex: 2 }]}>
             <TextInput
-              style={FormFieldStyles.input}
+              style={[FormFieldStyles.input, baseScreenStylesNew.item, baseScreenStylesNew.blackText]}
               placeholder="Gem Owner Name *"
+              placeholderTextColor={FormFieldStyles.placeholder.color}
               value={form.ownerName}
               onChangeText={(value) => handleInputChange("ownerName", value)}
             />
 
             <TextInput
-              style={FormFieldStyles.input}
+              style={[FormFieldStyles.input, baseScreenStylesNew.item, baseScreenStylesNew.blackText]}
               placeholder="Contact Number *"
+              placeholderTextColor={FormFieldStyles.placeholder.color}
               value={form.contactNumber.toString()}
               onChangeText={(value) => {
                 const numericValue = value.replace(/[^0-9]/g, "");
@@ -258,7 +260,8 @@ function GemRegister2Main() {
             />
 
             <TextInput
-              style={FormFieldStyles.input}
+              style={[FormFieldStyles.input, baseScreenStylesNew.item, baseScreenStylesNew.blackText]}
+              placeholderTextColor={FormFieldStyles.placeholder.color}
               placeholder="Dimensions (e.g., 9.30 x 7.30 x 4.60mm.5)"
               value={form.dimensions}
               onChangeText={(value) => {
@@ -270,8 +273,9 @@ function GemRegister2Main() {
             />
 
             <TextInput
-              style={FormFieldStyles.input}
+              style={[FormFieldStyles.input, baseScreenStylesNew.item, baseScreenStylesNew.blackText]}
               placeholder="Weight (ct)"
+              placeholderTextColor={FormFieldStyles.placeholder.color}
               value={form.weight}
               onChangeText={(value) => {
                 const numericValue = value
@@ -283,8 +287,9 @@ function GemRegister2Main() {
             />
 
             <TextInput
-              style={FormFieldStyles.input}
+              style={[FormFieldStyles.input, baseScreenStylesNew.item, baseScreenStylesNew.blackText]}
               placeholder="Purchase price (LKR) *"
+              placeholderTextColor={FormFieldStyles.placeholder.color}
               value={form.purchasePrice}
               onChangeText={(value) => {
                 const numericValue = value
@@ -296,8 +301,9 @@ function GemRegister2Main() {
             />
 
             <TextInput
-              style={[FormFieldStyles.input, FormFieldStyles.descriptionInput]}
+              style={[FormFieldStyles.input, FormFieldStyles.descriptionInput, baseScreenStylesNew.item, baseScreenStylesNew.blackText]}
               placeholder="Extra Information"
+              placeholderTextColor={FormFieldStyles.placeholder.color}
               value={form.extraInfo}
               onChangeText={(value) => handleInputChange("extraInfo", value)}
               multiline={true}
@@ -311,30 +317,30 @@ function GemRegister2Main() {
             />
             <View style={styles.buttonContainer}>
               <TouchableOpacity
-                style={baseScreenStyles.Button2}
+                style={baseScreenStylesNew.Button5}
                 onPress={handleBack}
               >
-                <Text style={baseScreenStyles.buttonText}>Back</Text>
+                <Text style={baseScreenStylesNew.buttonText5}>Back</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 style={[
-                  baseScreenStyles.Button1,
-                  {
+                  baseScreenStylesNew.Button1,
+                  /*{
                     opacity:
                       form.ownerName && form.contactNumber && form.purchasePrice
                         ? 1
                         : 0.5,
-                  },
+                  },*/
                 ]}
                 onPress={handleFinalize}
               >
-                <Text style={baseScreenStyles.buttonText}>Finalize</Text>
+                <Text style={baseScreenStylesNew.buttonText}>Finalize</Text>
               </TouchableOpacity>
             </View>
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
-    </GradientContainer>
+    </View>
   );
 }
 

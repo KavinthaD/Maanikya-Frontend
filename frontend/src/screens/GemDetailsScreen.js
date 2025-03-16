@@ -162,27 +162,26 @@ const GemDetailsScreen = ({ route, navigation }) => {
     <SafeAreaView style={baseScreenStylesNew.container}>
       <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
       
-      <View style={styles.header}>
+      <View style={[styles.header, baseScreenStylesNew.backgroundColor]}>
         <TouchableOpacity 
           style={styles.backButton} 
           onPress={() => navigation.goBack()}
         >
-          <Ionicons name="arrow-back" size={24} color="#333" />
+          <Ionicons name="arrow-back" size={24} style={baseScreenStylesNew.blackText}/>
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>{gem.gemId}</Text>
+        <Text style={[styles.headerTitle, baseScreenStylesNew.blackText]}>{gem.gemId}</Text>
         <TouchableOpacity 
           style={styles.shareButton} 
           onPress={handleShare}
         >
-          <Ionicons name="share-social-outline" size={24} color="#333" />
+          <Ionicons name="share-social-outline" size={24} style={baseScreenStylesNew.blackText} />
         </TouchableOpacity>
       </View>
       
       <ScrollView 
-        style={styles.scrollView}
         showsVerticalScrollIndicator={false}
       >
-        <View style={styles.imageContainer}>
+        <View style={[styles.imageContainer, baseScreenStylesNew.backgroundColor]}>
           <Image
             source={gem.photo ? { uri: gem.photo } : require("../assets/gems/no_gem.jpeg")}
             style={styles.gemImage}
@@ -205,7 +204,7 @@ const GemDetailsScreen = ({ route, navigation }) => {
                 </Text>
               </View>
               <View style={[baseScreenStylesNew.themeColor,styles.priceTag]}>
-                <MaterialCommunityIcons name="tag" size={20} color="#fff" />
+                <MaterialCommunityIcons name="tag" size={20} style={baseScreenStylesNew.whiteText} />
                 <Text style={[baseScreenStylesNew.whiteText,styles.priceText]}>
                   LKR {gem.price?.toLocaleString() || "Not for sale"}
                 </Text>
@@ -306,41 +305,32 @@ const GemDetailsScreen = ({ route, navigation }) => {
 
 const styles = StyleSheet.create({
 
-  scrollView: {
-    backgroundColor: '#FFFFFF',
-    flex: 1,
-  },
   header: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
     paddingHorizontal: 15,
     paddingVertical: 15,
-    backgroundColor: "#FFFFFF",
     borderBottomWidth: 1,
     borderBottomColor: "#F0F0F0",
   },
   backButton: {
     padding: 8,
     borderRadius: 20,
-    backgroundColor: "#F5F5F5",
   },
   headerTitle: {
     fontSize: 18,
-    fontWeight: "bold",
-    color: "#333333",
+    fontWeight: "bold"
   },
   shareButton: {
     padding: 8,
     borderRadius: 20,
-    backgroundColor: "#F5F5F5",
   },
   imageContainer: {
     width: "100%",
     height: 300,
     position: "relative",
     marginBottom: 20,
-    backgroundColor: "#FFFFFF",
   },
   gemImage: {
     width: "100%",

@@ -84,55 +84,75 @@ const SignUpScreenCustomer = ({ navigation }) => {
   return (
     <View style={[baseScreenStylesNew.container, styles.container]}>
       <Image source={require("../../assets/logo.png")} style={styles.logo} />
-      <Text style={styles.subtitle}>Sign Up</Text>
-      <Text style={styles.instructions}>Create Your Customer Account</Text>
+      <Text style={[styles.subtitle, baseScreenStylesNew.blackText]}>Sign Up</Text>
+      <Text style={[styles.instructions, baseScreenStylesNew.blackText]}>Create Your Customer Account</Text>
       <View style={styles.row}>
+        <View style={styles.inputHalfContainer}>
+        <Text style={styles.inputLabel}>First Name</Text>
         <TextInput
-          style={[baseScreenStylesNew.input, styles.halfInput]}
-          placeholder="First Name"
+          style={baseScreenStylesNew.input}
+          placeholder="John"
           placeholderTextColor="#B0B0B0"
           value={firstName}
           onChangeText={setFirstName}
         />
+        </View>
+        <View style={styles.inputHalfContainer}>
+        <Text style={styles.inputLabel}>First Name</Text>
         <TextInput
-          style={[baseScreenStylesNew.input, styles.halfInput]}
-          placeholder="Last Name"
+          style={baseScreenStylesNew.input}
+          placeholder="Doe"
           placeholderTextColor="#B0B0B0"
           value={lastName}
           onChangeText={setLastName}
         />
+        </View>
       </View>
+      <View style={styles.inputContainer}>
+      <Text style={styles.inputLabel}>Email Address</Text>
       <TextInput
         style={baseScreenStylesNew.input}
-        placeholder="email@domain.com"
+        placeholder="example@domain.com"
         keyboardType="email-address"
         placeholderTextColor="#B0B0B0"
         value={email}
         onChangeText={setEmail}
       />
+      </View>
+      <View style={styles.inputContainer}>
+      <Text style={styles.inputLabel}>Phone Number</Text>
       <TextInput
         style={baseScreenStylesNew.input}
-        placeholder="Phone number"
+        placeholder="+94 71 796 7845"
         keyboardType="phone-pad"
         placeholderTextColor="#B0B0B0"
         value={phoneNumber}
         onChangeText={setPhoneNumber}
       />
+      </View>
+      <View style={styles.inputContainer}>
+      <Text style={styles.inputLabel}>Username</Text>
       <TextInput
         style={baseScreenStylesNew.input}
-        placeholder="User Name"
+        placeholder="Choose a username"
         placeholderTextColor="#B0B0B0"
         value={userName}
         onChangeText={setUserName}
       />
+      </View>
+      <View style={styles.inputContainer}>
+      <Text style={styles.inputLabel}>Password</Text>
       <TextInput
         style={baseScreenStylesNew.input}
-        placeholder="Password"
+        placeholder="Enter password"
         placeholderTextColor="#B0B0B0"
         secureTextEntry
         value={password}
         onChangeText={setPassword}
       />
+      </View>
+      <View style={styles.inputContainer}>
+      <Text style={styles.inputLabel}>Confirm Password</Text>
       <TextInput
         style={baseScreenStylesNew.input}
         placeholder="Re-enter password"
@@ -141,6 +161,7 @@ const SignUpScreenCustomer = ({ navigation }) => {
         value={reEnterPassword}
         onChangeText={setReEnterPassword}
       />
+      </View>
       {errorMessage ? (
         <Text style={styles.errorText}>{errorMessage}</Text>
       ) : null}
@@ -167,7 +188,7 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   logo: {
-    paddingTop: 160,
+    paddingTop: 120,
     width: 170,
     height: 80,
     marginTop: 90,
@@ -190,10 +211,20 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     width: "100%",
   },
-  halfInput: {
-    width: "48%", 
+  inputHalfContainer: {
+    width: "48%",
+    marginBottom: 4,
   },
-
+  inputContainer: {
+    marginBottom: 4,
+    width: "100%",
+  },
+  inputLabel: {
+    fontSize: 14,
+    fontWeight: "500",
+    color: "#555555",
+    paddingLeft: 2,
+  },
   errorText: {
     color: 'red',
     marginBottom: 10,

@@ -345,7 +345,7 @@ function GemRegister1Main() {
   };
   
   return (
-    <View style={[baseScreenStylesNew.backgroundColor, baseScreenStylesNew.container]}>
+    <View style={baseScreenStylesNew.container}>
       <Header_1 title="Add gem" />
       
       {/* Dev bypass button (only in dev) */}
@@ -456,10 +456,10 @@ function GemRegister1Main() {
             <TouchableOpacity
               style={[
                 baseScreenStylesNew.Button1,
-                {
-                  opacity:
-                    form.color && form.gemShape && form.gemType ? 1 : 0.5,
-                },
+                //{
+                  //opacity:
+                    //form.color && form.gemShape && form.gemType ? 1 : 0.5,
+                //},
               ]}
               onPress={handleContinue}
             >

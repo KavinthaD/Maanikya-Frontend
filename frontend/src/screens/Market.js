@@ -111,7 +111,6 @@ const Market = ({ navigation }) => {
       <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
       <Header_1 title="Market"/>
       <ScrollView
-        style={styles.scrollView}
         contentContainerStyle={styles.contentContainer}
         refreshControl={
           <RefreshControl 
@@ -128,6 +127,7 @@ const Market = ({ navigation }) => {
             <TextInput
               style={baseScreenStylesNew.searchInput}
               placeholder="Search gems..."
+              placeholderTextColor={baseScreenStylesNew.searchIcon.color}
               value={searchQuery}
               onChangeText={handleSearch}
             />
@@ -137,7 +137,7 @@ const Market = ({ navigation }) => {
             </TouchableOpacity>
           </View>
 
-          <Text style={styles.sectionTitle}>Available Gems</Text>
+          <Text style={[styles.sectionTitle, baseScreenStylesNew.blackText]}>Available Gems</Text>
 
           {loading ? (
             <View style={styles.loadingContainer}>
@@ -194,10 +194,6 @@ const Market = ({ navigation }) => {
 };
 
 const styles = StyleSheet.create({
-
-  scrollView: {
-    backgroundColor: '#FFFFFF',
-  },
   contentContainer: {
     paddingBottom: 20,
   },

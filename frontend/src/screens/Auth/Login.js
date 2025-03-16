@@ -110,13 +110,13 @@ const Login = () => {
   return (
     <View style={[baseScreenStylesNew.container, styles.container]}>
       <Image source={require("../../assets/logo.png")} style={styles.logo} />
-      <Text style={styles.title}>Welcome Back</Text>
-      <Text style={styles.subtitle}>Enter your email to login</Text>
+      <Text style={[styles.title, baseScreenStylesNew.blackText]}>Welcome Back</Text>
+      <Text style={[styles.subtitle, baseScreenStylesNew.blackText]}>Enter your email to login</Text>
 
       <TextInput
         style={baseScreenStylesNew.input}
         placeholder="email@domain.com"
-        placeholderTextColor="#B0B0B0"
+        placeholderTextColor={baseScreenStylesNew.searchIcon.color}
         value={email}
         onChangeText={setEmail}
         keyboardType="email-address"
@@ -124,7 +124,7 @@ const Login = () => {
       <View style={baseScreenStylesNew.pickerContainer}>
         <Picker
           selectedValue={role}
-          style={[baseScreenStylesNew.picker, { color: role ? "black" : "#888" }]}
+          style={[baseScreenStylesNew.picker, { color: role ? baseScreenStylesNew.input.color : "#888" }]}
           onValueChange={(itemValue) => setRole(itemValue)}
         >
           <Picker.Item label="Choose your role" value="" color="#888"/>
@@ -136,7 +136,7 @@ const Login = () => {
       <TextInput
         style={baseScreenStylesNew.input}
         placeholder="Password"
-        placeholderTextColor="#B0B0B0"
+        placeholderTextColor={baseScreenStylesNew.searchIcon.color}
         secureTextEntry
         value={password}
         onChangeText={setPassword}

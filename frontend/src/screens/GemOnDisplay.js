@@ -270,14 +270,14 @@ const GemOnDisplay = ({}) => {
       end={{ x: 0, y: 1 }}
     >
           <View style={styles.header}>
-            <View style={styles.headerLine} />
-            <Text style={[baseScreenStylesNew.whiteText,styles.subtopic]}>Sold out</Text>
-            <View style={styles.headerLine} />
+            <View style={styles.headerLine2} />
+            <Text style={styles.subtopic2} >Sold out</Text>
+            <View style={styles.headerLine2} />
           </View>
           {sold.length === 0 ? (
             <View style={styles.emptyState}>
-              <Ionicons name="cash-outline" size={40} />
-              <Text style={styles.emptyStateText}>No sold gems</Text>
+              <Ionicons name="cash-outline" size={40} color={"white"}/>
+              <Text style={styles.emptyStateText2}>No sold gems</Text>
             </View>
           ) : (
             <FlatList
@@ -388,12 +388,23 @@ const styles = StyleSheet.create({
   headerLine: {
     flex: 1,
     height: 1,
+    backgroundColor: "black",
+  },
+  headerLine2: {
+    flex: 1,
+    height: 1,
     backgroundColor: "white",
   },
   subtopic: {
     fontSize: 18,
     fontWeight: "600",
     marginHorizontal: 10,
+  },
+  subtopic2: {
+    fontSize: 18,
+    fontWeight: "600",
+    marginHorizontal: 10,
+    color: "white"
   },
   gemDisplay: {
     flexDirection: "row",
@@ -544,6 +555,11 @@ gradientBackground: {
   emptyStateText: {
     marginTop: 10,
     fontSize: 16,
+  },
+  emptyStateText2: {
+    marginTop: 10,
+    fontSize: 16,
+    color: "white"
   },
 });
 

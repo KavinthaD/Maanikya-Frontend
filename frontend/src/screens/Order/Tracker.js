@@ -59,9 +59,9 @@ const Tracker = ({navigation}) => {
           <TextInput
             style={styles.searchData}
             placeholder="Search Gem ID"
+            placeholderTextColor={baseScreenStylesNew.searchIcon.color}
             value={search}
             onChangeText={(text) => setSearch(text)}
-            placeholderTextColor="#888"
           />
         </View>
 

@@ -19,6 +19,7 @@ import { Picker } from "@react-native-picker/picker";
 import { useNavigation } from "@react-navigation/native";
 import axios from "axios";
 import { API_URL, ENDPOINTS } from "../../config/api";
+import { baseScreenStylesNew } from "../../styles/baseStylesNew";
 
 const THEME_COLOR = '#9CCDDB';
 
@@ -80,7 +81,7 @@ const SignUpBusiness = () => {
   };
 
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <SafeAreaView style={baseScreenStylesNew.container}>
       <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
       
       <ScrollView 
@@ -95,15 +96,15 @@ const SignUpBusiness = () => {
             source={require("../../assets/logo.png")}
             style={styles.logo}
           />
-          <Text style={styles.subtitle}>Sign Up</Text>
-          <Text style={styles.prompt}>Create your business Account</Text>
+          <Text style={[styles.subtitle, baseScreenStylesNew.blackText]}>Sign Up</Text>
+          <Text style={[styles.prompt, baseScreenStylesNew.blackText]}>Create your business Account</Text>
           
           <View style={styles.formContainer}>
             <View style={styles.row}>
               <View style={styles.inputHalfContainer}>
                 <Text style={styles.inputLabel}>First Name</Text>
                 <TextInput
-                  style={styles.input}
+                  style={baseScreenStylesNew.input}
                   placeholder="John"
                   placeholderTextColor="#999"
                   value={form.firstName}
@@ -114,7 +115,7 @@ const SignUpBusiness = () => {
               <View style={styles.inputHalfContainer}>
                 <Text style={styles.inputLabel}>Last Name</Text>
                 <TextInput
-                  style={styles.input}
+                  style={baseScreenStylesNew.input}
                   placeholder="Doe"
                   placeholderTextColor="#999"
                   value={form.lastName}
@@ -124,10 +125,10 @@ const SignUpBusiness = () => {
             </View>
 
             <View style={styles.inputContainer}>
-              <Text style={styles.inputLabel}>Email</Text>
+              <Text style={styles.inputLabel}>email</Text>
               <TextInput
-                style={styles.input}
-                placeholder="email@domain.com"
+                style={baseScreenStylesNew.input}
+                placeholder="example@domain.com"
                 placeholderTextColor="#999"
                 value={form.email}
                 onChangeText={(value) => setForm({ ...form, email: value })}
@@ -139,8 +140,8 @@ const SignUpBusiness = () => {
             <View style={styles.inputContainer}>
               <Text style={styles.inputLabel}>Phone Number</Text>
               <TextInput
-                style={styles.input}
-                placeholder="+94 71 234 5678"
+                style={baseScreenStylesNew.input}
+                placeholder="+94 71 796 6745"
                 placeholderTextColor="#999"
                 value={form.phone}
                 onChangeText={(value) => setForm({ ...form, phone: value })}
@@ -150,10 +151,10 @@ const SignUpBusiness = () => {
             
             <View style={styles.inputContainer}>
               <Text style={styles.inputLabel}>Select Your Role</Text>
-              <View style={styles.pickerContainer}>
+              <View style={baseScreenStylesNew.pickerContainer}>
                 <Picker
                   selectedValue={form.role}
-                  style={styles.picker}
+                  style={[baseScreenStylesNew.picker, { color: form.role ? baseScreenStylesNew.input.color : "#888" }]}
                   onValueChange={(itemValue) => {
                     setForm({ ...form, role: itemValue });
                     if (itemValue === "gem_business_owner") {
@@ -165,7 +166,7 @@ const SignUpBusiness = () => {
                     }
                   }}
                 >
-                  <Picker.Item label="Choose your role" value="" color="#999" />
+                  <Picker.Item label="Choose your role" value="" color="#888" />
                   <Picker.Item label="Gem business owner" value="gem_business_owner" color="#333" />
                   <Picker.Item label="Cutter" value="cutter" color="#333" />
                   <Picker.Item label="Burner" value="burner" color="#333" />
@@ -179,10 +180,10 @@ const SignUpBusiness = () => {
             ) : null}
             
             <TouchableOpacity
-              style={styles.continueButton}
+              style={baseScreenStylesNew.Button1}
               onPress={handleContinue}
             >
-              <Text style={styles.continueButtonText}>Continue</Text>
+              <Text style={baseScreenStylesNew.buttonText}>Continue</Text>
             </TouchableOpacity>
           </View>
         </KeyboardAvoidingView>
@@ -192,10 +193,7 @@ const SignUpBusiness = () => {
 };
 
 const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: "#FFFFFF",
-  },
+
   scrollViewContent: {
     flexGrow: 1,
   },
@@ -224,7 +222,6 @@ const styles = StyleSheet.create({
   },
   formContainer: {
     width: "100%",
-    backgroundColor: "#FFFFFF",
     borderRadius: 12,
     padding: 5,
   },
@@ -234,12 +231,8 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   inputContainer: {
-    marginBottom: 16,
+    marginBottom: 6,
     width: "100%",
-  },
-  inputHalfContainer: {
-    width: "48%",
-    marginBottom: 16,
   },
   inputLabel: {
     fontSize: 14,
@@ -247,6 +240,10 @@ const styles = StyleSheet.create({
     color: "#555555",
     marginBottom: 8,
     paddingLeft: 2,
+  },
+  inputHalfContainer: {
+    width: "48%",
+    marginBottom: 6,
   },
   input: {
     width: "100%",
@@ -279,25 +276,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     fontSize: 14,
   },
-  continueButton: {
-    backgroundColor: THEME_COLOR,
-    borderRadius: 8,
-    width: "100%",
-    height: 50,
-    alignItems: "center",
-    justifyContent: "center",
-    marginTop: 16,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  continueButtonText: {
-    color: "#FFFFFF",
-    fontSize: 16,
-    fontWeight: "600",
-  },
+
 });
 
 export default SignUpBusiness;

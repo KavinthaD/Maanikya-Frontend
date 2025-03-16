@@ -27,12 +27,12 @@ const OwnerOrderTrackDetails = () => {
                     {gems.map((gem) => (
                         <View key={gem.id} style={styles.gemContainer}>
                             <Image source={gem.image} style={styles.gemImage} />
-                            <Text style={styles.gemId}>{gem.id}</Text>
+                            <Text style={[styles.gemId, baseScreenStylesNew.blackText]}>{gem.id}</Text>
                         </View>
                     ))}
         </ScrollView>
         <View style={styles.row}>
-            <Text style={styles.price}> Rs.7800</Text>
+            <Text style={[styles.price, baseScreenStylesNew.blackText]}> Rs.7800</Text>
             {orderConfirmed && (
             <View style={styles.ratingSection}>
                 <View style={styles.ratingContainer}>
@@ -46,7 +46,7 @@ const OwnerOrderTrackDetails = () => {
       )}
       </View>
             <View style={styles.dividerContainer}>
-                <View style={styles.divider} />
+                <View style={[styles.divider]} />
             </View>   
 
 
@@ -92,6 +92,15 @@ const OwnerOrderTrackDetails = () => {
             {!orderConfirmed && !orderCanceled && (
                 <View style={styles.buttonContainer}>
                     <TouchableOpacity
+                        style={[baseScreenStylesNew.cancelButton,styles.cancelButton]}
+                        onPress={() => {
+                            setOrderCanceled(true);
+                            setOrderConfirmed(false); // Ensure only one status is shown
+                        }}
+                    >
+                        <Text style={baseScreenStylesNew.buttonText}>Cancel Order</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
                         style={[baseScreenStylesNew.Button1, styles.confirmButton]}
                         onPress={() => {
                             setOrderConfirmed(true);
@@ -99,16 +108,6 @@ const OwnerOrderTrackDetails = () => {
                         }}
                     >
                         <Text style={baseScreenStylesNew.buttonText}>Confirm Order</Text>
-                    </TouchableOpacity>
-
-                    <TouchableOpacity
-                        style={styles.cancelButton}
-                        onPress={() => {
-                            setOrderCanceled(true);
-                            setOrderConfirmed(false); // Ensure only one status is shown
-                        }}
-                    >
-                        <Text style={baseScreenStylesNew.buttonText}>Cancel Order</Text>
                     </TouchableOpacity>
                 </View>
             )}
@@ -236,15 +235,14 @@ const styles = StyleSheet.create ({
     confirmButton: {
         backgroundColor: "#170969",
         borderRadius: 25,
+        marginTop: "3%",
         width: "90%",
-        marginTop: "35%",
         marginLeft: 25,
     },
     cancelButton: {
-        backgroundColor: "#690909",
         borderRadius: 25,
         width: "90%",
-        marginTop: "5%",
+        marginTop: "35%",
         padding: 15,
         marginLeft: 25,
     },
@@ -253,6 +251,7 @@ const styles = StyleSheet.create ({
         flexDirection: 'row',
         alignItems: 'center',
         marginVertical: 5,
+        marginTop: 18
     },
     divider: {
         flex: 1,

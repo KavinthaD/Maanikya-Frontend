@@ -89,10 +89,11 @@ const NotificationScreen = () => {
       <Header_2 title="Completed "/>
       <View style={styles.container}>
       <View style={baseScreenStylesNew.search}>
-       <Ionicons name="search" size={20} color="#888" style={baseScreenStylesNew.searchIcon} />
+       <Ionicons name="search" style={baseScreenStylesNew.searchIcon} />
       <TextInput
         style={styles.searchData}
         placeholder="Search Order ID"
+        placeholderTextColor={baseScreenStylesNew.searchIcon.color}
         value={searchQuery}
         onChangeText={setSearchQuery}
       />

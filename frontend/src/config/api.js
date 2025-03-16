@@ -4,7 +4,7 @@ const getBaseUrl = () => {
   if (__DEV__) {
     // Development environment
     if (Platform.OS === "android") {
-      return "http://192.168.1.3:5000"; // Primary IP
+      return "http://10.0.2.2:5000"; // Primary IP
       // andorid emulator ip : 10.0.2.2
     } else if (Platform.OS === "ios") {
       return "http://localhost:5000"; // iOS simulator
@@ -51,5 +51,10 @@ export const ENDPOINTS = {
   SEND_MESSAGE: '/api/messages', // Will append contactId
   GET_UNREAD: '/api/messages/unread',
   GET_BASIC_USER: '/api/userProfile/basic', // Will append userId
+
+  // **ADD THESE NEW ENDPOINTS HERE:**
+  OWNER_COMPLETED_ORDERS: "/api/owner/orders/completed",
+  OWNER_IN_PROGRESS_ORDERS: "/api/owner/orders/in-progress",
+
   // Add other endpoints here
 };

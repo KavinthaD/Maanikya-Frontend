@@ -107,7 +107,7 @@ export default function MessageInbox({ navigation }) {
       fetchConversations();
       
       // Set up periodic refreshing while on this screen
-      const intervalId = setInterval(fetchConversations, 10000); // 10 seconds
+      const intervalId = setInterval(fetchConversations, 20000); // 10 seconds
       
       return () => clearInterval(intervalId);
     }, [])

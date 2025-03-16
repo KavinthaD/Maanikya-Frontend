@@ -19,6 +19,7 @@ import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import axios from "axios";
 import { API_URL } from "../config/api";
 import { baseScreenStylesNew } from "../styles/baseStylesNew";
+import HeaderBar from "../components/HeaderBar";
 
 const { width } = Dimensions.get("window");
 const THEME_COLOR = "#9CCDDB"; // Light blue theme color
@@ -162,21 +163,19 @@ const GemDetailsScreen = ({ route, navigation }) => {
     <SafeAreaView style={baseScreenStylesNew.container}>
       <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
       
-      <View style={[styles.header, baseScreenStylesNew.backgroundColor]}>
-        <TouchableOpacity 
-          style={styles.backButton} 
-          onPress={() => navigation.goBack()}
-        >
-          <Ionicons name="arrow-back" size={24} style={baseScreenStylesNew.blackText}/>
-        </TouchableOpacity>
-        <Text style={[styles.headerTitle, baseScreenStylesNew.blackText]}>{gem.gemId}</Text>
-        <TouchableOpacity 
-          style={styles.shareButton} 
-          onPress={handleShare}
-        >
-          <Ionicons name="share-social-outline" size={24} style={baseScreenStylesNew.blackText} />
-        </TouchableOpacity>
-      </View>
+      <HeaderBar 
+  title={gem.gemId} 
+  navigation={navigation} 
+  showBack={true}
+  rightComponent={
+    <TouchableOpacity 
+      style={styles.shareButton} 
+      onPress={handleShare}
+    >
+      <Ionicons name="share-social-outline" size={24} style={baseScreenStylesNew.blackText} />
+    </TouchableOpacity>
+  }
+/>
       
       <ScrollView 
         showsVerticalScrollIndicator={false}

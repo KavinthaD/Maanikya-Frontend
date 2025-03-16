@@ -18,6 +18,8 @@ import { API_URL, ENDPOINTS } from '../config/api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import HeaderBar from '../components/HeaderBar';
+import { useFocusEffect } from '@react-navigation/native';
+import { useCallback } from 'react';
 
 const THEME_COLOR = '#9CCDDB';
 const POLLING_INTERVAL = 5000; // Poll every 5 seconds for new messages
@@ -94,13 +96,26 @@ export default function ChatScreen({ route, navigation }) {
   };
   
   // Initial load and polling
-  useEffect(() => {
-    fetchMessages();
-    
-    const intervalId = setInterval(fetchMessages, POLLING_INTERVAL);
-    
-    return () => clearInterval(intervalId);
-  }, [contactId]);
+  useFocusEffect(
+    useCallback(() => {
+      console.log('ChatScreen focused - starting polling');
+      
+      // Fetch messages immediately when screen comes into focus
+      fetchMessages();
+      
+      // Set up polling interval
+      const intervalId = setInterval(() => {
+        console.log('Polling for messages...');
+        fetchMessages();
+      }, POLLING_INTERVAL);
+      
+      // Return cleanup function that runs when screen loses focus
+      return () => {
+        console.log('ChatScreen blurred - stopping polling');
+        clearInterval(intervalId);
+      };
+    }, [contactId]) // Re-run effect if contactId changes
+  );
   
   // Scroll to bottom when messages change
   useEffect(() => {

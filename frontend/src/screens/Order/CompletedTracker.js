@@ -1,6 +1,6 @@
 //Screen creator: Dulith
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -14,45 +14,8 @@ import { baseScreenStylesNew } from "../../styles/baseStylesNew";
 import Header_2 from "../../components/Header_2";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { useNavigation } from "@react-navigation/native";
-
-const CompletedTracker = [
-  {
-    id: "TPK476",
-    dateTime: "20-12-2024, 3:00 PM",
-    cost: "Rs.2500",
-    type: "Burn",
-    completedDate: "22/05/2025",
-    person: "Mehara Wilfred",
-    gemImage: require("../../assets/gemimg/gem1.jpg"),
-  },
-  {
-    id: "MW963",
-    dateTime: "12-01-2025, 7:00 PM",
-    cost: "Rs.1800",
-    type: "Burn",
-    completedDate: "23/02/2025",
-    person: "Tilmi Thishara",
-    gemImage: require("../../assets/gemimg/gem2.jpg"),
-  },
-  {
-    id: "DCW030",
-    dateTime: "06-11-2024, 9:00 AM",
-    cost: "Rs.12000",
-    type: "Cut",
-    completedDate: "13/03/2025",
-    person: "Kavintha Dinushan",
-    gemImage: require("../../assets/gemimg/gem3.jpg"),
-  },
-  {
-    id: "TGK476",
-    dateTime: "20-12-2024, 3:00 PM",
-    cost: "Rs.2500",
-    type: "Cut",
-    completedDate: "22/05/2025",
-    person: "Dulith Wanigarathna",
-    gemImage: require("../../assets/gemimg/gem4.jpg"),
-  },
-];
+import { API_URL, ENDPOINTS } from "../../config/api"; // **Routes are imported from api.js**
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const CompletedTrackerItem = ({ item}) => {
   const navigation = useNavigation();
@@ -70,7 +33,7 @@ const CompletedTrackerItem = ({ item}) => {
       </View>
     </View>
     <View style={styles.imageContainer}>
-      <Image source={item.gemImage} style={styles.gemImage} />
+      <Image source={{ uri: item.gemImage }} style={styles.gemImage} />
       <Text style={styles.text}>{item.id}</Text>
     </View>
   </View>
@@ -80,7 +43,32 @@ const CompletedTrackerItem = ({ item}) => {
 
 const NotificationScreen = () => {
   const [searchQuery, setSearchQuery] = useState("");
-  const filteredOrders = CompletedTracker.filter((order) =>
+  const [completedOrders, setCompletedOrders] = useState([]);
+
+  useEffect(() => {
+    const fetchCompletedOrders = async () => {
+      try {
+        const token = await AsyncStorage.getItem('authToken');
+        const response = await fetch(`${API_URL}${ENDPOINTS.OWNER_COMPLETED_ORDERS}`, { // **Route from ENDPOINTS**
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        });
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        setCompletedOrders(data);
+      } catch (error) {
+        console.error("Error fetching completed orders:", error);
+      }
+    };
+
+    fetchCompletedOrders();
+  }, []);
+
+  const filteredOrders = completedOrders.filter((order) =>
     order.id.toLowerCase().includes(searchQuery.toLowerCase())
   );
 

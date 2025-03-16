@@ -51,5 +51,10 @@ export const ENDPOINTS = {
   SEND_MESSAGE: '/api/messages', // Will append contactId
   GET_UNREAD: '/api/messages/unread',
   GET_BASIC_USER: '/api/userProfile/basic', // Will append userId
+
+  // **ADD THESE NEW ENDPOINTS HERE:**
+  OWNER_COMPLETED_ORDERS: "/api/owner/orders/completed",
+  OWNER_IN_PROGRESS_ORDERS: "/api/owner/orders/in-progress",
+
   // Add other endpoints here
 };

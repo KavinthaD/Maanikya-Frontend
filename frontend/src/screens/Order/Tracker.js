@@ -1,57 +1,83 @@
-//Screen creator: Isum
+//Screen creator: Isum  //this is ownertracker
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { View, Text, FlatList, StyleSheet, Image, TextInput, SafeAreaView, TouchableOpacity } from "react-native"
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { baseScreenStylesNew } from "../../styles/baseStylesNew";
 import Header_2 from "../../components/Header_2";
+import { API_URL, ENDPOINTS } from "../../config/api"; // **Routes are imported from api.js**
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Tracker = ({navigation}) => {
   //manage the search option
   const [search, setSearch] = useState("");
 
-  const [progressGem, setProgressGem] = useState([
-    { id: "gem3", code: "DCW030", image: require("../../assets/Gem1.png") },
-    { id: "gem2", code: "KDD437", image: require("../../assets/Gem2.png") },
-    { id: "gem1", code: "IHP164", image: require("../../assets/Gem3.png") },
-  ]);
+  const [progressGem, setProgressGem] = useState([]);
+  const [completeGem, setCompleteGem] = useState([]);
 
-  const [completeGem, setCompleteGem] = useState([
-    { id: "gem6", code: "TTP467", image: require("../../assets/Gem4.png") },
-    { id: "gem5", code: "MW963", image: require("../../assets/Gem5.png") },
-    { id: "gem4", code: "TPK476", image: require("../../assets/Gem6.png") },
-  ]);
 
-  const addNewGem = (newGem, setGems) => {
-    setGems((prevGems) => [newGem, ...prevGems.slice(0, 2)]);
-  };
+  useEffect(() => {
+    const fetchGemData = async () => {
+      try {
+        const token = await AsyncStorage.getItem('authToken');
+
+        // Fetch In-Progress Gems
+        const progressResponse = await fetch(`${API_URL}${ENDPOINTS.OWNER_IN_PROGRESS_ORDERS}`, { // **Route from ENDPOINTS**
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        });
+        if (!progressResponse.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const progressData = await progressResponse.json();
+        setProgressGem(progressData);
+
+        // Fetch Completed Gems
+        const completeResponse = await fetch(`${API_URL}${ENDPOINTS.OWNER_COMPLETED_ORDERS}`, { // **Route from ENDPOINTS**
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        });
+        if (!completeResponse.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const completeData = await completeResponse.json();
+        setCompleteGem(completeData);
+
+      } catch (error) {
+        console.error("Error fetching gem data:", error);
+      }
+    };
+
+    fetchGemData();
+  }, []);
+
 
   const selectedGems = progressGem.filter((gem) =>
-    gem.code.toLowerCase().includes(search.toLowerCase())
+    gem.id.toLowerCase().includes(search.toLowerCase())
   );
+
 
   const handleGemPress = (gem) => {
     navigation.navigate("OwnerOrderTrackDetails", { gem });
   };
 
-  const markedComplete = (gem) =>{
-    setProgressGem(progressGem.filter((item) => item.id !== gem.id));
-    setCompleteGem([...completeGem, gem]);
-  };
 
   const renderGem = ({item}) => (
     <View style={styles.gemItem}>
       <TouchableOpacity onPress={() => handleGemPress(item)}>
-        <Image source={item.image} style={styles.gemImage} />
+        <Image source={{ uri: item.gemImage }} style={styles.gemImage} />
       </TouchableOpacity>
       <Text style={styles.gemCode}>{item.code}</Text>
     </View>
   );
 
-  
 
   return (
-  
+
       <SafeAreaView style={baseScreenStylesNew.container}>
         <Header_2 title="Tracker"/>
         <View style={baseScreenStylesNew.search}>
@@ -71,7 +97,7 @@ const Tracker = ({navigation}) => {
           <Text style={styles.subTopicProgress}>In Progress {'>'}</Text>
           </TouchableOpacity>
           <FlatList
-            data={selectedGems}
+            data={selectedGems.slice(0, 3)}
             horizontal
             keyExtractor={(item) => item.id}
             renderItem={renderGem}
@@ -85,7 +111,7 @@ const Tracker = ({navigation}) => {
           <Text style={styles.subTopicCompleted}>Completed {'>'}</Text>
           </TouchableOpacity>
           <FlatList
-            data={completeGem}
+            data={completeGem.slice(0, 3)}
             horizontal
             keyExtractor={(item) => item.id}
             renderItem={renderGem}

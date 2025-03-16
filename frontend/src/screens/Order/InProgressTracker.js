@@ -1,6 +1,6 @@
 //Screen creator: Dulith
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -14,36 +14,8 @@ import { baseScreenStylesNew } from "../../styles/baseStylesNew";
 import Header_2 from "../../components/Header_2";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { useNavigation } from "@react-navigation/native";
-
-const InProgressTracker = [
-  {
-    id: "IHP164",
-    dateTime: "20-12-2024, 3:00 PM",
-    type: "Burn",
-    estimatedDate: "22/05/2025",
-    person: "Mehara Wilfred",
-    price: "Rs. 3000",
-    gemImage: require("../../assets/gemimg/gem1.jpg"),
-  },
-  {
-    id: "KDD437",
-    dateTime: "12-01-2025, 7:00 PM",
-    type: "Cut",
-    estimatedDate: "23/02/2025",
-    person: "Tilmi Thishara",
-    price: "Rs. 6000",
-    gemImage: require("../../assets/gemimg/gem2.jpg"),
-  },
-  {
-    id: "DCW030",
-    dateTime: "06-11-2024, 9:00 AM",
-    type: "Cut",
-    estimatedDate: "13/03/2025",
-    person: "Kavintha Dinushan",
-    price: "Rs. 2000",
-    gemImage: require("../../assets/gemimg/gem3.jpg"),
-  },
-];
+import { API_URL, ENDPOINTS } from "../../config/api"; // **Routes are imported from api.js**
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const NotificationItem = ({ item }) => {
   const navigation = useNavigation();
@@ -54,14 +26,14 @@ const NotificationItem = ({ item }) => {
     <View style={styles.textContainer}>
       <Text style={[styles.personName,,{ color: "#000" }]}>{item.person}</Text>
       <Text style={[styles.text,{ color: "#000" }]}> {item.price}</Text>
-      <Text style={[styles.text,{ color: "#000" }]}> {item.dateTime}</Text>   
+      <Text style={[styles.text,{ color: "#000" }]}> {item.dateTime}</Text>
       <View style={styles.miniContainer}>
       <Text style={[styles.text,{ color: "#000", fontWeight: "bold", }]}> {item.type}</Text>
       <Text style={[baseScreenStylesNew.themeText, styles.text,{ fontWeight: "bold" }]}>Estimated Date: {item.estimatedDate}</Text>
       </View>
     </View>
     <View style={styles.imageContainer}>
-      <Image source={item.gemImage} style={styles.gemImage} />
+      <Image source={{ uri: item.gemImage }} style={styles.gemImage} />
       <Text style={[styles.text, { fontWeight: "bold", color: "#000" }]}>{item.id}</Text>
     </View>
   </View>
@@ -71,7 +43,33 @@ const NotificationItem = ({ item }) => {
 
 const InProgressTrackerScreen = () => {
   const [searchQuery, setSearchQuery] = useState("");
-  const filteredOrders = InProgressTracker.filter((order) =>
+  const [inProgressOrders, setInProgressOrders] = useState([]);
+
+  useEffect(() => {
+    const fetchInProgressOrders = async () => {
+      try {
+        const token = await AsyncStorage.getItem('authToken');
+        const response = await fetch(`${API_URL}${ENDPOINTS.OWNER_IN_PROGRESS_ORDERS}`, { // **Route from ENDPOINTS**
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        });
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        setInProgressOrders(data);
+      } catch (error) {
+        console.error("Error fetching in-progress orders:", error);
+      }
+    };
+
+    fetchInProgressOrders();
+  }, []);
+
+
+  const filteredOrders = inProgressOrders.filter((order) =>
     order.id.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
@@ -119,7 +117,7 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     elevation: 9
   },
-  
+
   textContainer: {
     flex: 1,
   },
@@ -151,7 +149,7 @@ const styles = StyleSheet.create({
     marginBottom: 2,
     marginLeft: 6,
   },
-  
+
 });
 
 export default InProgressTrackerScreen;

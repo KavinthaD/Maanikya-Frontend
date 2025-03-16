@@ -126,7 +126,7 @@ export default function MessageInbox({ navigation }) {
   // Use the WebSocket notification system to update conversations
   useEffect(() => {
     if (notifications.length > 0) {
-      // Refresh conversations when new messages come in
+      console.log("New notifications received, refreshing conversations");
       fetchConversations();
       clearNotifications();
     }

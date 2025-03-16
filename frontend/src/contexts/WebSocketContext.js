@@ -93,6 +93,12 @@ export const WebSocketProvider = ({ children }) => {
         setUnreadCount(prev => prev + 1);
       });
 
+      socketInstance.on('new-message', (data) => {
+        console.log('New message received globally:', data);
+        // Store notification for updating conversation list
+        setNotifications(prev => [...prev, data]);
+      });
+
       setSocket(socketInstance);
       
       return () => {

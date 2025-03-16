@@ -144,24 +144,33 @@ export default function ChatScreen({ route, navigation }) {
             const updated = [...prevMessages];
             updated[tempIndex] = {
               ...message,
-              _id: message.id,
+              _id: message.id || message._id,
               isOwn: message.sender === userId,
               sending: false,
             };
-            return updated;
+            return [...updated]; // Return new array to ensure re-render
           }
 
           // Add as new message
           console.log("Adding new message to state:", message.content);
+          
+          // Return completely new array to ensure re-render
           return [
             ...prevMessages,
             {
               ...message,
-              _id: message.id,
+              _id: message.id || message._id,
               isOwn: message.sender === userId,
             },
           ];
         });
+        
+        // Force scroll to bottom on new message
+        setTimeout(() => {
+          if (flatListRef.current) {
+            flatListRef.current.scrollToEnd({ animated: true });
+          }
+        }, 100);
       }
     };
 
@@ -211,6 +220,16 @@ export default function ChatScreen({ route, navigation }) {
       socket.off("message-error", handleError);
       socket.off("user-typing", handleTypingUpdate);
     };
+  }, [socket, isConnected, contactId, userId]);
+
+  useEffect(() => {
+    console.log("Socket connected:", isConnected);
+    console.log("Socket object:", socket ? "EXISTS" : "NULL");
+    console.log("ContactID:", contactId);
+    console.log("UserID:", userId);
+    
+    // Existing socket code...
+    
   }, [socket, isConnected, contactId, userId]);
 
   // Send message function using WebSockets
@@ -470,10 +489,11 @@ export default function ChatScreen({ route, navigation }) {
               data={messages}
               renderItem={renderMessage}
               keyExtractor={(item) =>
-                item._id || item.id || `msg-${Date.now()}-${Math.random()}`
+                item._id || item.id || `msg-${item.timestamp}-${Math.random()}`
               }
               contentContainerStyle={styles.messagesList}
-              extraData={[messages.length, isContactTyping]}
+              // Add messages as extraData to force updates when messages change
+              extraData={[messages, isContactTyping]}
               initialNumToRender={15}
               windowSize={10}
               maxToRenderPerBatch={10}

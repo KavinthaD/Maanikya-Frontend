@@ -135,9 +135,7 @@ const BusinessOwnerProfile = ({ route }) => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
+
   profileContainer: {
     padding: 20,
     alignItems: 'center',
@@ -160,17 +158,7 @@ const styles = StyleSheet.create({
     marginTop: 30,
     marginLeft: 140,
   },
-  editProfileButton: {
-    backgroundColor: "#29abe2",
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 8,
-  },
-  editProfileButtonText: {
-    color: "white",
-    fontSize: 16,
-    fontWeight: "500",
-  },
+
   info: {
     marginTop: 20,
     marginHorizontal: 16,

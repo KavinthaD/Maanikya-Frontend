@@ -20,8 +20,9 @@ import axios from 'axios';
 import HeaderBar from '../components/HeaderBar';
 import { useFocusEffect } from '@react-navigation/native';
 import { useCallback } from 'react';
+import { baseScreenStylesNew } from '../styles/baseStylesNew';
 
-const THEME_COLOR = '#9CCDDB';
+
 const POLLING_INTERVAL = 5000; // Poll every 5 seconds for new messages
 
 export default function ChatScreen({ route, navigation }) {
@@ -198,7 +199,7 @@ const sendMessage = async () => {
       >
         <View style={[
           styles.messageBubble,
-          isOwnMessage ? styles.ownMessageBubble : styles.otherMessageBubble,
+          isOwnMessage ? baseScreenStylesNew.themeColor : styles.otherMessageBubble,
           item.sending && styles.sendingMessageBubble,
           item.error && styles.errorMessageBubble
         ]}>
@@ -255,7 +256,7 @@ const sendMessage = async () => {
   );
   
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <SafeAreaView style={[baseScreenStylesNew.backgroundColor,baseScreenStylesNew.container]}>
       <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
       <HeaderBar
         customContent={renderHeader()}
@@ -270,7 +271,7 @@ const sendMessage = async () => {
       >
         {loading ? (
           <View style={styles.loadingContainer}>
-            <ActivityIndicator size="large" color={THEME_COLOR} />
+            <ActivityIndicator size="large" style={baseScreenStylesNew.themeText} />
           </View>
         ) : (
           <>
@@ -299,7 +300,7 @@ const sendMessage = async () => {
               }
             />
             
-            <View style={styles.inputContainer}>
+            <View style={[styles.inputContainer, baseScreenStylesNew.backgroundColor]}>
               <TextInput
                 style={styles.input}
                 placeholder="Type your message..."
@@ -311,6 +312,7 @@ const sendMessage = async () => {
               <TouchableOpacity
                 style={[
                   styles.sendButton,
+                  baseScreenStylesNew.themeColor,
                   (!inputText.trim() || sending) && styles.sendButtonDisabled
                 ]}
                 onPress={sendMessage}
@@ -331,10 +333,7 @@ const sendMessage = async () => {
 }
 
 const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: '#FFFFFF',
-  },
+
   container: {
     flex: 1,
   },
@@ -385,9 +384,7 @@ const styles = StyleSheet.create({
     padding: 12,
     minWidth: 80,
   },
-  ownMessageBubble: {
-    backgroundColor: THEME_COLOR,
-  },
+
   otherMessageBubble: {
     backgroundColor: '#F0F0F0',
   },
@@ -434,7 +431,6 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderTopColor: '#F0F0F0',
     alignItems: 'center',
-    backgroundColor: '#FFFFFF',
   },
   input: {
     flex: 1,
@@ -448,7 +444,6 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: THEME_COLOR,
     justifyContent: 'center',
     alignItems: 'center',
     marginLeft: 8,

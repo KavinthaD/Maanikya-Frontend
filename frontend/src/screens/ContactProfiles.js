@@ -117,7 +117,7 @@ export default function ContactProfiles({ route, navigation }) {
         <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
         <HeaderBar title="Contact Details" navigation={navigation} showBack={true} />
         <View style={[styles.container, styles.centerContent]}>
-          <ActivityIndicator size="large" color={THEME_COLOR} />
+          <ActivityIndicator size="large" style={baseScreenStylesNew.themeText} />
           <Text style={styles.loadingText}>Loading contact details...</Text>
         </View>
       </SafeAreaView>
@@ -128,11 +128,11 @@ export default function ContactProfiles({ route, navigation }) {
   const createdAt = formatDate(contact.createdAt);
 
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <SafeAreaView style={baseScreenStylesNew.container}>
       <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
       <HeaderBar title="Contact Details" navigation={navigation} showBack={true} />
       
-      <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
+      <ScrollView style={[styles.container,baseScreenStylesNew.container]} contentContainerStyle={styles.contentContainer}>
         {/* Profile Header Section */}
         <View style={styles.profileHeader}>
           <Image 
@@ -143,7 +143,7 @@ export default function ContactProfiles({ route, navigation }) {
           <View style={styles.nameContainer}>
             <Text style={styles.name}>{contact.name}</Text>
             <Text style={styles.username}>@{contact.username}</Text>
-            <View style={styles.roleBadge}>
+            <View style={[styles.roleBadge, baseScreenStylesNew.themeColor]}>
               <Text style={styles.roleText}>{contact.role}</Text>
             </View>
           </View>
@@ -165,44 +165,44 @@ export default function ContactProfiles({ route, navigation }) {
         
         {/* Contact Details Cards */}
         <View style={styles.detailsSection}>
-          <Text style={styles.sectionTitle}>CONTACT INFORMATION</Text>
+          <Text style={[styles.sectionTitle, baseScreenStylesNew.blackText]}>CONTACT INFORMATION</Text>
           
-          <View style={styles.detailCard}>
+          <View style={[styles.detailCard, baseScreenStylesNew.backgroundColor]}>
             <View style={styles.detailItem}>
-              <Ionicons name="call-outline" size={20} color={THEME_COLOR} style={styles.detailIcon} />
+              <Ionicons name="call-outline" size={20}  style={[styles.detailIcon, baseScreenStylesNew.themeText]} />
               <View style={styles.detailContent}>
                 <Text style={styles.detailLabel}>Phone</Text>
-                <Text style={styles.detailValue}>{contact.phone}</Text>
+                <Text style={[styles.detailValue, baseScreenStylesNew.blackText]}>{contact.phone}</Text>
               </View>
             </View>
             
             <View style={styles.detailDivider} />
             
             <View style={styles.detailItem}>
-              <Ionicons name="mail-outline" size={20} color={THEME_COLOR} style={styles.detailIcon} />
+              <Ionicons name="mail-outline" size={20}  style={[styles.detailIcon, baseScreenStylesNew.themeText]} />
               <View style={styles.detailContent}>
                 <Text style={styles.detailLabel}>Email</Text>
-                <Text style={styles.detailValue}>{contact.email}</Text>
+                <Text style={[styles.detailValue, baseScreenStylesNew.blackText]}>{contact.email}</Text>
               </View>
             </View>
             
             <View style={styles.detailDivider} />
             
             <View style={styles.detailItem}>
-              <Ionicons name="location-outline" size={20} color={THEME_COLOR} style={styles.detailIcon} />
+              <Ionicons name="location-outline" size={20} style={[styles.detailIcon, baseScreenStylesNew.themeText]}/>
               <View style={styles.detailContent}>
                 <Text style={styles.detailLabel}>Location</Text>
-                <Text style={styles.detailValue}>{contact.address || "Not specified"}</Text>
+                <Text style={[styles.detailValue, baseScreenStylesNew.blackText]}>{contact.address || "Not specified"}</Text>
               </View>
             </View>
             
             <View style={styles.detailDivider} />
             
             <View style={styles.detailItem}>
-              <Ionicons name="calendar-outline" size={20} color={THEME_COLOR} style={styles.detailIcon} />
+              <Ionicons name="calendar-outline" size={20} style={[styles.detailIcon, baseScreenStylesNew.themeText]} />
               <View style={styles.detailContent}>
                 <Text style={styles.detailLabel}>Member Since</Text>
-                <Text style={styles.detailValue}>{createdAt}</Text>
+                <Text style={[styles.detailValue, baseScreenStylesNew.blackText]}>{createdAt}</Text>
               </View>
             </View>
           </View>
@@ -233,7 +233,7 @@ export default function ContactProfiles({ route, navigation }) {
         </View>
 
         {/* You can implement the past work section if you have this data from your API */}
-        <Text style={styles.sectionTitle}>PAST WORK</Text>
+        <Text style={[styles.sectionTitle, baseScreenStylesNew.blackText]}>PAST WORK</Text>
         {contact.pastWork && contact.pastWork.length > 0 ? (
           <FlatList
             data={contact.pastWork}
@@ -252,10 +252,7 @@ export default function ContactProfiles({ route, navigation }) {
 }
 
 const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: '#FFFFFF',
-  },
+
   container: {
     flex: 1,
     padding: 16,
@@ -297,7 +294,6 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
   roleBadge: {
-    backgroundColor: THEME_COLOR,
     borderRadius: 5,
     paddingVertical: 3,
     paddingHorizontal: 8,
@@ -333,7 +329,6 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   detailCard: {
-    backgroundColor: '#F9F9F9',
     borderRadius: 10,
     padding: 15,
     shadowColor: '#000',
@@ -341,6 +336,8 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 5,
     elevation: 2,
+    borderWidth: 1,
+    borderColor: '#E1E1E1',
   },
   detailItem: {
     flexDirection: 'row',

@@ -147,7 +147,7 @@ const AddContact = ({ navigation }) => {
           <Text style={styles.userRole}>{item.role}</Text>
         </View>
         <TouchableOpacity 
-          style={styles.addBtn}
+          style={[baseScreenStylesNew.themeColor,styles.addBtn]}
           onPress={() => addContact(item.id)}
         >
           <MaterialIcons name="person-add" size={24} color="#FFFFFF" />
@@ -157,7 +157,7 @@ const AddContact = ({ navigation }) => {
   };
 
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <SafeAreaView style={baseScreenStylesNew.container}>
       <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
       
       <HeaderBar 
@@ -166,7 +166,7 @@ const AddContact = ({ navigation }) => {
         showBack={true} 
       />
       
-      <View style={styles.container}>
+      <View style={baseScreenStylesNew.container}>
         {/* Search Bar - Now with real-time search */}
         <View style={styles.searchContainer}>
           <View style={styles.searchInputContainer}>
@@ -200,7 +200,7 @@ const AddContact = ({ navigation }) => {
         {/* Loading Indicator */}
         {loading && (
           <View style={styles.loadingContainer}>
-            <ActivityIndicator size="large" color={THEME_COLOR} />
+            <ActivityIndicator size="large" style={baseScreenStylesNew.themeText} />
             <Text style={styles.loadingText}>Searching...</Text>
           </View>
         )}
@@ -244,15 +244,7 @@ const AddContact = ({ navigation }) => {
 };
 
 const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: '#FFFFFF',
-  },
-  container: {
-    flex: 1,
-    padding: 16,
-    backgroundColor: '#FFFFFF',
-  },
+
   searchContainer: {
     flexDirection: "row",
     marginBottom: 16,
@@ -383,7 +375,6 @@ const styles = StyleSheet.create({
     marginTop: 2,
   },
   addBtn: {
-    backgroundColor: THEME_COLOR,
     width: 40,
     height: 40,
     borderRadius: 20,

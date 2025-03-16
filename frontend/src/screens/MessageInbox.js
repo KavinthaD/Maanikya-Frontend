@@ -140,7 +140,7 @@ export default function MessageInbox({ navigation }) {
       {item.avatar ? (
         <Image source={{ uri: item.avatar }} style={styles.avatar} />
       ) : (
-        <View style={styles.avatarPlaceholder}>
+        <View style={[styles.avatarPlaceholder, baseScreenStylesNew.themeColor]}>
           <Text style={styles.avatarInitial}>{getInitial(item.name)}</Text>
         </View>
       )}
@@ -148,8 +148,8 @@ export default function MessageInbox({ navigation }) {
       {/* Conversation details */}
       <View style={styles.conversationDetails}>
         <View style={styles.conversationHeader}>
-          <Text style={styles.name} numberOfLines={1}>{item.name}</Text>
-          <Text style={styles.time}>{formatMessageTime(item.timestamp)}</Text>
+          <Text style={[styles.name, baseScreenStylesNew.blackText]} numberOfLines={1}>{item.name}</Text>
+          <Text style={[styles.time, baseScreenStylesNew.blackText]}>{formatMessageTime(item.timestamp)}</Text>
         </View>
         
         <View style={styles.messagePreviewContainer}>
@@ -191,7 +191,7 @@ export default function MessageInbox({ navigation }) {
   
   // Main render
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <SafeAreaView style={baseScreenStylesNew.container}>
       <HeaderBar
         title="Messages"
         navigation={navigation}
@@ -231,10 +231,7 @@ export default function MessageInbox({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: "#FFFFFF",
-  },
+
   loadingContainer: {
     flex: 1,
     justifyContent: "center",
@@ -258,7 +255,6 @@ const styles = StyleSheet.create({
     width: 50,
     height: 50,
     borderRadius: 25,
-    backgroundColor: THEME_COLOR,
     justifyContent: "center",
     alignItems: "center",
   },
@@ -296,7 +292,7 @@ const styles = StyleSheet.create({
   },
   messagePreview: {
     fontSize: 14,
-    color: "#666666",
+    color: "#999999",
     flex: 1,
     marginRight: 8,
   },

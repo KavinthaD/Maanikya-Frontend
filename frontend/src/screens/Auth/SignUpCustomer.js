@@ -98,7 +98,7 @@ const SignUpScreenCustomer = ({ navigation }) => {
         />
         </View>
         <View style={styles.inputHalfContainer}>
-        <Text style={styles.inputLabel}>First Name</Text>
+        <Text style={styles.inputLabel}>Last Name</Text>
         <TextInput
           style={baseScreenStylesNew.input}
           placeholder="Doe"

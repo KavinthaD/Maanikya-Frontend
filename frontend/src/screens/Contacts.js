@@ -201,12 +201,12 @@ const Contacts = ({ navigation }) => {
     
     return (
       <TouchableOpacity 
-        style={styles.contactCard}
+        style={[styles.contactCard, baseScreenStylesNew.backgroundColor]}
         onPress={() => navigation.navigate("ContactProfiles", { contactId: item.id })}
       >
         <Image source={avatarSource} style={styles.avatar} />
         <View style={styles.contactInfo}>
-          <Text style={styles.contactName}>{item.name}</Text>
+          <Text style={[styles.contactName, baseScreenStylesNew.blackText]}>{item.name}</Text>
           <Text style={styles.contactRole}>{item.role}</Text>
         </View>
         
@@ -231,7 +231,7 @@ const Contacts = ({ navigation }) => {
               contactUsername: item.username
             })}
           >
-            <MaterialIcons name="message" size={22} color={THEME_COLOR} />
+            <MaterialIcons name="message" size={22} style={baseScreenStylesNew.themeText} />
           </TouchableOpacity>
           
           <TouchableOpacity 
@@ -246,7 +246,7 @@ const Contacts = ({ navigation }) => {
   };
 
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <View style={baseScreenStylesNew.container}>
       <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
       
       {/* Replace the header with the new HeaderBar */}
@@ -256,15 +256,15 @@ const Contacts = ({ navigation }) => {
         showBack={true} 
       />
       
-      <View style={styles.container}>
+      <View style={baseScreenStylesNew.container}>
         {/* Search Bar - Styled like Market.js */}
         <View style={styles.searchContainer}>
           <View style={baseScreenStylesNew.search}>
             <Ionicons name="search" size={20} color="#666" style={baseScreenStylesNew.searchIcon} />
             <TextInput
-              style={styles.searchInput}
+              style={baseScreenStylesNew.searchInput}
               placeholder="Search contacts..."
-              placeholderTextColor="#999"
+              placeholderTextColor={baseScreenStylesNew.searchIcon.color}
               value={searchText}
               onChangeText={setSearchText}
             />
@@ -280,22 +280,26 @@ const Contacts = ({ navigation }) => {
         <ScrollView 
   horizontal 
   showsHorizontalScrollIndicator={false}
-  style={styles.categoriesContainer}
+  style={[styles.categoriesContainer]}
   contentContainerStyle={styles.categoryList}
 >
   {categories.map((category) => (
     <TouchableOpacity
       key={category}
       style={[
-        styles.categoryTab,
-        selectedCategory === category && styles.activeCategory,
+        baseScreenStylesNew.tabButton,
+        selectedCategory === category 
+          ? baseScreenStylesNew.tabButtonActive 
+          : baseScreenStylesNew.tabButtonInactive,
       ]}
       onPress={() => setSelectedCategory(category)}
     >
       <Text
         style={[
-          styles.categoryText,
-          selectedCategory === category && styles.activeCategoryText,
+          baseScreenStylesNew.tabText,
+          selectedCategory === category 
+            ? baseScreenStylesNew.tabTextActive
+            : baseScreenStylesNew.tabTextInactive,
         ]}
       >
         {category}
@@ -307,8 +311,8 @@ const Contacts = ({ navigation }) => {
         {/* Contacts List */}
         {loading ? (
           <View style={styles.loadingContainer}>
-            <ActivityIndicator size="large" color={THEME_COLOR} />
-            <Text style={styles.loadingText}>Loading contacts...</Text>
+            <ActivityIndicator size="large" style={baseScreenStylesNew.themeText} />
+            <Text style={[styles.loadingText,baseScreenStylesNew.blackText]}>Loading contacts...</Text>
           </View>
         ) : error ? (
           <View style={styles.errorContainer}>
@@ -323,7 +327,7 @@ const Contacts = ({ navigation }) => {
           </View>
         ) : (
           <>
-            <Text style={styles.sectionTitle}>Your Contacts</Text>
+            <Text style={[styles.sectionTitle, baseScreenStylesNew.blackText]}>Your Contacts</Text>
             
             {filteredContacts.length === 0 ? (
               <View style={styles.emptyContainer}>
@@ -337,7 +341,7 @@ const Contacts = ({ navigation }) => {
                   style={styles.addFirstContactBtn}
                   onPress={() => navigation.navigate("AddContact")}
                 >
-                  <Text style={styles.addFirstContactBtnText}>Add Your First Contact</Text>
+                  <Text style={[styles.addFirstContactBtnText, baseScreenStylesNew.blackText]}>Add Your First Contact</Text>
                 </TouchableOpacity>
               </View>
             ) : (
@@ -362,25 +366,18 @@ const Contacts = ({ navigation }) => {
       
       {/* Add Contact Button (fixed at bottom right) - Updated to square with text */}
       <TouchableOpacity
-        style={styles.addButton}
+        style={[baseScreenStylesNew.Button1,styles.addButton]}
         onPress={() => navigation.navigate("AddContact")}
       >
         <AntDesign name="plus" size={20} color="#FFFFFF" />
-        <Text style={styles.addButtonText}>Add Contact</Text>
+        <Text style={[baseScreenStylesNew.buttonText,styles.addButtonText]}>Add Contact</Text>
       </TouchableOpacity>
-    </SafeAreaView>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: '#FFFFFF',
-  },
-  container: {
-    flex: 1,
-    backgroundColor: '#FFFFFF',
-  },
+
   header: {
     backgroundColor: '#FFFFFF',
     paddingVertical: 16,
@@ -407,36 +404,17 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   categoriesContainer: {
-    marginVertical: 8,
+    marginVertical: 2,
     maxHeight: 50, // Add a max height to contain the ScrollView
+    marginBottom: 15,
+    marginLeft: 0
   },
   categoryList: {
     paddingHorizontal: 15,
     paddingVertical: 4,
     alignItems: 'center', // This centers items vertically
   },
-  categoryTab: {
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-    marginRight: 8,
-    borderRadius: 20,
-    backgroundColor: '#F0F0F0',
-    height: 36, // Fixed height for consistent appearance
-    justifyContent: 'center', // Center content vertically
-    alignItems: 'center', // Center content horizontally
-  },
-  activeCategory: {
-    backgroundColor: THEME_COLOR,
-  },
-  categoryText: {
-    fontSize: 14,
-    fontWeight: '500',
-    color: '#666',
-  },
-  activeCategoryText: {
-    color: '#FFFFFF',
-    fontWeight: '600',
-  },
+
   sectionTitle: {
     fontSize: 18,
     fontWeight: 'bold',
@@ -452,17 +430,15 @@ const styles = StyleSheet.create({
   contactCard: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: '#FFFFFF',
     borderRadius: 40,
     padding: 12,
     marginBottom: 12,
-    elevation: 2,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
     borderWidth: 1,
-    borderColor: '#EEEEEE',
+    borderColor: '#E1E1E1',
   },
   avatar: {
     width: 70,
@@ -495,7 +471,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     right: 20,
     bottom: 20,
-    backgroundColor: THEME_COLOR,
+    width: "20",
     paddingVertical: 12,
     paddingHorizontal: 16,
     borderRadius: 12,
@@ -508,7 +484,6 @@ const styles = StyleSheet.create({
     shadowRadius: 3,
   },
   addButtonText: {
-    color: '#FFFFFF',
     fontWeight: 'bold',
     fontSize: 16,
     marginLeft: 8,

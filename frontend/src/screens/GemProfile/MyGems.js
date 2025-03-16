@@ -9,10 +9,11 @@ import {
   Modal,
   Button,
   StyleSheet,
+  ScrollView,
 } from "react-native";
 import QRCode from "react-native-qrcode-svg"; // Import QR library
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Ionicons, FontAwesome5 } from "@expo/vector-icons"; // Import icons
+import { Ionicons, FontAwesome5, MaterialCommunityIcons } from "@expo/vector-icons"; // Import icons
 import axios from "axios"; // Import axios
 import { API_URL, ENDPOINTS } from "../../config/api"; // Import the API URL and endpoints
 import ImageCropPicker from "react-native-image-crop-picker"; // Import ImageCropPicker
@@ -142,218 +143,348 @@ const MyGems = ({ route, navigation }) => {
 
   return (
     <GradientContainer>
-    <SafeAreaView style={styles.container}>
-      <View style={styles.imageContainer}>
-        {/* Gem Image */}
-        <Image
-          source={{
-            uri:
-              gemDetails?.photo ||
-              "https://cdn.britannica.com/80/151380-050-2ABD86F2/diamond.jpg",
-          }}
-          style={styles.gemPhoto}
-          onError={(error) => {
-            console.error("Image loading error:", error);
-            // You might want to set a fallback image here
-          }}
-        />
-        {/*Popup QR code*/}
-        <TouchableOpacity
-          style={styles.qrContainer}
-          onPress={() => setPopQRCode(true)}
-        >
-          <View>
-            {qrCodeUrl ? (
-              <QRCode value={qrCodeUrl} size={50} quietZone={5} />
-            ) : (
-              <Text>No QR Code</Text>
-            )}
-          </View>
-        </TouchableOpacity>
-      </View>
-
-      {/* Gem ID */}
-      <Text style={styles.gemId}>Gem ID - {gemDetails?.gemId || "N/A"}</Text>
-      {/* Gem Details */}
-      <View style={styles.detailCard}>
-        <Text style={styles.detailTitle}>
-          {" "}
-          Date added to system -{" "}
-          {gemDetails?.createdAt
-            ? new Date(gemDetails.createdAt).toISOString().split("T")[0]
-            : "N/A"}
-        </Text>
-        <Text style={styles.detailText}>
-          Identification - {gemDetails?.details?.gemType || "N/A"}
-        </Text>
-        <Text style={styles.detailText}>
-          Weight - {gemDetails?.details?.weight?.toString() || "N/A"} ct
-        </Text>
-        <Text style={styles.detailText}>
-          Measurements - {gemDetails?.details?.dimensions || "N/A"} mm
-        </Text>
-        <Text style={styles.detailText}>
-          Shape - {gemDetails?.details?.gemShape || "N/A"}
-        </Text>
-        <Text style={styles.detailText}>
-          Color - {gemDetails?.details?.color || "N/A"}
-        </Text>
-        <Text style={styles.detailText}>
-          Additional Information - {gemDetails?.details?.extraInfo || "N/A"}
-        </Text>
-      </View>
-      {/*Financial Details */}
-      <View style={styles.detailCard}>
-        <Text style={styles.detailText}>
-          Purchase Price -{" "}
-          {gemDetails?.details?.purchasePrice?.toString() || "N/A"}
-        </Text>
-        <Text style={styles.detailText}>
-          Cost - {gemDetails?.details?.cost?.toString() || "N/A"}
-        </Text>
-        <Text style={styles.detailText}>
-          Sold Price - {gemDetails?.details?.soldPrice?.toString() || "N/A"}
-        </Text>
-      </View>
-
-      {/* Certificate Image */}
-      <Image
-        source={{
-          uri:
-            gemDetails?.certificateUrl ||
-            gemDetails?.certificate ||
-            "https://cdn.britannica.com/80/151380-050-2ABD86F2/diamond.jpg",
-        }}
-        style={styles.gemCert}
-        onError={(error) =>
-          console.error("Certificate image loading error:", error)
-        }
-      />
-      {/*edit button for editing the profile*/}
-      <TouchableOpacity onPress={handleCameraPress} style={styles.editBtn}>
-        <FontAwesome5 name="pen" size={16} color="white" />
-      </TouchableOpacity>
-
-      {/* QR Code Popup modal */}
-      <Modal transparent visible={popQRCode} animationType="fade">
-        <View style={styles.popUpContainer}>
-          <View style={styles.popUpContent}>
-            <Text style={styles.modalTopic}>QR Code</Text>
-            <View tyle={styles.qrCodeWrapper}>
-              {qrCodeUrl ? (
-                <QRCode value={qrCodeUrl} size={200} quietZone={10} />
-              ) : (
-                <Text>No QR Code available</Text>
-              )}
-            </View>
-            <Button title="Close" onPress={() => setPopQRCode(false)} />
-          </View>
+      <SafeAreaView style={styles.container}>
+        <View style={styles.header}>
+          <Text style={styles.headerTitle}>Gem Details</Text>
         </View>
-      </Modal>
 
-      <Modal transparent visible={modalVisible} animationType="slide">
-        <View style={styles.popUpContainer}>
-          <View style={styles.modalContent}>
-            <View style={styles.modalHeader}>
-              <View style={styles.modalIndicator} />
+        <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
+          <View style={styles.imageContainer}>
+            <Image
+              source={{
+                uri: gemDetails?.photo ||
+                  "https://cdn.britannica.com/80/151380-050-2ABD86F2/diamond.jpg",
+              }}
+              style={styles.gemImage}
+              resizeMode="contain"
+            />
+            <View style={styles.badgeContainer}>
+              <TouchableOpacity
+                style={styles.qrBadge}
+                onPress={() => setPopQRCode(true)}
+              >
+                {qrCodeUrl ? (
+                  <QRCode value={qrCodeUrl} size={50} quietZone={5} />
+                ) : (
+                  <Text>No QR</Text>
+                )}
+              </TouchableOpacity>
             </View>
-            <TouchableOpacity
-              style={styles.modalButton}
-              onPress={handleTakePhoto}
-            >
-              <Ionicons name="camera" size={24} color="#170969" />
-              <Text style={styles.modalButtonText}>Take Photo</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.modalButton}
-              onPress={handleChooseFromGallery}
-            >
-              <Ionicons name="images" size={24} color="#170969" />
-              <Text style={styles.modalButtonText}>Choose from Gallery</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[styles.modalButton, styles.cancelButton]}
-              onPress={() => setModalVisible(false)}
-            >
-              <Text style={[styles.modalButtonText, styles.cancelButtonText]}>
-                Cancel
-              </Text>
-            </TouchableOpacity>
           </View>
-        </View>
-      </Modal>
-    </SafeAreaView>
+
+          <View style={styles.detailsContainer}>
+            <View style={styles.infoCard}>
+              <View style={styles.gemHeader}>
+                <View>
+                  <Text style={styles.gemId}>Gem ID - {gemDetails?.gemId || "N/A"}</Text>
+                  <Text style={styles.gemType}>
+                    {gemDetails?.details?.weight} ct {gemDetails?.details?.gemType}
+                  </Text>
+                </View>
+              </View>
+
+              <View style={styles.divider} />
+
+              <View style={styles.infoSection}>
+                <View style={styles.infoRow}>
+                  <Ionicons name="calendar" size={20} color="#555" />
+                  <Text style={styles.infoLabel}>Added on:</Text>
+                  <Text style={styles.infoValue}>
+                    {gemDetails?.createdAt
+                      ? new Date(gemDetails.createdAt).toLocaleDateString()
+                      : "N/A"}
+                  </Text>
+                </View>
+
+                <View style={styles.infoRow}>
+                  <Ionicons name="diamond" size={20} color="#555" />
+                  <Text style={styles.infoLabel}>Type:</Text>
+                  <Text style={styles.infoValue}>
+                    {gemDetails?.details?.gemType || "N/A"}
+                  </Text>
+                </View>
+
+                <View style={styles.infoRow}>
+                  <MaterialCommunityIcons name="weight" size={20} color="#555" />
+                  <Text style={styles.infoLabel}>Weight:</Text>
+                  <Text style={styles.infoValue}>
+                    {gemDetails?.details?.weight?.toString() || "N/A"} ct
+                  </Text>
+                </View>
+
+                <View style={styles.infoRow}>
+                  <MaterialCommunityIcons name="ruler" size={20} color="#555" />
+                  <Text style={styles.infoLabel}>Size:</Text>
+                  <Text style={styles.infoValue}>
+                    {gemDetails?.details?.dimensions || "N/A"} mm
+                  </Text>
+                </View>
+
+                <View style={styles.infoRow}>
+                  <Ionicons name="shapes" size={20} color="#555" />
+                  <Text style={styles.infoLabel}>Shape:</Text>
+                  <Text style={styles.infoValue}>
+                    {gemDetails?.details?.gemShape || "N/A"}
+                  </Text>
+                </View>
+
+                <View style={styles.infoRow}>
+                  <Ionicons name="color-palette" size={20} color="#555" />
+                  <Text style={styles.infoLabel}>Color:</Text>
+                  <Text style={styles.infoValue}>
+                    {gemDetails?.details?.color || "N/A"}
+                  </Text>
+                </View>
+              </View>
+
+              <View style={styles.divider} />
+
+              <View style={styles.financialSection}>
+                <Text style={styles.sectionTitle}>Financial Details</Text>
+                <View style={styles.infoRow}>
+                  <MaterialCommunityIcons name="cash" size={20} color="#555" />
+                  <Text style={styles.infoLabel}>Purchase:</Text>
+                  <Text style={styles.infoValue}>
+                    LKR {gemDetails?.details?.purchasePrice?.toString() || "N/A"}
+                  </Text>
+                </View>
+                <View style={styles.infoRow}>
+                  <MaterialCommunityIcons name="cash" size={20} color="#555" />
+                  <Text style={styles.infoLabel}>Cost:</Text>
+                  <Text style={styles.infoValue}>
+                    LKR {gemDetails?.details?.cost?.toString() || "N/A"}
+                  </Text>
+                </View>
+                <View style={styles.infoRow}>
+                  <MaterialCommunityIcons name="cash" size={20} color="#555" />
+                  <Text style={styles.infoLabel}>Sold:</Text>
+                  <Text style={styles.infoValue}>
+                    LKR {gemDetails?.details?.soldPrice?.toString() || "N/A"}
+                  </Text>
+                </View>
+              </View>
+
+              {/* Certificate Image Section */}
+              <View style={styles.certificateSection}>
+                <Text style={styles.sectionTitle}>Certificate</Text>
+                <Image
+                  source={{
+                    uri: gemDetails?.certificateUrl ||
+                      gemDetails?.certificate ||
+                      "https://cdn.britannica.com/80/151380-050-2ABD86F2/diamond.jpg",
+                  }}
+                  style={styles.certificateImage}
+                  resizeMode="contain"
+                />
+                {/* Add Certificate Button */}
+                <TouchableOpacity onPress={handleCameraPress} style={styles.addCertificateButton}>
+                  <FontAwesome5 name="plus" size={16} color="white" />
+                  <Text style={styles.addButtonText}>Add Gem Certificate</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+        </ScrollView>
+
+        {/* QR Code Popup modal */}
+        <Modal transparent visible={popQRCode} animationType="fade">
+          <View style={styles.popUpContainer}>
+            <View style={styles.popUpContent}>
+              <Text style={styles.modalTopic}>QR Code</Text>
+              <View tyle={styles.qrCodeWrapper}>
+                {qrCodeUrl ? (
+                  <QRCode value={qrCodeUrl} size={200} quietZone={10} />
+                ) : (
+                  <Text>No QR Code available</Text>
+                )}
+              </View>
+              <Button title="Close" onPress={() => setPopQRCode(false)} />
+            </View>
+          </View>
+        </Modal>
+
+        <Modal transparent visible={modalVisible} animationType="slide">
+          <View style={styles.popUpContainer}>
+            <View style={styles.modalContent}>
+              <View style={styles.modalHeader}>
+                <View style={styles.modalIndicator} />
+              </View>
+              <TouchableOpacity
+                style={styles.modalButton}
+                onPress={handleTakePhoto}
+              >
+                <Ionicons name="camera" size={24} color="#170969" />
+                <Text style={styles.modalButtonText}>Take Photo</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.modalButton}
+                onPress={handleChooseFromGallery}
+              >
+                <Ionicons name="images" size={24} color="#170969" />
+                <Text style={styles.modalButtonText}>Choose from Gallery</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.modalButton, styles.cancelButton]}
+                onPress={() => setModalVisible(false)}
+              >
+                <Text style={[styles.modalButtonText, styles.cancelButtonText]}>
+                  Cancel
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
+      </SafeAreaView>
     </GradientContainer>
   );
 };
 
-// Styles
+// Updated styles
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#9CCDDB",
+    backgroundColor: "#FFFFFF",
+  },
+  header: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    paddingHorizontal: 15,
+    paddingVertical: 15,
+    backgroundColor: "#FFFFFF",
+    borderBottomWidth: 1,
+    borderBottomColor: "#F0F0F0",
+  },
+  headerTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "#333333",
+  },
+  scrollView: {
+    backgroundColor: "#FFFFFF",
+    flex: 1,
   },
   imageContainer: {
-    alignItems: "center",
-    marginVertical: 15,
+    width: "100%",
+    height: 300,
     position: "relative",
+    marginBottom: 20,
   },
-  gemPhoto: {
-    width: 120,
-    height: 120,
+  gemImage: {
+    width: "100%",
+    height: "100%",
+    borderRadius: 0,
+  },
+  badgeContainer: {
+    position: "absolute",
+    top: 15,
+    right: 15,
+  },
+  qrBadge: {
+    backgroundColor: "#FFFFFF",
+    padding: 5,
     borderRadius: 10,
-    borderWidth: 2,
-    borderColor: "#ccc",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
   },
-  editBtn: {
-    position: "absolute",
-    top: 620,
-    left: 150,
-    backgroundColor: "#007BFF",
-    padding: 5,
-    borderRadius: 5,
+  detailsContainer: {
+    paddingHorizontal: 15,
+    paddingBottom: 30,
   },
-  qrContainer: {
-    position: "absolute",
-    top: 5,
-    left: 5,
-    backgroundColor: "#fff",
-    padding: 5,
-    borderRadius: 5,
+  infoCard: {
+    backgroundColor: "#FFFFFF",
+    borderRadius: 12,
+    padding: 15,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 1,
+    borderWidth: 1,
+    borderColor: "#F0F0F0",
+  },
+  gemHeader: {
+    marginBottom: 15,
   },
   gemId: {
-    textAlign: "center",
-    fontSize: 16,
+    fontSize: 24,
     fontWeight: "bold",
+    color: "#222",
+  },
+  gemType: {
+    fontSize: 16,
+    color: "#666",
+    marginTop: 5,
+  },
+  divider: {
+    height: 1,
+    backgroundColor: "#F0F0F0",
+    marginVertical: 15,
+  },
+  infoSection: {
     marginBottom: 10,
   },
-  detailCard: {
-    backgroundColor: "#0B3D4B",
-    padding: 15,
+  infoRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 12,
+  },
+  infoLabel: {
+    fontSize: 16,
+    color: "#555",
+    fontWeight: "500",
+    marginLeft: 5,
+    width: 100,
+  },
+  infoValue: {
+    fontSize: 16,
+    color: "#333",
+    flex: 1,
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "#333",
+    marginBottom: 10,
+  },
+  financialSection: {
+    marginBottom: 15,
+  },
+  certificateSection: {
+    alignItems: "center",
+  },
+  certificateImage: {
+    width: "100%",
+    height: 200,
     borderRadius: 10,
-    marginHorizontal: 20,
-    marginBottom: 10,
+  },
+  addCertificateButton: {
+    marginTop: 20,
+    backgroundColor: "#9CCDDB",
+    flexDirection: "row",
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    borderRadius: 8,
+    justifyContent: "center",
+    alignItems: "center",
+    width: "90%",
     shadowColor: "#000",
-    shadowOpacity: 0.1,
     shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 4,
-    elevation: 2,
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
   },
-  detailTitle: {
+  addButtonText: {
+    color: "white",
     fontSize: 16,
-    fontWeight: "bold",
-    marginBottom: 5,
+    fontWeight: "500",
+    marginLeft: 8,
+    textAlign: "center",
   },
-  detailText: {
-    fontSize: 14,
-    marginBottom: 3,
-  },
-  gemCert: {
-    width: 120,
-    height: 80,
-    marginLeft: 20,
-    borderRadius: 5,
-  },
+  // Keep existing modal styles
   popUpContainer: {
     flex: 1,
     backgroundColor: "rgba(0,0,0,0.5)",

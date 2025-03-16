@@ -13,7 +13,6 @@ import {
   ScrollView,
   Platform,
 } from "react-native";
-import DropDownPicker from "react-native-dropdown-picker"; // Import DropDownPicker
 import { baseScreenStylesNew } from "../../styles/baseStylesNew"; // Import base styles
 import {
   useNavigation,
@@ -21,7 +20,7 @@ import {
   useFocusEffect,
 } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import Header_2 from "../../components/Header_2";
+import HeaderBar from "../../components/HeaderBar";
 import Gem_register_3 from "./GemRegister3"; // Import GemRegister3
 import axios from "axios"; // Import axios
 import { FormFieldStyles } from "../../styles/FormFields";
@@ -215,7 +214,11 @@ function GemRegister2Main() {
   
   return (
     <View style={[baseScreenStylesNew.backgroundColor,baseScreenStylesNew.container]}>
-      <Header_2 title="Add gem" />
+      <HeaderBar 
+        title="Register Gem" 
+        navigation={navigation} 
+        showBack={true} 
+      />
       
       {/* Dev bypass button (only in dev) */}
       {__DEV__ && (

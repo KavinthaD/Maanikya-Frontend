@@ -18,7 +18,7 @@ import {
 import { baseScreenStylesNew } from "../../styles/baseStylesNew";
 import { useNavigation } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import Header_1 from "../../components/Header_1";
+import HeaderBar from "../../components/HeaderBar";
 import Gem_register_2 from "./GemRegister2";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import DropDownPicker from "react-native-dropdown-picker";
@@ -346,7 +346,10 @@ function GemRegister1Main() {
   
   return (
     <View style={baseScreenStylesNew.container}>
-      <Header_1 title="Add gem" />
+      <HeaderBar 
+        title="Register Gem" 
+        
+      />
       
       {/* Dev bypass button (only in dev) */}
       {__DEV__ && (

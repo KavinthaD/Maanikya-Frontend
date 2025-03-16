@@ -17,7 +17,7 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { baseScreenStylesNew } from "../../styles/baseStylesNew";
-import Header_2 from "../../components/Header_2";
+import HeaderBar from "../../components/HeaderBar";
 import BS_NavBar from "../../components/BS_NavBar";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -247,8 +247,11 @@ const GemCollectionScreen = ({ navigation }) => {
 
   return (
     <SafeAreaView style={[baseScreenStylesNew.backgroundColor, baseScreenStylesNew.container]}>
-      <Header_2 title="My Gems" />
-      <StatusBar barStyle="light-content" />
+      <HeaderBar 
+        title="My gems" 
+        navigation={navigation} 
+        showBack={true} 
+      />
       <View style={[baseScreenStylesNew.container.backgroundColor,styles.header]}>
         <View style={styles.searchContainer}>
           <View style={baseScreenStylesNew.search}>

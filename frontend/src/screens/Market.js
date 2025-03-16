@@ -20,7 +20,7 @@ import axios from 'axios';
 import { API_URL } from '../config/api';
 import { Ionicons } from '@expo/vector-icons';
 import { baseScreenStylesNew } from '../styles/baseStylesNew';
-import Header_1 from '../components/Header_1';
+import HeaderBar from '../components/HeaderBar';
 
 const { width } = Dimensions.get('window');
 const CARD_WIDTH = (width - 40) / 2; // 2 cards per row with margins
@@ -109,7 +109,9 @@ const Market = ({ navigation }) => {
   return (
     <SafeAreaView style={baseScreenStylesNew.container}>
       <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
-      <Header_1 title="Market"/>
+      <HeaderBar 
+        title="Marketplace" 
+      />
       <ScrollView
         contentContainerStyle={styles.contentContainer}
         refreshControl={

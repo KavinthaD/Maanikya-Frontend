@@ -14,12 +14,12 @@ import {
   StatusBar
 } from "react-native";
 import { baseScreenStylesNew } from "../../styles/baseStylesNew";
-import Header_2 from "../../components/Header_2";
+import HeaderBar from "../../components/HeaderBar";
 import { API_URL, ENDPOINTS } from "../../config/api";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 
-const WorkerFinancialRecords = () => {
+const WorkerFinancialRecords = ({ navigation }) => {
   const [financialData, setFinancialData] = useState(null);
   const [workerType, setWorkerType] = useState(null); // "cutter" or "burner"
   const [loading, setLoading] = useState(true);
@@ -173,7 +173,11 @@ const WorkerFinancialRecords = () => {
     return (
       <SafeAreaView style={baseScreenStylesNew.container}>
         <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
-        <Header_2 title="Worker Finances" />
+        <HeaderBar 
+        title="Financial Records" 
+        navigation={navigation} 
+        showBack={true} 
+      />
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color="#007BFF" />
           <Text style={styles.loadingText}>Loading financial data...</Text>
@@ -186,7 +190,11 @@ const WorkerFinancialRecords = () => {
     return (
       <SafeAreaView style={baseScreenStylesNew.container}>
         <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
-        <Header_2 title="Worker Finances" />
+        <HeaderBar 
+        title="Financial Records" 
+        navigation={navigation} 
+        showBack={true} 
+      />
         <View style={styles.errorContainer}>
           <Text style={styles.errorText}>{error}</Text>
           <TouchableOpacity
@@ -212,7 +220,11 @@ const WorkerFinancialRecords = () => {
   return (
     <SafeAreaView style={baseScreenStylesNew.container}>
       <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
-      <Header_2 title={workerType === "cutter" ? "Cutter Finances" : "Burner Finances"} />
+      <HeaderBar 
+        title="Financial Records" 
+        navigation={navigation} 
+        showBack={true} 
+      />
       
       <ScrollView
         contentContainerStyle={styles.scrollViewContent}

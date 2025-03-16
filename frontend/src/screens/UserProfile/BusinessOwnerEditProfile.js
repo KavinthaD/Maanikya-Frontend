@@ -8,7 +8,7 @@ import ImageCropPicker from "react-native-image-crop-picker";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { API_URL, ENDPOINTS } from '../../config/api'; 
 import GradientContainer from "../../components/GradientContainer";
-import Header_1 from "../../components/Header_1";
+import HeaderBar from "../../components/HeaderBar";
 import { baseScreenStyles } from "../../styles/baseStyles";
 
 const BusinessOwnerEditProfile = ({ navigation, route }) => {
@@ -167,7 +167,11 @@ const BusinessOwnerEditProfile = ({ navigation, route }) => {
 
   return (
     <GradientContainer>
-      <Header_1 title="Edit Profile" />
+      <HeaderBar 
+        title="Edit Profile" 
+        navigation={navigation} 
+        showBack={true} 
+      />
     <SafeAreaView style={styles.container}>
       
       <KeyboardAvoidingView 

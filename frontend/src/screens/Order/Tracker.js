@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import { View, Text, FlatList, StyleSheet, Image, TextInput, SafeAreaView, TouchableOpacity } from "react-native"
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { baseScreenStylesNew } from "../../styles/baseStylesNew";
-import Header_2 from "../../components/Header_2";
+import HeaderBar from "../../components/HeaderBar";
 import { API_URL, ENDPOINTS } from "../../config/api"; // **Routes are imported from api.js**
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -79,7 +79,11 @@ const Tracker = ({navigation}) => {
   return (
 
       <SafeAreaView style={baseScreenStylesNew.container}>
-        <Header_2 title="Tracker"/>
+       <HeaderBar 
+        title="Order tracker" 
+        navigation={navigation} 
+        showBack={true} 
+      />
         <View style={baseScreenStylesNew.search}>
           <Ionicons name="search" size={20} color="#888" style={baseScreenStylesNew.searchIcon} />
           <TextInput

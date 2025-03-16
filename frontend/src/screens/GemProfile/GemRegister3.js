@@ -19,7 +19,7 @@ import QRCode from "react-native-qrcode-svg";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import ViewShot from "react-native-view-shot";
 import { BackHandler } from "react-native";
-import Header_1 from "../../components/Header_1";
+import HeaderBar from "../../components/HeaderBar";
 
 export default function Gem_register_3() {
   const navigation = useNavigation();
@@ -172,7 +172,9 @@ export default function Gem_register_3() {
 
   return (
     <View style={[baseScreenStylesNew.backgroundColor,baseScreenStylesNew.container]}>
-      <Header_1 title="Add gem success" />
+      <HeaderBar 
+        title="Register success" 
+      />
         <View style={styles.innerContainer}>
           <ViewShot
             ref={qrContainerRef}

@@ -17,7 +17,7 @@ import {
   RefreshControl,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import Header_2 from "../components/Header_2";
+import HeaderBar from "../components/HeaderBar";
 import LinearGradient from "react-native-linear-gradient";
 import axios from "axios";
 import { API_URL, ENDPOINTS } from "../config/api";
@@ -25,7 +25,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { baseScreenStylesNew } from "../styles/baseStylesNew";
 
 const THEME_COLOR = '#9CCDDB'; // Light blue theme color
-const GemOnDisplay = ({}) => {
+const GemOnDisplay = ({ navigation }) => {
   // Store gems on display
   const [onDisplay, setOnDisplay] = useState([]);
   // Store sold gems
@@ -180,7 +180,11 @@ const GemOnDisplay = ({}) => {
   if (loading && !refreshing) {
     return (
       <SafeAreaView style={styles.container}>
-        <Header_2 title="Gems On Display" />
+        <HeaderBar 
+        title="Gems On Market" 
+        navigation={navigation} 
+        showBack={true} 
+      />
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color="#051B41" />
           <Text style={styles.loadingText}>Loading gems...</Text>
@@ -192,7 +196,11 @@ const GemOnDisplay = ({}) => {
   if (error && !refreshing) {
     return (
       <SafeAreaView style={styles.container}>
-        <Header_2 title="Gems On Display" />
+        <HeaderBar 
+        title="Gems On Market" 
+        navigation={navigation} 
+        showBack={true} 
+      />
         <View style={styles.errorContainer}>
           <Ionicons name="alert-circle-outline" size={60} color="#FF6B6B" />
           <Text style={styles.errorText}>{error}</Text>
@@ -206,7 +214,11 @@ const GemOnDisplay = ({}) => {
 
   return (
     <SafeAreaView style={baseScreenStylesNew.container}>
-      <Header_2 title="Gems On Display" />
+      <HeaderBar 
+        title="Gems On Market" 
+        navigation={navigation} 
+        showBack={true} 
+      />
       <ScrollView
         contentContainerStyle={styles.scrollContainer}
         keyboardShouldPersistTaps="handled"

@@ -14,7 +14,7 @@ import {
   StatusBar
 } from 'react-native';
 import { baseScreenStylesNew } from '../../styles/baseStylesNew';
-import Header_1 from '../../components/Header_1';
+import HeaderBar from '../../components/HeaderBar';
 import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
@@ -264,7 +264,9 @@ const AlertsScreen = () => {
     <SafeAreaView style={styles.safeArea}>
       <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
       
-      <Header_1 title="Alerts" />
+      <HeaderBar 
+        title="Notifications" 
+      />
       
       <TouchableWithoutFeedback onPress={handleCloseSelection}>
         <View style={styles.container}>

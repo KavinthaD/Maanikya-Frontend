@@ -8,8 +8,7 @@ import { baseScreenStyles } from "../../styles/baseStyles";
 import GradientContainer from "../../components/GradientContainer";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { API_URL, ENDPOINTS } from '../../config/api'; 
-import Header_1 from "../../components/Header_1";
-
+import HeaderBar from "../../components/HeaderBar";
 
 const BusinessOwnerProfile = ({ navigation, route }) => {
   //state holds user data
@@ -61,7 +60,9 @@ const BusinessOwnerProfile = ({ navigation, route }) => {
     <GradientContainer>
     <SafeAreaView style={[baseScreenStyles.container, styles.container]}>
       {/*Handling profile pic and edit button*/}
-      <Header_1 title="Profile" />
+      <HeaderBar 
+        title="Profile" 
+      />
       <View style={styles.profileContainer}>
         <Image source={{ uri: user.image }} style={styles.profilePic} />
         <TouchableOpacity style={styles.editProfileButton} onPress={() => navigation.navigate("BusinessOwnerEditProfile", { user })}>

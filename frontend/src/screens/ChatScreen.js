@@ -194,120 +194,112 @@ export default function ChatScreen({ route, navigation }) {
     }
   }, [contactId, userId, socket, isConnected]);
   
-  // Update the useEffect for room joining:
+  // Replace BOTH useEffects with socket handlers with this single unified one:
 
-  // Join chat room when component mounts or connection status changes
-  useEffect(() => {
-    if (socket && isConnected && contactId && userId) {
-      console.log('Joining chat room with contact:', contactId);
-      console.log('Current user ID:', userId);
-      socket.emit('join-chat', contactId);
-    }
-  }, [socket, isConnected, contactId, userId]);
-  
-  // Replace your socket event listeners in useEffect:
-
-  useEffect(() => {
-    if (socket && isConnected && contactId) {
-      console.log('Setting up message handlers for contact:', contactId);
+// Replace both useEffects that handle socket events with this single one
+useEffect(() => {
+  // Only set up listeners if we have all the data we need
+  if (socket && isConnected && contactId && userId) {
+    console.log('Setting up socket listeners for chat:', contactId);
+    
+    // Join the chat room
+    socket.emit('join-chat', contactId);
+    
+    // Handle new messages
+    const handleNewMessage = (message) => {
+      console.log('New message received:', message);
+      console.log('From sender:', message.sender, 'to recipient:', message.recipient);
       
-      // Handle new incoming messages
-      const handleNewMessage = (message) => {
-        console.log('New message received:', message);
-        console.log('Current userId:', userId);
-        console.log('Contact ID:', contactId);
-        
-        // Check if this message belongs to this conversation
-        const isFromCurrentChat = 
-          (message.sender === contactId && message.recipient === userId) || 
-          (message.sender === userId && message.recipient === contactId);
-        
-        console.log('Is from current chat:', isFromCurrentChat);
-        
-        if (isFromCurrentChat) {
-          // IMPORTANT: Force a state update with a new array reference
-          setMessages(prevMessages => {
-            // First check if we already have this message (by id)
-            const existingMsg = prevMessages.find(m => 
-              (m._id === message.id) || (m.id === message.id)
-            );
-            
-            if (existingMsg) {
-              console.log('Message already exists in state, not adding duplicate');
-              return prevMessages;
-            }
-            
-            // Check if this is confirming a message we sent (temporary message)
-            const pendingMsgIndex = prevMessages.findIndex(m => 
-              m.sending && m.content === message.content && m.isOwn
-            );
-            
-            if (pendingMsgIndex !== -1) {
-              // Replace the temporary message with confirmed one
-              console.log('Updating temporary message with confirmed one');
-              const newMessages = [...prevMessages];
-              newMessages[pendingMsgIndex] = {
-                ...message,
-                _id: message.id || message._id,
-                isOwn: message.sender === userId
-              };
-              return newMessages;
-            }
-            
-            // Add as a new message
-            console.log('Adding new message to state:', message.content);
-            return [
-              ...prevMessages, 
-              {
-                ...message,
-                _id: message.id || message._id,
-                isOwn: message.sender === userId
-              }
-            ];
-          });
-        }
-      };
+      // Check if message belongs to this conversation
+      const isFromCurrentChat = 
+        (message.sender === contactId && message.recipient === userId) || 
+        (message.sender === userId && message.recipient === contactId);
       
-      // Handle message sent confirmation
-      const handleMessageSent = (data) => {
-        console.log('Message sent confirmation:', data.messageId);
-        
+      console.log('Is from current chat:', isFromCurrentChat);
+      
+      if (isFromCurrentChat) {
         setMessages(prevMessages => {
-          // Find temporary message
-          const tempIndex = prevMessages.findIndex(m => m.sending === true);
-          if (tempIndex === -1) return prevMessages;
+          // First check if we already have this message
+          const existingMsg = prevMessages.find(m => 
+            (m._id === message.id) || (m.id === message.id)
+          );
           
-          // Replace temporary message with confirmed one
-          const newMessages = [...prevMessages];
-          newMessages[tempIndex] = {
-            ...newMessages[tempIndex],
-            _id: data.messageId,
-            sending: false
-          };
-          return newMessages;
+          if (existingMsg) {
+            console.log('Message already exists in state, skipping');
+            return prevMessages; // No change needed
+          }
+          
+          // Check if this is confirming a message we sent
+          const tempIndex = prevMessages.findIndex(m => 
+            m.sending && m.content === message.content && m.isOwn
+          );
+          
+          if (tempIndex !== -1) {
+            console.log('Replacing temporary message with confirmed one');
+            const updatedMessages = [...prevMessages];
+            updatedMessages[tempIndex] = {
+              ...message,
+              _id: message.id,
+              isOwn: message.sender === userId,
+              sending: false
+            };
+            return updatedMessages;
+          }
+          
+          // Otherwise add as new message
+          console.log('Adding new message to state:', message.content);
+          return [
+            ...prevMessages,
+            {
+              ...message,
+              _id: message.id,
+              isOwn: message.sender === userId
+            }
+          ];
         });
-      };
+      }
+    };
+    
+    // Handle message sent confirmations
+    const handleMessageSent = (data) => {
+      console.log('Message sent confirmation:', data.messageId);
       
-      // Handle errors
-      const handleError = (error) => {
-        console.error('Message error:', error.message);
-      };
-      
-      // Register event handlers
-      socket.on('new-message', handleNewMessage);
-      socket.on('message-sent', handleMessageSent);
-      socket.on('message-error', handleError);
-      
-      // Clean up
-      return () => {
-        console.log('Cleaning up socket listeners');
-        socket.off('new-message', handleNewMessage);
-        socket.off('message-sent', handleMessageSent);
-        socket.off('message-error', handleError);
-      };
-    }
-  }, [socket, isConnected, contactId, userId]);
-  
+      setMessages(prevMessages => {
+        // Find the sending message
+        const tempIndex = prevMessages.findIndex(m => m.sending === true);
+        if (tempIndex === -1) return prevMessages;
+        
+        // Update with confirmed state
+        const updatedMessages = [...prevMessages];
+        updatedMessages[tempIndex] = {
+          ...updatedMessages[tempIndex],
+          _id: data.messageId,
+          sending: false
+        };
+        return updatedMessages;
+      });
+    };
+    
+    // Handle errors
+    const handleError = (error) => {
+      console.error('Message error:', error.message);
+    };
+    
+    // Register all event handlers
+    socket.on('new-message', handleNewMessage);
+    socket.on('message-sent', handleMessageSent);
+    socket.on('message-error', handleError);
+    
+    // Clean up all handlers when component unmounts or deps change
+    return () => {
+      console.log('Removing socket listeners');
+      socket.off('new-message', handleNewMessage);
+      socket.off('message-sent', handleMessageSent);
+      socket.off('message-error', handleError);
+    };
+  }
+}, [socket, isConnected, contactId, userId]);
+
   // Send message function using WebSockets
   const sendMessage = async () => {
     if (!inputText.trim() || !socket || !isConnected) return;
@@ -546,17 +538,20 @@ export default function ChatScreen({ route, navigation }) {
               renderItem={renderMessage}
               keyExtractor={(item) => item._id || item.id || `${item.content}-${Date.now()}-${Math.random()}`}
               contentContainerStyle={styles.messagesList}
-              inverted={false}
-              extraData={messages.length} // Add this prop to force re-render when messages change
+              extraData={messages.length} // Force update when messages change
               onContentSizeChange={() => {
-                if (flatListRef.current && messages.length > 0) {
-                  flatListRef.current.scrollToEnd({ animated: true });
-                }
+                setTimeout(() => {
+                  if (flatListRef.current && messages.length > 0) {
+                    flatListRef.current.scrollToEnd({ animated: true });
+                  }
+                }, 100); // Add a small delay to ensure component has updated
               }}
               onLayout={() => {
-                if (flatListRef.current && messages.length > 0) {
-                  flatListRef.current.scrollToEnd({ animated: false });
-                }
+                setTimeout(() => {
+                  if (flatListRef.current && messages.length > 0) {
+                    flatListRef.current.scrollToEnd({ animated: false });
+                  }
+                }, 100); // Add a small delay to ensure component has updated
               }}
             />
             

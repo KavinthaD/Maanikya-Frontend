@@ -28,9 +28,12 @@ export const ENDPOINTS = {
   GET_USER_PROFILE: "/api/auth/me",
   UPDATE_PROFILE: "/api/auth/update-profile",
   GET_MY_GEMS: "/api/gems/my-gems",
+
   ADD_GEMS_TO_MARKET: "/api/market/add",
   GET_GEMS_ON_MARKET: "/api/market/view",
   GET_MY_MARKET_GEMS: "/api/gems/view/market-gems",
+  REMOVE_GEM_FROM_MARKET: "/api/market/remove",
+
   GET_OWNER_FINANCIAL: "/api/financial/owner/analysis",
   GET_WORKER_FINANCIAL: "/api/financial/worker/analysis",
   ALERTS: "/api/alerts",
@@ -55,6 +58,12 @@ export const ENDPOINTS = {
   // **ADD THESE NEW ENDPOINTS HERE:**
   OWNER_COMPLETED_ORDERS: "/api/owner/orders/completed",
   OWNER_IN_PROGRESS_ORDERS: "/api/owner/orders/in-progress",
-
+  SEND_ORDER: "/api/owner/orders",
+  
+  // Order endpoints
+  CREATE_ORDER: "/api/orders", // For creating new orders
+  GET_ORDERS: "/api/orders",   // For fetching orders
+  UPDATE_ORDER: "/api/orders", // For updating order status
+  
   // Add other endpoints here
 };

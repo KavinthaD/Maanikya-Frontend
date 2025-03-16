@@ -205,6 +205,109 @@ export default function ChatScreen({ route, navigation }) {
     }
   }, [socket, isConnected, contactId, userId]);
   
+  // Replace your socket event listeners in useEffect:
+
+  useEffect(() => {
+    if (socket && isConnected && contactId) {
+      console.log('Setting up message handlers for contact:', contactId);
+      
+      // Handle new incoming messages
+      const handleNewMessage = (message) => {
+        console.log('New message received:', message);
+        console.log('Current userId:', userId);
+        console.log('Contact ID:', contactId);
+        
+        // Check if this message belongs to this conversation
+        const isFromCurrentChat = 
+          (message.sender === contactId && message.recipient === userId) || 
+          (message.sender === userId && message.recipient === contactId);
+        
+        console.log('Is from current chat:', isFromCurrentChat);
+        
+        if (isFromCurrentChat) {
+          // IMPORTANT: Force a state update with a new array reference
+          setMessages(prevMessages => {
+            // First check if we already have this message (by id)
+            const existingMsg = prevMessages.find(m => 
+              (m._id === message.id) || (m.id === message.id)
+            );
+            
+            if (existingMsg) {
+              console.log('Message already exists in state, not adding duplicate');
+              return prevMessages;
+            }
+            
+            // Check if this is confirming a message we sent (temporary message)
+            const pendingMsgIndex = prevMessages.findIndex(m => 
+              m.sending && m.content === message.content && m.isOwn
+            );
+            
+            if (pendingMsgIndex !== -1) {
+              // Replace the temporary message with confirmed one
+              console.log('Updating temporary message with confirmed one');
+              const newMessages = [...prevMessages];
+              newMessages[pendingMsgIndex] = {
+                ...message,
+                _id: message.id || message._id,
+                isOwn: message.sender === userId
+              };
+              return newMessages;
+            }
+            
+            // Add as a new message
+            console.log('Adding new message to state:', message.content);
+            return [
+              ...prevMessages, 
+              {
+                ...message,
+                _id: message.id || message._id,
+                isOwn: message.sender === userId
+              }
+            ];
+          });
+        }
+      };
+      
+      // Handle message sent confirmation
+      const handleMessageSent = (data) => {
+        console.log('Message sent confirmation:', data.messageId);
+        
+        setMessages(prevMessages => {
+          // Find temporary message
+          const tempIndex = prevMessages.findIndex(m => m.sending === true);
+          if (tempIndex === -1) return prevMessages;
+          
+          // Replace temporary message with confirmed one
+          const newMessages = [...prevMessages];
+          newMessages[tempIndex] = {
+            ...newMessages[tempIndex],
+            _id: data.messageId,
+            sending: false
+          };
+          return newMessages;
+        });
+      };
+      
+      // Handle errors
+      const handleError = (error) => {
+        console.error('Message error:', error.message);
+      };
+      
+      // Register event handlers
+      socket.on('new-message', handleNewMessage);
+      socket.on('message-sent', handleMessageSent);
+      socket.on('message-error', handleError);
+      
+      // Clean up
+      return () => {
+        console.log('Cleaning up socket listeners');
+        socket.off('new-message', handleNewMessage);
+        socket.off('message-sent', handleMessageSent);
+        socket.off('message-error', handleError);
+      };
+    }
+  }, [socket, isConnected, contactId, userId]);
+  
   // Send message function using WebSockets
   const sendMessage = async () => {
     if (!inputText.trim() || !socket || !isConnected) return;
@@ -213,7 +316,9 @@ export default function ChatScreen({ route, navigation }) {
     setInputText('');
     
     // Clear typing indicator
-    handleStopTyping();
+    if (typeof handleStopTyping === 'function') {
+      handleStopTyping();
+    }
     
     // Create temporary message with unique ID
     const tempId = `temp-${Date.now()}`;
@@ -398,6 +503,20 @@ export default function ChatScreen({ route, navigation }) {
     );
   };
   
+  // Debug logging
+  useEffect(() => {
+    console.log('Messages state updated:', messages.length, 'messages');
+    // Log the last message if available
+    if (messages.length > 0) {
+      const lastMsg = messages[messages.length - 1];
+      console.log('Last message in state:', 
+        lastMsg.content?.substring(0, 20), 
+        'from', lastMsg.isOwn ? 'me' : 'them',
+        lastMsg.sending ? '(sending)' : ''
+      );
+    }
+  }, [messages]);
+  
   // Update your render function to include these new components
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -424,31 +543,21 @@ export default function ChatScreen({ route, navigation }) {
             <FlatList
               ref={flatListRef}
               data={messages}
-              keyExtractor={(item, index) => {
-                // Use _id if available, otherwise use a combination of content and index
-                if (item._id) return item._id.toString();
-                if (item.id) return item.id.toString();
-                return `msg-${item.content?.substring(0, 10)}-${index}-${Date.now()}`;
-              }}
               renderItem={renderMessage}
+              keyExtractor={(item) => item._id || item.id || `${item.content}-${Date.now()}-${Math.random()}`}
               contentContainerStyle={styles.messagesList}
+              inverted={false}
+              extraData={messages.length} // Add this prop to force re-render when messages change
               onContentSizeChange={() => {
-                if (messages.length > 0) {
-                  flatListRef.current?.scrollToEnd({ animated: true });
+                if (flatListRef.current && messages.length > 0) {
+                  flatListRef.current.scrollToEnd({ animated: true });
                 }
               }}
               onLayout={() => {
-                if (messages.length > 0) {
-                  flatListRef.current?.scrollToEnd({ animated: false });
+                if (flatListRef.current && messages.length > 0) {
+                  flatListRef.current.scrollToEnd({ animated: false });
                 }
               }}
-              removeClippedSubviews={false} // Prevents rendering issues
-              ListEmptyComponent={
-                <View style={styles.emptyContainer}>
-                  <Text style={styles.emptyText}>No messages yet</Text>
-                  <Text style={styles.emptySubText}>Send a message to start chatting</Text>
-                </View>
-              }
             />
             
             {renderTypingIndicator()}

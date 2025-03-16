@@ -109,10 +109,11 @@ export default function MessageInbox({ navigation }) {
     React.useCallback(() => {
       fetchConversations();
       
-      // Set up periodic refreshing while on this screen
-      const intervalId = setInterval(fetchConversations, 10000); // 10 seconds
+      // Remove the polling interval - WebSockets will handle updates
+      // const intervalId = setInterval(fetchConversations, 10000); 
       
-      return () => clearInterval(intervalId);
+      // return () => clearInterval(intervalId);
+      return () => {}; // Empty cleanup function
     }, [])
   );
   

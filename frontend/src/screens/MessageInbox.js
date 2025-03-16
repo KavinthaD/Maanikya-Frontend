@@ -17,6 +17,7 @@ import axios from "axios";
 import { API_URL, ENDPOINTS } from "../config/api";
 import HeaderBar from "../components/HeaderBar";
 import { useFocusEffect } from '@react-navigation/native';
+import { useWebSocket } from '../contexts/WebSocketContext';
 
 const THEME_COLOR = '#9CCDDB';
 
@@ -24,6 +25,8 @@ export default function MessageInbox({ navigation }) {
   const [conversations, setConversations] = useState([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  
+  const { socket, notifications, unreadCount, clearNotifications } = useWebSocket();
   
   // Format time for display
   const formatMessageTime = (timestamp) => {
@@ -118,6 +121,15 @@ export default function MessageInbox({ navigation }) {
     setRefreshing(true);
     fetchConversations();
   };
+  
+  // Use the WebSocket notification system to update conversations
+  useEffect(() => {
+    if (notifications.length > 0) {
+      // Refresh conversations when new messages come in
+      fetchConversations();
+      clearNotifications();
+    }
+  }, [notifications]);
   
   // Navigate to chat screen
   const openChat = (contact) => {

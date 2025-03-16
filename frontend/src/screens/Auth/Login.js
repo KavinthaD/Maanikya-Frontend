@@ -16,6 +16,7 @@ import { useNavigation } from "@react-navigation/native";
 import axios from "axios"; // Import axios
 import AsyncStorage from "@react-native-async-storage/async-storage"; // Import AsyncStorage
 import { API_URL, ENDPOINTS } from '../../config/api'; 
+import { useWebSocket } from '../../contexts/WebSocketContext'; // Add this import
 
 const Login = () => {
   const navigation = useNavigation();
@@ -23,6 +24,7 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [role, setRole] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+  const { reconnect } = useWebSocket(); // Inside your Login component, add:
 
   const handleLogin = async () => {
     // Make handleLogin async
@@ -65,6 +67,9 @@ const Login = () => {
       // **Store the JWT token securely (using AsyncStorage):**
       await AsyncStorage.setItem("authToken", response.data.token);
 
+      // Reconnect WebSocket with new token
+      reconnect();
+
       // **Navigate based on user role after successful login:**
       if (response.data.user.loginRole === "Gem business owner") {
         navigation.navigate("BS_NavBar");
@@ -95,6 +100,11 @@ const Login = () => {
   const handleTestLogin = (testRole) => {
     // Set the role based on the test role
     setRole(testRole);
+    // Create a fake token for testing
+    AsyncStorage.setItem("authToken", "test-token-for-development");
+    
+    // Try to reconnect socket
+    reconnect();
     // Navigate based on the test role
     if (testRole === "gem_business_owner") {
       navigation.navigate("BS_NavBar");

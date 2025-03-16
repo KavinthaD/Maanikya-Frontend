@@ -18,17 +18,22 @@ import { API_URL, ENDPOINTS } from '../config/api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import HeaderBar from '../components/HeaderBar';
+import { useWebSocket } from '../contexts/WebSocketContext';
 
 const THEME_COLOR = '#9CCDDB';
-const POLLING_INTERVAL = 5000; // Poll every 5 seconds for new messages
 
 export default function ChatScreen({ route, navigation }) {
-  const { contactId, contactName, contactAvatar, contactUsername } = route.params;
-  
+  const { socket, isConnected, lastError, reconnect } = useWebSocket();
   const [messages, setMessages] = useState([]);
   const [inputText, setInputText] = useState('');
   const [loading, setLoading] = useState(true);
   const [sending, setSending] = useState(false);
+  const [typing, setTyping] = useState(false);
+  const [isContactTyping, setIsContactTyping] = useState(false);
+  const typingTimeoutRef = useRef(null);
+  
+  // Get route params
+  const { contactId, contactName, contactUsername, contactAvatar } = route.params;
   const [userId, setUserId] = useState(null);
   
   const flatListRef = useRef();
@@ -39,53 +44,37 @@ export default function ChatScreen({ route, navigation }) {
     return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   };
   
-  // Get current user ID
-  useEffect(() => {
-    const getUserId = async () => {
-      try {
-        const userData = await AsyncStorage.getItem('userData');
-        if (userData) {
-          const parsed = JSON.parse(userData);
-          setUserId(parsed.id);
-        }
-      } catch (error) {
-        console.error('Error getting user data:', error);
-      }
-    };
-    
-    getUserId();
-  }, []);
-  
-  // Fetch messages
-  const fetchMessages = async () => {
+  // Fetch initial messages
+  const fetchInitialMessages = async () => {
     try {
+      setLoading(true);
       const token = await AsyncStorage.getItem('authToken');
       if (!token) {
         navigation.navigate('Login');
         return;
       }
       
-      const response = await axios.get(`${API_URL}${ENDPOINTS.GET_MESSAGES}/${contactId}`, {
+      // Get user ID for identifying own messages
+      const userProfile = await axios.get(`${API_URL}${ENDPOINTS.GET_USER_PROFILE}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
+      setUserId(userProfile.data._id);
       
-      // Make sure each message has a valid _id
-      const messagesWithIds = response.data.map(msg => ({
+      // Fetch messages
+      const response = await axios.get(
+        `${API_URL}${ENDPOINTS.GET_MESSAGES}/${contactId}`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      
+      console.log(`Fetched ${response.data.length} messages`);
+      
+      const formattedMessages = response.data.map(msg => ({
         ...msg,
-        _id: msg._id || msg.id || `server-${Date.now()}-${Math.random()}`
+        _id: msg.id || msg._id,  // Ensure consistent _id field
+        isOwn: msg.isOwn
       }));
       
-      // Keep optimistic messages that aren't in the response yet
-      setMessages(prevMessages => {
-        const optimisticMessages = prevMessages.filter(msg => 
-          msg.sending && !messagesWithIds.some(serverMsg => 
-            serverMsg.content === msg.content && 
-            Math.abs(new Date(serverMsg.createdAt) - new Date(msg.timestamp)) < 10000
-          )
-        );
-        return [...messagesWithIds, ...optimisticMessages];
-      });
-      
+      setMessages(formattedMessages);
       setLoading(false);
     } catch (error) {
       console.error('Error fetching messages:', error);
@@ -93,80 +82,144 @@ export default function ChatScreen({ route, navigation }) {
     }
   };
   
-  // Initial load and polling
+  // Join chat room when component mounts
   useEffect(() => {
-    fetchMessages();
+    fetchInitialMessages();
     
-    const intervalId = setInterval(fetchMessages, POLLING_INTERVAL);
-    
-    return () => clearInterval(intervalId);
-  }, [contactId]);
-  
-  // Scroll to bottom when messages change
-  useEffect(() => {
-    if (messages.length > 0 && flatListRef.current) {
-      flatListRef.current.scrollToEnd({ animated: true });
-    }
-  }, [messages]);
-  
-  // Send message
-const sendMessage = async () => {
-    if (!inputText.trim()) return;
-    
-    const messageText = inputText.trim();
-    setInputText(''); // Clear input immediately for better UX
-    
-    try {
-      setSending(true);
-      const token = await AsyncStorage.getItem('authToken');
-      if (!token) {
-        navigation.navigate('Login');
-        return;
-      }
+    // Only try to join chat if socket exists and is connected
+    if (socket && isConnected && contactId) {
+      console.log('Joining chat room with contact:', contactId);
+      socket.emit('join-chat', contactId);
       
-      // Optimistically add message to UI
-      const tempId = `temp-${Date.now()}`;
-      const optimisticMessage = {
-        _id: tempId,
-        content: messageText,
-        sender: userId, // Use userId instead of isOwn flag for consistency
-        timestamp: new Date().toISOString(),
-        sending: true
+      // Listen for new messages
+      const handleNewMessage = (message) => {
+        console.log('New message received:', message);
+        
+        // Add message to state if it's from this conversation
+        const isFromCurrentChat = 
+          (message.sender === contactId && message.recipient === userId) || 
+          (message.sender === userId && message.recipient === contactId);
+        
+        if (isFromCurrentChat) {
+          setMessages(prev => [
+            ...prev, 
+            { 
+              ...message,
+              _id: message.id || message._id,
+              isOwn: message.sender === userId
+            }
+          ]);
+          
+          // Mark message as read if we're the recipient
+          if (message.sender === contactId) {
+            socket.emit('mark-as-read', { 
+              messageId: message.id || message._id,
+              conversationId: message.conversationId
+            });
+          }
+        }
       };
       
-      setMessages(prevMessages => [...prevMessages, optimisticMessage]);
+      // Add message listener
+      socket.on('new-message', handleNewMessage);
+      socket.on('message-sent', (data) => {
+        console.log('Message sent confirmation:', data.messageId);
+      });
+      socket.on('message-error', (error) => {
+        console.error('Message error:', error.message);
+      });
       
-      // Actually send message
-      const response = await axios.post(
-        `${API_URL}${ENDPOINTS.SEND_MESSAGE}`,
-        { 
-          recipientId: contactId,
-          content: messageText 
-        },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      
-      // Update messages to replace optimistic message with real one
-      setMessages(prevMessages => 
-        prevMessages.map(msg => 
-          msg._id === tempId ? {
-            ...response.data,
-            _id: response.data._id || response.data.id // Handle either _id or id in response
-          } : msg
-        )
-      );
-      
+      // Clean up
+      return () => {
+        console.log('Cleaning up socket listeners');
+        socket.off('new-message', handleNewMessage);
+        socket.off('message-sent');
+        socket.off('message-error');
+      };
+    }
+  }, [contactId, userId, socket, isConnected]);
+  
+  // Send message function using WebSockets
+  const sendMessage = async () => {
+    if (!inputText.trim() || !socket || !isConnected) return;
+    
+    const messageText = inputText.trim();
+    setInputText('');
+    
+    // Clear typing indicator
+    handleStopTyping();
+    
+    // Create temporary message for immediate display
+    const tempMessage = {
+      _id: `temp-${Date.now()}`,
+      content: messageText,
+      timestamp: new Date().toISOString(),
+      isOwn: true,
+      sending: true
+    };
+    
+    // Add to messages
+    setMessages(prev => [...prev, tempMessage]);
+    
+    try {
+      // Send via socket
+      socket.emit('send-message', {
+        recipientId: contactId,
+        content: messageText
+      });
     } catch (error) {
       console.error('Error sending message:', error);
-      // Show error state for the message
-      setMessages(prevMessages => 
-        prevMessages.map(msg => 
-          msg._id === tempId ? { ...msg, sending: false, error: true } : msg
+      
+      // Update temporary message to show error
+      setMessages(prev => 
+        prev.map(msg => 
+          msg._id === tempMessage._id 
+            ? { ...msg, sending: false, error: true } 
+            : msg
         )
       );
-    } finally {
-      setSending(false);
     }
+  };
+  
+  // Handle typing indicator
+  const handleTyping = () => {
+    if (!typing && socket) {
+      setTyping(true);
+      socket.emit('typing', { 
+        conversationId: generateConversationId(userId, contactId),
+        isTyping: true 
+      });
+    }
+    
+    // Clear existing timeout
+    if (typingTimeoutRef.current) {
+      clearTimeout(typingTimeoutRef.current);
+    }
+    
+    // Set new timeout
+    typingTimeoutRef.current = setTimeout(handleStopTyping, 2000);
+  };
+  
+  const handleStopTyping = () => {
+    if (typing && socket) {
+      setTyping(false);
+      socket.emit('typing', { 
+        conversationId: generateConversationId(userId, contactId),
+        isTyping: false 
+      });
+    }
+  };
+  
+  // Helper function to generate conversation ID
+  const generateConversationId = (userId1, userId2) => {
+    const sortedIds = [userId1, userId2].sort();
+    return `${sortedIds[0]}_${sortedIds[1]}`;
+  };
+  
+  // Input change handler
+  const handleInputChange = (text) => {
+    setInputText(text);
+    handleTyping();
   };
   
   // Render message bubble
@@ -238,7 +291,46 @@ const sendMessage = async () => {
       </View>
     </TouchableOpacity>
   );
+
+  // Update renderConnectionStatus to only show for logged-in users
+  const renderConnectionStatus = () => {
+    // Don't use useWebSocket() here - it's already called above
+    if (!socket) return null;
+    
+    if (!isConnected) {
+      return (
+        <View style={styles.connectionStatus}>
+          <Text style={styles.connectionStatusText}>
+            {lastError ? `Connection issue: ${lastError}` : "Connecting..."}
+          </Text>
+          {lastError && (
+            <TouchableOpacity 
+              onPress={reconnect} // Use the reconnect function from above
+              style={styles.reconnectButton}
+            >
+              <Text style={styles.reconnectText}>Reconnect</Text>
+            </TouchableOpacity>
+          )}
+        </View>
+      );
+    }
+    return null;
+  };
   
+  // Add typing indicator to your UI
+  const renderTypingIndicator = () => {
+    if (!isContactTyping) return null;
+    
+    return (
+      <View style={styles.typingContainer}>
+        <Text style={styles.typingText}>
+          {contactName} is typing...
+        </Text>
+      </View>
+    );
+  };
+  
+  // Update your render function to include these new components
   return (
     <SafeAreaView style={styles.safeArea}>
       <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
@@ -247,6 +339,8 @@ const sendMessage = async () => {
         navigation={navigation}
         showBack={true}
       />
+      
+      {renderConnectionStatus()}
       
       <KeyboardAvoidingView 
         behavior={Platform.OS === 'ios' ? 'padding' : null}
@@ -284,12 +378,14 @@ const sendMessage = async () => {
               }
             />
             
+            {renderTypingIndicator()}
+            
             <View style={styles.inputContainer}>
               <TextInput
                 style={styles.input}
                 placeholder="Type your message..."
                 value={inputText}
-                onChangeText={setInputText}
+                onChangeText={handleInputChange}
                 multiline
                 maxLength={500}
               />
@@ -456,5 +552,34 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#AAAAAA',
     marginTop: 8,
+  },
+  connectionStatus: {
+    backgroundColor: '#FFF3CD',
+    padding: 6,
+    alignItems: 'center',
+  },
+  connectionStatusText: {
+    color: '#856404',
+    fontSize: 12,
+  },
+  typingContainer: {
+    padding: 8,
+    paddingLeft: 16,
+  },
+  typingText: {
+    color: '#666',
+    fontSize: 12,
+    fontStyle: 'italic',
+  },
+  reconnectButton: {
+    backgroundColor: '#0078d7',
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 4,
+    marginTop: 5,
+  },
+  reconnectText: {
+    color: 'white',
+    fontSize: 12,
   },
 });

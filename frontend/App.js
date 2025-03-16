@@ -6,6 +6,7 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import { baseScreenStyles } from "./src/styles/baseStyles";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as ScreenOrientation from "expo-screen-orientation";
+import { WebSocketProvider } from './src/contexts/WebSocketContext';
 
 // Import screens
 import PurposeSelectionPage from "./src/screens/Auth/PurposeSelectionPage";
@@ -15,7 +16,6 @@ import SignUpScreenCustomer from "./src/screens/Auth/SignUpCustomer";
 import GemstoneMarketplace from "./src/screens/Market";
 import OwnerFinancialRecords from "./src/screens/Financial/ownerFinancialRecords";
 import GemOnDisplay from "./src/screens/GemOnDisplay";
-import ContactProfiles from "./src/screens/ContactProfiles";
 import Orders from "./src/screens/Order/Orders";
 import Login from "./src/screens/Auth/Login";
 import SignUpBusiness from "./src/screens/Auth/SignUpBusiness";
@@ -67,46 +67,48 @@ const App = () => {
         }}
       >
         <StatusBar barStyle="dark-content" backgroundColor={baseScreenStyles.container.backgroundColor} translucent={true} />
-        <NavigationContainer>
-          <Stack.Navigator initialRouteName={initialRouteName}>
-            
-            <Stack.Screen name="AddContact" component={AddContact} options={{ headerShown: false }} />
-            <Stack.Screen name="BS_NavBar" component={BS_NavBar} options={{ headerShown: false }} />
-            <Stack.Screen name="BusinessOwnerEditProfile" component={BusinessOwnerEditProfile} options={{ headerShown: false }} />
-            <Stack.Screen name="BusinessOwnerProfile" component={BusinessOwnerProfile} options={{ headerShown: false }} />
-            <Stack.Screen name="C_NavBar" component={C_NavBar} options={{ headerShown: false }} />
-            <Stack.Screen name="CompletedTrackerScreen" component={NotificationScreen} options={{ headerShown: false }} />
-            <Stack.Screen name="ContactProfiles" component={ContactProfiles} options={{ headerShown: false }} />
-            <Stack.Screen name="ChatScreen" component={ChatScreen} options={{ headerShown: false }} />
-            <Stack.Screen name="Contacts" component={Contacts} options={{ headerShown: false }} />
-            <Stack.Screen name="Customeraddseller" component={Customeraddseller} options={{ headerShown: false }} />
-            <Stack.Screen name="FavoritesScreen" component={FavoritesScreen} options={{ headerShown: false }} />
-            <Stack.Screen name="GemDetailsScreen" component={GemDetailsScreen} options={{ headerShown: false}} />
-            <Stack.Screen name="GemOnDisplay" component={GemOnDisplay} options={{ headerShown: false }} />
-            <Stack.Screen name="GemRegister1" component={GemRegister1} options={{ headerShown: false }} />
-            <Stack.Screen name="GemstoneMarketplace" component={GemstoneMarketplace} options={{ headerShown: false }} />
-            <Stack.Screen name="HomeMyGems" component={HomeMyGems} options={{ headerShown: false }} />
-            <Stack.Screen name="InProgressTrackerScreen" component={InProgressTrackerScreen} options={{ headerShown: false }} />
-            <Stack.Screen name="Login" component={Login} options={{ headerShown: false }} />
-            <Stack.Screen name="MyGems" component={MyGems} options={{ headerShown: false }} />
-            <Stack.Screen name="MessageInbox" component={MessageInbox} options={{ headerShown: false }} />
-            <Stack.Screen name="Orders" component={Orders} options={{ headerShown: false }} />
-            <Stack.Screen name="OwnerFinancialRecords" component={OwnerFinancialRecords} options={{ headerShown: false }} />
-            <Stack.Screen name="OwnerOrderTrackDetails" component={OwnerOrderTrackDetails} options={{ headerShown: false}} />
-            <Stack.Screen name="PurposeSelectionPage" component={PurposeSelectionPage} options={{ headerShown: false }} />
-            <Stack.Screen name="RegisterSelectionPage" component={RegisterSelectionPage} options={{ headerShown: false }} />
-            <Stack.Screen name="SellerProfile" component={SellerProfile} options={{ headerShown: false }} />
-            <Stack.Screen name="SignUpBusiness" component={SignUpBusiness} options={{ headerShown: false }} />
-            <Stack.Screen name="SignUpScreen" component={SignUpBusiness2} options={{ headerShown: false }} />
-            <Stack.Screen name="SignUpScreenCustomer" component={SignUpScreenCustomer} options={{ headerShown: false }} />
-            <Stack.Screen name="Tracker" component={Tracker} options={{ headerShown: false }} />
-            <Stack.Screen name="W_NavBar" component={W_NavBar} options={{ headerShown: false }} />
-            <Stack.Screen name="WelcomePage" component={WelcomePage} options={{ headerShown: false }} />
-            <Stack.Screen name="WorkerFinancialRecords" component={WorkerFinancialRecords} options={{ headerShown: false }} />
-            <Stack.Screen name="WorkerOrderTrackDetails" component={WorkerOrderTrackDetails} options={{ headerShown: false}} />
+        <WebSocketProvider>
+          <NavigationContainer>
+            <Stack.Navigator initialRouteName={initialRouteName}>
+              
+              <Stack.Screen name="AddContact" component={AddContact} options={{ headerShown: false }} />
+              <Stack.Screen name="BS_NavBar" component={BS_NavBar} options={{ headerShown: false }} />
+              <Stack.Screen name="BusinessOwnerEditProfile" component={BusinessOwnerEditProfile} options={{ headerShown: false }} />
+              <Stack.Screen name="BusinessOwnerProfile" component={BusinessOwnerProfile} options={{ headerShown: false }} />
+              <Stack.Screen name="C_NavBar" component={C_NavBar} options={{ headerShown: false }} />
+              <Stack.Screen name="CompletedTrackerScreen" component={NotificationScreen} options={{ headerShown: false }} />
+              <Stack.Screen name="ContactProfiles" component={ContactProfiles} options={{ headerShown: false }} />
+              <Stack.Screen name="ChatScreen" component={ChatScreen} options={{ headerShown: false }} />
+              <Stack.Screen name="Contacts" component={Contacts} options={{ headerShown: false }} />
+              <Stack.Screen name="Customeraddseller" component={Customeraddseller} options={{ headerShown: false }} />
+              <Stack.Screen name="FavoritesScreen" component={FavoritesScreen} options={{ headerShown: false }} />
+              <Stack.Screen name="GemDetailsScreen" component={GemDetailsScreen} options={{ headerShown: false}} />
+              <Stack.Screen name="GemOnDisplay" component={GemOnDisplay} options={{ headerShown: false }} />
+              <Stack.Screen name="GemRegister1" component={GemRegister1} options={{ headerShown: false }} />
+              <Stack.Screen name="GemstoneMarketplace" component={GemstoneMarketplace} options={{ headerShown: false }} />
+              <Stack.Screen name="HomeMyGems" component={HomeMyGems} options={{ headerShown: false }} />
+              <Stack.Screen name="InProgressTrackerScreen" component={InProgressTrackerScreen} options={{ headerShown: false }} />
+              <Stack.Screen name="Login" component={Login} options={{ headerShown: false }} />
+              <Stack.Screen name="MyGems" component={MyGems} options={{ headerShown: false }} />
+              <Stack.Screen name="MessageInbox" component={MessageInbox} options={{ headerShown: false }} />
+              <Stack.Screen name="Orders" component={Orders} options={{ headerShown: false }} />
+              <Stack.Screen name="OwnerFinancialRecords" component={OwnerFinancialRecords} options={{ headerShown: false }} />
+              <Stack.Screen name="OwnerOrderTrackDetails" component={OwnerOrderTrackDetails} options={{ headerShown: false}} />
+              <Stack.Screen name="PurposeSelectionPage" component={PurposeSelectionPage} options={{ headerShown: false }} />
+              <Stack.Screen name="RegisterSelectionPage" component={RegisterSelectionPage} options={{ headerShown: false }} />
+              <Stack.Screen name="SellerProfile" component={SellerProfile} options={{ headerShown: false }} />
+              <Stack.Screen name="SignUpBusiness" component={SignUpBusiness} options={{ headerShown: false }} />
+              <Stack.Screen name="SignUpScreen" component={SignUpBusiness2} options={{ headerShown: false }} />
+              <Stack.Screen name="SignUpScreenCustomer" component={SignUpScreenCustomer} options={{ headerShown: false }} />
+              <Stack.Screen name="Tracker" component={Tracker} options={{ headerShown: false }} />
+              <Stack.Screen name="W_NavBar" component={W_NavBar} options={{ headerShown: false }} />
+              <Stack.Screen name="WelcomePage" component={WelcomePage} options={{ headerShown: false }} />
+              <Stack.Screen name="WorkerFinancialRecords" component={WorkerFinancialRecords} options={{ headerShown: false }} />
+              <Stack.Screen name="WorkerOrderTrackDetails" component={WorkerOrderTrackDetails} options={{ headerShown: false}} />
 
-          </Stack.Navigator>
-        </NavigationContainer>
+            </Stack.Navigator>
+          </NavigationContainer>
+        </WebSocketProvider>
       </SafeAreaView>
     </SafeAreaProvider>
   );

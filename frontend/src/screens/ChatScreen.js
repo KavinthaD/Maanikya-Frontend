@@ -100,23 +100,53 @@ export default function ChatScreen({ route, navigation }) {
           (message.sender === contactId && message.recipient === userId) || 
           (message.sender === userId && message.recipient === contactId);
         
+        console.log('Is from current chat:', isFromCurrentChat);
+        
         if (isFromCurrentChat) {
-          setMessages(prev => [
-            ...prev, 
-            { 
-              ...message,
-              _id: message.id || message._id,
-              isOwn: message.sender === userId
+          setMessages(prev => {
+            // First, check if we already have a message with this ID
+            const existingMessageIndex = prev.findIndex(m => 
+              m._id === message.id || m.id === message.id
+            );
+            
+            // If message already exists, don't add it
+            if (existingMessageIndex !== -1) {
+              console.log('Message already exists in state, not adding duplicate');
+              return prev;
             }
-          ]);
-          
-          // Mark message as read if we're the recipient
-          if (message.sender === contactId) {
-            socket.emit('mark-as-read', { 
-              messageId: message.id || message._id,
-              conversationId: message.conversationId
-            });
-          }
+            
+            // Check if this is a confirmation of a sending message
+            const tempMessageIndex = prev.findIndex(m => 
+              m.sending === true && 
+              m.content === message.content && 
+              m.isOwn === (message.sender === userId)
+            );
+            
+            if (tempMessageIndex !== -1) {
+              console.log('Found temporary message, replacing with confirmed message');
+              // Replace the temporary message with the confirmed one
+              const newMessages = [...prev];
+              newMessages[tempMessageIndex] = {
+                ...message,
+                _id: message.id,
+                isOwn: message.sender === userId,
+                sending: false
+              };
+              return newMessages;
+            }
+            
+            // Otherwise, add as a new message
+            console.log('Adding new message to state');
+            return [
+              ...prev, 
+              { 
+                ...message,
+                _id: message.id,
+                isOwn: message.sender === userId,
+                sending: false
+              }
+            ];
+          });
         }
       };
       
@@ -124,6 +154,31 @@ export default function ChatScreen({ route, navigation }) {
       socket.on('new-message', handleNewMessage);
       socket.on('message-sent', (data) => {
         console.log('Message sent confirmation:', data.messageId);
+        
+        setMessages(prev => {
+          // Find any temporary message that's still in "sending" state
+          const tempIndex = prev.findIndex(msg => msg.sending === true && msg.isOwn === true);
+          
+          // If no temporary message found, don't change anything
+          if (tempIndex === -1) return prev;
+          
+          // Check if we already have the confirmed message (avoid duplicate)
+          const confirmedExists = prev.some(msg => msg._id === data.messageId);
+          if (confirmedExists) {
+            // If confirmed message exists, remove the temporary one
+            return prev.filter(msg => msg._id !== prev[tempIndex]._id);
+          }
+          
+          // Otherwise update the temporary message
+          const newMessages = [...prev];
+          newMessages[tempIndex] = {
+            ...newMessages[tempIndex],
+            _id: data.messageId,
+            sending: false,
+            timestamp: new Date().toISOString()
+          };
+          return newMessages;
+        });
       });
       socket.on('message-error', (error) => {
         console.error('Message error:', error.message);
@@ -139,6 +194,17 @@ export default function ChatScreen({ route, navigation }) {
     }
   }, [contactId, userId, socket, isConnected]);
   
+  // Update the useEffect for room joining:
+
+  // Join chat room when component mounts or connection status changes
+  useEffect(() => {
+    if (socket && isConnected && contactId && userId) {
+      console.log('Joining chat room with contact:', contactId);
+      console.log('Current user ID:', userId);
+      socket.emit('join-chat', contactId);
+    }
+  }, [socket, isConnected, contactId, userId]);
+  
   // Send message function using WebSockets
   const sendMessage = async () => {
     if (!inputText.trim() || !socket || !isConnected) return;
@@ -149,9 +215,10 @@ export default function ChatScreen({ route, navigation }) {
     // Clear typing indicator
     handleStopTyping();
     
-    // Create temporary message for immediate display
+    // Create temporary message with unique ID
+    const tempId = `temp-${Date.now()}`;
     const tempMessage = {
-      _id: `temp-${Date.now()}`,
+      _id: tempId,
       content: messageText,
       timestamp: new Date().toISOString(),
       isOwn: true,
@@ -162,6 +229,7 @@ export default function ChatScreen({ route, navigation }) {
     setMessages(prev => [...prev, tempMessage]);
     
     try {
+      console.log('Sending message to:', contactId);
       // Send via socket
       socket.emit('send-message', {
         recipientId: contactId,
@@ -173,7 +241,7 @@ export default function ChatScreen({ route, navigation }) {
       // Update temporary message to show error
       setMessages(prev => 
         prev.map(msg => 
-          msg._id === tempMessage._id 
+          msg._id === tempId
             ? { ...msg, sending: false, error: true } 
             : msg
         )
@@ -356,7 +424,12 @@ export default function ChatScreen({ route, navigation }) {
             <FlatList
               ref={flatListRef}
               data={messages}
-              keyExtractor={item => item._id ? item._id.toString() : `temp-${Date.now()}-${Math.random()}`}
+              keyExtractor={(item, index) => {
+                // Use _id if available, otherwise use a combination of content and index
+                if (item._id) return item._id.toString();
+                if (item.id) return item.id.toString();
+                return `msg-${item.content?.substring(0, 10)}-${index}-${Date.now()}`;
+              }}
               renderItem={renderMessage}
               contentContainerStyle={styles.messagesList}
               onContentSizeChange={() => {

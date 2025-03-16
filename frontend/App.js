@@ -42,6 +42,7 @@ import AddContact from "./src/screens/AddContact";
 import Contacts from "./src/screens/Contacts";
 import ChatScreen from "./src/screens/ChatScreen";
 import MessageInbox from "./src/screens/MessageInbox";
+import ContactProfiles from "./src/screens/ContactProfiles";
 
 const Stack = createNativeStackNavigator();
 

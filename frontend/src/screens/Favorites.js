@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -9,431 +9,633 @@ import {
   TouchableOpacity,
   FlatList,
   Modal,
+  ActivityIndicator,
+  Alert
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { LinearGradient } from 'expo-linear-gradient';
-import Header_2 from "../components/Header_2";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import axios from "axios";
+import { API_URL, ENDPOINTS } from "../config/api";
+import HeaderBar from "../components/HeaderBar";
 import { baseScreenStylesNew } from "../styles/baseStylesNew";
 
-const OrderRequestModal = ({ visible, onClose, selectedPerson }) => {
-  const [additionalMessage, setAdditionalMessage] = useState("");
-
-  if (!selectedPerson) return null;
-
-  const gemImages = [
-    { id: "EM001", source: require("../assets/gems/EM001.png") },
-    { id: "RR001", source: require("../assets/gems/RR001.png") },
-    { id: "YS001", source: require("../assets/gems/YS001.png") },
-  ];
-
-  return (
-    <Modal
-      visible={visible}
-      transparent={true}
-      animationType="fade"
-      onRequestClose={onClose}
-    >
-      <View style={modalStyles.modalOverlay}>
-        <View style={modalStyles.modalContent}>
-          <LinearGradient
-            colors={[
-              'rgb(3, 15, 79)',
-              'rgb(11, 10, 43)'
-            ]}
-            style={modalStyles.gradientBackground}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 0, y: 1 }}
-          />
-          <Text style={modalStyles.orderId}>Order#: NB01130</Text>
-
-          <Text style={modalStyles.personName}>{selectedPerson.name}</Text>
-
-          <View style={modalStyles.gemImagesContainer}>
-            {gemImages.map((gem) => (
-              <Image key={gem.id} source={gem.source} style={modalStyles.gemImage} />
-            ))}
-          </View>
-
-          <TextInput
-            style={modalStyles.messageInput}
-            placeholder="Additional messages (optional)"
-            placeholderTextColor="#666"
-            multiline
-            value={additionalMessage}
-            onChangeText={setAdditionalMessage}
-          />
-
-          <View style={modalStyles.buttonContainer}>
-            <TouchableOpacity
-              style={[baseScreenStylesNew.cancelButton, modalStyles.button, modalStyles.cancelButton]}
-              onPress={onClose}
-            >
-              <Text style={modalStyles.buttonText}>Cancel</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[baseScreenStylesNew.Button3, modalStyles.button, modalStyles.sendButton]}
-              onPress={onClose}
-            >
-              <Text style={modalStyles.buttonText}>Send Request</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </View>
-    </Modal>
-  );
-};
-
-const FavoritesScreen = () => {
-  const [selectedCategory, setSelectedCategory] = useState("Cutter");
+const FavoritesScreen = ({ route, navigation }) => {
+  // 1. State variables
+  const selectedGems = route.params?.selectedGems || [];
+  
+  // Log received gems for debugging
+  useEffect(() => {
+    console.log("Received gems in Favorites screen:", selectedGems);
+  }, []);
+  
   const [searchQuery, setSearchQuery] = useState("");
-  const [modalVisible, setModalVisible] = useState(false);
-  const [selectedPerson, setSelectedPerson] = useState(null);
-
-  // All available categories
-  const categories = ["All", "Cutter", "Burner", "Elec. Burner"];
-
-  // Complete list of favorites with their respective types
-  const allFavorites = [
-    {
-      id: "1",
-      name: "Dulith Wanigarathne",
-      role: "Cutter",
-      image: require("../assets/seller.png"),
-      type: "Cutter",
-    },
-    {
-      id: "2",
-      name: "Isum Hansaja Perera",
-      role: "Cutter",
-      image: require("../assets/seller.png"),
-      type: "Cutter",
-    },
-    {
-      id: "3",
-      name: "Kavintha Dinushan",
-      role: "Cutter",
-      image: require("../assets/seller.png"),
-      type: "Cutter",
-    },
-    {
-      id: "4",
-      name: "Nihal Hewarthna",
-      role: "Cutter",
-      image: require("../assets/seller.png"),
-      type: "Cutter",
-    },
-    {
-      id: "5",
-      name: "Rajitha Perera",
-      role: "Burner",
-      image: require("../assets/seller.png"),
-      type: "Burner",
-    },
-    {
-      id: "6",
-      name: "Tharushi Silva",
-      role: "Burner",
-      image: require("../assets/seller.png"),
-      type: "Burner",
-    },
-    {
-      id: "7",
-      name: "Kasun Fernando",
-      role: "Elec. Burner",
-      image: require("../assets/seller.png"),
-      type: "Elec. Burner",
-    },
-    {
-      id: "8",
-      name: "Sampath Kumara",
-      role: "Elec. Burner",
-      image: require("../assets/seller.png"),
-      type: "Elec. Burner",
-    },
-  ];
-
-  // Filter favorites based on selected category and search query
-  // Sort alphabetically when "All" category is selected
-  const filteredFavorites = allFavorites
-    .filter((item) => {
-      const matchesCategory = selectedCategory === "All" || item.type === selectedCategory;
-      const matchesSearch = item.name
-        .toLowerCase()
-        .includes(searchQuery.toLowerCase());
-      return matchesCategory && matchesSearch;
-    })
-    .sort((a, b) => {
-      // Only sort alphabetically if "All" category is selected
-      if (selectedCategory === "All") {
-        return a.name.localeCompare(b.name);
+  const [workers, setWorkers] = useState([]);
+  const [filteredWorkers, setFilteredWorkers] = useState([]);
+  const [selectedWorkerId, setSelectedWorkerId] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [orderModalVisible, setOrderModalVisible] = useState(false);
+  const [specialNote, setSpecialNote] = useState("");
+  
+  // 2. Effect to fetch workers on component mount
+  useEffect(() => {
+    fetchWorkers();
+  }, []);
+  
+  // 3. Effect to filter workers when search query changes
+  useEffect(() => {
+    if (workers.length > 0) {
+      const filtered = workers.filter(worker => {
+        const fullName = `${worker.firstName} ${worker.lastName}`.toLowerCase();
+        const username = worker.username?.toLowerCase() || "";
+        return fullName.includes(searchQuery.toLowerCase()) || 
+               username.includes(searchQuery.toLowerCase());
+      });
+      setFilteredWorkers(filtered);
+    }
+  }, [searchQuery, workers]);
+  
+  // 4. Function to fetch worker contacts
+  const fetchWorkers = async () => {
+    try {
+      const token = await AsyncStorage.getItem("authToken");
+      if (!token) {
+        Alert.alert("Error", "Not logged in");
+        setLoading(false);
+        return;
       }
-      return 0; // Keep original order for other categories
-    });
-
-  const handleCategoryPress = (category) => {
-    setSelectedCategory(category);
-  };
-
-  const handleFavoriteSelect = (person) => {
-    setSelectedPerson(person);
-  };
-
-  const handleConfirm = () => {
-    if (selectedPerson) {
-      setModalVisible(true);
+      
+      const response = await axios.get(`${API_URL}${ENDPOINTS.GET_CONTACTS}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      
+      // Filter to only include workers (Cutter, Burner, Electric Burner)
+      const workerContacts = response.data.filter(
+        contact => ['Cutter', 'Burner', 'Electric Burner'].includes(contact.role)
+      );
+      
+      setWorkers(workerContacts);
+      setFilteredWorkers(workerContacts);
+    } catch (error) {
+      console.error("Error fetching workers:", error);
+      Alert.alert("Error", "Failed to load workers");
+    } finally {
+      setLoading(false);
     }
   };
+  
+  // 5. Function to handle worker selection
+  const handleWorkerSelect = (workerId) => {
+    console.log("Selecting worker:", workerId);
+    setSelectedWorkerId(selectedWorkerId === workerId ? null : workerId);
+  };
+  
+  // 6. Function to handle order confirmation
+  const handleConfirm = () => {
+    if (!selectedWorkerId) {
+      Alert.alert("Error", "Please select a worker first");
+      return;
+    }
+    
+    setOrderModalVisible(true);
+  };
+  
+  // 7. Function to send the order request
+  const handleSendOrder = async () => {
+    try {
+      const token = await AsyncStorage.getItem("authToken");
+      if (!token) {
+        Alert.alert("Error", "Not logged in");
+        return;
+      }
+      
+      // Use id instead of _id
+      const selectedWorker = workers.find(w => w.id === selectedWorkerId);
+      if (!selectedWorker) {
+        Alert.alert("Error", "Selected worker not found");
+        return;
+      }
+      
+      // Check if gems are selected
+      if (!selectedGems || selectedGems.length === 0) {
+        Alert.alert("Error", "No gems selected");
+        return;
+      }
 
-  const renderFavoriteItem = ({ item }) => (
-    <TouchableOpacity
-      style={[ baseScreenStylesNew.item,styles.favoriteItem]}
-      onPress={() => handleFavoriteSelect(item)}
-    >
-      <View style={styles.favoriteContent}>
-        <Image source={item.image} style={styles.profileImage} />
-        <View style={[baseScreenStylesNew.blackText, styles.textContainer]}>
-          <Text style={styles.name}>{item.name}</Text>
-          <Text style={styles.role}>{item.role}</Text>
+      // Determine order type based on worker role
+      let orderType = "cutting";
+      if (selectedWorker.role === "Burner" || selectedWorker.role === "Electric Burner") {
+        orderType = "burning";
+      }
+      
+      // Extract gem IDs more carefully
+      const gemIds = selectedGems.map(gem => {
+        // Try various property names where ID might be stored
+        return gem._id || gem.id || gem.gemId;
+      }).filter(id => id); // Remove any undefined/null values
+      
+      // Check if we have any valid gem IDs
+      if (gemIds.length === 0) {
+        console.error("Could not extract valid gem IDs");
+        Alert.alert("Error", "Could not identify gem IDs");
+        return;
+      }
+      
+      const orderData = {
+        gemIds: gemIds,
+        workerId: selectedWorkerId,
+        orderType,
+        specialNote
+      };
+      
+      console.log("Sending order data:", orderData);
+      
+      const response = await axios.post(
+        `${API_URL}${ENDPOINTS.CREATE_ORDER || '/api/orders'}`, 
+        orderData,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      
+      console.log("Order response:", response.data);
+      
+      // Close modal and navigate back
+      setOrderModalVisible(false);
+      Alert.alert("Success", "Order sent successfully", [
+        { text: "OK", onPress: () => navigation.navigate("HomeMyGems") }
+      ]);
+    } catch (error) {
+      console.error("Error sending order:", error.response?.data || error.message);
+      Alert.alert("Error", error.response?.data?.message || "Failed to send order");
+    }
+  };
+  
+  // 8. Render a worker item
+  const renderWorkerItem = ({ item }) => {
+    // Use item.id instead of item._id
+    const isSelected = selectedWorkerId === item.id;
+    
+    return (
+      <TouchableOpacity 
+        style={[
+          styles.workerItem,
+          isSelected && styles.selectedWorkerItem
+        ]}
+        onPress={() => handleWorkerSelect(item.id)}
+      >
+        <Image 
+          source={
+            item.avatar 
+              ? { uri: item.avatar }
+              : require("../assets/default-images/user_with_gem.jpeg")
+          }
+          style={styles.workerImage} 
+        />
+        
+        <View style={styles.workerInfo}>
+          <Text style={styles.workerName}>{item.name}</Text>
+          <Text style={styles.workerUsername}>
+            @{item.username} • {item.role}
+          </Text>
+        </View>
+        
+        <View style={[
+          styles.selectionIndicator,
+          isSelected && [styles.selectedIndicator, baseScreenStylesNew.themeColor]
+        ]}>
+          {isSelected && <Ionicons name="checkmark" size={20} color="#fff" />}
+        </View>
+      </TouchableOpacity>
+    );
+  };
+  
+  // 9. Render the confirmation modal
+  const renderOrderModal = () => {
+    // Use id instead of _id
+    const selectedWorker = workers.find(w => w.id === selectedWorkerId);
+    
+    if (!selectedWorker) return null;
+    
+    // Debug log for modal rendering
+    console.log("Rendering modal with gems:", selectedGems);
+    
+    return (
+      <Modal
+        visible={orderModalVisible}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setOrderModalVisible(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalTitle}>Confirm Order</Text>
+              <TouchableOpacity 
+                onPress={() => setOrderModalVisible(false)}
+                style={styles.closeButton}
+              >
+                <Ionicons name="close" size={24} color="#666" />
+              </TouchableOpacity>
+            </View>
+            
+            <View style={styles.workerInfoContainer}>
+              <Image 
+                source={
+                  selectedWorker.avatar 
+                    ? { uri: selectedWorker.avatar }
+                    : require("../assets/default-images/user_with_gem.jpeg")
+                }
+                style={styles.modalWorkerImage} 
+              />
+              <View style={styles.workerInfoDetails}>
+                <Text style={styles.modalWorkerName}>{selectedWorker.name}</Text>
+                <Text style={styles.modalWorkerUsername}>
+                  @{selectedWorker.username} • {selectedWorker.role}
+                </Text>
+              </View>
+            </View>
+            
+            <View style={styles.divider} />
+            
+            <Text style={styles.sectionTitle}>Selected Gems</Text>
+            {selectedGems && selectedGems.length > 0 ? (
+              <FlatList
+                data={selectedGems}
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                renderItem={({ item }) => {
+                  console.log("Rendering gem item:", item);
+                  return (
+                    <View style={styles.gemCard}>
+                      <Image 
+                        source={{ 
+                          uri: item.photo || 
+                               item.image || 
+                               require("../assets/gems/no_gem.jpeg") 
+                        }}
+                        style={styles.gemImage} 
+                      />
+                      <View style={styles.gemInfo}>
+                        <Text style={styles.gemId}>{item.gemId || "Unknown ID"}</Text>
+                        <Text style={styles.gemType}>
+                          {item.details?.gemType || item.gemType || "Unknown"}
+                        </Text>
+                      </View>
+                    </View>
+                  );
+                }}
+                keyExtractor={(item, index) => item.gemId || item._id || `gem-${index}`}
+                contentContainerStyle={styles.gemList}
+              />
+            ) : (
+              <View style={styles.emptyGemsContainer}>
+                <Text style={styles.emptyText}>No gems selected</Text>
+              </View>
+            )}
+            
+            <View style={styles.divider} />
+            
+            <TextInput
+              style={styles.noteInput}
+              placeholder="Special instructions (optional)"
+              placeholderTextColor="#999"
+              multiline
+              value={specialNote}
+              onChangeText={setSpecialNote}
+            />
+            
+            <View style={styles.buttonContainer}>
+              <TouchableOpacity
+                style={styles.cancelButton}
+                onPress={() => setOrderModalVisible(false)}
+              >
+                <Text style={styles.cancelButtonText}>Cancel</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.sendButton, baseScreenStylesNew.themeColor]}
+                onPress={handleSendOrder}
+              >
+                <Text style={styles.sendButtonText}>Send Order</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
+    );
+  };
+  
+  // 10. Main render
+  return (
+    <SafeAreaView style={baseScreenStylesNew.container}>
+      <HeaderBar 
+        title="Select Worker" 
+        navigation={navigation} 
+        showBack={true} 
+      />
+      
+      <View style={styles.searchContainer}>
+        <View style={baseScreenStylesNew.search}>
+          <Ionicons
+            name="search"
+            size={20}
+            style={baseScreenStylesNew.searchIcon}
+          />
+          <TextInput
+            style={baseScreenStylesNew.searchInput}
+            placeholder="Search workers..."
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+          />
         </View>
       </View>
-      <View
-        style={[
-          baseScreenStylesNew.checkBox,
-          styles.checkbox,
-          selectedPerson?.id === item.id && baseScreenStylesNew.themeColor,
-        ]}
-      >
-        {selectedPerson?.id === item.id && (
-          <Ionicons name="checkmark" size={20} color="white" />
-        )}
-      </View>
-    </TouchableOpacity>
-  );
-
-
-  return (
-    <View style={[baseScreenStylesNew.container, styles.container]}>
-      <Header_2 title ="Favourites"/>
-        <SafeAreaView style={styles.safeArea}>
-          {/* Search Bar */}
-          <View style={baseScreenStylesNew.search}>
-            <Ionicons
-              name="search"
-              size={20}
-              style={baseScreenStylesNew.searchIcon}
-            />
-            <TextInput
-              style={baseScreenStylesNew.searchInput}
-              placeholder="Send order to?"
-              value={searchQuery}
-              onChangeText={setSearchQuery}
-            />
-          </View>
-
-          {/* Tab Bar */}
-          <View style={baseScreenStylesNew.tabBar}>
-            {categories.map((category) => (
-              <TouchableOpacity
-                key={category}
-                style={[
-                  baseScreenStylesNew.tabButton,
-                  selectedCategory === category ? 
-                    baseScreenStylesNew.tabButtonActive : 
-                    baseScreenStylesNew.tabButtonInactive
-                ]}
-                onPress={() => handleCategoryPress(category)}
-              >
-                <Text 
-                  style={[
-                    baseScreenStylesNew.tabText, 
-                    selectedCategory === category ? 
-                      baseScreenStylesNew.tabTextActive : 
-                      baseScreenStylesNew.tabTextInactive
-                  ]}
-                >
-                  {category}
-                </Text>
-              </TouchableOpacity>
-            ))}
-          </View>
-
-          {/* Favorites List */}
-          <FlatList
-            data={filteredFavorites}
-            renderItem={renderFavoriteItem}
-            keyExtractor={(item) => item.id}
-            style={styles.list}
-            contentContainerStyle={styles.listContent}
-          />
-
-          {/* Confirm Button with increased bottom margin for navbar */}
-          <View style={styles.confirmButtonContainer}>
-            <TouchableOpacity style={baseScreenStylesNew.Button1} onPress={handleConfirm}>
-              <Text style={baseScreenStylesNew.buttonText}>Confirm</Text>
+      
+      {loading ? (
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color="#9CCDDB" />
+          <Text style={styles.loadingText}>Loading workers...</Text>
+        </View>
+      ) : filteredWorkers.length === 0 ? (
+        <View style={styles.emptyContainer}>
+          <Ionicons name="people" size={50} color="#ccc" />
+          <Text style={styles.emptyText}>
+            {searchQuery ? "No matching workers found" : "No workers found"}
+          </Text>
+          {searchQuery && (
+            <TouchableOpacity onPress={() => setSearchQuery("")}>
+              <Text style={styles.clearSearchText}>Clear search</Text>
             </TouchableOpacity>
-          </View>
-
-          <OrderRequestModal
-            visible={modalVisible}
-            onClose={() => {
-              setModalVisible(false);
-              setSelectedPerson(null);
-            }}
-            selectedPerson={selectedPerson}
-          />
-        </SafeAreaView>
-    </View>
+          )}
+        </View>
+      ) : (
+        <FlatList
+          data={filteredWorkers}
+          renderItem={renderWorkerItem}
+          keyExtractor={(item) => item.id} // Use item.id instead of item._id
+          style={styles.workerList}
+          contentContainerStyle={styles.workerListContent}
+        />
+      )}
+      
+      <View style={styles.confirmButtonContainer}>
+        <TouchableOpacity 
+          style={[
+            baseScreenStylesNew.Button1,
+            !selectedWorkerId && styles.disabledButton
+          ]}
+          onPress={handleConfirm}
+          disabled={!selectedWorkerId}
+        >
+          <Text style={baseScreenStylesNew.buttonText}>Continue</Text>
+        </TouchableOpacity>
+      </View>
+      
+      {renderOrderModal()}
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
+  // Search and list styles
+  searchContainer: {
+    padding: 15,
+  },
+  workerList: {
     flex: 1,
   },
-  gradient: {
-    flex: 1,
-  },
-  safeArea: {
-    flex: 1,
-  },
-  backButton: {
-    padding: 5,
-  },
-  
-  placeholder: {
-    width: 24,
-  },
-  
-  list: {
-    flex: 1,
-  },
-  listContent: {
-    paddingHorizontal: 20,
-    paddingBottom: 10,
-  },
-  favoriteItem: {
-    borderRadius: 15,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingVertical: 8,
+  workerListContent: {
     paddingHorizontal: 15,
-    marginBottom: 16,
-    height: 80,
   },
-  favoriteContent: {
+  
+  // Worker item styles
+  workerItem: {
     flexDirection: 'row',
     alignItems: 'center',
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    padding: 15,
+    marginBottom: 12,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    elevation: 2,
   },
-  profileImage: {
-    width: 61,
-    height: 56,
-    borderRadius: 32,
-    marginRight: 15,
+  selectedWorkerItem: {
+    borderWidth: 2,
+    borderColor: '#9CCDDB',
   },
-  textContainer: {
-    justifyContent: 'center',
-  },
-  name: {
-    fontFamily: "Inter-Medium",
-    fontSize: 14,
-    fontWeight: 'bold',
-    marginBottom: 3,
-  },
-  role: {
-    fontFamily: "Inter-Medium",
-    fontSize: 14,
-    fontWeight: 'bold',
-    opacity: 0.8,
-  },
-  checkbox: {
-    width: 40,
-    height: 40,
+  workerImage: {
+    width: 50,
+    height: 50,
     borderRadius: 25,
+  },
+  workerInfo: {
+    flex: 1,
+    marginLeft: 15,
+  },
+  workerName: {
+    fontWeight: 'bold',
+    fontSize: 16,
+    color: '#333',
+  },
+  workerUsername: {
+    fontSize: 14,
+    color: '#666',
+    marginTop: 2,
+  },
+  selectionIndicator: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    borderWidth: 2,
+    borderColor: '#ccc',
     alignItems: 'center',
     justifyContent: 'center',
   },
-
+  selectedIndicator: {
+    borderColor: 'transparent',
+  },
+  
+  // Bottom confirm button styles
   confirmButtonContainer: {
-    paddingHorizontal: 20,
-    paddingBottom: 70, // Increased bottom padding to make space for the navigation bar
+    paddingHorizontal: 15,
+    paddingBottom: 20,
     marginTop: 10,
   },
-
-});
-
-const modalStyles = StyleSheet.create({
+  disabledButton: {
+    opacity: 0.6,
+  },
+  
+  // Loading and empty states
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  loadingText: {
+    marginTop: 10,
+    color: '#666',
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  emptyText: {
+    fontSize: 16,
+    color: '#666',
+    marginTop: 10,
+    textAlign: 'center',
+  },
+  clearSearchText: {
+    color: '#9CCDDB',
+    marginTop: 10,
+    fontSize: 16,
+  },
+  
+  // Modal styles
   modalOverlay: {
     flex: 1,
     backgroundColor: "rgba(0, 0, 0, 0.5)",
     justifyContent: "center",
     alignItems: "center",
-    padding: 20,
   },
   modalContent: {
-    width: 288,
-    height: 390,
-    borderRadius: 10,
-    padding: 20,
-    backgroundColor: 'transparent', // Remove background color since we'll use gradient
+    width: '90%',
+    maxHeight: '85%',
+    backgroundColor: "white",
+    borderRadius: 15,
+    padding: 0,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
   },
-  gradientBackground: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    top: 0,
-    bottom: 0,
-    borderRadius: 10,
+  modalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: '#eee',
   },
-  orderId: {
-    color: "white",
+  modalTitle: {
     fontSize: 18,
-    fontWeight: "600",
-    marginBottom: 12,
+    fontWeight: 'bold',
+    color: '#333',
   },
-  personName: {
-    color: "white",
+  closeButton: {
+    padding: 5,
+  },
+  workerInfoContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 15,
+  },
+  modalWorkerImage: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+  },
+  workerInfoDetails: {
+    marginLeft: 15,
+  },
+  modalWorkerName: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#333',
+  },
+  modalWorkerUsername: {
+    fontSize: 14,
+    color: '#666',
+    marginTop: 2,
+  },
+  divider: {
+    height: 1,
+    backgroundColor: '#eee',
+    marginVertical: 10,
+    marginHorizontal: 15,
+  },
+  sectionTitle: {
     fontSize: 16,
-    marginBottom: 16,
+    fontWeight: 'bold',
+    color: '#333',
+    marginLeft: 15,
+    marginTop: 5,
   },
-  gemImagesContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginBottom: 16,
+  gemList: {
+    padding: 15,
+  },
+  gemCard: {
+    width: 120,
+    marginRight: 10,
+    backgroundColor: '#f9f9f9',
+    borderRadius: 8,
+    overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: '#eee',
   },
   gemImage: {
-    width: 80,
-    height: 80,
-    borderRadius: 8,
-    backgroundColor: "#fff",
+    width: '100%',
+    height: 100,
   },
-  messageInput: {
-    backgroundColor: "white",
-    borderRadius: 8,
+  gemInfo: {
+    padding: 8,
+  },
+  gemId: {
+    fontWeight: 'bold',
+    fontSize: 14,
+    color: '#333',
+  },
+  gemType: {
+    fontSize: 12,
+    color: '#666',
+  },
+  noteInput: {
+    marginHorizontal: 15,
+    marginVertical: 10,
     padding: 12,
     height: 100,
-    textAlignVertical: "top",
-    marginBottom: 20,
+    backgroundColor: '#f9f9f9',
+    borderWidth: 1,
+    borderColor: '#eee',
+    borderRadius: 8,
+    textAlignVertical: 'top',
   },
   buttonContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
+    flexDirection: 'row',
+    padding: 15,
+    justifyContent: 'space-between',
   },
-  button: {
+  cancelButton: {
+    flex: 1,
+    backgroundColor: '#F3F3F3',
+    paddingVertical: 12,
+    borderRadius: 8,
+    alignItems: 'center',
+    marginRight: 8,
+    borderWidth: 1,
+    borderColor: '#DDD',
+  },
+  sendButton: {
     flex: 1,
     paddingVertical: 12,
     borderRadius: 8,
-    alignItems: "center",
-  },
-  cancelButton: {
-    marginRight: 8,
-  },
-  sendButton: {
+    alignItems: 'center',
     marginLeft: 8,
   },
-  buttonText: {
-    color: "white",
-    fontWeight: "600",
+  cancelButtonText: {
+    color: '#666',
+    fontWeight: 'bold',
+  },
+  sendButtonText: {
+    color: 'white',
+    fontWeight: 'bold',
+  },
+  emptyGemsContainer: {
+    padding: 30,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });
 

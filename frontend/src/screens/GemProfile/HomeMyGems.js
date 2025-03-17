@@ -32,34 +32,40 @@ const GemCollectionScreen = ({ navigation }) => {
   const [isSellModalVisible, setSellModalVisible] = useState(false);
   const [loading, setLoading] = useState(true); // Loading state
   const [gemPrices, setGemPrices] = useState({});
+  const [historyModalVisible, setHistoryModalVisible] = useState(false);
+  const [soldOutGems, setSoldOutGems] = useState([]);
   
+  // Extract the fetchGems function to make it reusable
+  const fetchGems = async () => {
+    setLoading(true); // Show loading indicator when refreshing
+    const token = await AsyncStorage.getItem("authToken");
+    if (!token) {
+      console.error("Authentication token not found");
+      setLoading(false);
+      return; // Exit if no token
+    }
+    try {
+      const response = await axios.get(`${API_URL}${ENDPOINTS.GET_MY_GEMS}?includeAll=true`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      setGems(response.data.gems.filter(gem => gem.status !== "SoldOut"));
+      setSoldOutGems(response.data.gems.filter(gem => gem.status === "SoldOut"));
+      console.log("Number of gems fetched:", response.data.gems.length);
+      console.log("Number of sold gems:", response.data.gems.filter(gem => gem.status === "SoldOut").length);
+    } catch (error) {
+      console.error(
+        "Error fetching gems:",
+        error.response ? error.response.data : error.message
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  // Use fetchGems in useEffect
   useEffect(() => {
-    const fetchGems = async () => {
-      const token = await AsyncStorage.getItem("authToken");
-      if (!token) {
-        console.error("Authentication token not found");
-        setLoading(false);
-        return; // Exit if no token
-      }
-      try {
-        const response = await axios.get(`${API_URL}${ENDPOINTS.GET_MY_GEMS}`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        setGems(response.data.gems);
-        console.log("Number of gems fetched:", response.data.gems.length);
-      } catch (error) {
-        console.error(
-          "Error fetching gems:",
-          error.response ? error.response.data : error.message
-        );
-      } finally {
-        setLoading(false); // Set loading to false after fetching
-      }
-    };
-
     fetchGems();
   }, []);
 
@@ -88,26 +94,104 @@ const GemCollectionScreen = ({ navigation }) => {
     }
   };
 
-  const toggleGemSelection = (gemId) => {
-    if (!isSelectMode) {
-      navigation.navigate("MyGems", { gemId });
-      return;
+  // 2. Update the toggleGemSelection function to check gem status before selection
+const toggleGemSelection = (gemId) => {
+  if (!isSelectMode) {
+    navigation.navigate("MyGems", { gemId });
+    return;
+  }
+  
+  // Find the gem object with this ID
+  const gem = gems.find(g => g.gemId === gemId);
+  
+  // Check if gem exists
+  if (!gem) {
+    console.error(`Gem with ID ${gemId} not found`);
+    return;
+  }
+  
+  // Check if gem is in order or market
+  if (gem.status === "InOrder" || gem.status === "Requested") {
+    Alert.alert("Cannot Select", `Gem ${gemId} is already in an order request.`);
+    return;
+  }
+  
+  if (gem.inMarket) {
+    Alert.alert("Cannot Select", `Gem ${gemId} is currently on sale in the market.`);
+    return;
+  }
+  
+  // If gem is available, toggle its selection
+  setSelectedGems((prev) => {
+    if (prev.includes(gemId)) {
+      return prev.filter((id) => id !== gemId);
+    } else {
+      return [...prev, gemId];
     }
-    setSelectedGems((prev) => {
-      if (prev.includes(gemId)) {
-        return prev.filter((id) => id !== gemId);
-      } else {
-        return [...prev, gemId];
-      }
-    });
-  };
+  });
+};
 
-  const handleSendOrder = () => {
-    console.log("Sending order for gems:", selectedGems);
-    setIsSelectMode(false);
-    setSelectedGems([]);
-    navigation.navigate("FavoritesScreen");
-  };
+  // 3. Update the handleSendOrder function to double-check gems before navigation
+const handleSendOrder = () => {
+  if (selectedGems.length === 0) {
+    Alert.alert("Error", "Please select at least one gem");
+    return;
+  }
+  
+  // Verify all selected gems are available (not in order or market)
+  const unavailableGems = [];
+  
+  // Find the complete gem objects that match the selected gem IDs
+  const selectedGemObjects = gems.filter(gem => {
+    const isSelected = selectedGems.includes(gem.gemId);
+    
+    // Check for unavailable gems
+    if (isSelected) {
+      if (gem.status === "InOrder" || gem.status === "Requested") {
+        unavailableGems.push(`${gem.gemId} (in order)`);
+        return false;
+      }
+      
+      if (gem.inMarket) {
+        unavailableGems.push(`${gem.gemId} (in market)`);
+        return false;
+      }
+    }
+    
+    return isSelected;
+  });
+  
+  // Show alert if any gems are unavailable
+  if (unavailableGems.length > 0) {
+    Alert.alert(
+      "Cannot Proceed",
+      `The following gems are no longer available:\n\n${unavailableGems.join("\n")}`,
+      [{ text: "OK" }]
+    );
+    
+    // Remove unavailable gems from selection
+    setSelectedGems(prev => 
+      prev.filter(gemId => {
+        const gem = gems.find(g => g.gemId === gemId);
+        return gem && gem.status !== "InOrder" && 
+               gem.status !== "Requested" && !gem.inMarket;
+      })
+    );
+    
+    return;
+  }
+  
+  console.log("Sending order for gems:", selectedGemObjects.map(gem => gem.gemId));
+  
+  // Navigate to Favorites screen with the selected gem objects
+  navigation.navigate("FavoritesScreen", { 
+    selectedGems: selectedGemObjects 
+  });
+  
+  // Reset selection mode and clear selected gems
+  setIsSelectMode(false);
+  setSelectedGems([]);
+};
 
   const handleSellPress = () => {
     // Initialize prices for all selected gems
@@ -126,57 +210,73 @@ const GemCollectionScreen = ({ navigation }) => {
     }));
   };
 
-  const handleAddGemsToMarket = async () => {
-    if (selectedGems.length === 0) {
-      Alert.alert("No Gems Selected", "Please select gems to sell.");
-      return;
-    }
+  // 2. Update the handleAddGemsToMarket function to refresh data after success
+const handleAddGemsToMarket = async () => {
+  if (selectedGems.length === 0) {
+    Alert.alert("No Gems Selected", "Please select gems to sell.");
+    return;
+  }
 
-    // Check if all gems have prices
-    const missingPrices = selectedGems.filter(gemId => !gemPrices[gemId]);
-    if (missingPrices.length > 0) {
-      Alert.alert("Missing Prices", "Please set prices for all selected gems.");
-      return;
-    }
+  // Check if all gems have prices
+  const missingPrices = selectedGems.filter(gemId => !gemPrices[gemId]);
+  if (missingPrices.length > 0) {
+    Alert.alert("Missing Prices", "Please set prices for all selected gems.");
+    return;
+  }
 
-    const token = await AsyncStorage.getItem("authToken");
-    if (!token) {
-      console.error("Authentication token not found");
-      return; // Exit if no token
-    }
+  const token = await AsyncStorage.getItem("authToken");
+  if (!token) {
+    console.error("Authentication token not found");
+    return; // Exit if no token
+  }
 
-    try {
-      // Create gemData array with prices
-      const gemData = selectedGems.map(gemId => ({
-        gemId,
-        price: parseFloat(gemPrices[gemId])
-      }));
+  try {
+    // Create gemData array with prices
+    const gemData = selectedGems.map(gemId => ({
+      gemId,
+      price: parseFloat(gemPrices[gemId])
+    }));
 
-      const response = await axios.post(
-        `${API_URL}${ENDPOINTS.ADD_GEMS_TO_MARKET}`,
-        { gems: gemData },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      if (response.status === 201) {
-        Alert.alert("Success", "Gems have been added to the market.");
-        setSellModalVisible(false);
-        setSelectedGems([]);
-        setGemPrices({});
-        setIsSelectMode(false);
+    const response = await axios.post(
+      `${API_URL}${ENDPOINTS.ADD_GEMS_TO_MARKET}`,
+      { gems: gemData },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       }
-    } catch (error) {
-      console.error("Error adding gems to market:", error);
+    );
+
+    if (response.status === 201) {
+      // Close modal and reset selection states immediately
+      setSellModalVisible(false);
+      setSelectedGems([]);
+      setGemPrices({});
+      setIsSelectMode(false);
+      
+      // Show alert with refresh on dismissal
       Alert.alert(
-        "Error",
-        error.response?.data?.message || "Failed to add gems to market."
+        "Success", 
+        "Gems have been added to the market.",
+        [
+          {
+            text: "OK",
+            onPress: () => {
+              // Refetch the gems data when user clicks OK
+              fetchGems();
+            }
+          }
+        ]
       );
     }
-  };
+  } catch (error) {
+    console.error("Error adding gems to market:", error);
+    Alert.alert(
+      "Error",
+      error.response?.data?.message || "Failed to add gems to market."
+    );
+  }
+};
 
   const handleSellCancel = () => {
     setSellModalVisible(false);
@@ -216,43 +316,159 @@ const GemCollectionScreen = ({ navigation }) => {
     );
   };
 
-  const renderGemItem = React.useCallback(
-    ({ item }) => {
-      const isSelected = selectedGems.includes(item.gemId);
-      return (
-        <TouchableOpacity
-          style={[
-            styles.gemCard,
-            isSelectMode && !isSelected ? { opacity: 0.7 } : { opacity: 1 },
-          ]}
-          onPress={() => {
-            if (isSelectMode) {
-              toggleGemSelection(item.gemId);
-            } else {
-              navigation.navigate("MyGems", { gemId: item.gemId }); // Navigate to MyGems with gemId
+  // 1. Update the renderGemItem function to show status indicators
+const renderGemItem = React.useCallback(
+  ({ item }) => {
+    const isSelected = selectedGems.includes(item.gemId);
+    const isInOrder = item.status === "InOrder" || item.status === "Requested";
+    const isInMarket = item.inMarket === true;
+    
+    return (
+      <TouchableOpacity
+        style={[
+          styles.gemCard,
+          isSelectMode && !isSelected ? { opacity: 0.7 } : { opacity: 1 },
+        ]}
+        onPress={() => {
+          if (isSelectMode) {
+            // Check if gem is already in an order or market before selection
+            if (isInOrder) {
+              Alert.alert("Cannot Select", `Gem ${item.gemId} is already in an order request.`);
+              return;
             }
-          }}
-        >
-          <Image
-            source={{ uri: item.photo || require("../../assets/gems/no_gem.jpeg") }}
-            style={styles.gemImage}
-            resizeMode="cover"
-          />
-          <Text style={styles.gemId}>{item.gemId}</Text>
-        </TouchableOpacity>
-      );
-    },
-    [isSelectMode, selectedGems, navigation]
-  );
+            if (isInMarket) {
+              Alert.alert("Cannot Select", `Gem ${item.gemId} is currently on sale in the market.`);
+              return;
+            }
+            toggleGemSelection(item.gemId);
+          } else {
+            navigation.navigate("MyGems", { gemId: item.gemId }); // Navigate to MyGems with gemId
+          }
+        }}
+      >
+        <Image
+          source={{ uri: item.photo || require("../../assets/gems/no_gem.jpeg") }}
+          style={styles.gemImage}
+          resizeMode="cover"
+        />
+        
+        {/* Status Indicators */}
+        {isInOrder && (
+          <View style={styles.statusIndicator}>
+            <Ionicons name="time-outline" size={18} color="#FFFFFF" />
+          </View>
+        )}
+        
+        {isInMarket && (
+          <View style={[styles.statusIndicator, styles.marketIndicator]}>
+            <Ionicons name="pricetag-outline" size={18} color="#FFFFFF" />
+          </View>
+        )}
+        
+        <Text style={styles.gemId}>{item.gemId}</Text>
+      </TouchableOpacity>
+    );
+  },
+  [isSelectMode, selectedGems, navigation]
+);
 
+  const handleShowHistory = () => {
+    setHistoryModalVisible(true);
+  };
+
+  const handleCloseHistory = () => {
+    setHistoryModalVisible(false);
+  };
+
+  const renderHistoryItem = ({ item }) => {
+    return (
+      <View style={styles.historyItem}>
+        <Image
+          source={{ uri: item.photo || require("../../assets/gems/no_gem.jpeg") }}
+          style={styles.historyGemImage}
+          resizeMode="cover"
+        />
+        
+        <View style={styles.historyGemDetails}>
+          <Text style={styles.historyGemId}>{item.gemId}</Text>
+          <Text style={styles.historyGemType}>
+            {(item.details?.gemType || item.gemType || "Unknown")}
+          </Text>
+          {item.details?.soldTo && (
+            <Text style={styles.historyGemBuyer}>
+              Sold to: {item.details.soldTo}
+            </Text>
+          )}
+          {item.details?.soldPrice && (
+            <Text style={styles.historyGemPrice}>
+              Price: LKR {item.details.soldPrice.toLocaleString()}
+            </Text>
+          )}
+          {item.details?.soldDate && (
+            <Text style={styles.historyGemDate}>
+              Date: {new Date(item.details.soldDate).toLocaleDateString()}
+            </Text>
+          )}
+        </View>
+        
+        <View style={styles.soldBadge}>
+          <Text style={styles.soldBadgeText}>Sold</Text>
+        </View>
+      </View>
+    );
+  };
+
+  const renderHistoryModal = () => {
+    return (
+      <Modal
+        visible={historyModalVisible}
+        animationType="slide"
+        transparent={true}
+        onRequestClose={handleCloseHistory}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.historyModalContent}>
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalTitle}>Gem History</Text>
+              <TouchableOpacity 
+                style={styles.modalCloseButton} 
+                onPress={handleCloseHistory}
+              >
+                <Text style={styles.modalCloseButtonText}>✕</Text>
+              </TouchableOpacity>
+            </View>
+            
+            {soldOutGems.length === 0 ? (
+              <View style={styles.modalEmptyContainer}>
+                <Ionicons name="diamond-outline" size={60} color="#CCCCCC" />
+                <Text style={styles.modalEmptyText}>No sold gems found</Text>
+              </View>
+            ) : (
+              <FlatList
+                data={soldOutGems}
+                renderItem={renderHistoryItem}
+                keyExtractor={(item) => item.gemId || item._id}
+                contentContainerStyle={styles.historyList}
+                showsVerticalScrollIndicator={false}
+              />
+            )}
+          </View>
+        </View>
+      </Modal>
+    );
+  };
+
+  // Update the JSX for the buttons in the header
   return (
     <SafeAreaView style={[baseScreenStylesNew.backgroundColor, baseScreenStylesNew.container]}>
       <HeaderBar 
         title="My gems" 
         navigation={navigation} 
         showBack={true} 
+        leftIcon="menu" 
+        onLeftPress={() => navigation.openDrawer()}
       />
-      <View style={[baseScreenStylesNew.container.backgroundColor,styles.header]}>
+      <View style={[baseScreenStylesNew.container.backgroundColor, styles.header]}>
         <View style={styles.searchContainer}>
           <View style={baseScreenStylesNew.search}>
             <Ionicons name="search" style={baseScreenStylesNew.searchIcon} />
@@ -270,14 +486,30 @@ const GemCollectionScreen = ({ navigation }) => {
           </View>
         </View>
         
-        <TouchableOpacity
-          style={[baseScreenStylesNew.Button1,styles.selectButton]}
-          onPress={toggleSelect}
-        >
-          <Text style={styles.selectButtonText}>
-            {isSelectMode ? "Cancel" : "Select"}
-          </Text>
-        </TouchableOpacity>
+        {/* Updated buttons container */}
+        <View style={styles.buttonsRow}>
+          {/* Empty space to push buttons to the right */}
+          <View style={styles.buttonSpacer} />
+          
+          {/* History button */}
+          <TouchableOpacity
+            style={[styles.historyButton, baseScreenStylesNew.outlineButton]}
+            onPress={handleShowHistory}
+          >
+            <Ionicons name="time-outline" size={16} color="#9CCDDB" />
+            <Text style={styles.historyButtonText}>History</Text>
+          </TouchableOpacity>
+          
+          {/* Select button - fixed width */}
+          <TouchableOpacity
+            style={[styles.selectButton, baseScreenStylesNew.themeColor]}
+            onPress={toggleSelect}
+          >
+            <Text style={[styles.selectButtonText, baseScreenStylesNew.whiteText]}>
+              {isSelectMode ? "Cancel" : "Select"}
+            </Text>
+          </TouchableOpacity>
+        </View>
       </View>
 
       {loading ? (
@@ -366,6 +598,7 @@ const GemCollectionScreen = ({ navigation }) => {
           )}
         </>
       )}
+      {renderHistoryModal()}
     </SafeAreaView>
   );
 };
@@ -377,7 +610,53 @@ const styles = StyleSheet.create({
   },
   searchContainer: {
     width: '100%',
-    marginBottom: 15,
+    marginBottom: 10, // Reduced from 15 to tighten layout
+  },
+  
+  // New row container for buttons
+  buttonsRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-end', // Align buttons to the right
+    width: '100%',
+    marginTop: 5, // Reduced from 10 to tighten layout
+  },
+  
+  // Spacer to push buttons to the right
+  buttonSpacer: {
+    flex: 1,
+  },
+  
+  // Updated history button style
+  historyButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    borderRadius: 8,
+    marginRight: 10, // Space between buttons
+  },
+  
+  historyButtonText: {
+    color: '#9CCDDB',
+    fontWeight: '600',
+    fontSize: 14,
+    marginLeft: 5,
+  },
+  
+  // Updated select button style - compact with fixed width
+  selectButton: {
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: 80, // Fixed width for consistent look
+  },
+  
+  selectButtonText: {
+    fontWeight: '600',
+    fontSize: 14,
   },
   searchBar: {
     flexDirection: 'row',
@@ -695,7 +974,122 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "bold",
     textAlign: "right",
-  }
+  },
+  statusIndicator: {
+    position: "absolute",
+    top: 8,
+    right: 8,
+    backgroundColor: "#FF6347",
+    borderRadius: 12,
+    padding: 4,
+  },
+  marketIndicator: {
+    backgroundColor: "#FFD700",
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    width: '100%',
+    marginTop: 10,
+  },
+  historyButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 10,
+    paddingHorizontal: 15,
+    borderRadius: 10,
+  },
+  historyButtonText: {
+    color: '#9CCDDB',
+    fontWeight: '600',
+    fontSize: 14,
+    marginLeft: 5,
+  },
+  historyModalContent: {
+    width: '90%',
+    maxHeight: '80%',
+    backgroundColor: '#FFFFFF',
+    borderRadius: 16,
+    overflow: 'hidden',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.27,
+    shadowRadius: 4.65,
+    elevation: 6,
+  },
+  historyList: {
+    padding: 12,
+  },
+  historyItem: {
+    flexDirection: 'row',
+    backgroundColor: '#F9F9F9',
+    borderRadius: 12,
+    padding: 15,
+    marginBottom: 12,
+    position: 'relative',
+    borderWidth: 1,
+    borderColor: '#EEEEEE',
+  },
+  historyGemImage: {
+    width: 70,
+    height: 70,
+    borderRadius: 8,
+    backgroundColor: '#F0F0F0',
+    marginRight: 15,
+  },
+  historyGemDetails: {
+    flex: 1,
+    justifyContent: 'center',
+  },
+  historyGemId: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#333333',
+    marginBottom: 2,
+  },
+  historyGemType: {
+    fontSize: 14,
+    color: '#666666',
+    marginBottom: 5,
+  },
+  historyGemBuyer: {
+    fontSize: 13,
+    color: '#444444',
+    marginBottom: 2,
+  },
+  historyGemPrice: {
+    fontSize: 13,
+    color: '#444444',
+    marginBottom: 2,
+  },
+  historyGemDate: {
+    fontSize: 12,
+    color: '#888888',
+  },
+  soldBadge: {
+    position: 'absolute',
+    top: 10,
+    right: 10,
+    backgroundColor: '#E74C3C',
+    paddingVertical: 3,
+    paddingHorizontal: 8,
+    borderRadius: 12,
+  },
+  soldBadgeText: {
+    color: '#FFFFFF',
+    fontSize: 11,
+    fontWeight: 'bold',
+  },
+  buttonsRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+    marginTop: 10,
+  },
+  buttonSpacer: {
+    flex: 1,
+  },
 });
 
 export default GemCollectionScreen;

@@ -319,7 +319,7 @@ const Contacts = ({ navigation }) => {
             <MaterialIcons name="error-outline" size={64} color="#FF6B6B" />
             <Text style={styles.errorText}>{error}</Text>
             <TouchableOpacity 
-              style={styles.retryButton}
+              style={[styles.retryButton, baseScreenStylesNew.themeColor]}
               onPress={() => fetchContacts()}
             >
               <Text style={styles.retryButtonText}>Retry</Text>
@@ -378,21 +378,7 @@ const Contacts = ({ navigation }) => {
 
 const styles = StyleSheet.create({
 
-  header: {
-    backgroundColor: '#FFFFFF',
-    paddingVertical: 16,
-    paddingHorizontal: 20,
-    borderBottomWidth: 1,
-    borderBottomColor: '#F0F0F0',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  headerTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#333333',
-  },
+
   searchContainer: {
     padding: 15,
     paddingBottom: 5,
@@ -513,7 +499,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   retryButton: {
-    backgroundColor: THEME_COLOR,
+  
     paddingHorizontal: 20,
     paddingVertical: 10,
     borderRadius: 8,
@@ -537,7 +523,6 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   addFirstContactBtn: {
-    backgroundColor: THEME_COLOR,
     paddingHorizontal: 20,
     paddingVertical: 10,
     borderRadius: 8,

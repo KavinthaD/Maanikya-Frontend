@@ -2,10 +2,9 @@ import React, { useState } from "react";
 import { View, Text, Image, TouchableOpacity, Modal, Linking, FlatList, StyleSheet } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import {Ionicons} from "@expo/vector-icons"
-import Header_2 from "../components/Header_2";
-import { baseScreenStyles } from "../styles/baseStyles";
-import GradientContainer from "../components/GradientContainer";
+import HeaderBar from "../components/HeaderBar";
 import { TouchableWithoutFeedback } from "react-native";
+import { baseScreenStylesNew } from "../styles/baseStylesNew";
 
 const SellerProfile = () => {
     const navigation = useNavigation();
@@ -34,25 +33,31 @@ const SellerProfile = () => {
     };
 
     return (
-        <GradientContainer>
-        <View style={baseScreenStyles.container}>
-            <Header_2 title="My Sellers"/>
+        
+        <View style={baseScreenStylesNew.container}>
+                  <HeaderBar
+        title="My Sellers"
+        navigation={navigation}
+        showBack={true}
+        leftIcon="menu"
+        onLeftPress={() => navigation.openDrawer()}
+      />
             <View style={styles.profileSection}>
                 <Image source={require("../assets/seller.png")} style={styles.profileImage} />
-                <Text style={styles.name}>{seller.name}</Text>
-                <Text style={styles.title}>{seller.title}</Text>
+                <Text style={[styles.name, baseScreenStylesNew.blackText]}>{seller.name}</Text>
+                <Text style={[styles.title, baseScreenStylesNew.blackText]}>{seller.title}</Text>
                 <View style={styles.addressContainer}>
-                    <Ionicons name="location-sharp" size={15} color="white" />
-                    <Text style={styles.address}>{seller.address}</Text>
+                    <Ionicons name="location-sharp" size={15} style={baseScreenStylesNew.blackText} />
+                    <Text style={[styles.address, baseScreenStylesNew.blackText]}>{seller.address}</Text>
                 </View>
                 <View style={styles.buttonContainer}>
-                    <TouchableOpacity style={styles.button} onPress={() => setPhoneModalVisible(true)}>
+                    <TouchableOpacity style={[styles.button, baseScreenStylesNew.themeColor]} onPress={() => setPhoneModalVisible(true)}>
                         <View style={styles.buttonContent}>
                             <Ionicons name="call" size={16} color="white" />
                             <Text style={styles.buttonText}>Contact</Text>
                             </View>
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.button} onPress={() => setMailModalVisible(true)}>
+                    <TouchableOpacity style={[styles.button, baseScreenStylesNew.themeColor]} onPress={() => setMailModalVisible(true)}>
                         <View style={styles.buttonContent}>
                             <Ionicons name="mail" size={16} color="white" />
                             <Text style={styles.buttonText}>Mail</Text>
@@ -61,9 +66,9 @@ const SellerProfile = () => {
             </View>
         </View>
             <View style={styles.dividerContainer}>
-                      <View style={styles.divider} />
-                      <Text style={styles.divText}>Gems On Display</Text>
-                      <View style={styles.divider} />
+                      <View style={[styles.divider, baseScreenStylesNew.themeColor]} />
+                      <Text style={[styles.divText, baseScreenStylesNew.themeText]}>Gems On Display</Text>
+                      <View style={[styles.divider, baseScreenStylesNew.themeColor]}/>
                     </View>
             <FlatList
                 data={seller.gems}
@@ -110,16 +115,11 @@ const SellerProfile = () => {
                 </TouchableWithoutFeedback>
             </Modal>
         </View>
-        </GradientContainer>
     );
 };
 
 const styles = StyleSheet.create({
-    container: { 
-        flex: 1, 
-        backgroundColor: "#0C2D48",
-        padding: 20 
-    },
+
     profileSection: { 
         alignItems: "center" 
     },
@@ -173,10 +173,10 @@ const styles = StyleSheet.create({
         height: 2,
         marginLeft: 8,
         marginRight: 8,
-        backgroundColor: "#ffffff",
     },
     divText: {
-        color: "#fff",
+        fontWeight: "bold",
+        fontSize: 17
     },
     button: { 
         backgroundColor: " rgba(7, 45, 68, 0.73);", 

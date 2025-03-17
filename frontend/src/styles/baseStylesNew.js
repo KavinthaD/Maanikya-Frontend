@@ -6,11 +6,11 @@ export const baseScreenStylesNew = StyleSheet.create({
     backgroundColor: '#170969'   
   },
   backgroundColor: {
-    backgroundColor: "white", // Default background color for all screens
+    backgroundColor: "black", // Default background color for all screens
   },
   container: {
     flex: 1,
-    backgroundColor: "white", // Default background color for all screens
+    backgroundColor: "black", // Default background color for all screens
     position: "relative",
   },
 

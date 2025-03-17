@@ -144,7 +144,7 @@ const MyGems = ({ route, navigation }) => {
 
   return (
     <SafeAreaView 
-      style={[styles.safeArea, baseScreenStylesNew.backgroundColor]} 
+      style={[baseScreenStylesNew.backgroundColor,baseScreenStylesNew.container]} 
       edges={['bottom', 'left', 'right']} // Don't include 'top' here
     >
       <HeaderBar 
@@ -155,7 +155,7 @@ const MyGems = ({ route, navigation }) => {
       />
 
       <ScrollView 
-        style={styles.scrollView} 
+        style={[styles.scrollView, baseScreenStylesNew.backgroundColor]} 
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollViewContent}
       >
@@ -287,7 +287,7 @@ const MyGems = ({ route, navigation }) => {
                 resizeMode="contain"
               />
               {/* Add Certificate Button */}
-              <TouchableOpacity onPress={handleCameraPress} style={styles.addCertificateButton}>
+              <TouchableOpacity onPress={handleCameraPress} style={[baseScreenStylesNew.Button1,styles.addCertificateButton]}>
                 <FontAwesome5 name="plus" size={16} color="white" />
                 <Text style={styles.addButtonText}>Add Gem Certificate</Text>
               </TouchableOpacity>
@@ -350,10 +350,7 @@ const MyGems = ({ route, navigation }) => {
 
 // Updated styles
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#FFFFFF",
-  },
+
   scrollView: {
     backgroundColor: "#FFFFFF",
     flex: 1,
@@ -460,7 +457,6 @@ const styles = StyleSheet.create({
   },
   addCertificateButton: {
     marginTop: 20,
-    backgroundColor: "#9CCDDB",
     flexDirection: "row",
     paddingVertical: 12,
     paddingHorizontal: 24,

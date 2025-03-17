@@ -38,6 +38,10 @@ const GemOnDisplay = ({ navigation }) => {
   const [error, setError] = useState(null);
   const [refreshing, setRefreshing] = useState(false);
 
+  // New state for removal confirmation
+  const [removeModalVisible, setRemoveModalVisible] = useState(false);
+  const [gemToRemove, setGemToRemove] = useState(null);
+
   // Fetch market gems when component mounts
   useEffect(() => {
     fetchMarketGems();

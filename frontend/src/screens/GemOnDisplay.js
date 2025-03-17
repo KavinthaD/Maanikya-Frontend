@@ -114,7 +114,9 @@ const GemOnDisplay = ({ navigation }) => {
     setSelectedGem(gem);
     setModalVisible(true);
   };
+  
 
+  
   // Mark gem as sold
   const markSold = async () => {
     if (selectedGem && buyerName && price) {
@@ -172,10 +174,155 @@ const GemOnDisplay = ({ navigation }) => {
     }
   };
 
+  // Add new function to handle removal from market
+  const handleRemovePress = (gem) => {
+    setGemToRemove(gem);
+    setRemoveModalVisible(true);
+  };
+
+  // Function to execute the removal API call
+  const removeFromMarket = async () => {
+    if (!gemToRemove) return;
+
+    try {
+      setRemoveModalVisible(false); // Close modal first
+
+      // Get auth token
+      const token = await AsyncStorage.getItem("authToken");
+      
+      if (!token) {
+        Alert.alert("Error", "Authentication required. Please login.");
+        return;
+      }
+
+      // Call API to remove gem from market
+      const response = await axios.put(
+        `${API_URL}/api/market/${gemToRemove.id}/remove`,
+        {},
+        {
+          headers: { Authorization: `Bearer ${token}` }
+        }
+      );
+
+      if (response.data.success) {
+        // Update local state by removing the gem from display list
+        setOnDisplay(onDisplay.filter(item => item.id !== gemToRemove.id));
+        
+        // Show success message
+        Alert.alert(
+          "Success", 
+          "Gem has been removed from the market and returned to inventory.",
+          [{ text: "OK" }]
+        );
+      } else {
+        Alert.alert("Error", response.data.message || "Failed to remove gem from market");
+      }
+    } catch (error) {
+      console.error("Error removing gem from market:", error);
+      
+      // Show specific error message if available
+      const errorMessage = error.response?.data?.message || 
+                          "Failed to remove gem from market. Please try again.";
+      
+      Alert.alert("Error", errorMessage);
+    }
+  };
+
+
+
   // Item separator for FlatList
   const ItemSeperator = () => (
     <View style={{ height: 1, backgroundColor: "#e0e0e0", marginVertical: 5 }} />
   );
+
+  // Update renderItem for onDisplay FlatList to include Remove button
+  const renderDisplayGem = ({ item }) => (
+    <View style={styles.gemDisplay}>
+      <Image 
+        source={item.image} 
+        style={styles.gemImg} 
+        defaultSource={require("../assets/logo.png")}
+      />
+      <View style={styles.gemInfo}>
+        <Text style={styles.gemId}>{item.id}</Text>
+        <Text style={styles.gemDetails}>
+          {item.weight ? `${item.weight} ct ` : ''}{item.gemType || ''}
+        </Text>
+        <Text style={styles.gemPrice}>LKR {item.price}</Text>
+      </View>
+      <View style={styles.actionButtonsContainer}>
+        <TouchableOpacity
+          onPress={() => handleRemovePress(item)}
+          style={styles.removeBtn}
+        >
+          <Text style={styles.removeBtnText}>Remove</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => openModal(item)}
+          style={[baseScreenStylesNew.themeColor, styles.soldBtn]}
+        >
+          <Text style={[baseScreenStylesNew.whiteText, styles.soldBtnText]}>Mark As Sold</Text>
+        </TouchableOpacity>
+      </View>
+    </View>
+  );
+
+  // Add removal confirmation modal
+  const renderRemoveModal = () => (
+    <Modal
+      animationType="slide"
+      transparent={true}
+      visible={removeModalVisible}
+      onRequestClose={() => setRemoveModalVisible(false)}
+    >
+      <View style={styles.modalContainer}>
+        <LinearGradient
+          colors={['rgb(3, 15, 79)', 'rgb(11, 10, 43)']}
+          style={styles.gradientBackground}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 0, y: 1 }}
+        >
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>Remove from Market</Text>
+            
+            {gemToRemove && (
+              <View style={styles.gemPreviewContainer}>
+                <Image 
+                  source={gemToRemove?.image} 
+                  style={styles.previewGemImg} 
+                  defaultSource={require("../assets/logo.png")}
+                />
+                <Text style={styles.previewGemId}>{gemToRemove?.id}</Text>
+              </View>
+            )}
+            
+            <Text style={styles.confirmationText}>
+              Are you sure you want to remove this gem from the market?
+            </Text>
+            <Text style={styles.confirmationSubtext}>
+              The gem will be returned to your inventory.
+            </Text>
+            
+            <View style={styles.modalBtn}>
+              <TouchableOpacity
+                onPress={() => setRemoveModalVisible(false)}
+                style={[baseScreenStylesNew.cancelButton, styles.cancelBtn]}
+              >
+                <Text style={styles.btnText}>Cancel</Text>
+              </TouchableOpacity>
+              <TouchableOpacity 
+                onPress={removeFromMarket} 
+                style={[styles.removeConfirmBtn, styles.confirmBtn]}
+              >
+                <Text style={styles.btnText}>Remove</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </LinearGradient>
+      </View>
+    </Modal>
+  );
+
 
   if (loading && !refreshing) {
     return (
@@ -246,28 +393,7 @@ const GemOnDisplay = ({ navigation }) => {
             <FlatList
               data={onDisplay}
               keyExtractor={(item) => item.id}
-              renderItem={({ item }) => (
-                <View style={styles.gemDisplay}>
-                  <Image 
-                    source={item.image} 
-                    style={styles.gemImg} 
-                    defaultSource={require("../assets/logo.png")}
-                  />
-                  <View style={styles.gemInfo}>
-                    <Text style={styles.gemId}>{item.id}</Text>
-                    <Text style={styles.gemDetails}>
-                      {item.weight ? `${item.weight} ct ` : ''}{item.gemType || ''}
-                    </Text>
-                    <Text style={styles.gemPrice}>LKR {item.price}</Text>
-                  </View>
-                  <TouchableOpacity
-                    onPress={() => openModal(item)}
-                    style={[baseScreenStylesNew.themeColor, styles.soldBtn]}
-                  >
-                    <Text style={[baseScreenStylesNew.whiteText,styles.soldBtnText]}>Mark As Sold</Text>
-                  </TouchableOpacity>
-                </View>
-              )}
+              renderItem={renderDisplayGem}
               ItemSeparatorComponent={ItemSeperator}
               scrollEnabled={false}
             />
@@ -359,6 +485,8 @@ const GemOnDisplay = ({ navigation }) => {
             </LinearGradient>
           </View>
         </Modal>
+        {/* Add the new remove confirmation modal */}
+        {renderRemoveModal()}
       </ScrollView>
     </SafeAreaView>
   );
@@ -470,12 +598,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "rgba(255, 255, 255, 0.85)",
   },
-gradientBackground: {
-  width: "90%",
-  padding: 24,
-  borderRadius: 12,
-  maxWidth: 400,
-},
+  gradientBackground: {
+    width: "90%",
+    padding: 24,
+    borderRadius: 12,
+    maxWidth: 400,
+  },
   modalContent: {
     width: "100%",
     padding: 24,
@@ -572,6 +700,57 @@ gradientBackground: {
     marginTop: 10,
     fontSize: 16,
     color: "white"
+  },
+  ctionButtonsContainer: {
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'flex-end',
+  },
+  removeBtn: {
+    paddingVertical: 8,
+    paddingHorizontal: 10,
+    borderRadius: 10,
+    backgroundColor: '#f5f5f5', // Light gray
+    borderWidth: 1,
+    borderColor: '#ddd',
+    marginBottom: 8,
+  },
+  removeBtnText: {
+    fontSize: 14,
+    fontWeight: "500",
+    color: '#e74c3c', // Red text
+  },
+  gemPreviewContainer: {
+    alignItems: 'center',
+    marginBottom: 15,
+  },
+  previewGemImg: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    marginBottom: 10,
+    borderWidth: 2,
+    borderColor: 'rgba(255, 255, 255, 0.3)',
+  },
+  previewGemId: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  confirmationText: {
+    color: 'white',
+    fontSize: 16,
+    textAlign: 'center',
+    marginBottom: 10,
+  },
+  confirmationSubtext: {
+    color: 'rgba(255, 255, 255, 0.7)',
+    fontSize: 14,
+    textAlign: 'center',
+    marginBottom: 20,
+  },
+  removeConfirmBtn: {
+    backgroundColor: '#e74c3c', // Red button
   },
 });
 

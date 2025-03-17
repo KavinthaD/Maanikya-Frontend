@@ -61,9 +61,12 @@ export const ENDPOINTS = {
   SEND_ORDER: "/api/owner/orders",
   
   // Order endpoints
+  ORDERS:"/api/orders",
   CREATE_ORDER: "/api/orders", // For creating new orders
-  GET_ORDERS: "/api/orders",   // For fetching orders
+  GET_ORDERS_OWNER: "/api/orders/owner-view",   // For fetching orders
+  GET_ORDERS_WORKER: "/api/orders/worker-view",   // For fetching orders
   UPDATE_ORDER: "/api/orders", // For updating order status
+  UPDATE_ORDER_STATUS: "/api/orders/worker", // This will be used with /:id/status
   
   // Add other endpoints here
 };

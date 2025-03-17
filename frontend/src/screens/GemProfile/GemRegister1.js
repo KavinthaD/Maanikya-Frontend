@@ -155,82 +155,101 @@ function GemRegister1Main() {
     }
   };
 
-  // Update handleAIAnalysis function
-  const handleAIAnalysis = async (imageInfo) => {
-    try {
-      console.log("Image Stats before API call:", {
-        width: imageInfo.width,
-        height: imageInfo.height,
-        size: `${(imageInfo.size / (1024 * 1024)).toFixed(2)}MB`,
-        mime: imageInfo.mime,
-      });
+  // Update handleAIAnalysis function to handle failures better
 
-      // Validate image before processing
-      const validationResult = await validateImage(imageInfo); // Changed from imagePath to imageInfo
-      if (!validationResult.isValid) {
-        Alert.alert("Invalid Image", validationResult.errors.join("\n"), [
-          { text: "OK" },
-        ]);
-        return;
-      }
+const handleAIAnalysis = async (imageInfo) => {
+  try {
+    console.log("Image Stats before API call:", {
+      width: imageInfo.width,
+      height: imageInfo.height,
+      size: `${(imageInfo.size / (1024 * 1024)).toFixed(2)}MB`,
+      mime: imageInfo.mime,
+    });
 
-      const token = await AsyncStorage.getItem('authToken');
-      if (!token) {
-        throw new Error("No authentication token found");
-      }
+    // Validate image before processing
+    const validationResult = await validateImage(imageInfo);
+    if (!validationResult.isValid) {
+      Alert.alert("Invalid Image", validationResult.errors.join("\n"), [
+        { text: "OK" },
+      ]);
+      return;
+    }
 
-      const formData = new FormData();
-      formData.append("image", {
-        uri:
-          Platform.OS === "ios"
-            ? imageInfo.path.replace("file://", "")
-            : imageInfo.path, // Changed from imagePath to imageInfo.path
-        type: "image/jpeg",
-        name: "gem_image.jpg",
-      });
+    // Update the form with the image regardless of AI analysis success
+    setForm((prev) => ({
+      ...prev,
+      photos: [imageInfo.path],
+    }));
 
-      const response = await axios.post(`${API_URL}/api/ai/analyze`, formData, {
+    const token = await AsyncStorage.getItem('authToken');
+    if (!token) {
+      throw new Error("No authentication token found");
+    }
+
+    const formData = new FormData();
+    formData.append("image", {
+      uri:
+        Platform.OS === "ios"
+          ? imageInfo.path.replace("file://", "")
+          : imageInfo.path,
+      type: "image/jpeg",
+      name: "gem_image.jpg",
+    });
+
+    // Set a timeout to prevent long waits
+    const timeoutPromise = new Promise((_, reject) =>
+      setTimeout(() => reject(new Error("AI analysis request timed out")), 20000)
+    );
+
+    // Try AI analysis with a timeout
+    const response = await Promise.race([
+      axios.post(`${API_URL}/api/ai/analyze`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
           Authorization: `Bearer ${token}`,
         },
-      });
+      }),
+      timeoutPromise,
+    ]);
 
-      // Log raw response data
-      console.log("Raw API Response:", JSON.stringify(response.data, null, 2));
+    console.log("Raw API Response:", JSON.stringify(response.data, null, 2));
 
-      if (response.data.success) {
-        const analysis = response.data.analysis;
+    if (response.data.success) {
+      const analysis = response.data.analysis;
 
-        // Find the matching gem type in gemTypeItems
-        const matchingGemType =
-          gemTypeItems.find((item) => item.label === analysis.gemTypes[0])
-            ?.value || analysis.gemTypes[0];
+      // Find the matching gem type in gemTypeItems
+      const matchingGemType =
+        gemTypeItems.find((item) => item.label === analysis.gemTypes[0])
+          ?.value || analysis.gemTypes[0];
 
-        // Auto-fill the form with AI analysis results
-        setForm((prev) => ({
-          ...prev,
-          color: analysis.color.name,
-          gemShape: analysis.shape.toLowerCase(),
-          gemType: matchingGemType,
-          description: analysis.description,
-          photos: [imageInfo.path], // Changed from imagePath to imageInfo.path
-        }));
+      // Auto-fill the form with AI analysis results
+      setForm((prev) => ({
+        ...prev,
+        color: analysis.color.name,
+        gemShape: analysis.shape.toLowerCase(),
+        gemType: matchingGemType,
+        description: analysis.description,
+      }));
 
-        Alert.alert(
-          "AI Analysis Complete",
-          "The form has been filled with AI suggestions. You can modify them if needed."
-        );
-      }
-    } catch (error) {
-      console.error("AI Analysis error:", error);
       Alert.alert(
-        "AI Analysis Failed",
-        error.response?.data?.message ||
-          "Could not analyze the image. Please fill the form manually."
+        "AI Analysis Complete",
+        "The form has been filled with AI suggestions. You can modify them if needed."
       );
     }
-  };
+  } catch (error) {
+    console.error("AI Analysis error:", error);
+    
+    // The important part: don't remove the image if AI fails
+    // Just inform the user and let them continue manually
+    Alert.alert(
+      "AI Analysis Failed",
+      "The image has been added but couldn't be analyzed. Please fill the form manually.",
+      [{ text: "OK" }]
+    );
+    
+    // We don't need to clear the image here - it's already set in the form
+  }
+};
 
   // Update handleTakePhoto and handleChooseFromGallery configurations
   const imagePickerConfig = {
@@ -248,6 +267,7 @@ function GemRegister1Main() {
     forceJpg: true, // Convert all images to JPG for better compression
   };
 
+  // Update handleTakePhoto for better error handling
   const handleTakePhoto = async () => {
     try {
       const result = await ImageCropPicker.openCamera(imagePickerConfig);
@@ -257,15 +277,35 @@ function GemRegister1Main() {
           Alert.alert("Invalid Image", validation.errors.join("\n"));
           return;
         }
-        await handleAIAnalysis(result);
+        
+        // Always update the form with the image
+        setForm((prev) => ({
+          ...prev,
+          photos: [result.path],
+        }));
+        
+        // Try AI analysis but don't block on failure
+        try {
+          await handleAIAnalysis(result);
+        } catch (aiError) {
+          console.error("AI analysis failed but continuing with image:", aiError);
+          Alert.alert(
+            "AI Analysis Failed",
+            "The image has been added but couldn't be analyzed. Please fill the form manually."
+          );
+        }
       }
     } catch (error) {
       console.error("Error taking photo:", error);
+      if (error.message !== "User cancelled image selection") {
+        Alert.alert("Error", "Failed to take photo. Please try again.");
+      }
     } finally {
       setModalVisible(false);
     }
   };
 
+  // Update handleChooseFromGallery for better error handling
   const handleChooseFromGallery = async () => {
     try {
       const result = await ImageCropPicker.openPicker(imagePickerConfig);
@@ -275,10 +315,29 @@ function GemRegister1Main() {
           Alert.alert("Invalid Image", validation.errors.join("\n"));
           return;
         }
-        await handleAIAnalysis(result);
+        
+        // Always update the form with the image
+        setForm((prev) => ({
+          ...prev,
+          photos: [result.path],
+        }));
+        
+        // Try AI analysis but don't block on failure
+        try {
+          await handleAIAnalysis(result);
+        } catch (aiError) {
+          console.error("AI analysis failed but continuing with image:", aiError);
+          Alert.alert(
+            "AI Analysis Failed",
+            "The image has been added but couldn't be analyzed. Please fill the form manually."
+          );
+        }
       }
     } catch (error) {
       console.error("Error choosing from gallery:", error);
+      if (error.message !== "User cancelled image selection") {
+        Alert.alert("Error", "Failed to select image from gallery. Please try again.");
+      }
     } finally {
       setModalVisible(false);
     }

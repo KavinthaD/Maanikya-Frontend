@@ -13,7 +13,7 @@ import {
   StatusBar,
   Modal,
   Alert,
-  ActivityIndicator
+  ActivityIndicator,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { baseScreenStylesNew } from "../../styles/baseStylesNew";
@@ -34,7 +34,7 @@ const GemCollectionScreen = ({ navigation }) => {
   const [gemPrices, setGemPrices] = useState({});
   const [historyModalVisible, setHistoryModalVisible] = useState(false);
   const [soldOutGems, setSoldOutGems] = useState([]);
-  
+
   // Extract the fetchGems function to make it reusable
   const fetchGems = async () => {
     setLoading(true); // Show loading indicator when refreshing
@@ -45,15 +45,23 @@ const GemCollectionScreen = ({ navigation }) => {
       return; // Exit if no token
     }
     try {
-      const response = await axios.get(`${API_URL}${ENDPOINTS.GET_MY_GEMS}?includeAll=true`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      setGems(response.data.gems.filter(gem => gem.status !== "SoldOut"));
-      setSoldOutGems(response.data.gems.filter(gem => gem.status === "SoldOut"));
+      const response = await axios.get(
+        `${API_URL}${ENDPOINTS.GET_MY_GEMS}?includeAll=true`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      setGems(response.data.gems.filter((gem) => gem.status !== "SoldOut"));
+      setSoldOutGems(
+        response.data.gems.filter((gem) => gem.status === "SoldOut")
+      );
       console.log("Number of gems fetched:", response.data.gems.length);
-      console.log("Number of sold gems:", response.data.gems.filter(gem => gem.status === "SoldOut").length);
+      console.log(
+        "Number of sold gems:",
+        response.data.gems.filter((gem) => gem.status === "SoldOut").length
+      );
     } catch (error) {
       console.error(
         "Error fetching gems:",
@@ -95,188 +103,199 @@ const GemCollectionScreen = ({ navigation }) => {
   };
 
   // 2. Update the toggleGemSelection function to check gem status before selection
-const toggleGemSelection = (gemId) => {
-  if (!isSelectMode) {
-    navigation.navigate("MyGems", { gemId });
-    return;
-  }
-  
-  // Find the gem object with this ID
-  const gem = gems.find(g => g.gemId === gemId);
-  
-  // Check if gem exists
-  if (!gem) {
-    console.error(`Gem with ID ${gemId} not found`);
-    return;
-  }
-  
-  // Check if gem is in order or market
-  if (gem.status === "InOrder" || gem.status === "Requested") {
-    Alert.alert("Cannot Select", `Gem ${gemId} is already in an order request.`);
-    return;
-  }
-  
-  if (gem.inMarket) {
-    Alert.alert("Cannot Select", `Gem ${gemId} is currently on sale in the market.`);
-    return;
-  }
-  
-  // If gem is available, toggle its selection
-  setSelectedGems((prev) => {
-    if (prev.includes(gemId)) {
-      return prev.filter((id) => id !== gemId);
-    } else {
-      return [...prev, gemId];
+  const toggleGemSelection = (gemId) => {
+    if (!isSelectMode) {
+      navigation.navigate("MyGems", { gemId });
+      return;
     }
-  });
-};
+
+    // Find the gem object with this ID
+    const gem = gems.find((g) => g.gemId === gemId);
+
+    // Check if gem exists
+    if (!gem) {
+      console.error(`Gem with ID ${gemId} not found`);
+      return;
+    }
+
+    // Check if gem is in order or market
+    if (gem.status === "InOrder" || gem.status === "Requested") {
+      Alert.alert(
+        "Cannot Select",
+        `Gem ${gemId} is already in an order request.`
+      );
+      return;
+    }
+
+    if (gem.inMarket) {
+      Alert.alert(
+        "Cannot Select",
+        `Gem ${gemId} is currently on sale in the market.`
+      );
+      return;
+    }
+
+    // If gem is available, toggle its selection
+    setSelectedGems((prev) => {
+      if (prev.includes(gemId)) {
+        return prev.filter((id) => id !== gemId);
+      } else {
+        return [...prev, gemId];
+      }
+    });
+  };
 
   // 3. Update the handleSendOrder function to double-check gems before navigation
-const handleSendOrder = () => {
-  if (selectedGems.length === 0) {
-    Alert.alert("Error", "Please select at least one gem");
-    return;
-  }
-  
-  // Verify all selected gems are available (not in order or market)
-  const unavailableGems = [];
-  
-  // Find the complete gem objects that match the selected gem IDs
-  const selectedGemObjects = gems.filter(gem => {
-    const isSelected = selectedGems.includes(gem.gemId);
-    
-    // Check for unavailable gems
-    if (isSelected) {
-      if (gem.status === "InOrder" || gem.status === "Requested") {
-        unavailableGems.push(`${gem.gemId} (in order)`);
-        return false;
-      }
-      
-      if (gem.inMarket) {
-        unavailableGems.push(`${gem.gemId} (in market)`);
-        return false;
-      }
+  const handleSendOrder = () => {
+    if (selectedGems.length === 0) {
+      Alert.alert("Error", "Please select at least one gem");
+      return;
     }
-    
-    return isSelected;
-  });
-  
-  // Show alert if any gems are unavailable
-  if (unavailableGems.length > 0) {
-    Alert.alert(
-      "Cannot Proceed",
-      `The following gems are no longer available:\n\n${unavailableGems.join("\n")}`,
-      [{ text: "OK" }]
+
+    // Verify all selected gems are available (not in order or market)
+    const unavailableGems = [];
+
+    // Find the complete gem objects that match the selected gem IDs
+    const selectedGemObjects = gems.filter((gem) => {
+      const isSelected = selectedGems.includes(gem.gemId);
+
+      // Check for unavailable gems
+      if (isSelected) {
+        if (gem.status === "InOrder" || gem.status === "Requested") {
+          unavailableGems.push(`${gem.gemId} (in order)`);
+          return false;
+        }
+
+        if (gem.inMarket) {
+          unavailableGems.push(`${gem.gemId} (in market)`);
+          return false;
+        }
+      }
+
+      return isSelected;
+    });
+
+    // Show alert if any gems are unavailable
+    if (unavailableGems.length > 0) {
+      Alert.alert(
+        "Cannot Proceed",
+        `The following gems are no longer available:\n\n${unavailableGems.join(
+          "\n"
+        )}`,
+        [{ text: "OK" }]
+      );
+
+      // Remove unavailable gems from selection
+      setSelectedGems((prev) =>
+        prev.filter((gemId) => {
+          const gem = gems.find((g) => g.gemId === gemId);
+          return (
+            gem &&
+            gem.status !== "InOrder" &&
+            gem.status !== "Requested" &&
+            !gem.inMarket
+          );
+        })
+      );
+
+      return;
+    }
+
+    console.log(
+      "Sending order for gems:",
+      selectedGemObjects.map((gem) => gem.gemId)
     );
-    
-    // Remove unavailable gems from selection
-    setSelectedGems(prev => 
-      prev.filter(gemId => {
-        const gem = gems.find(g => g.gemId === gemId);
-        return gem && gem.status !== "InOrder" && 
-               gem.status !== "Requested" && !gem.inMarket;
-      })
-    );
-    
-    return;
-  }
-  
-  console.log("Sending order for gems:", selectedGemObjects.map(gem => gem.gemId));
-  
-  // Navigate to Favorites screen with the selected gem objects
-  navigation.navigate("FavoritesScreen", { 
-    selectedGems: selectedGemObjects 
-  });
-  
-  // Reset selection mode and clear selected gems
-  setIsSelectMode(false);
-  setSelectedGems([]);
-};
+
+    // Navigate to Favorites screen with the selected gem objects
+    navigation.navigate("FavoritesScreen", {
+      selectedGems: selectedGemObjects,
+    });
+
+    // Reset selection mode and clear selected gems
+    setIsSelectMode(false);
+    setSelectedGems([]);
+  };
 
   const handleSellPress = () => {
     // Initialize prices for all selected gems
     const initialPrices = {};
-    selectedGems.forEach(gemId => {
-      initialPrices[gemId] = '';
+    selectedGems.forEach((gemId) => {
+      initialPrices[gemId] = "";
     });
     setGemPrices(initialPrices);
     setSellModalVisible(true);
   };
 
   const updateGemPrice = (gemId, price) => {
-    setGemPrices(prev => ({
+    setGemPrices((prev) => ({
       ...prev,
-      [gemId]: price
+      [gemId]: price,
     }));
   };
 
   // 2. Update the handleAddGemsToMarket function to refresh data after success
-const handleAddGemsToMarket = async () => {
-  if (selectedGems.length === 0) {
-    Alert.alert("No Gems Selected", "Please select gems to sell.");
-    return;
-  }
+  const handleAddGemsToMarket = async () => {
+    if (selectedGems.length === 0) {
+      Alert.alert("No Gems Selected", "Please select gems to sell.");
+      return;
+    }
 
-  // Check if all gems have prices
-  const missingPrices = selectedGems.filter(gemId => !gemPrices[gemId]);
-  if (missingPrices.length > 0) {
-    Alert.alert("Missing Prices", "Please set prices for all selected gems.");
-    return;
-  }
+    // Check if all gems have prices
+    const missingPrices = selectedGems.filter((gemId) => !gemPrices[gemId]);
+    if (missingPrices.length > 0) {
+      Alert.alert("Missing Prices", "Please set prices for all selected gems.");
+      return;
+    }
 
-  const token = await AsyncStorage.getItem("authToken");
-  if (!token) {
-    console.error("Authentication token not found");
-    return; // Exit if no token
-  }
+    const token = await AsyncStorage.getItem("authToken");
+    if (!token) {
+      console.error("Authentication token not found");
+      return; // Exit if no token
+    }
 
-  try {
-    // Create gemData array with prices
-    const gemData = selectedGems.map(gemId => ({
-      gemId,
-      price: parseFloat(gemPrices[gemId])
-    }));
+    try {
+      // Create gemData array with prices
+      const gemData = selectedGems.map((gemId) => ({
+        gemId,
+        price: parseFloat(gemPrices[gemId]),
+      }));
 
-    const response = await axios.post(
-      `${API_URL}${ENDPOINTS.ADD_GEMS_TO_MARKET}`,
-      { gems: gemData },
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
+      const response = await axios.post(
+        `${API_URL}${ENDPOINTS.ADD_GEMS_TO_MARKET}`,
+        { gems: gemData },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
-    if (response.status === 201) {
-      // Close modal and reset selection states immediately
-      setSellModalVisible(false);
-      setSelectedGems([]);
-      setGemPrices({});
-      setIsSelectMode(false);
-      
-      // Show alert with refresh on dismissal
-      Alert.alert(
-        "Success", 
-        "Gems have been added to the market.",
-        [
+      if (response.status === 201) {
+        // Close modal and reset selection states immediately
+        setSellModalVisible(false);
+        setSelectedGems([]);
+        setGemPrices({});
+        setIsSelectMode(false);
+
+        // Show alert with refresh on dismissal
+        Alert.alert("Success", "Gems have been added to the market.", [
           {
             text: "OK",
             onPress: () => {
               // Refetch the gems data when user clicks OK
               fetchGems();
-            }
-          }
-        ]
+            },
+          },
+        ]);
+      }
+    } catch (error) {
+      console.error("Error adding gems to market:", error);
+      Alert.alert(
+        "Error",
+        error.response?.data?.message || "Failed to add gems to market."
       );
     }
-  } catch (error) {
-    console.error("Error adding gems to market:", error);
-    Alert.alert(
-      "Error",
-      error.response?.data?.message || "Failed to add gems to market."
-    );
-  }
-};
+  };
 
   const handleSellCancel = () => {
     setSellModalVisible(false);
@@ -285,19 +304,19 @@ const handleAddGemsToMarket = async () => {
   const renderSelectedGemItem = ({ item }) => {
     const gemData = gems.find((g) => g.gemId === item);
     if (!gemData) return null;
-    
+
     return (
       <View style={styles.modalGemItem}>
         <Image
-          source={{ uri: gemData.photo || require("../../assets/gems/no_gem.jpeg") }}
+          source={getValidImageSource(gemData.photo)}
           style={styles.modalGemImage}
           resizeMode="cover"
         />
         <View style={styles.modalGemInfo}>
           <Text style={styles.modalGemId}>{gemData.gemId}</Text>
           <Text style={styles.modalGemType}>
-            {(gemData.weight ? `${gemData.weight} ct ` : '') + 
-             (gemData.details?.gemType || gemData.gemType || "Unknown")}
+            {(gemData.weight ? `${gemData.weight} ct ` : "") +
+              (gemData.details?.gemType || gemData.gemType || "Unknown")}
           </Text>
         </View>
         <View style={styles.modalPriceContainer}>
@@ -317,60 +336,67 @@ const handleAddGemsToMarket = async () => {
   };
 
   // 1. Update the renderGemItem function to show status indicators
-const renderGemItem = React.useCallback(
-  ({ item }) => {
-    const isSelected = selectedGems.includes(item.gemId);
-    const isInOrder = item.status === "InOrder" || item.status === "Requested";
-    const isInMarket = item.inMarket === true;
-    
-    return (
-      <TouchableOpacity
-        style={[
-          styles.gemCard,
-          isSelectMode && !isSelected ? { opacity: 0.7 } : { opacity: 1 },
-        ]}
-        onPress={() => {
-          if (isSelectMode) {
-            // Check if gem is already in an order or market before selection
-            if (isInOrder) {
-              Alert.alert("Cannot Select", `Gem ${item.gemId} is already in an order request.`);
-              return;
+  const renderGemItem = React.useCallback(
+    ({ item }) => {
+      const isSelected = selectedGems.includes(item.gemId);
+      const isInOrder =
+        item.status === "InOrder" || item.status === "Requested";
+      const isInMarket = item.inMarket === true;
+
+      return (
+        <TouchableOpacity
+          style={[
+            styles.gemCard,
+            isSelectMode && !isSelected ? { opacity: 0.7 } : { opacity: 1 },
+          ]}
+          onPress={() => {
+            if (isSelectMode) {
+              // Check if gem is already in an order or market before selection
+              if (isInOrder) {
+                Alert.alert(
+                  "Cannot Select",
+                  `Gem ${item.gemId} is already in an order request.`
+                );
+                return;
+              }
+              if (isInMarket) {
+                Alert.alert(
+                  "Cannot Select",
+                  `Gem ${item.gemId} is currently on sale in the market.`
+                );
+                return;
+              }
+              toggleGemSelection(item.gemId);
+            } else {
+              navigation.navigate("MyGems", { gemId: item.gemId }); // Navigate to MyGems with gemId
             }
-            if (isInMarket) {
-              Alert.alert("Cannot Select", `Gem ${item.gemId} is currently on sale in the market.`);
-              return;
-            }
-            toggleGemSelection(item.gemId);
-          } else {
-            navigation.navigate("MyGems", { gemId: item.gemId }); // Navigate to MyGems with gemId
-          }
-        }}
-      >
-        <Image
-          source={{ uri: item.photo || require("../../assets/gems/no_gem.jpeg") }}
-          style={styles.gemImage}
-          resizeMode="cover"
-        />
-        
-        {/* Status Indicators */}
-        {isInOrder && (
-          <View style={styles.statusIndicator}>
-            <Ionicons name="time-outline" size={18} color="#FFFFFF" />
-          </View>
-        )}
-        
-        {isInMarket && (
-          <View style={[styles.statusIndicator, styles.marketIndicator]}>
-            <Ionicons name="pricetag-outline" size={18} color="#FFFFFF" />
-          </View>
-        )}
-        
-        <Text style={styles.gemId}>{item.gemId}</Text>
-      </TouchableOpacity>
-    );
-  },
-  [isSelectMode, selectedGems, navigation]
-);
+          }}
+        >
+          <Image
+            source={getValidImageSource(item.photo)}
+            style={styles.gemImage}
+            resizeMode="cover"
+          />
+
+          {/* Status Indicators */}
+          {isInOrder && (
+            <View style={styles.statusIndicator}>
+              <Ionicons name="time-outline" size={18} color="#FFFFFF" />
+            </View>
+          )}
+
+          {isInMarket && (
+            <View style={[styles.statusIndicator, styles.marketIndicator]}>
+              <Ionicons name="pricetag-outline" size={18} color="#FFFFFF" />
+            </View>
+          )}
+
+          <Text style={styles.gemId}>{item.gemId}</Text>
+        </TouchableOpacity>
+      );
+    },
+    [isSelectMode, selectedGems, navigation]
+  );
 
   const handleShowHistory = () => {
     setHistoryModalVisible(true);
@@ -379,20 +405,28 @@ const renderGemItem = React.useCallback(
   const handleCloseHistory = () => {
     setHistoryModalVisible(false);
   };
+  const getValidImageSource = (photoUrl) => {
+    if (typeof photoUrl === 'string' && photoUrl) {
+      return { uri: photoUrl };
+    }
+    
+    // If photoUrl is a number or not a string or empty string
+    return require("../../assets/gems/no_gem.jpeg");
+  };
 
   const renderHistoryItem = ({ item }) => {
     return (
       <View style={styles.historyItem}>
         <Image
-          source={{ uri: item.photo || require("../../assets/gems/no_gem.jpeg") }}
+          source={getValidImageSource(item.photo)}
           style={styles.historyGemImage}
           resizeMode="cover"
         />
-        
+
         <View style={styles.historyGemDetails}>
           <Text style={styles.historyGemId}>{item.gemId}</Text>
           <Text style={styles.historyGemType}>
-            {(item.details?.gemType || item.gemType || "Unknown")}
+            {item.details?.gemType || item.gemType || "Unknown"}
           </Text>
           {item.details?.soldTo && (
             <Text style={styles.historyGemBuyer}>
@@ -410,7 +444,7 @@ const renderGemItem = React.useCallback(
             </Text>
           )}
         </View>
-        
+
         <View style={styles.soldBadge}>
           <Text style={styles.soldBadgeText}>Sold</Text>
         </View>
@@ -430,14 +464,14 @@ const renderGemItem = React.useCallback(
           <View style={styles.historyModalContent}>
             <View style={styles.modalHeader}>
               <Text style={styles.modalTitle}>Gem History</Text>
-              <TouchableOpacity 
-                style={styles.modalCloseButton} 
+              <TouchableOpacity
+                style={styles.modalCloseButton}
                 onPress={handleCloseHistory}
               >
                 <Text style={styles.modalCloseButtonText}>✕</Text>
               </TouchableOpacity>
             </View>
-            
+
             {soldOutGems.length === 0 ? (
               <View style={styles.modalEmptyContainer}>
                 <Ionicons name="diamond-outline" size={60} color="#CCCCCC" />
@@ -460,15 +494,22 @@ const renderGemItem = React.useCallback(
 
   // Update the JSX for the buttons in the header
   return (
-    <SafeAreaView style={[baseScreenStylesNew.backgroundColor, baseScreenStylesNew.container]}>
-      <HeaderBar 
-        title="My gems" 
-        navigation={navigation} 
-        showBack={true} 
-        leftIcon="menu" 
+    <SafeAreaView
+      style={[
+        baseScreenStylesNew.backgroundColor,
+        baseScreenStylesNew.container,
+      ]}
+    >
+      <HeaderBar
+        title="My gems"
+        navigation={navigation}
+        showBack={true}
+        leftIcon="menu"
         onLeftPress={() => navigation.openDrawer()}
       />
-      <View style={[baseScreenStylesNew.container.backgroundColor, styles.header]}>
+      <View
+        style={[baseScreenStylesNew.container.backgroundColor, styles.header]}
+      >
         <View style={styles.searchContainer}>
           <View style={baseScreenStylesNew.search}>
             <Ionicons name="search" style={baseScreenStylesNew.searchIcon} />
@@ -479,18 +520,29 @@ const renderGemItem = React.useCallback(
               value={searchQuery}
               onChangeText={setSearchQuery}
             />
-            <TouchableOpacity style={[styles.sortButton, baseScreenStylesNew.themeColor]} onPress={toggleSort}>
-              <Ionicons name={sortAscending ? "arrow-up" : "arrow-down"} size={16} color="#fff" />
-              <Text style={[baseScreenStylesNew.whiteText, styles.sortButtonText]}>Sort</Text>
+            <TouchableOpacity
+              style={[styles.sortButton, baseScreenStylesNew.themeColor]}
+              onPress={toggleSort}
+            >
+              <Ionicons
+                name={sortAscending ? "arrow-up" : "arrow-down"}
+                size={16}
+                color="#fff"
+              />
+              <Text
+                style={[baseScreenStylesNew.whiteText, styles.sortButtonText]}
+              >
+                Sort
+              </Text>
             </TouchableOpacity>
           </View>
         </View>
-        
+
         {/* Updated buttons container */}
         <View style={styles.buttonsRow}>
           {/* Empty space to push buttons to the right */}
           <View style={styles.buttonSpacer} />
-          
+
           {/* History button */}
           <TouchableOpacity
             style={[styles.historyButton, baseScreenStylesNew.outlineButton]}
@@ -499,13 +551,15 @@ const renderGemItem = React.useCallback(
             <Ionicons name="time-outline" size={16} color="#9CCDDB" />
             <Text style={styles.historyButtonText}>History</Text>
           </TouchableOpacity>
-          
+
           {/* Select button - fixed width */}
           <TouchableOpacity
             style={[styles.selectButton, baseScreenStylesNew.themeColor]}
             onPress={toggleSelect}
           >
-            <Text style={[styles.selectButtonText, baseScreenStylesNew.whiteText]}>
+            <Text
+              style={[styles.selectButtonText, baseScreenStylesNew.whiteText]}
+            >
               {isSelectMode ? "Cancel" : "Select"}
             </Text>
           </TouchableOpacity>
@@ -527,22 +581,31 @@ const renderGemItem = React.useCallback(
             <FlatList
               data={sortedGems}
               renderItem={renderGemItem}
-              keyExtractor={(item) => item.gemId || item._id || Math.random().toString()}
+              keyExtractor={(item) =>
+                item.gemId || item._id || Math.random().toString()
+              }
               numColumns={3}
               contentContainerStyle={styles.gemGrid}
             />
           )}
 
-          <Modal visible={isSellModalVisible} transparent={true} animationType="fade">
+          <Modal
+            visible={isSellModalVisible}
+            transparent={true}
+            animationType="fade"
+          >
             <View style={styles.modalOverlay}>
               <View style={styles.modalContent}>
                 <View style={styles.modalHeader}>
                   <Text style={styles.modalTitle}>Set Prices for Gems</Text>
-                  <TouchableOpacity onPress={handleSellCancel} style={styles.modalCloseButton}>
+                  <TouchableOpacity
+                    onPress={handleSellCancel}
+                    style={styles.modalCloseButton}
+                  >
                     <Text style={styles.modalCloseButtonText}>✕</Text>
                   </TouchableOpacity>
                 </View>
-                
+
                 {selectedGems.length === 0 ? (
                   <View style={styles.modalEmptyContainer}>
                     <Text style={styles.modalEmptyText}>No gems selected</Text>
@@ -553,7 +616,7 @@ const renderGemItem = React.useCallback(
                       <Text style={styles.columnHeaderGem}>Gem</Text>
                       <Text style={styles.columnHeaderPrice}>Price (LKR)</Text>
                     </View>
-                    
+
                     <FlatList
                       data={selectedGems}
                       renderItem={renderSelectedGemItem}
@@ -563,7 +626,7 @@ const renderGemItem = React.useCallback(
                     />
                   </View>
                 )}
-                
+
                 <View style={styles.modalActions}>
                   <TouchableOpacity
                     style={[styles.modalButton, styles.cancelButton]}
@@ -585,7 +648,10 @@ const renderGemItem = React.useCallback(
 
           {isSelectMode && (
             <View style={styles.selectionActions}>
-              <TouchableOpacity style={[styles.sellButton, baseScreenStylesNew.themeColor]} onPress={handleSellPress}>
+              <TouchableOpacity
+                style={[styles.sellButton, baseScreenStylesNew.themeColor]}
+                onPress={handleSellPress}
+              >
                 <Text style={styles.actionButtonText}>Sell</Text>
               </TouchableOpacity>
               <TouchableOpacity
@@ -609,64 +675,64 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
   },
   searchContainer: {
-    width: '100%',
+    width: "100%",
     marginBottom: 10, // Reduced from 15 to tighten layout
   },
-  
+
   // New row container for buttons
   buttonsRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'flex-end', // Align buttons to the right
-    width: '100%',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "flex-end", // Align buttons to the right
+    width: "100%",
     marginTop: 5, // Reduced from 10 to tighten layout
   },
-  
+
   // Spacer to push buttons to the right
   buttonSpacer: {
     flex: 1,
   },
-  
+
   // Updated history button style
   historyButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     paddingVertical: 8,
     paddingHorizontal: 12,
     borderRadius: 8,
     marginRight: 10, // Space between buttons
   },
-  
+
   historyButtonText: {
-    color: '#9CCDDB',
-    fontWeight: '600',
+    color: "#9CCDDB",
+    fontWeight: "600",
     fontSize: 14,
     marginLeft: 5,
   },
-  
+
   // Updated select button style - compact with fixed width
   selectButton: {
     paddingVertical: 8,
     paddingHorizontal: 16,
     borderRadius: 8,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     width: 80, // Fixed width for consistent look
   },
-  
+
   selectButtonText: {
-    fontWeight: '600',
+    fontWeight: "600",
     fontSize: 14,
   },
   searchBar: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#F5F5F5',
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#F5F5F5",
     borderRadius: 12,
     paddingHorizontal: 15,
     height: 46,
     borderWidth: 1,
-    borderColor: '#EEEEEE',
+    borderColor: "#EEEEEE",
   },
   searchIcon: {
     marginRight: 10,
@@ -674,12 +740,12 @@ const styles = StyleSheet.create({
   searchInput: {
     flex: 1,
     height: 46,
-    color: '#333333',
+    color: "#333333",
     fontSize: 16,
   },
   sortButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 15,
@@ -688,21 +754,20 @@ const styles = StyleSheet.create({
   sortButtonText: {
     marginLeft: 5,
     fontSize: 14,
-    fontWeight: '500',
+    fontWeight: "500",
   },
   selectButton: {
     paddingVertical: 10,
     paddingHorizontal: 15,
     borderRadius: 10,
-    alignItems: 'center',
+    alignItems: "center",
     marginTop: 5,
   },
 
-
   // Buttons
   sortButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 15,
@@ -727,7 +792,7 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     fontSize: 14,
   },
-  
+
   // Gem grid styles
   gemGrid: {
     padding: 8,
@@ -754,7 +819,7 @@ const styles = StyleSheet.create({
     color: "#000",
     fontWeight: "500",
   },
-  
+
   // Selection actions
   selectionActions: {
     flexDirection: "row",
@@ -781,14 +846,14 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "600",
   },
-  
+
   // Loading indicator
   loadingContainer: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
   },
-  
+
   // Modal styles
   modalOverlay: {
     flex: 1,
@@ -987,32 +1052,32 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFD700",
   },
   buttonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    width: '100%',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    width: "100%",
     marginTop: 10,
   },
   historyButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     paddingVertical: 10,
     paddingHorizontal: 15,
     borderRadius: 10,
   },
   historyButtonText: {
-    color: '#9CCDDB',
-    fontWeight: '600',
+    color: "#9CCDDB",
+    fontWeight: "600",
     fontSize: 14,
     marginLeft: 5,
   },
   historyModalContent: {
-    width: '90%',
-    maxHeight: '80%',
-    backgroundColor: '#FFFFFF',
+    width: "90%",
+    maxHeight: "80%",
+    backgroundColor: "#FFFFFF",
     borderRadius: 16,
-    overflow: 'hidden',
-    shadowColor: '#000',
+    overflow: "hidden",
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.27,
     shadowRadius: 4.65,
@@ -1022,69 +1087,69 @@ const styles = StyleSheet.create({
     padding: 12,
   },
   historyItem: {
-    flexDirection: 'row',
-    backgroundColor: '#F9F9F9',
+    flexDirection: "row",
+    backgroundColor: "#F9F9F9",
     borderRadius: 12,
     padding: 15,
     marginBottom: 12,
-    position: 'relative',
+    position: "relative",
     borderWidth: 1,
-    borderColor: '#EEEEEE',
+    borderColor: "#EEEEEE",
   },
   historyGemImage: {
     width: 70,
     height: 70,
     borderRadius: 8,
-    backgroundColor: '#F0F0F0',
+    backgroundColor: "#F0F0F0",
     marginRight: 15,
   },
   historyGemDetails: {
     flex: 1,
-    justifyContent: 'center',
+    justifyContent: "center",
   },
   historyGemId: {
     fontSize: 16,
-    fontWeight: 'bold',
-    color: '#333333',
+    fontWeight: "bold",
+    color: "#333333",
     marginBottom: 2,
   },
   historyGemType: {
     fontSize: 14,
-    color: '#666666',
+    color: "#666666",
     marginBottom: 5,
   },
   historyGemBuyer: {
     fontSize: 13,
-    color: '#444444',
+    color: "#444444",
     marginBottom: 2,
   },
   historyGemPrice: {
     fontSize: 13,
-    color: '#444444',
+    color: "#444444",
     marginBottom: 2,
   },
   historyGemDate: {
     fontSize: 12,
-    color: '#888888',
+    color: "#888888",
   },
   soldBadge: {
-    position: 'absolute',
+    position: "absolute",
     top: 10,
     right: 10,
-    backgroundColor: '#E74C3C',
+    backgroundColor: "#E74C3C",
     paddingVertical: 3,
     paddingHorizontal: 8,
     borderRadius: 12,
   },
   soldBadgeText: {
-    color: '#FFFFFF',
+    color: "#FFFFFF",
     fontSize: 11,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   buttonsRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'flex-end',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "flex-end",
     marginTop: 10,
   },
   buttonSpacer: {

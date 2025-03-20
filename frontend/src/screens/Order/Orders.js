@@ -158,9 +158,9 @@ const OrderScreen = () => {
             requestedOrders.push(formattedOrder);
             break;
           case "accepted":
-          case "pendingpayment":
             ongoingOrders.push(formattedOrder);
             break;
+          case "pendingpayment":
           case "completed":
             completedOrders.push(formattedOrder);
             break;
@@ -266,37 +266,56 @@ const OrderScreen = () => {
   };
 
   // Update handleDecline function to use the correct endpoint
-  const handleDecline = async () => {
-    try {
-      if (!selectedOrder) return;
+const handleDecline = async () => {
+  try {
+    if (!selectedOrder) return;
 
-      const token = await AsyncStorage.getItem("authToken");
-      if (!token) {
-        Alert.alert("Error", "Authentication required. Please log in.");
-        return;
-      }
+    const token = await AsyncStorage.getItem("authToken");
+    if (!token) {
+      Alert.alert("Error", "Authentication required. Please log in.");
+      return;
+    }
 
-      const orderId = selectedOrder._id 
-      await axios.patch(
+    const orderId = selectedOrder._id;
+    
+    // Send decline request and alert in parallel
+    const [orderResponse, alertResponse] = await Promise.all([
+      // Decline order
+      axios.patch(
         `${API_URL}/api/orders/worker/${orderId}/status`,
         {
           status: "declined",
           note: "Order declined by worker",
         },
         { headers: { Authorization: `Bearer ${token}` } }
-      );
+      ),
+      
+      // Send alert to owner
+      axios.post(
+        `${API_URL}/api/alerts`,
+        {
+          recipient: selectedOrder.ownerId,
+          message: `Your order #${selectedOrder.id} has been declined by worker`,
+          relatedTo: "order",
+          relatedId: orderId,
+          priority: "medium",
+          clickAction: "openOrderHistory"
+        },
+        { headers: { Authorization: `Bearer ${token}` } }
+      )
+    ]);
 
-      setTrackingModalVisible(false);
-      fetchOrders();
-      Alert.alert("Success", "Order has been declined");
-    } catch (error) {
-      console.error("Error declining order:", error);
-      Alert.alert(
-        "Error",
-        error.response?.data?.message || "Failed to decline order"
-      );
-    }
-  };
+    setTrackingModalVisible(false);
+    fetchOrders();
+    Alert.alert("Success", "Order has been declined");
+  } catch (error) {
+    console.error("Error declining order:", error);
+    Alert.alert(
+      "Error",
+      error.response?.data?.message || "Failed to decline order"
+    );
+  }
+};
 
   // Update handleAccept function to directly accept without price
   const handleAccept = async () => {
@@ -307,15 +326,34 @@ const OrderScreen = () => {
         return;
       }
 
-      const orderId = selectedOrder._id
-      await axios.patch(
-        `${API_URL}/api/orders/worker/${orderId}/status`,
-        {
-          status: "accepted",
-          note: "Order accepted by worker",
-        },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+      const orderId = selectedOrder._id;
+      
+      // Send order status update and alert in parallel
+      const [orderResponse, alertResponse] = await Promise.all([
+        // Update order status
+        axios.patch(
+          `${API_URL}/api/orders/worker/${orderId}/status`,
+          {
+            status: "accepted",
+            note: "Order accepted by worker",
+          },
+          { headers: { Authorization: `Bearer ${token}` } }
+        ),
+        
+        // Send alert to owner
+        axios.post(
+          `${API_URL}/api/alerts`,
+          {
+            recipient: selectedOrder.ownerId, // Use owner's ID
+            message: `Your order (${selectedOrder.id}) has been accepted`,
+            relatedTo: "order",
+            relatedId: orderId,
+            priority: "medium",
+            clickAction: "openOrderOngoing"
+          },
+          { headers: { Authorization: `Bearer ${token}` } }
+        )
+      ]);
 
       setTrackingModalVisible(false);
       fetchOrders();
@@ -335,91 +373,133 @@ const OrderScreen = () => {
     setIsPriceModalVisible(true);
   };
 
-  // Rename handleSendPrice to handleCompleteWithPrice
-  const handleCompleteWithPrice = async () => {
-    try {
-      if (!selectedOrder || !price) {
-        Alert.alert("Error", "Please enter a valid service fee");
-        return;
-      }
+// Update handleCompleteWithPrice function to send an alert
+const handleCompleteWithPrice = async () => {
+  try {
+    if (!selectedOrder || !price) {
+      Alert.alert("Error", "Please enter a valid service fee");
+      return;
+    }
 
-      const token = await AsyncStorage.getItem("authToken");
-      if (!token) {
-        Alert.alert("Error", "Authentication required. Please log in.");
-        return;
-      }
+    const token = await AsyncStorage.getItem("authToken");
+    if (!token) {
+      Alert.alert("Error", "Authentication required. Please log in.");
+      return;
+    }
 
-      const priceValue = parseFloat(price);
+    const priceValue = parseFloat(price);
 
-      if (isNaN(priceValue) || priceValue <= 0) {
-        Alert.alert("Error", "Please enter a valid service fee amount");
-        return;
-      }
+    if (isNaN(priceValue) || priceValue <= 0) {
+      Alert.alert("Error", "Please enter a valid service fee amount");
+      return;
+    }
 
-      const orderId = selectedOrder._id;
-      await axios.patch(
+    const orderId = selectedOrder._id;
+    
+    // Send complete request and alert in parallel
+    const [orderResponse, alertResponse] = await Promise.all([
+      // Complete order with price
+      axios.patch(
         `${API_URL}/api/orders/worker/${orderId}/status`,
         {
-          status: "completed", // This should match what the backend is expecting
+          status: "completed",
           price: priceValue,
           note: `Order completed with service fee of LKR ${priceValue}`,
         },
         { headers: { Authorization: `Bearer ${token}` } }
-      );
+      ),
+      
+      // Send alert to owner
+      axios.post(
+        `${API_URL}/api/alerts`,
+        {
+          recipient: selectedOrder.ownerId,
+          message: `Your order #${selectedOrder.id} is complete. Please make a payment of LKR ${priceValue}`,
+          relatedTo: "order",
+          relatedId: orderId,
+          priority: "high",
+          clickAction: "openOrderCompleted"
+        },
+        { headers: { Authorization: `Bearer ${token}` } }
+      )
+    ]);
 
-      setIsPriceModalVisible(false);
-      setPrice("");
-      fetchOrders();
-      Alert.alert(
-        "Success",
-        "Order has been completed and service fee has been set. The owner will now be asked to make payment."
-      );
-    } catch (error) {
-      console.error("Error completing order:", error);
-      Alert.alert(
-        "Error",
-        error.response?.data?.message || "Failed to complete order"
-      );
-    }
-  };
+    setIsPriceModalVisible(false);
+    setPrice("");
+    fetchOrders();
+    Alert.alert(
+      "Success",
+      "Order has been completed and service fee has been set. The owner will now be asked to make payment."
+    );
+  } catch (error) {
+    console.error("Error completing order:", error);
+    Alert.alert(
+      "Error",
+      error.response?.data?.message || "Failed to complete order"
+    );
+  }
+};
 
   /**
    * Handles order status updates with proper error handling
    * @param {string} newStatus - The new status to set for the order
    * @returns {Promise<void>}
    */
-  const handleUpdateStatus = async (newStatus) => {
-    try {
-      if (!selectedOrder) return;
+// Update handleUpdateStatus function to send an alert
+const handleUpdateStatus = async (newStatus) => {
+  try {
+    if (!selectedOrder) return;
 
-      const token = await AsyncStorage.getItem("authToken");
-      if (!token) {
-        Alert.alert("Error", "Authentication required. Please log in.");
-        return;
-      }
+    const token = await AsyncStorage.getItem("authToken");
+    if (!token) {
+      Alert.alert("Error", "Authentication required. Please log in.");
+      return;
+    }
 
-      const orderId = selectedOrder._id;
-      await axios.patch(
+    const orderId = selectedOrder._id;
+    
+    // Format status for message
+    const formattedStatus = newStatus.charAt(0).toUpperCase() + newStatus.slice(1);
+    
+    // Send status update and alert in parallel
+    const [orderResponse, alertResponse] = await Promise.all([
+      // Update status
+      axios.patch(
         `${API_URL}/api/orders/worker/${orderId}/status`,
         {
           status: newStatus,
           note: `Order marked as ${newStatus} by worker`,
         },
         { headers: { Authorization: `Bearer ${token}` } }
-      );
+      ),
+      
+      // Send alert to owner
+      axios.post(
+        `${API_URL}/api/alerts`,
+        {
+          recipient: selectedOrder.ownerId,
+          message: `Your order #${selectedOrder.id} has been marked as ${formattedStatus}`,
+          relatedTo: "order",
+          relatedId: orderId,
+          priority: "medium",
+          clickAction: newStatus === "completed" ? "openOrderRequests" : "openOrderOngoing"
+        },
+        { headers: { Authorization: `Bearer ${token}` } }
+      )
+    ]);
 
-      setTrackingModalVisible(false);
-      fetchOrders();
-      Alert.alert("Success", `Order has been marked as ${newStatus}`);
-    } catch (error) {
-      console.error(`Error updating order status to ${newStatus}:`, error);
-      Alert.alert(
-        "Error",
-        error.response?.data?.message ||
-          `Failed to update order status to ${newStatus}`
-      );
-    }
-  };
+    setTrackingModalVisible(false);
+    fetchOrders();
+    Alert.alert("Success", `Order has been marked as ${newStatus}`);
+  } catch (error) {
+    console.error(`Error updating order status to ${newStatus}:`, error);
+    Alert.alert(
+      "Error",
+      error.response?.data?.message ||
+        `Failed to update order status to ${newStatus}`
+    );
+  }
+};
 
   const handleConfirmPayment = async () => {
     try {
@@ -456,38 +536,57 @@ const OrderScreen = () => {
     }
   };
 
-  // Add this function for workers to confirm payment receipt
-  const confirmPaymentReceived = async () => {
-    try {
-      if (!selectedOrder) return;
+  // Update confirmPaymentReceived function to send an alert
+const confirmPaymentReceived = async () => {
+  try {
+    if (!selectedOrder) return;
 
-      const token = await AsyncStorage.getItem("authToken");
-      if (!token) {
-        Alert.alert("Error", "Authentication required. Please log in.");
-        return;
-      }
+    const token = await AsyncStorage.getItem("authToken");
+    if (!token) {
+      Alert.alert("Error", "Authentication required. Please log in.");
+      return;
+    }
 
-      const orderId = selectedOrder._id;
-      await axios.patch(
+    const orderId = selectedOrder._id;
+    
+    // Send payment confirmation and alert in parallel
+    const [orderResponse, alertResponse] = await Promise.all([
+      // Confirm payment
+      axios.patch(
         `${API_URL}/api/orders/worker/${orderId}/status`,
         {
-          status: "paymentCompleted", // Use paymentCompleted status
+          status: "paymentCompleted",
           note: "Payment confirmed by worker",
         },
         { headers: { Authorization: `Bearer ${token}` } }
-      );
+      ),
+      
+      // Send alert to owner
+      axios.post(
+        `${API_URL}/api/alerts`,
+        {
+          recipient: selectedOrder.ownerId,
+          message: `Your payment for order #${selectedOrder.id} has been confirmed`,
+          relatedTo: "order",
+          relatedId: orderId,
+          priority: "medium",
+          clickAction: "openOrderHistory"
+        },
+        { headers: { Authorization: `Bearer ${token}` } }
+      )
+    ]);
 
-      setTrackingModalVisible(false);
-      fetchOrders();
-      Alert.alert("Success", "Payment has been confirmed");
-    } catch (error) {
-      console.error("Error confirming payment:", error);
-      Alert.alert(
-        "Error",
-        error.response?.data?.message || "Failed to confirm payment"
-      );
-    }
-  };
+    setTrackingModalVisible(false);
+    fetchOrders();
+    Alert.alert("Success", "Payment has been confirmed");
+  } catch (error) {
+    console.error("Error confirming payment:", error);
+    Alert.alert(
+      "Error",
+      error.response?.data?.message || "Failed to confirm payment"
+    );
+  }
+};
 
   // Add this function inside your component to handle image saving
   const saveImageToGallery = async (imageUrl) => {
@@ -1335,17 +1434,35 @@ const OrderScreen = () => {
         return;
       }
   
-      const response = await axios.patch(
-        `${API_URL}/api/orders/${orderId}/cancel`,
-        {
-          cancelReason: cancelReason
-        },
-        {
-          headers: { Authorization: `Bearer ${token}` }
-        }
-      );
+      // Send order cancellation and alert in parallel
+      const [orderResponse, alertResponse] = await Promise.all([
+        // Cancel order
+        axios.patch(
+          `${API_URL}/api/orders/${orderId}/cancel`,
+          {
+            cancelReason: cancelReason
+          },
+          {
+            headers: { Authorization: `Bearer ${token}` }
+          }
+        ),
+        
+        // Send alert to owner
+        axios.post(
+          `${API_URL}/api/alerts`,
+          {
+            recipient: selectedOrder.ownerId,
+            message: `Order #${selectedOrder.id} has been cancelled by worker with reason: ${cancelReason}`,
+            relatedTo: "order",
+            relatedId: orderId,
+            priority: "medium",
+            clickAction: "openOrderHistory"
+          },
+          { headers: { Authorization: `Bearer ${token}` } }
+        )
+      ]);
   
-      if (response.data.success) {
+      if (orderResponse.data.success) {
         Alert.alert('Success', 'Order cancelled successfully');
         setIsCancelModalVisible(false);
         setCancelReason('');

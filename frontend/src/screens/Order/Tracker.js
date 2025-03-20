@@ -13,7 +13,7 @@ import {
   Modal,
   Platform,
   Linking,
-  TextInput
+  TextInput,
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import { Ionicons, FontAwesome } from "@expo/vector-icons";
@@ -24,11 +24,11 @@ import { API_URL, ENDPOINTS } from "../../config/api";
 import HeaderBar from "../../components/HeaderBar";
 import { baseScreenStylesNew } from "../../styles/baseStylesNew";
 import { orderStyles } from "../../styles/OrderStyles"; // Import shared styles
-import * as FileSystem from 'expo-file-system';
-import * as MediaLibrary from 'expo-media-library';
+import * as FileSystem from "expo-file-system";
+import * as MediaLibrary from "expo-media-library";
 import ImageView from "react-native-image-viewing";
 
-const TrackerScreen = ({ navigation }) => {
+const TrackerScreen = ({ route, navigation }) => {
   // State variables
   const [activeTab, setActiveTab] = useState("Requested");
   const [orders, setOrders] = useState({
@@ -48,8 +48,15 @@ const TrackerScreen = ({ navigation }) => {
   const [isImageViewerVisible, setIsImageViewerVisible] = useState(false);
   const [fullScreenImage, setFullScreenImage] = useState(null);
   const [hasGalleryPermission, setHasGalleryPermission] = useState(false);
-const [isCancelModalVisible, setIsCancelModalVisible] = useState(false);
-const [cancelReason, setCancelReason] = useState('');
+  const [isCancelModalVisible, setIsCancelModalVisible] = useState(false);
+  const [cancelReason, setCancelReason] = useState("");
+
+  // Set initial tab from navigation params
+  useEffect(() => {
+    if (route.params?.initialTab) {
+      setActiveTab(route.params.initialTab);
+    }
+  }, [route.params?.initialTab]);
 
   // Fetch orders on screen focus
   useFocusEffect(
@@ -83,8 +90,6 @@ const [cancelReason, setCancelReason] = useState('');
           headers: { Authorization: `Bearer ${token}` },
         }
       );
-
-      console.log("Orders response:", response.data);
 
       // Filter orders where userRole is owner
       const ownerOrders = response.data.filter(
@@ -152,7 +157,9 @@ const [cancelReason, setCancelReason] = useState('');
             historyOrders.push(formattedOrder);
             break;
           default:
-            console.warn(`Unrecognized status: "${order.status}" for order #${order.orderId}`);
+            console.warn(
+              `Unrecognized status: "${order.status}" for order #${order.orderId}`
+            );
             requestedOrders.push(formattedOrder);
         }
       });
@@ -173,121 +180,126 @@ const [cancelReason, setCancelReason] = useState('');
     }
   };
 
-  // Add this function to your TrackerScreen component
-  const handleOrderClick = async (order) => {
-    try {
-      // First show the modal with basic details
-      setSelectedOrder(order);
-      setTrackingModalVisible(true);
-
-      const token = await AsyncStorage.getItem("authToken");
-      if (!token) {
-        console.error("Authentication token missing");
-        return;
-      }
-
-      // Debug: Extract the correct order ID
-      const orderId = order.orderId || order._id || order.id;
-
-      // Debug: Log the API request details
-      const apiUrl = `${API_URL}${ENDPOINTS.ORDERS}/owner-view/${orderId}`;
-      console.log("Fetching order details from:", apiUrl);
-      console.log("Order object:", {
-        id: order.id,
-        orderId: order.orderId,
-        _id: order._id,
-      });
-
-      // Make the request to get detailed order info including gems
-      const response = await axios.get(apiUrl, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
-      // Debug: Log the response
-      console.log(
-        "Order details response:",
-        JSON.stringify(response.data, null, 2)
-      );
-
-      if (response.data && response.data.success) {
-        const detailedOrder = response.data.order;
-
-        // Ensure the gems array is properly formatted for React Native
-        const formattedGems = detailedOrder.gems?.map(gem => ({
-          _id: gem._id || '',
-          id: gem.gemId || '',
-          // Update how we get the gem type
-          type: gem.details?.gemType || gem.gemType || gem.type || 'Unknown',
-          // Handle weight and other properties
-          weight: gem.details?.weight || gem.weight || 0,
-          color: gem.details?.color || gem.color || '',
-          photo: gem.photo || '',
-          status: gem.status || ''
-        })) || [];
-
-        // Update the selected order with detailed information
-        setSelectedOrder(prevOrder => ({
-          ...prevOrder,
-          gems: formattedGems,
-          statusHistory: detailedOrder.statusHistory || [],
-          specialNote: detailedOrder.specialNote || prevOrder.specialNote || '',
-          price: detailedOrder.price || prevOrder.price,
-          orderType: detailedOrder.orderType || prevOrder.orderType,
-          receiptPhoto: detailedOrder.payment?.receiptPhoto || prevOrder.receiptPhoto,
-          payment: detailedOrder.payment || prevOrder.payment || {},
-          cancellation: detailedOrder.cancellation || prevOrder.cancellation || {}
-        }));
-      }
-    } catch (error) {
-      console.error("Error fetching order details:", error);
-      // Continue showing modal with basic info since we've already opened it
-    }
-  };
-
-//handle order cancellation
-const handleCancelOrder = async () => {
-  if (!cancelReason.trim()) {
-    Alert.alert('Error', 'Please provide a reason for cancellation');
-    return;
-  }
-
+// Update handleOrderClick to optionally send a view notification
+const handleOrderClick = async (order) => {
   try {
+    // First show the modal with basic details
+    setSelectedOrder(order);
+    setTrackingModalVisible(true);
+
     const token = await AsyncStorage.getItem("authToken");
-    const orderId = selectedOrder.orderId || selectedOrder._id;
-    
-    if (!orderId) {
-      Alert.alert('Error', 'Invalid order ID');
+    if (!token) {
+      console.error("Authentication token missing");
       return;
     }
 
-    const response = await axios.patch(
-      `${API_URL}/api/orders/${orderId}/cancel`,
+    // Debug: Extract the correct order ID
+    const orderId = order.orderId || order._id || order.id;
+
+    // Make the request to get detailed order info including gems
+    const response = await axios.get(
+      `${API_URL}${ENDPOINTS.ORDERS}/owner-view/${orderId}`,
       {
-        cancelReason: cancelReason
-      },
-      {
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { Authorization: `Bearer ${token}` },
       }
     );
 
-    if (response.data.success) {
-      Alert.alert('Success', 'Order cancelled successfully');
-      setIsCancelModalVisible(false);
-      setCancelReason('');
-      setTrackingModalVisible(false);
-      fetchOrders(); // Refresh orders list
+    if (response.data && response.data.success) {
+      const detailedOrder = response.data.order;
+
+      // Format gems and update selected order as before...
+      const formattedGems = // ... (keep existing code)
+
+      setSelectedOrder((prevOrder) => ({
+        ...prevOrder,
+        gems: formattedGems,
+        workerId: detailedOrder.workerId,
+        statusHistory: detailedOrder.statusHistory || [],
+        specialNote: detailedOrder.specialNote || prevOrder.specialNote || "",
+        price: detailedOrder.price || prevOrder.price,
+        orderType: detailedOrder.orderType || prevOrder.orderType,
+        receiptPhoto: detailedOrder.payment?.receiptPhoto || prevOrder.receiptPhoto,
+        payment: detailedOrder.payment || prevOrder.payment || {},
+        cancellation: detailedOrder.cancellation || prevOrder.cancellation || {},
+      }));
+      
     }
   } catch (error) {
-    console.error('Cancel order error:', error);
-    Alert.alert('Error', error.response?.data?.message || 'Failed to cancel order');
+    console.error("Error fetching order details:", error);
   }
 };
+
+  //handle order cancellation
+  const handleCancelOrder = async () => {
+    if (!cancelReason.trim()) {
+      Alert.alert("Error", "Please provide a reason for cancellation");
+      return;
+    }
+
+    try {
+      const token = await AsyncStorage.getItem("authToken");
+      const orderId = selectedOrder.orderId || selectedOrder._id;
+
+      // Debug logging
+      console.log("Full Selected Order:", selectedOrder);
+      console.log("Order ID:", orderId);
+      console.log("Worker ID:", selectedOrder.workerId);
+
+      if (!orderId) {
+        Alert.alert("Error", "Invalid order ID");
+        return;
+      }
+
+      // Send order cancellation and alert in parallel
+      const [orderResponse, alertResponse] = await Promise.all([
+        // Cancel order
+        axios.patch(
+          `${API_URL}/api/orders/${orderId}/cancel`,
+          {
+            cancelReason: cancelReason,
+          },
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        ),
+
+        // Send alert to worker using workerId directly
+        axios.post(
+          `${API_URL}/api/alerts`,
+          {
+            recipient: selectedOrder.workerId,
+            message: `Order #${selectedOrder.id} has been cancelled by owner with reason: ${cancelReason}`,
+            relatedTo: "order",
+            relatedId: orderId,
+            priority: "medium",
+            clickAction: "openOrderHistory"
+          },
+          { headers: { Authorization: `Bearer ${token}` } }
+        )
+      ]);
+
+      if (orderResponse.data.success) {
+        Alert.alert("Success", "Order cancelled successfully");
+        setIsCancelModalVisible(false);
+        setCancelReason("");
+        setTrackingModalVisible(false);
+        fetchOrders();
+      }
+    } catch (error) {
+      console.error("Cancel order error:", error.response?.data || error);
+      Alert.alert(
+        "Error",
+        error.response?.data?.message || "Failed to cancel order"
+      );
+    }
+  };
 
   // Function to pick an image from gallery without forcing cropping
   const pickImage = async () => {
     try {
       // Request permission
-      const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      const { status } =
+        await ImagePicker.requestMediaLibraryPermissionsAsync();
 
       if (status !== "granted") {
         Alert.alert(
@@ -313,85 +325,95 @@ const handleCancelOrder = async () => {
     }
   };
 
-  // Function to upload receipt and confirm payment
-  const confirmPayment = async () => {
-    try {
-      if (!selectedOrder) return;
-      if (!receiptPhoto) {
-        Alert.alert("Error", "Please upload a receipt photo first");
-        return;
-      }
-
-      const token = await AsyncStorage.getItem("authToken");
-      if (!token) {
-        Alert.alert("Error", "Authentication required. Please log in.");
-        return;
-      }
-
-      setLoading(true);
-      
-      // Get file extension from URI
-      const uriParts = receiptPhoto.split('.');
-      const fileType = uriParts[uriParts.length - 1];
-
-      // Create form data with proper filename and type
-      const formData = new FormData();
-      formData.append("receiptPhoto", {
-        uri: receiptPhoto,
-        name: `receipt.${fileType || 'jpg'}`,
-        type: `image/${fileType || 'jpeg'}`
-      });
-      formData.append("status", "pendingPayment");
-      formData.append(
-        "note",
-        "Payment made and receipt uploaded by owner. Awaiting confirmation."
-      );
-
-      console.log("Receipt photo URI:", receiptPhoto);
-
-      const orderId = selectedOrder.orderId || selectedOrder._id;
-      console.log("Uploading payment receipt for order:", orderId);
-
-      // Upload receipt and update status
-      const response = await axios.patch(
-        `${API_URL}/api/orders/owner/${orderId}/payment`,
-        formData,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
-
-      console.log("Payment receipt upload response:", response.data);
-      
-      // Close modal and update state
-      setIsReceiptModalVisible(false);
-      setReceiptPhoto(null);
-
-      // Update the local order status
-      setSelectedOrder((prev) => ({
-        ...prev,
-        status: "pendingPayment",
-        receiptPhoto: response.data.order.receiptPhoto,
-        statusHistory: response.data.order.statusHistory || prev.statusHistory,
-      }));
-
-      // Refresh orders list
-      fetchOrders();
-      
-      Alert.alert("Success", "Payment receipt uploaded successfully");
-    } catch (error) {
-      console.error("Error uploading receipt:", error.response?.data || error);
-      Alert.alert(
-        "Error",
-        error.response?.data?.message || "Failed to upload receipt"
-      );
-    } finally {
-      setLoading(false);
+// Update confirmPayment function to send an alert to the worker
+const confirmPayment = async () => {
+  try {
+    if (!selectedOrder) return;
+    if (!receiptPhoto) {
+      Alert.alert("Error", "Please upload a receipt photo first");
+      return;
     }
-  };
+
+    const token = await AsyncStorage.getItem("authToken");
+    if (!token) {
+      Alert.alert("Error", "Authentication required. Please log in.");
+      return;
+    }
+
+    setLoading(true);
+
+    // Get file extension from URI
+    const uriParts = receiptPhoto.split(".");
+    const fileType = uriParts[uriParts.length - 1];
+
+    // Create form data with proper filename and type
+    const formData = new FormData();
+    formData.append("receiptPhoto", {
+      uri: receiptPhoto,
+      name: `receipt.${fileType || "jpg"}`,
+      type: `image/${fileType || "jpeg"}`,
+    });
+    formData.append("status", "pendingPayment");
+    formData.append(
+      "note",
+      "Payment made and receipt uploaded by owner. Awaiting confirmation."
+    );
+
+    const orderId = selectedOrder.orderId || selectedOrder._id;
+    console.log("Uploading payment receipt for order:", orderId);
+
+    // Upload receipt and update status
+    const response = await axios.patch(
+      `${API_URL}/api/orders/owner/${orderId}/payment`,
+      formData,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
+
+    // Send alert to worker about payment submission
+    await axios.post(
+      `${API_URL}/api/alerts`,
+      {
+        recipient: selectedOrder.workerId,
+        message: `Payment receipt uploaded for order #${selectedOrder.id}. Please review and confirm.`,
+        relatedTo: "order",
+        relatedId: orderId,
+        priority: "high", // High priority since it's a payment notification
+        clickAction: "openOrderRequests"
+      },
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+
+    // Close modal and update state
+    setIsReceiptModalVisible(false);
+    setReceiptPhoto(null);
+
+    // Update the local order status
+    setSelectedOrder((prev) => ({
+      ...prev,
+      status: "pendingPayment",
+      receiptPhoto: response.data.order.receiptPhoto,
+      statusHistory: response.data.order.statusHistory || prev.statusHistory,
+    }));
+
+    // Refresh orders list
+    fetchOrders();
+
+    Alert.alert("Success", "Payment receipt uploaded successfully");
+  } catch (error) {
+    console.error("Error uploading receipt:", error.response?.data || error);
+    Alert.alert(
+      "Error",
+      error.response?.data?.message || "Failed to upload receipt"
+    );
+  } finally {
+    setLoading(false);
+  }
+};
 
   // Function to render content based on active tab
   const renderContent = () => {
@@ -475,14 +497,24 @@ const handleCancelOrder = async () => {
 
                 {/* Update badge styles and text to match status */}
                 {order.status?.toLowerCase() === "completed" && (
-                  <View style={[orderStyles.pendingPaymentBadge, {backgroundColor: '#3498db'}]}>
+                  <View
+                    style={[
+                      orderStyles.pendingPaymentBadge,
+                      { backgroundColor: "#3498db" },
+                    ]}
+                  >
                     <Text style={orderStyles.pendingPaymentText}>
-                    Payment Pending
+                      Payment Pending
                     </Text>
                   </View>
                 )}
                 {order.status?.toLowerCase() === "pendingpayment" && (
-                  <View style={[orderStyles.pendingPaymentBadge, {backgroundColor: '#f39c12'}]}>
+                  <View
+                    style={[
+                      orderStyles.pendingPaymentBadge,
+                      { backgroundColor: "#f39c12" },
+                    ]}
+                  >
                     <Text style={orderStyles.pendingPaymentText}>
                       Payment Review
                     </Text>
@@ -498,15 +530,21 @@ const handleCancelOrder = async () => {
                     }}
                     style={{ padding: 5 }}
                   >
-                    <Ionicons name="receipt-outline" size={20} color="#3498db" />
+                    <Ionicons
+                      name="receipt-outline"
+                      size={20}
+                      color="#3498db"
+                    />
                   </TouchableOpacity>
                 )}
                 {/* Add cancelled badge */}
                 {order.status?.toLowerCase() === "cancelled" && (
-                  <View style={[
-                    orderStyles.pendingPaymentBadge, 
-                    { backgroundColor: '#e74c3c' }
-                  ]}>
+                  <View
+                    style={[
+                      orderStyles.pendingPaymentBadge,
+                      { backgroundColor: "#e74c3c" },
+                    ]}
+                  >
                     <Text style={orderStyles.pendingPaymentText}>
                       Cancelled
                     </Text>
@@ -541,22 +579,28 @@ const handleCancelOrder = async () => {
                   ? `Ongoing since: ${new Date(
                       order.acceptedDate || order.requestDate
                     ).toLocaleDateString()}`
-                  : activeTab === "History" && order.status?.toLowerCase() === "paymentcompleted"
+                  : activeTab === "History" &&
+                    order.status?.toLowerCase() === "paymentcompleted"
                   ? `Payment completed: ${
-                      order.payment?.paymentConfirmedDate ? 
-                      new Date(order.payment.paymentConfirmedDate).toLocaleDateString() : 
-                      new Date(order.updatedAt || order.completedDate).toLocaleDateString()
+                      order.payment?.paymentConfirmedDate
+                        ? new Date(
+                            order.payment.paymentConfirmedDate
+                          ).toLocaleDateString()
+                        : new Date(
+                            order.updatedAt || order.completedDate
+                          ).toLocaleDateString()
                     }`
                   : `Cancelled: ${new Date(
                       order.completedDate || order.requestDate
                     ).toLocaleDateString()}`}
               </Text>
               {/* Add cancellation reason if available */}
-              {order.status?.toLowerCase() === "cancelled" && order.cancellation?.reason && (
-                <Text style={[orderStyles.orderDate, { color: '#e74c3c' }]}>
-                  Reason: {order.cancellation.reason}
-                </Text>
-              )}
+              {order.status?.toLowerCase() === "cancelled" &&
+                order.cancellation?.reason && (
+                  <Text style={[orderStyles.orderDate, { color: "#e74c3c" }]}>
+                    Reason: {order.cancellation.reason}
+                  </Text>
+                )}
             </View>
           </TouchableOpacity>
         ))}
@@ -586,7 +630,8 @@ const handleCancelOrder = async () => {
         : null);
     const completed =
       statusHistory.find((s) => s.status === "completed") ||
-      (selectedOrder.status === "completed" || selectedOrder.status === "pendingPayment"
+      (selectedOrder.status === "completed" ||
+      selectedOrder.status === "pendingPayment"
         ? {
             status: "completed",
             timestamp: selectedOrder.completedDate || new Date(),
@@ -604,8 +649,10 @@ const handleCancelOrder = async () => {
         : null);
 
     // Add padding to scroll content when buttons need to be shown
-    const needsButtonSpace = activeTab === "Completed" && 
-      (selectedOrder.status === "completed" || selectedOrder.status === "pendingPayment");
+    const needsButtonSpace =
+      activeTab === "Completed" &&
+      (selectedOrder.status === "completed" ||
+        selectedOrder.status === "pendingPayment");
 
     return (
       <Modal
@@ -628,35 +675,45 @@ const handleCancelOrder = async () => {
                 Order#: {selectedOrder.id || selectedOrder.orderId}
               </Text>
             </View>
-            
+
             {/* Show pending badge in modal header with better label */}
             {selectedOrder.status?.toLowerCase() === "pendingpayment" && (
-              <View style={[orderStyles.pendingPaymentBadge, { 
-                marginLeft: 10,
-                backgroundColor: '#f39c12' // Consistent orange color for review status
-              }]}>
+              <View
+                style={[
+                  orderStyles.pendingPaymentBadge,
+                  {
+                    marginLeft: 10,
+                    backgroundColor: "#f39c12", // Consistent orange color for review status
+                  },
+                ]}
+              >
                 <Text style={orderStyles.pendingPaymentText}>
                   Payment Review
                 </Text>
               </View>
             )}
             {/* Show pending badge in modal header */}
-{selectedOrder.status?.toLowerCase() === "completed" && (
-  <View style={[orderStyles.pendingPaymentBadge, { 
-    marginLeft: 10,
-    backgroundColor: '#3498db'
-  }]}>
-    <Text style={orderStyles.pendingPaymentText}>
-      Payment Pending
-    </Text>
-  </View>
-)}
-            
+            {selectedOrder.status?.toLowerCase() === "completed" && (
+              <View
+                style={[
+                  orderStyles.pendingPaymentBadge,
+                  {
+                    marginLeft: 10,
+                    backgroundColor: "#3498db",
+                  },
+                ]}
+              >
+                <Text style={orderStyles.pendingPaymentText}>
+                  Payment Pending
+                </Text>
+              </View>
+            )}
+
             <ScrollView
               contentContainerStyle={[
                 orderStyles.trackingScrollContainer,
                 // Add padding when buttons will be shown
-                needsButtonSpace && { paddingBottom: 80 }
+                needsButtonSpace && { paddingBottom: 80 },
               ]}
             >
               {/* Gems section with detailed information */}
@@ -770,8 +827,6 @@ const handleCancelOrder = async () => {
                 </View>
               </View>
 
-              
-
               <View style={orderStyles.dividerContainer}>
                 <View style={orderStyles.divider} />
               </View>
@@ -785,7 +840,7 @@ const handleCancelOrder = async () => {
                   <View
                     style={[
                       orderStyles.statusBoxPayment,
-                      { backgroundColor: "#4CAF50" }, 
+                      { backgroundColor: "#4CAF50" },
                     ]}
                   >
                     <View>
@@ -804,43 +859,51 @@ const handleCancelOrder = async () => {
                 )}
 
                 {/* Display status history notes if available, after all status boxes */}
-                {statusHistory.length > 0 && statusHistory.some(status => status.note) && (
-                  <View style={[orderStyles.historyNotesContainer, { marginTop: 15 }]}>
-                    <Text
+                {statusHistory.length > 0 &&
+                  statusHistory.some((status) => status.note) && (
+                    <View
                       style={[
-                        orderStyles.historyNotesTitle,
-                        baseScreenStylesNew.blackText,
+                        orderStyles.historyNotesContainer,
+                        { marginTop: 15 },
                       ]}
                     >
-                      Status History Notes
-                    </Text>
-                    {statusHistory.map(
-                      (status, index) =>
-                        status.note && (
-                          <View
-                            key={`note-${index}`}
-                            style={[
-                              orderStyles.historyNoteItem,
-                              index === statusHistory.filter(s => s.note).length - 1 ? 
-                              { marginBottom: 0, borderBottomWidth: 0 } : {}
-                            ]}
-                          >
-                            <Text style={orderStyles.historyNoteDate}>
-                              {new Date(status.timestamp).toLocaleString()}:
-                            </Text>
-                            <Text style={orderStyles.historyNoteText}>
-                              {status.note}
-                            </Text>
-                          </View>
-                        )
-                    )}
-                  </View>
-                )}
+                      <Text
+                        style={[
+                          orderStyles.historyNotesTitle,
+                          baseScreenStylesNew.blackText,
+                        ]}
+                      >
+                        Status History Notes
+                      </Text>
+                      {statusHistory.map(
+                        (status, index) =>
+                          status.note && (
+                            <View
+                              key={`note-${index}`}
+                              style={[
+                                orderStyles.historyNoteItem,
+                                index ===
+                                statusHistory.filter((s) => s.note).length - 1
+                                  ? { marginBottom: 0, borderBottomWidth: 0 }
+                                  : {},
+                              ]}
+                            >
+                              <Text style={orderStyles.historyNoteDate}>
+                                {new Date(status.timestamp).toLocaleString()}:
+                              </Text>
+                              <Text style={orderStyles.historyNoteText}>
+                                {status.note}
+                              </Text>
+                            </View>
+                          )
+                      )}
+                    </View>
+                  )}
                 {selectedOrder.status?.toLowerCase() === "cancelled" && (
                   <View
                     style={[
                       orderStyles.statusBoxPayment,
-                      { backgroundColor: "#e74c3c" }
+                      { backgroundColor: "#e74c3c" },
                     ]}
                   >
                     <View>
@@ -864,165 +927,184 @@ const handleCancelOrder = async () => {
                 )}
               </View>
               {/* Payment receipt section for History tab */}
-              {activeTab === "History" && 
-                selectedOrder.status?.toLowerCase() === "paymentcompleted" && 
+              {activeTab === "History" &&
+                selectedOrder.status?.toLowerCase() === "paymentcompleted" &&
                 selectedOrder.receiptPhoto && (
-                <View style={orderStyles.dividerContainer}>
-                  <View style={orderStyles.divider} />
-                  <View style={{ padding: 15, alignItems: "center", marginTop: 10 }}>
-                    <Text style={{
-                      fontSize: 16,
-                      fontWeight: "bold", 
-                      color: "#555",
-                      marginBottom: 10,
-                    }}>
-                      Payment Receipt
-                    </Text>
-                    <TouchableOpacity
-                      onPress={() => {
-                        setFullScreenImage({ uri: selectedOrder.receiptPhoto });
-                        setIsImageViewerVisible(true);
-                      }}
+                  <View style={orderStyles.dividerContainer}>
+                    <View style={orderStyles.divider} />
+                    <View
                       style={{
-                        alignItems: 'center',
-                        marginTop: 5,
+                        padding: 15,
+                        alignItems: "center",
+                        marginTop: 10,
                       }}
                     >
-                      <Image
-                        source={{ uri: selectedOrder.receiptPhoto }}
+                      <Text
                         style={{
-                          width: 200,
-                          height: 120,
-                          borderRadius: 8,
-                          marginBottom: 8,
+                          fontSize: 16,
+                          fontWeight: "bold",
+                          color: "#555",
+                          marginBottom: 10,
                         }}
-                        resizeMode="cover"
-                      />
-                      <Text style={{
-                        fontSize: 13,
-                        color: '#3498db',
-                        marginTop: 5,
-                      }}>
-                        Tap to view full receipt
+                      >
+                        Payment Receipt
                       </Text>
-                    </TouchableOpacity>
+                      <TouchableOpacity
+                        onPress={() => {
+                          setFullScreenImage({
+                            uri: selectedOrder.receiptPhoto,
+                          });
+                          setIsImageViewerVisible(true);
+                        }}
+                        style={{
+                          alignItems: "center",
+                          marginTop: 5,
+                        }}
+                      >
+                        <Image
+                          source={{ uri: selectedOrder.receiptPhoto }}
+                          style={{
+                            width: 200,
+                            height: 120,
+                            borderRadius: 8,
+                            marginBottom: 8,
+                          }}
+                          resizeMode="cover"
+                        />
+                        <Text
+                          style={{
+                            fontSize: 13,
+                            color: "#3498db",
+                            marginTop: 5,
+                          }}
+                        >
+                          Tap to view full receipt
+                        </Text>
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                )}
+            </ScrollView>
+
+            {/* FIXED POSITION BUTTONS */}
+            {/* Upload Payment button */}
+            {selectedOrder &&
+              String(selectedOrder?.status).toLowerCase() === "completed" && (
+                <View
+                  style={[
+                    orderStyles.fixedButtonContainer,
+                    {
+                      position: "absolute",
+                      bottom: 0,
+                      left: 0,
+                      right: 0,
+                      borderBottomLeftRadius: 20,
+                      borderBottomRightRadius: 20,
+                      backgroundColor: "white",
+                      shadowColor: "#000",
+                      shadowOffset: { width: 0, height: -2 },
+                      shadowOpacity: 0.1,
+                      shadowRadius: 4,
+                      elevation: 5,
+                      zIndex: 1000,
+                    },
+                  ]}
+                >
+                  <TouchableOpacity
+                    style={[
+                      orderStyles.fixedButton,
+                      { backgroundColor: "#3498db" }, // Match the badge color
+                    ]}
+                    onPress={() => setIsReceiptModalVisible(true)}
+                  >
+                    <Text style={orderStyles.fixedButtonText}>
+                      Mark as Paid
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              )}
+
+            {/* Payment Pending Review status */}
+            {activeTab === "Completed" &&
+              selectedOrder.status === "pendingPayment" && (
+                <View
+                  style={[
+                    orderStyles.fixedButtonContainer,
+                    {
+                      position: "absolute",
+                      bottom: 0,
+                      left: 0,
+                      right: 0,
+                      borderBottomLeftRadius: 20,
+                      borderBottomRightRadius: 20,
+                      backgroundColor: "white",
+                      shadowColor: "#000",
+                      shadowOffset: { width: 0, height: -2 },
+                      shadowOpacity: 0.1,
+                      shadowRadius: 4,
+                      elevation: 5,
+                      zIndex: 1000,
+                    },
+                  ]}
+                >
+                  <View style={{ padding: 15, alignItems: "center" }}>
+                    <Text
+                      style={{
+                        fontSize: 16,
+                        fontWeight: "bold",
+                        color: "#555",
+                        marginBottom: 10,
+                      }}
+                    >
+                      Payment Under Review
+                    </Text>
+                    <Text
+                      style={{
+                        fontSize: 14,
+                        color: "#777",
+                        textAlign: "center",
+                        marginBottom: 10,
+                      }}
+                    >
+                      Your payment receipt has been uploaded. Waiting for the
+                      worker to confirm receipt.
+                    </Text>
+
+                    {selectedOrder.receiptPhoto && (
+                      <TouchableOpacity
+                        onPress={() => {
+                          // Option to add a function to view receipt in full screen
+                          // Or just make this area non-clickable
+                        }}
+                        style={{
+                          alignItems: "center",
+                          marginTop: 5,
+                        }}
+                      >
+                        <Text
+                          style={{
+                            color: "#555",
+                            fontSize: 13,
+                            marginBottom: 5,
+                            fontWeight: "500",
+                          }}
+                        >
+                          Receipt Uploaded
+                        </Text>
+                        <Image
+                          source={{ uri: selectedOrder.receiptPhoto }}
+                          style={{
+                            width: 100,
+                            height: 60,
+                            borderRadius: 5,
+                          }}
+                          resizeMode="cover"
+                        />
+                      </TouchableOpacity>
+                    )}
                   </View>
                 </View>
               )}
-            </ScrollView>
-            
-            {/* FIXED POSITION BUTTONS */}
-            {/* Upload Payment button */}
-            {selectedOrder && String(selectedOrder?.status).toLowerCase() === "completed" && (
-              <View 
-                style={[
-                  orderStyles.fixedButtonContainer,
-                  {
-                    position: 'absolute',
-                    bottom: 0,
-                    left: 0,
-                    right: 0,
-                    borderBottomLeftRadius: 20,
-                    borderBottomRightRadius: 20,
-                    backgroundColor: 'white',
-                    shadowColor: "#000",
-                    shadowOffset: { width: 0, height: -2 },
-                    shadowOpacity: 0.1,
-                    shadowRadius: 4,
-                    elevation: 5,
-                    zIndex: 1000
-                  }
-                ]}
-              >
-                <TouchableOpacity
-                  style={[
-                    orderStyles.fixedButton,
-                    { backgroundColor: '#3498db' }, // Match the badge color
-                    
-                  ]}
-                  onPress={() => setIsReceiptModalVisible(true)}
-                >
-                  <Text style={orderStyles.fixedButtonText}>
-                    Mark as Paid
-                  </Text>
-                </TouchableOpacity>
-              </View>
-            )}
-            
-            {/* Payment Pending Review status */}
-            {activeTab === "Completed" && selectedOrder.status === "pendingPayment" && (
-              <View 
-                style={[
-                  orderStyles.fixedButtonContainer,
-                  {
-                    position: 'absolute',
-                    bottom: 0,
-                    left: 0,
-                    right: 0,
-                    borderBottomLeftRadius: 20,
-                    borderBottomRightRadius: 20,
-                    backgroundColor: 'white',
-                    shadowColor: "#000", 
-                    shadowOffset: { width: 0, height: -2 },
-                    shadowOpacity: 0.1,
-                    shadowRadius: 4,
-                    elevation: 5,
-                    zIndex: 1000
-                  }
-                ]}
-              >
-                <View style={{ padding: 15, alignItems: "center" }}>
-                  <Text style={{
-                    fontSize: 16,
-                    fontWeight: "bold",
-                    color: "#555",
-                    marginBottom: 10,
-                  }}>
-                    Payment Under Review
-                  </Text>
-                  <Text style={{
-                    fontSize: 14,
-                    color: "#777",
-                    textAlign: "center",
-                    marginBottom: 10,
-                  }}>
-                    Your payment receipt has been uploaded. Waiting for the
-                    worker to confirm receipt.
-                  </Text>
-                  
-                  {selectedOrder.receiptPhoto && (
-                    <TouchableOpacity 
-                      onPress={() => {
-                        // Option to add a function to view receipt in full screen
-                        // Or just make this area non-clickable
-                      }}
-                      style={{
-                        alignItems: 'center',
-                        marginTop: 5,
-                      }}
-                    >
-                      <Text style={{ 
-                        color: '#555', 
-                        fontSize: 13, 
-                        marginBottom: 5, 
-                        fontWeight: '500' 
-                      }}>
-                        Receipt Uploaded
-                      </Text>
-                      <Image
-                        source={{ uri: selectedOrder.receiptPhoto }}
-                        style={{
-                          width: 100,
-                          height: 60,
-                          borderRadius: 5,
-                        }}
-                        resizeMode="cover"
-                      />
-                    </TouchableOpacity>
-                  )}
-                </View>
-              </View>
-            )}
             {/* Add this section for Ongoing tab */}
             {activeTab === "Ongoing" && (
               <View style={orderStyles.fixedButtonContainer}>
@@ -1038,10 +1120,15 @@ const handleCancelOrder = async () => {
                 ) : (
                   <>
                     <TouchableOpacity
-                      style={[orderStyles.fixedButton, { backgroundColor: "#FF4444" }]}
+                      style={[
+                        orderStyles.fixedButton,
+                        { backgroundColor: "#FF4444" },
+                      ]}
                       onPress={() => setIsCancelModalVisible(true)}
                     >
-                      <Text style={orderStyles.fixedButtonText}>Cancel Order</Text>
+                      <Text style={orderStyles.fixedButtonText}>
+                        Cancel Order
+                      </Text>
                     </TouchableOpacity>
                   </>
                 )}
@@ -1057,7 +1144,9 @@ const handleCancelOrder = async () => {
   const renderReceiptModal = () => (
     <Modal visible={isReceiptModalVisible} transparent animationType="slide">
       <View style={orderStyles.modalContainer}>
-        <View style={[orderStyles.modalContent, { height: "auto", padding: 20 }]}>
+        <View
+          style={[orderStyles.modalContent, { height: "auto", padding: 20 }]}
+        >
           <TouchableOpacity
             onPress={() => {
               setIsReceiptModalVisible(false);
@@ -1068,20 +1157,23 @@ const handleCancelOrder = async () => {
             <Ionicons name="close" size={24} color="#666" />
           </TouchableOpacity>
           <Text style={orderStyles.modalHeader}>Upload Payment Receipt</Text>
-          
-          <Text style={{
-            fontSize: 14, 
-            color: "#555",
-            textAlign: "center",
-            marginBottom: 15
-          }}>
-            Please upload a photo of your payment receipt to notify the worker that payment has been made.
+
+          <Text
+            style={{
+              fontSize: 14,
+              color: "#555",
+              textAlign: "center",
+              marginBottom: 15,
+            }}
+          >
+            Please upload a photo of your payment receipt to notify the worker
+            that payment has been made.
           </Text>
-          
+
           {receiptPhoto ? (
             <View style={orderStyles.previewContainer}>
-              <Image 
-                source={{ uri: receiptPhoto }} 
+              <Image
+                source={{ uri: receiptPhoto }}
                 style={orderStyles.receiptPreview}
                 resizeMode="contain"
               />
@@ -1098,15 +1190,17 @@ const handleCancelOrder = async () => {
               onPress={pickImage}
             >
               <Ionicons name="camera" size={28} color="#fff" />
-              <Text style={orderStyles.uploadButtonText}>Select Receipt Photo</Text>
+              <Text style={orderStyles.uploadButtonText}>
+                Select Receipt Photo
+              </Text>
             </TouchableOpacity>
           )}
-          
+
           <TouchableOpacity
             style={[
-              baseScreenStylesNew.Button1, 
+              baseScreenStylesNew.Button1,
               orderStyles.confirmButton,
-              {opacity: receiptPhoto ? 1 : 0.5}
+              { opacity: receiptPhoto ? 1 : 0.5 },
             ]}
             onPress={confirmPayment}
             disabled={!receiptPhoto}
@@ -1122,107 +1216,124 @@ const handleCancelOrder = async () => {
     try {
       // Request specific permissions based on platform version
       if (!hasGalleryPermission) {
-        const permissionResult = await MediaLibrary.requestPermissionsAsync(false);
+        const permissionResult = await MediaLibrary.requestPermissionsAsync(
+          false
+        );
         const { status } = permissionResult;
-        
-        setHasGalleryPermission(status === 'granted');
-        
-        if (status !== 'granted') {
+
+        setHasGalleryPermission(status === "granted");
+
+        if (status !== "granted") {
           Alert.alert(
-            "Permission Required", 
-            Platform.OS === 'android' 
+            "Permission Required",
+            Platform.OS === "android"
               ? "To save images, Maanikya needs permission to access your photos. Please go to your device settings to enable this permission."
               : "Cannot save images without storage permission.",
             [
               { text: "Cancel", style: "cancel" },
-              { 
-                text: "Settings", 
+              {
+                text: "Settings",
                 onPress: () => {
-                  if (Platform.OS === 'ios') {
-                    Linking.openURL('app-settings:');
+                  if (Platform.OS === "ios") {
+                    Linking.openURL("app-settings:");
                   } else {
                     Linking.openSettings();
                   }
-                }
-              }
+                },
+              },
             ]
           );
           return;
         }
       }
-      
-      Alert.alert("Saving Image", "Please wait while we save the receipt to your gallery...");
-      
-      const filename = imageUrl.split('/').pop() || `receipt-${Date.now()}.jpg`;
+
+      Alert.alert(
+        "Saving Image",
+        "Please wait while we save the receipt to your gallery..."
+      );
+
+      const filename = imageUrl.split("/").pop() || `receipt-${Date.now()}.jpg`;
       const fileUri = `${FileSystem.cacheDirectory}${filename}`;
-      
+
       const downloadResult = await FileSystem.downloadAsync(imageUrl, fileUri);
-      
+
       if (downloadResult.status !== 200) {
         throw new Error(`Failed to download image: ${downloadResult.status}`);
       }
-      
+
       const asset = await MediaLibrary.createAssetAsync(downloadResult.uri);
-      
+
       try {
         const album = await MediaLibrary.getAlbumAsync("MaanikyaReceipts");
-        
+
         if (album) {
           await MediaLibrary.addAssetsToAlbumAsync([asset], album, false);
         } else {
           await MediaLibrary.createAlbumAsync("MaanikyaReceipts", asset, false);
         }
-        
-        Alert.alert("Success", "Receipt saved to your gallery in the 'MaanikyaReceipts' album");
+
+        Alert.alert(
+          "Success",
+          "Receipt saved to your gallery in the 'MaanikyaReceipts' album"
+        );
       } catch (albumError) {
-        console.log("Album creation/update failed but image was saved:", albumError);
-        Alert.alert("Partially Successful", "Receipt saved to your gallery, but couldn't add to the Maanikya album");
+        console.log(
+          "Album creation/update failed but image was saved:",
+          albumError
+        );
+        Alert.alert(
+          "Partially Successful",
+          "Receipt saved to your gallery, but couldn't add to the Maanikya album"
+        );
       }
     } catch (error) {
       console.error("Error saving image:", error);
-      Alert.alert("Error", "Failed to save receipt to gallery. Please try again.");
+      Alert.alert(
+        "Error",
+        "Failed to save receipt to gallery. Please try again."
+      );
     }
   };
 
   // Add this modal component for cancel reason
-const renderCancelModal = () => (
-  <Modal
-    visible={isCancelModalVisible}
-    transparent
-    animationType="slide"
-    onRequestClose={() => setIsCancelModalVisible(false)}
-  >
-    <View style={orderStyles.modalContainer}>
-      <View style={orderStyles.modalContent}>
-        <Text style={orderStyles.modalHeader}>Cancel Order</Text>
-        <TextInput
-          style={orderStyles.reasonInput}
-          placeholder="Enter reason for cancellation"
-          value={cancelReason}
-          onChangeText={setCancelReason}
-          multiline
-        />
-        <View style={orderStyles.modalActions}>
-          <TouchableOpacity
-            style={[orderStyles.fixedButton, { backgroundColor: "#FF4444" }]}
-            onPress={() => {
-              setIsCancelModalVisible(false);
-              setCancelReason('');
-            }}
-          >
-            <Text style={orderStyles.fixedButtonText}>Close</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[orderStyles.fixedButton, { backgroundColor: "#4CAF50" }]}
-            onPress={handleCancelOrder}
-          >
-            <Text style={orderStyles.fixedButtonText}>Submit</Text>
-          </TouchableOpacity>
+  const renderCancelModal = () => (
+    <Modal
+      visible={isCancelModalVisible}
+      transparent
+      animationType="slide"
+      onRequestClose={() => setIsCancelModalVisible(false)}
+    >
+      <View style={orderStyles.modalContainer}>
+        <View style={orderStyles.modalContent}>
+          <Text style={orderStyles.modalHeader}>Cancel Order</Text>
+          <TextInput
+            style={orderStyles.reasonInput}
+            placeholder="Enter reason for cancellation"
+            value={cancelReason}
+            onChangeText={setCancelReason}
+            multiline
+          />
+          <View style={orderStyles.modalActions}>
+            <TouchableOpacity
+              style={[orderStyles.fixedButton, { backgroundColor: "#FF4444" }]}
+              onPress={() => {
+                setIsCancelModalVisible(false);
+                setCancelReason("");
+              }}
+            >
+              <Text style={orderStyles.fixedButtonText}>Close</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[orderStyles.fixedButton, { backgroundColor: "#4CAF50" }]}
+              onPress={handleCancelOrder}
+            >
+              <Text style={orderStyles.fixedButtonText}>Submit</Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </View>
-    </View>
-  </Modal>
-);
+    </Modal>
+  );
 
   return (
     <View style={baseScreenStylesNew.container}>
@@ -1270,26 +1381,35 @@ const renderCancelModal = () => (
         visible={isImageViewerVisible}
         onRequestClose={() => setIsImageViewerVisible(false)}
         FooterComponent={({ imageIndex }) => (
-          <View style={{
-            backgroundColor: 'rgba(0, 0, 0, 0.7)',
-            padding: 15,
-            flexDirection: 'row',
-            justifyContent: 'center',
-            width: '100%'
-          }}>
+          <View
+            style={{
+              backgroundColor: "rgba(0, 0, 0, 0.7)",
+              padding: 15,
+              flexDirection: "row",
+              justifyContent: "center",
+              width: "100%",
+            }}
+          >
             <TouchableOpacity
               style={{
-                backgroundColor: '#3498db',
+                backgroundColor: "#3498db",
                 padding: 10,
                 borderRadius: 8,
-                flexDirection: 'row',
-                alignItems: 'center',
-                justifyContent: 'center'
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "center",
               }}
               onPress={() => saveImageToGallery(selectedOrder.receiptPhoto)}
             >
-              <Ionicons name="download" size={18} color="#fff" style={{ marginRight: 8 }} />
-              <Text style={{ color: 'white', fontWeight: 'bold' }}>Save to Gallery</Text>
+              <Ionicons
+                name="download"
+                size={18}
+                color="#fff"
+                style={{ marginRight: 8 }}
+              />
+              <Text style={{ color: "white", fontWeight: "bold" }}>
+                Save to Gallery
+              </Text>
             </TouchableOpacity>
           </View>
         )}

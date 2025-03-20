@@ -23,11 +23,6 @@ const FavoritesScreen = ({ route, navigation }) => {
   // 1. State variables
   const selectedGems = route.params?.selectedGems || [];
   
-  // Log received gems for debugging
-  useEffect(() => {
-    console.log("Received gems in Favorites screen:", selectedGems);
-  }, []);
-  
   const [searchQuery, setSearchQuery] = useState("");
   const [workers, setWorkers] = useState([]);
   const [filteredWorkers, setFilteredWorkers] = useState([]);
@@ -154,8 +149,24 @@ const FavoritesScreen = ({ route, navigation }) => {
         orderData,
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      
+
       console.log("Order response:", response.data);
+      
+      // Send alert - using complete URL path
+      const response2 = await axios.post(
+        `${API_URL}/api/alerts`, // Added /api prefix
+        {
+          recipient: selectedWorkerId,
+          message: "Order request received",
+          relatedTo: "order",
+          relatedId: response.data.order._id,
+          priority: "medium",
+          clickAction: "openOrderRequests"
+        },
+        { headers: { Authorization: `Bearer ${token}` } }
+      )
+      console.log("Alert response:", response2.data);
+     
       
       // Close modal and navigate back
       setOrderModalVisible(false);
@@ -214,9 +225,6 @@ const FavoritesScreen = ({ route, navigation }) => {
     
     if (!selectedWorker) return null;
     
-    // Debug log for modal rendering
-    console.log("Rendering modal with gems:", selectedGems);
-    
     return (
       <Modal
         visible={orderModalVisible}
@@ -262,7 +270,7 @@ const FavoritesScreen = ({ route, navigation }) => {
                 horizontal
                 showsHorizontalScrollIndicator={false}
                 renderItem={({ item }) => {
-                  console.log("Rendering gem item:", item);
+                  
                   return (
                     <View style={styles.gemCard}>
                       <Image 

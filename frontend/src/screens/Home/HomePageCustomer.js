@@ -137,7 +137,6 @@ const HomePageCustomer = ({ navigation }) => {
 
           <View style={styles.content}>
             <Image source={require("../../assets/logo-letter.png")} style={styles.logo}/>
-            <Text style={styles.greeting}>Hello Rathnasiri,</Text>
             <View style={styles.menuGrid}>
               {menuItems.map((item, index) => (
                 <MenuItem
@@ -200,12 +199,6 @@ const styles = StyleSheet.create({
     height: 70,  
     resizeMode: "contain",
     marginBottom: 5,
-  },
-  greeting: {
-    fontSize: 16,
-    marginBottom: 20,
-    color: "#000",
-    fontWeight: "500",
   },
   menuGrid: {
     flexDirection: "column", // Changed from row to column

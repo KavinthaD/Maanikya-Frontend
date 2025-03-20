@@ -75,9 +75,9 @@ const SellerProfile = () => {
                 keyExtractor={(item) => item.id}
                 numColumns={3}
                 renderItem={({ item }) => (
-                    <TouchableOpacity onPress={() => navigation.navigate("MyGems", { gem: item })}>
+                    <TouchableOpacity onPress={() => navigation.navigate("GemDetailsScreen", { gem: item })}>
                         <Image source={item.image} style={styles.gemImage} />
-                        <Text style={styles.gemLabel}>{item.id}</Text>
+                        <Text style={[styles.gemLabel, baseScreenStylesNew.blackText]}>{item.id}</Text>
                     </TouchableOpacity>
                 )}
             />
@@ -220,7 +220,6 @@ const styles = StyleSheet.create({
         marginTop: 20,
     },
     gemLabel: { 
-        color: "white", 
         marginLeft: 55,
         marginTop: -5, 
     },

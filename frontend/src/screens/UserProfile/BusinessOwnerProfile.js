@@ -151,22 +151,23 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   profilePic: {
-    width: 120,
-    height: 120,
-    borderRadius: 60,
-    marginBottom: 6,
+    width: 100,  
+    height: 100,
+    borderRadius: 50, 
+    marginBottom: 10, 
     marginTop: 30,
-    marginLeft: 140,
-  },
+    alignSelf: 'center', 
+},
 
   info: {
     marginTop: 20,
     marginHorizontal: 16,
   },
   nameContainer: {
-    paddingHorizontal: 150,
+    paddingHorizontal: 20, 
     marginBottom: 10,
-  },
+    alignItems: 'center', 
+},
   nameText: {
     fontSize: 17,
     fontWeight: "bold"

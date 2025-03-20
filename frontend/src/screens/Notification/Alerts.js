@@ -191,10 +191,14 @@ const AlertsScreen = () => {
     } else {
       markAsRead(alert._id);
       
-      // Navigate if clickAction is specified
-      if (alert.clickAction) {
-        const [screen, params] = alert.clickAction.split('/');
-        navigation.navigate(screen, { id: params });
+      // Navigate based on clickAction
+      if (alert.clickAction === "openMessage") {
+        navigation.navigate('ChatScreen', {
+          contactId: alert.senderId,
+          contactName: alert.senderName,
+          contactAvatar: alert.senderImage,
+          contactUsername: alert.sender
+        });
       }
     }
   };

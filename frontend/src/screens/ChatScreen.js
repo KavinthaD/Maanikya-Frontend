@@ -17,8 +17,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { API_URL, ENDPOINTS } from '../config/api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
-import HeaderBar from '../components/HeaderBar';
-import { useFocusEffect } from '@react-navigation/native';
+import HeaderBar from '../components/HeaderBar';import { useFocusEffect } from '@react-navigation/native';
 import { useCallback } from 'react';
 import { baseScreenStylesNew } from '../styles/baseStylesNew';
 
@@ -131,6 +130,7 @@ const sendMessage = async () => {
     
     const messageText = inputText.trim();
     setInputText(''); // Clear input immediately for better UX
+    const tempId = `temp-${Date.now()}`; // Declare tempId here
     
     try {
       setSending(true);
@@ -141,39 +141,55 @@ const sendMessage = async () => {
       }
       
       // Optimistically add message to UI
-      const tempId = `temp-${Date.now()}`;
       const optimisticMessage = {
         _id: tempId,
         content: messageText,
-        sender: userId, // Use userId instead of isOwn flag for consistency
+        sender: userId,
         timestamp: new Date().toISOString(),
         sending: true
       };
       
       setMessages(prevMessages => [...prevMessages, optimisticMessage]);
       
-      // Actually send message
-      const response = await axios.post(
-        `${API_URL}${ENDPOINTS.SEND_MESSAGE}`,
-        { 
-          recipientId: contactId,
-          content: messageText 
-        },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+      // Send message and alert in parallel
+      const [messageResponse, alertResponse] = await Promise.all([
+        // Send message
+        axios.post(
+          `${API_URL}${ENDPOINTS.SEND_MESSAGE}`,
+          { 
+            recipientId: contactId,
+            content: messageText 
+          },
+          { headers: { Authorization: `Bearer ${token}` } }
+        ),
+        
+        // Send alert - using complete URL path
+        axios.post(
+          `${API_URL}/api/alerts`, // Added /api prefix
+          {
+            recipient: contactUsername,
+            message: messageText.length > 50 ? `${messageText.substring(0, 47)}...` : messageText,
+            relatedTo: "message",
+            relatedId: userId,
+            priority: "medium",
+            clickAction: "openMessage"
+          },
+          { headers: { Authorization: `Bearer ${token}` } }
+        )
+      ]);
       
       // Update messages to replace optimistic message with real one
       setMessages(prevMessages => 
         prevMessages.map(msg => 
           msg._id === tempId ? {
-            ...response.data,
-            _id: response.data._id || response.data.id // Handle either _id or id in response
+            ...messageResponse.data,
+            _id: messageResponse.data._id || messageResponse.data.id
           } : msg
         )
       );
       
     } catch (error) {
-      console.error('Error sending message:', error);
+      console.error('Error sending message:', error.response?.data || error.message);
       // Show error state for the message
       setMessages(prevMessages => 
         prevMessages.map(msg => 

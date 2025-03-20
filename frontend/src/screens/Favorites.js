@@ -266,11 +266,11 @@ const FavoritesScreen = ({ route, navigation }) => {
                   return (
                     <View style={styles.gemCard}>
                       <Image 
-                        source={{ 
-                          uri: item.photo || 
-                               item.image || 
-                               require("../assets/gems/no_gem.jpeg") 
-                        }}
+                        source={
+                          item.photo || item.image
+                            ? { uri: item.photo || item.image }
+                            : require("../assets/default-images/no_gem.jpeg")
+                        }
                         style={styles.gemImage} 
                       />
                       <View style={styles.gemInfo}>

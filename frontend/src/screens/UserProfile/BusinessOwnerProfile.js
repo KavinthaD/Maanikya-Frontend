@@ -1,7 +1,6 @@
 //Screen creator: Isum
-
 import React, { useState, useEffect } from "react";
-import { SafeAreaView, View, Text, Image, TouchableOpacity, StyleSheet, Pressable } from "react-native";
+import { Alert,SafeAreaView, View, Text, Image, TouchableOpacity, StyleSheet, Pressable } from "react-native";
 import axios from "axios";
 import { Ionicons } from "@expo/vector-icons";
 import { MaterialIcons } from '@expo/vector-icons';
@@ -68,6 +67,66 @@ const BusinessOwnerProfile = ({ route }) => {
     navigation.navigate("BusinessOwnerEditProfile", { user });
   };
 
+  const handleLogout = async () => {
+    setMenuVisible(false);  // Close the menu
+
+    // Call the logout API endpoint
+    try {
+      const token = await AsyncStorage.getItem("authToken");
+      await axios.post(`${API_URL}${ENDPOINTS.LOGOUT}`, {}, { // empty body for logout request
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      // Remove the token from AsyncStorage
+      await AsyncStorage.removeItem("authToken");
+
+      // Remove any other relevant user data as well
+      await AsyncStorage.removeItem("userData");
+
+      // Display success message
+      Alert.alert(
+        "Logging out",
+        "Logout of your account?",
+        [
+          {
+            text: "Log out",
+            onPress: () => {
+              // Navigate to the WelcomeScreen
+              navigation.reset({
+                index: 0,
+                routes: [{ name: 'PurposeSelectionPage' }],
+              });
+            },
+          },
+          {
+            text: "Cancel",
+            onPress: () => {
+              // Remain on the same page (do nothing)
+            },
+          },
+        ]
+      );
+    } catch (error) {
+      console.error("Logout failed:", error);
+
+      // Display failure message
+      Alert.alert(
+        "Logout Failed",
+        "An error occurred during logout. Please try again.",
+        [
+          {
+            text: "OK",
+            onPress: () => {
+              // Remain on the same page (do nothing)
+            },
+          },
+        ]
+      );
+    }
+  };
 
   return (
     <SafeAreaView style={[baseScreenStylesNew.container, styles.container]}>
@@ -88,7 +147,7 @@ const BusinessOwnerProfile = ({ route }) => {
           <TouchableOpacity style={styles.menuItem} onPress={navigateToEditProfile}>
             <Text>Help Center</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.menuItem} onPress={navigateToEditProfile}>
+          <TouchableOpacity style={styles.menuItem} onPress={handleLogout}>
             <Text>Logout</Text>
           </TouchableOpacity>
         </View>

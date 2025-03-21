@@ -9,13 +9,19 @@ import {
   StyleSheet,
   Image,
   Alert,
+  SafeAreaView,
+  StatusBar,
+  ScrollView,
+  KeyboardAvoidingView,
+  Platform,
 } from "react-native";
 import { Picker } from "@react-native-picker/picker";
-import { baseScreenStylesNew } from "../../styles/baseStylesNew";
+import { baseScreenStyles } from "../../styles/baseStyles";
 import { useNavigation } from "@react-navigation/native";
-import axios from "axios"; // Import axios
-import AsyncStorage from "@react-native-async-storage/async-storage"; // Import AsyncStorage
-import { API_URL, ENDPOINTS } from '../../config/api'; 
+import axios from "axios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { API_URL, ENDPOINTS } from "../../config/api";
+import { Ionicons } from "@expo/vector-icons";
 
 const Login = () => {
   const navigation = useNavigation();
@@ -23,9 +29,10 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [role, setRole] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
   const handleLogin = async () => {
-    // Make handleLogin async
+    // Validation
     if (!email || !password || !role) {
       Alert.alert("Please fill all fields.");
       return;
@@ -37,7 +44,7 @@ const Login = () => {
     }
     setErrorMessage("");
 
-    // **Role Mapping for Backend:**
+    // Role Mapping for Backend
     let backendLoginRole = "";
     if (role === "gem_business_owner") {
       backendLoginRole = "Gem business owner";
@@ -46,56 +53,49 @@ const Login = () => {
     } else if (role === "customer") {
       backendLoginRole = "Customer";
     } else {
-      Alert.alert("Please select a role."); // Keep this alert for role selection
+      Alert.alert("Please select a role.");
       return;
     }
 
     try {
-      const response = await axios.post(`${API_URL}${ENDPOINTS.LOGIN}`, { 
-        // Replace with your backend URL if different
+      const response = await axios.post(`${API_URL}${ENDPOINTS.LOGIN}`, {
         email: email,
         password: password,
-        loginRole: backendLoginRole, // Use the mapped backend role
+        loginRole: backendLoginRole,
       });
 
-      // **Successful Login:**
-      console.log("Login successful:", response.data);
-      Alert.alert("Login Successful!", response.data.message);
-
-      // **Store the JWT token securely (using AsyncStorage):**
+      // Store token and navigate
       await AsyncStorage.setItem("authToken", response.data.token);
 
-      // **Navigate based on user role after successful login:**
       if (response.data.user.loginRole === "Gem business owner") {
         navigation.navigate("BS_NavBar");
-      } else if (response.data.user.loginRole === "Burner" || 
-        response.data.user.loginRole === "Cutter" || 
-        response.data.user.loginRole === "Electric Burner") {
+      } else if (
+        response.data.user.loginRole === "Burner" ||
+        response.data.user.loginRole === "Cutter" ||
+        response.data.user.loginRole === "Electric Burner"
+      ) {
         navigation.navigate("W_NavBar");
       } else if (response.data.user.loginRole === "Customer") {
         navigation.navigate("C_NavBar");
       }
     } catch (error) {
-      // **Login Error:**
       console.error(
         "Login failed:",
         error.response ? error.response.data : error.message
       );
       if (error.response && error.response.data && error.response.data.error) {
-        setErrorMessage(error.response.data.error); // Display backend error message
+        setErrorMessage(error.response.data.error);
       } else {
         setErrorMessage(
           "Login failed. Please check your credentials and try again."
-        ); // Generic error message
+        );
       }
     }
   };
 
-  // New function to bypass backend for testing
+  // For testing only
   const handleTestLogin = (testRole) => {
-    // Set the role based on the test role
     setRole(testRole);
-    // Navigate based on the test role
     if (testRole === "gem_business_owner") {
       navigation.navigate("BS_NavBar");
     } else if (testRole === "cutter_burner") {
@@ -108,184 +108,201 @@ const Login = () => {
   };
 
   return (
-    <View style={[baseScreenStylesNew.container, styles.container]}>
-      <Image source={require("../../assets/logo.png")} style={styles.logo} />
-      <Text style={[styles.title, baseScreenStylesNew.blackText]}>Welcome Back</Text>
-      <Text style={[styles.subtitle, baseScreenStylesNew.blackText]}>Enter your email to login</Text>
-
-      <TextInput
-        style={baseScreenStylesNew.input}
-        placeholder="email@domain.com"
-        placeholderTextColor={baseScreenStylesNew.searchIcon.color}
-        value={email}
-        onChangeText={setEmail}
-        keyboardType="email-address"
-      />
-      <View style={baseScreenStylesNew.pickerContainer}>
-        <Picker
-          selectedValue={role}
-          style={[baseScreenStylesNew.picker, { color: role ? baseScreenStylesNew.input.color : "#888" }]}
-          onValueChange={(itemValue) => setRole(itemValue)}
+    <SafeAreaView style={baseScreenStyles.container}>
+      <StatusBar barStyle="dark-content" backgroundColor={baseScreenStyles.colors.background} />
+      <ScrollView contentContainerStyle={baseScreenStyles.scrollContent}>
+        <KeyboardAvoidingView
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+          style={baseScreenStyles.contentContainer}
         >
-          <Picker.Item label="Choose your role" value="" color="#888"/>
-          <Picker.Item label="Gem business owner" value="gem_business_owner" color="black" />
-          <Picker.Item label="Cutter/Burner" value="cutter_burner" color="black"/>
-          <Picker.Item label="Customer" value="customer" color="black" />
-        </Picker>
-      </View>
-      <TextInput
-        style={baseScreenStylesNew.input}
-        placeholder="Password"
-        placeholderTextColor={baseScreenStylesNew.searchIcon.color}
-        secureTextEntry
-        value={password}
-        onChangeText={setPassword}
-      />
-      {errorMessage ? (
-        <Text style={styles.errorText}>{errorMessage}</Text>
-      ) : null}
-      <TouchableOpacity style={styles.forgotPasswordContainer}>
-        <Text style={styles.forgotPassword}>Forgot your password?</Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        style={[baseScreenStylesNew.Button1,]}
-        onPress={handleLogin}
-      >
-        <Text style={baseScreenStylesNew.buttonText}>Login</Text>
-      </TouchableOpacity>
-
-      {/* Test Login Buttons */}
-      {__DEV__ && (
-        <View style={styles.developerSection}>
-          <Text style={styles.developerTitle}>Developer Buttons</Text>
-          <View style={styles.testLoginContainer}>
-            <TouchableOpacity
-              style={styles.devButton}
-              onPress={() => handleTestLogin("gem_business_owner")}
-            >
-              <Text style={styles.devButtonText}>B</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.devButton}
-              onPress={() => handleTestLogin("cutter_burner")}
-            >
-              <Text style={styles.devButtonText}>W</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.devButton}
-              onPress={() => handleTestLogin("customer")}
-            >
-              <Text style={styles.devButtonText}>C</Text>
-            </TouchableOpacity>
+          <View style={baseScreenStyles.logoContainer}>
+            <Image
+              source={require("../../assets/logo.png")}
+              style={baseScreenStyles.logo}
+            />
           </View>
-        </View>
-      )}
-    </View>
+
+          <View style={baseScreenStyles.formContainer}>
+            <Text style={baseScreenStyles.title}>Welcome Back</Text>
+            <Text style={baseScreenStyles.subtitle}>Sign in to continue</Text>
+
+            <View style={baseScreenStyles.inputWrapper}>
+              <Ionicons
+                name="mail-outline"
+                size={22}
+                color="#888"
+                style={baseScreenStyles.inputIcon}
+              />
+              <TextInput
+                style={baseScreenStyles.input}
+                placeholder="Email"
+                placeholderTextColor={baseScreenStyles.colors.input.placeholder}
+                value={email}
+                onChangeText={setEmail}
+                keyboardType="email-address"
+                autoCapitalize="none"
+              />
+            </View>
+
+            <View style={baseScreenStyles.inputWrapper}>
+              <Ionicons
+                name="person-outline"
+                size={22}
+                color="#888"
+                style={baseScreenStyles.inputIcon}
+              />
+              <View style={baseScreenStyles.pickerContainer}>
+                <Picker
+                  selectedValue={role}
+                  style={[baseScreenStyles.picker, { color: role ? baseScreenStyles.colors.text.dark : "#888" }]}
+                  onValueChange={(itemValue) => setRole(itemValue)}
+                >
+                  <Picker.Item label="Select your role" value="" color="#888" />
+                  <Picker.Item
+                    label="Gem business owner"
+                    value="gem_business_owner"
+                    color={baseScreenStyles.colors.text.dark}
+                  />
+                  <Picker.Item
+                    label="Cutter/Burner"
+                    value="cutter_burner"
+                    color={baseScreenStyles.colors.text.dark}
+                  />
+                  <Picker.Item 
+                    label="Customer" 
+                    value="customer" 
+                    color={baseScreenStyles.colors.text.dark}
+                  />
+                </Picker>
+              </View>
+            </View>
+
+            <View style={baseScreenStyles.inputWrapper}>
+              <Ionicons
+                name="lock-closed-outline"
+                size={22}
+                color="#888"
+                style={baseScreenStyles.inputIcon}
+              />
+              <TextInput
+                style={baseScreenStyles.input}
+                placeholder="Password"
+                placeholderTextColor={baseScreenStyles.colors.input.placeholder}
+                secureTextEntry={!isPasswordVisible}
+                value={password}
+                onChangeText={setPassword}
+              />
+              <TouchableOpacity
+                style={baseScreenStyles.eyeIcon}
+                onPress={() => setIsPasswordVisible(!isPasswordVisible)}
+              >
+                <Ionicons
+                  name={isPasswordVisible ? "eye-off-outline" : "eye-outline"}
+                  size={22}
+                  color="#888"
+                />
+              </TouchableOpacity>
+            </View>
+
+            {errorMessage ? (
+              <Text style={baseScreenStyles.errorText}>{errorMessage}</Text>
+            ) : null}
+
+            <TouchableOpacity style={styles.forgotPasswordContainer}>
+              <Text style={styles.forgotPassword}>Forgot your password?</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={baseScreenStyles.primaryButton} onPress={handleLogin}>
+              <Text style={baseScreenStyles.buttonText}>Login</Text>
+            </TouchableOpacity>
+
+            <View style={styles.registerContainer}>
+              <Text style={baseScreenStyles.regularText}>Don't have an account? </Text>
+              <TouchableOpacity
+                onPress={() => navigation.navigate("RegisterSelectionPage")}
+              >
+                <Text style={baseScreenStyles.linkText}>Sign Up</Text>
+              </TouchableOpacity>
+            </View>
+
+            {/* Test Login Buttons - only in development */}
+            {__DEV__ && (
+              <View style={styles.developerSection}>
+                <Text style={styles.developerTitle}>Developer Buttons</Text>
+                <View style={styles.testLoginContainer}>
+                  <TouchableOpacity
+                    style={styles.devButton}
+                    onPress={() => handleTestLogin("gem_business_owner")}
+                  >
+                    <Text style={styles.devButtonText}>B</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={styles.devButton}
+                    onPress={() => handleTestLogin("cutter_burner")}
+                  >
+                    <Text style={styles.devButtonText}>W</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={styles.devButton}
+                    onPress={() => handleTestLogin("customer")}
+                  >
+                    <Text style={styles.devButtonText}>C</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            )}
+          </View>
+        </KeyboardAvoidingView>
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 
+// Only keep screen-specific styles that aren't already in baseScreenStyles
 const styles = StyleSheet.create({
-
-  // Add these to your StyleSheet:
+  forgotPasswordContainer: {
+    alignSelf: "flex-end",
+    marginBottom: 24,
+  },
+  forgotPassword: {
+    color: baseScreenStyles.colors.primary,
+    fontSize: 14,
+    fontWeight: "500",
+  },
+  registerContainer: {
+    flexDirection: "row",
+    justifyContent: "center",
+    marginTop: 16,
+  },
   developerSection: {
-    width: '100%',
-    marginTop: 20,
-    padding: 10,
-    paddingBottom: 20,
-    backgroundColor: 'rgba(0, 0, 0, 0.3)',
-    borderRadius: 10,
+    marginTop: 40,
+    padding: 16,
+    backgroundColor: "rgba(0,0,0,0.05)",
+    borderRadius: 12,
   },
   developerTitle: {
     fontSize: 14,
-    color: '#666',
-    textAlign: 'center',
-    marginBottom: 10,
-    fontWeight: '600',
+    color: "#666",
+    textAlign: "center",
+    marginBottom: 16,
   },
   testLoginContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    width: '100%',
+    flexDirection: "row",
+    justifyContent: "space-around",
   },
   devButton: {
     width: 50,
     height: 50,
-    borderRadius: 12,
-    backgroundColor: '#2196F3',
-    alignItems: 'center',
-    justifyContent: 'center',
-    elevation: 3,
-    shadowColor: '#000',
-    shadowOffset: {
-    width: 0,
-    height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
+    borderRadius: 25,
+    backgroundColor: baseScreenStyles.colors.primary,
+    justifyContent: "center",
+    alignItems: "center",
   },
   devButtonText: {
-    color: 'white',
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-
-  container: {
-    alignItems: "center",
-    justifyContent: "center",
-    padding: 20,
-  },
-  logo: {
-    width: 170,
-    height: 150,
-    marginBottom: 20,
-  },
-  title: {
-    fontSize: 28,
-    marginBottom: 10,
-    color: "black"
-  },
-  subtitle: {
+    color: "#FFFFFF",
     fontSize: 18,
-    marginBottom: 15,
-    color: "black"
-  },
-
-  inputWithOpacity: {
-    backgroundColor: "rgba(255, 255, 255, 0.8)",
-  },
-  forgotPasswordContainer: {
-    alignSelf: "flex-start",
-  },
-  forgotPassword: {
-    color: "#000",
-    marginBottom: 20,
-    fontWeight: "bold"
-  },
-  
-  testLoginContainer: {
-    flexDirection: "row",
-    justifyContent: "space-around",
-    marginTop: 20,
-    width: "100%",
-  },
-  testLoginButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: "red",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  testLoginButtonText: {
-    color: "white",
     fontWeight: "bold",
   },
-  errorText: {
-    color: "red", 
-    fontSize: 14,
-    marginBottom: 10,
-    fontWeight: "bold",
-  }
 });
 
 export default Login;

@@ -171,10 +171,11 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     padding: 20,
+    paddingTop: 0,
   },
   logo: {
     width: 200,
-    height: 200,
+    height: 100,
     marginTop: 30,
     marginBottom: 5,
     resizeMode: "contain"

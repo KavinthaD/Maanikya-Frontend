@@ -1,4 +1,7 @@
-import { StyleSheet } from "react-native";
+import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
+import React from "react";
+import Modal from "react-native-modal";
+import { Ionicons } from "@expo/vector-icons";
 
 // Define brand colors for easy reference
 const COLORS = {
@@ -148,11 +151,12 @@ const styles = StyleSheet.create({
   // Logo container
   logoContainer: {
     alignItems: "center",
-    marginVertical: 40,
+    marginTop: 10,
+
   },
   logo: {
-    width: 140,
-    height: 140,
+    width: 200,
+    height: 200,
     resizeMode: "contain",
   },
   
@@ -186,9 +190,293 @@ const styles = StyleSheet.create({
     width: "40%",
     alignSelf: "center",
   },
+
+  // Role Selector Modal Styles
+  roleSelector: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    height: 50,
+    paddingRight: 12,
+  },
+  roleSelectorText: {
+    fontSize: 16,
+    color: COLORS.text.dark,
+  },
+  rolePlaceholderText: {
+    fontSize: 16,
+    color: COLORS.input.placeholder,
+  },
+  roleModal: {
+    margin: 0,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  roleModalContent: {
+    backgroundColor: COLORS.background,
+    width: "80%",
+    borderRadius: 16,
+    padding: 20,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  roleModalTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: COLORS.text.dark,
+    marginBottom: 16,
+    textAlign: "center",
+  },
+  roleOption: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingVertical: 14,
+    paddingHorizontal: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: "#f0f0f0",
+  },
+  selectedRoleOption: {
+    backgroundColor: `${COLORS.primary}10`,
+  },
+  roleOptionText: {
+    fontSize: 16,
+    color: COLORS.text.dark,
+  },
+  selectedRoleOptionText: {
+    color: COLORS.primary,
+    fontWeight: "500",
+  },
+
+  // Language selector styles
+  headerContainer: {
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    paddingHorizontal: 24,
+    paddingTop: 12,
+  },
+  languageButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: "#E0E0E0",
+    borderRadius: 20,
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    backgroundColor: "#F8F8F8",
+  },
+  languageText: {
+    fontSize: 14,
+    color: COLORS.text.medium,
+    marginHorizontal: 6,
+  },
+  
+  // Divider styles
+  dividerContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginVertical: 24,
+  },
+  divider: {
+    flex: 1,
+    height: 1,
+    backgroundColor: "#E0E0E0",
+  },
+  dividerText: {
+    paddingHorizontal: 16,
+    color: COLORS.text.light,
+    fontSize: 14,
+    fontWeight: "500",
+  },
+  
+  // Welcome screen styles
+  welcomeText: {
+    fontSize: 28,
+    fontWeight: "bold",
+    color: COLORS.primary,
+    marginBottom: 8,
+    textAlign: "center",
+  },
+  subtitleText: {
+    fontSize: 16,
+    color: COLORS.text.medium,
+    marginBottom: 40,
+    textAlign: "center",
+  },
+  
+  // Purpose/option button styles
+  purposeButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: COLORS.background,
+    borderRadius: 16,
+    padding: 16,
+    marginBottom: 16,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+    borderWidth: 1,
+    borderColor: "#F0F0F0",
+  },
+  purposeIconContainer: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    justifyContent: "center",
+    alignItems: "center",
+    marginRight: 16,
+  },
+  primaryIconBg: {
+    backgroundColor: COLORS.primary,
+  },
+  accentIconBg: {
+    backgroundColor: COLORS.accent,
+  },
+  purposeTextContainer: {
+    flex: 1,
+  },
+  purposeButtonTitle: {
+    fontSize: 18,
+    fontWeight: "600",
+    color: COLORS.text.dark,
+    marginBottom: 4,
+  },
+  purposeButtonSubtitle: {
+    fontSize: 14,
+    color: COLORS.text.medium,
+  },
+  
+  // Outlined button style (for login/secondary actions)
+  outlinedButton: {
+    backgroundColor: "#F8F8F8",
+    borderWidth: 2,
+    borderColor: COLORS.primary,
+    borderRadius: 12,
+    padding: 16,
+    alignItems: "center",
+    marginBottom: 24,
+  },
+  outlinedButtonText: {
+    color: COLORS.primary,
+    fontSize: 18,
+    fontWeight: "600",
+  },
+
+  // Login/register link container
+  authLinkContainer: {
+    flexDirection: "row",
+    marginTop: 28,
+    alignItems: "center",
+    justifyContent: "center",
+  },
 });
 
+// Export the baseScreenStyles with additional components
 export const baseScreenStyles = {
   ...styles,
   colors: COLORS,
+  
+  // Reusable component for role selection
+  RoleSelectorField: ({ role, placeholder, onPress }) => (
+    <TouchableOpacity 
+      style={styles.roleSelector} 
+      onPress={onPress}
+    >
+      <Text 
+        style={role ? styles.roleSelectorText : styles.rolePlaceholderText}
+      >
+        {role || placeholder || "Select an option"}
+      </Text>
+      <Ionicons name="chevron-down" size={20} color="#888" />
+    </TouchableOpacity>
+  ),
+  
+  // Reusable modal component for role selection
+  RoleSelectorModal: ({ 
+    isVisible, 
+    onClose, 
+    title, 
+    options, 
+    selectedValue, 
+    onSelect 
+  }) => (
+    <Modal
+      isVisible={isVisible}
+      backdropOpacity={0.5}
+      onBackdropPress={onClose}
+      style={styles.roleModal}
+    >
+      <View style={styles.roleModalContent}>
+        <Text style={styles.roleModalTitle}>{title || "Select an option"}</Text>
+        {options.map(item => (
+          <TouchableOpacity
+            key={item.value}
+            style={[
+              styles.roleOption,
+              selectedValue === item.value && styles.selectedRoleOption
+            ]}
+            onPress={() => {
+              onSelect(item.value);
+              onClose();
+            }}
+          >
+            <Text 
+              style={[
+                styles.roleOptionText,
+                selectedValue === item.value && styles.selectedRoleOptionText
+              ]}
+            >
+              {item.label}
+            </Text>
+            {selectedValue === item.value && (
+              <Ionicons name="checkmark" size={24} color={COLORS.primary} />
+            )}
+          </TouchableOpacity>
+        ))}
+      </View>
+    </Modal>
+  ),
+
+  // Add a new reusable language selector component
+  LanguageSelector: ({ selectedLanguage, onPress }) => (
+    <TouchableOpacity 
+      style={styles.languageButton} 
+      onPress={onPress}
+    >
+      <Ionicons name="globe-outline" size={22} color={COLORS.text.medium} />
+      <Text style={styles.languageText}>{selectedLanguage}</Text>
+      <Ionicons name="chevron-down" size={18} color={COLORS.text.medium} />
+    </TouchableOpacity>
+  ),
+  
+  // Add a divider component
+  Divider: ({ text }) => (
+    <View style={styles.dividerContainer}>
+      <View style={styles.divider} />
+      <Text style={styles.dividerText}>{text || "OR"}</Text>
+      <View style={styles.divider} />
+    </View>
+  ),
+  
+  // Add an auth link component (login/signup)
+  AuthLink: ({ question, linkText, onPress }) => (
+    <View style={styles.authLinkContainer}>
+      <Text style={styles.regularText}>{question} </Text>
+      <TouchableOpacity onPress={onPress}>
+        <Text style={styles.linkText}>{linkText}</Text>
+      </TouchableOpacity>
+    </View>
+  ),
 };

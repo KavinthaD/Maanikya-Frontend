@@ -104,63 +104,67 @@ const BusinessOwnerEditProfile = ({ navigation, route }) => {
   //handle saving profile data
   const handleSave = async () => {
     try {
-      // Get the token from storage
-      const token = await AsyncStorage.getItem("authToken");
-      if (!token) {
-        throw new Error("Authentication token not found");
-      }
-      
-      
-      const formData = new FormData();
+        // Get the token from storage
+        const token = await AsyncStorage.getItem("authToken");
+        if (!token) {
+            throw new Error("Authentication token not found");
+        }
 
-      // append the fields to the FormData object
-      formData.append("firstName", firstName);
-      formData.append("lastName", lastName);
-      formData.append("email", email);
-      formData.append("phone", contact);
-      formData.append("role", title);
-      formData.append("address", address);
-      
-      if (profilePhoto) {
-        formData.append("image", {
-          uri: profilePhoto,
-          type: "image/jpeg", // Adjust the type based on your image format
-          name: "profile.jpg", 
+        const updateData = {
+            firstName: firstName,
+            lastName: lastName,
+            email: email,
+            phone: contact,
+            role: title,
+            address: address,
+        };
+
+        // **Option 1: If Backend expects JSON**
+        const response = await fetch(`${API_URL}${ENDPOINTS.UPDATE_PROFILE}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`, // Include the token
+            },
+            body: JSON.stringify(updateData), // Send data as JSON
         });
-      }
 
+        console.log("User profile updated successfully:", response);
 
-      const response = await fetch(`${API_URL}${ENDPOINTS.UPDATE_PROFILE}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'multipart/form-data',
-          'Authorization': `Bearer ${token}`, // Include the token
-        },
-        body: formData,  
-      });
-      console.log("GUser profile updated successfully:", response.data);
-      if (!response.ok) {
-        const errorData = await response.json();
-        console.error('Update failed:', errorData);
-        Alert.alert('Update Failed', errorData.message || 'Something went wrong.'); // Show user-friendly error
-        return;
-      }
+        if (!response.ok) {
+            const errorData = await response.json();
+            console.error('Update failed:', errorData);
+            Alert.alert('Update Failed', errorData.message || 'Something went wrong.');
+            return;
+        }
 
-      const contentType = response.headers.get('content-type');
-      if (contentType && contentType.indexOf('application/json') !== -1) {
-        const data = await response.json();
-        console.log('Profile updated:', data);
-        Alert.alert('Success', 'Profile updated successfully!');
+        const contentType = response.headers.get('content-type');
+        if (contentType && contentType.indexOf('application/json') !== -1) {
+            const data = await response.json();
+            console.log('Profile updated:', data);
+            Alert.alert('Success', 'Profile updated successfully!');
 
-        // Navigate back and pass 
-        navigation.navigate("BS_NavBar", { screen: "Profiles" });
-      } else {
-        console.error('Unexpected content type:', contentType);
-        Alert.alert('Error', 'Unexpected response from server.');
-      }
+            // Check if data.role is valid before storing
+            if (data.role) {
+                await AsyncStorage.setItem("userRole", data.role);
+            } else {
+                console.warn("Received null/undefined role from backend.  Using existing role from AsyncStorage.");
+                // do not update, keep existing value
+            }
+
+            // Determine the correct navigation bar based on user role
+            const userRole = await AsyncStorage.getItem("userRole");
+            const navigationBar = userRole === "BusinessOwner" ? "BS_NavBar" : "W_NavBar";
+
+            // Navigate to the correct navigation bar
+            navigation.navigate(navigationBar, { screen: "Profiles" });
+        } else {
+            console.error('Unexpected content type:', contentType);
+            Alert.alert('Error', 'Unexpected response from server.');
+        }
     } catch (error) {
-      console.error('Error updating profile:', error);
-      Alert.alert('Error', 'Failed to update profile.  Check your network connection.');
+        console.error('Error updating profile:', error);
+        Alert.alert('Error', 'Failed to update profile.  Check your network connection.');
     }
   };
 

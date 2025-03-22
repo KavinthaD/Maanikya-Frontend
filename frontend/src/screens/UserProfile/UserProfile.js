@@ -178,7 +178,19 @@ const UserProfile = ({ route }) => {
   if (loading && !user) {
     return (
       <SafeAreaView style={baseScreenStylesNew.container}>
-        <HeaderBar title="Profile" />
+        {/* Header with settings menu */}
+      <HeaderBar
+        title="My Profile"
+        rightComponent={
+          <Pressable onPress={toggleMenu} style={styles.settingsButton}>
+            <MaterialIcons
+              name="more-vert"
+              size={28}
+              color={baseScreenStyles.colors.text.dark}
+            />
+          </Pressable>
+        }
+      />
         <View style={styles.loadingContainer}>
           <ActivityIndicator
             size="large"
@@ -194,7 +206,19 @@ const UserProfile = ({ route }) => {
   if (error && !user) {
     return (
       <SafeAreaView style={baseScreenStylesNew.container}>
-        <HeaderBar title="Profile" />
+        {/* Header with settings menu */}
+      <HeaderBar
+        title="My Profile"
+        rightComponent={
+          <Pressable onPress={toggleMenu} style={styles.settingsButton}>
+            <MaterialIcons
+              name="more-vert"
+              size={28}
+              color={baseScreenStyles.colors.text.dark}
+            />
+          </Pressable>
+        }
+      />
         <View style={styles.errorContainer}>
           <Ionicons name="alert-circle-outline" size={64} color="#FF6B6B" />
           <Text style={styles.errorText}>{error}</Text>

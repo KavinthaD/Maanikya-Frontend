@@ -23,6 +23,7 @@ import { API_URL, ENDPOINTS } from '../../config/api';
 import HeaderBar from "../../components/HeaderBar";
 import { baseScreenStylesNew } from "../../styles/baseStylesNew";
 import { baseScreenStyles } from "../../styles/baseStyles";
+import { Camera } from "expo-camera";
 
 const EditProfile = ({ navigation, route }) => {
   // Destructuring the user data if available
@@ -40,6 +41,7 @@ const EditProfile = ({ navigation, route }) => {
   const [isModalVisible, setModalVisible] = useState(false);
   const [loading, setLoading] = useState(false);
   const [photoChanged, setPhotoChanged] = useState(false);
+  const [hasPermission, setHasPermission] = useState(null);
   const [toast, setToast] = useState({
     visible: false,
     message: "",
@@ -72,8 +74,32 @@ const EditProfile = ({ navigation, route }) => {
     }
   }, [route.params?.user]);
 
-  const handleCameraPress = () => {
-    setModalVisible(true);
+  const handleCameraPress = async () => {
+    try {
+              const { status } = await Camera.requestCameraPermissionsAsync();
+              if (status !== "granted") {
+                Alert.alert(
+                  "Permission Required",
+                  "This app needs camera and gallery access to get user photo. Pleasse go to settings and enable permissions for camera",
+                  [
+                    {
+                      text: "Open Settings",
+                      onPress: () => Linking.openSettings(),
+                    },
+                    { text: "Cancel", style: "cancel" },
+                  ]
+                );
+                return;
+              }
+              setHasPermission(status === "granted");
+              setModalVisible(true);
+            } catch (error) {
+              console.error("Error requesting camera permission:", error);
+              Alert.alert(
+                "Error",
+                "Failed to request camera permissions. Please try again."
+              );
+            }
   };
 
   const handleTakePhoto = async () => {
@@ -89,6 +115,7 @@ const EditProfile = ({ navigation, route }) => {
         cropperCircleOverlay: true,
         cropperStatusBarColor: baseScreenStyles.colors.primary || "#170969",
         cropperToolbarColor: baseScreenStyles.colors.primary || "#170969",
+        cropperToolbarWidgetColor: "#FFFFFF", 
       });
 
       if (result && result.path) {
@@ -113,6 +140,7 @@ const EditProfile = ({ navigation, route }) => {
         cropperCircleOverlay: true,
         cropperStatusBarColor: baseScreenStyles.colors.primary || "#170969",
         cropperToolbarColor: baseScreenStyles.colors.primary || "#170969",
+        cropperToolbarWidgetColor: "#FFFFFF", 
       });
 
       if (result && result.path) {
@@ -167,7 +195,7 @@ const EditProfile = ({ navigation, route }) => {
         const match = /\.(\w+)$/.exec(filename);
         const type = match ? `image/${match[1]}` : 'image/jpeg';
         
-        formData.append("profileImage", {
+        formData.append("image", {
           uri: profilePhoto,
           name: filename,
           type

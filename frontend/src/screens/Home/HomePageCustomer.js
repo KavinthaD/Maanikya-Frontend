@@ -17,24 +17,40 @@ import { baseScreenStylesNew } from "../../styles/baseStylesNew";
 import { baseScreenStyles } from "../../styles/baseStyles";
 import { homeStyles, HomeScreenComponents } from "../../styles/homeScreenStyles";
 import { useNavigation } from "@react-navigation/native";
+import { Camera } from "expo-camera";
 
 const HomePageCustomer = () => {
   const navigation = useNavigation();
   const [isModalVisible, setModalVisible] = useState(false);
   const [scanning, setScanning] = useState(false);
-  const [permission, requestPermission] = useCameraPermissions();
+  const [hasPermission, setHasPermission] = useState(null);
 
-  if (!permission) {
-    // Camera permissions are still loading
-    return <View />;
-  }
-
-  if (!permission.granted) {
-    return <HomeScreenComponents.PermissionRequest onRequestPermission={requestPermission} />;
-  }
-
-  const handleQrScan = () => {
-    setModalVisible(true);
+  const handleQrScan = async () => {
+    try {
+          const { status } = await Camera.requestCameraPermissionsAsync();
+          if (status !== "granted") {
+            Alert.alert(
+              "Permission Required",
+              "This app needs camera and gallery access to get QR code. Pleasse go to settings and enable permissions for camera",
+              [
+                {
+                  text: "Open Settings",
+                  onPress: () => Linking.openSettings(),
+                },
+                { text: "Cancel", style: "cancel" },
+              ]
+            );
+            return;
+          }
+          setHasPermission(status === "granted");
+          setModalVisible(true);
+        } catch (error) {
+          console.error("Error requesting camera permission:", error);
+          Alert.alert(
+            "Error",
+            "Failed to request camera permissions. Please try again."
+          );
+        }
   };
 
   const handleBarCodeScanned = ({ data }) => {

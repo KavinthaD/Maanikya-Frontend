@@ -20,7 +20,7 @@ const HomeScreen = () => {
   const navigation = useNavigation();
   const [isModalVisible, setModalVisible] = useState(false);
   const [scanning, setScanning] = useState(false);
-  const [permission, requestPermission] = useCameraPermissions();
+  const [hasPermission, setHasPermission] = useState(null);
 
   const handleQrScan = async () => {
     try {
@@ -28,7 +28,7 @@ const HomeScreen = () => {
           if (status !== "granted") {
             Alert.alert(
               "Permission Required",
-              "This app needs camera and gallery access to get Gem image. Pleasse go to settings and enable permissions for camera",
+              "This app needs camera and gallery access to get QR code. Pleasse go to settings and enable permissions for camera",
               [
                 {
                   text: "Open Settings",

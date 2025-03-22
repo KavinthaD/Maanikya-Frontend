@@ -41,6 +41,8 @@ const Login = () => {
     { label: "Customer", value: "customer" }
   ]);
   const [showRoleModal, setShowRoleModal] = useState(false);
+  const [errorModalVisible, setErrorModalVisible] = useState(false);
+  const [errorModalMessage, setErrorModalMessage] = useState("");
 
   const getRoleLabel = () => {
     const selectedRole = roleItems.find(item => item.value === role);
@@ -107,13 +109,21 @@ const Login = () => {
         "Login failed:",
         error.response ? error.response.data : error.message
       );
-      if (error.response && error.response.data && error.response.data.error) {
-        setErrorMessage(error.response.data.error);
-      } else {
-        setErrorMessage(
-          "Login failed. Please check your credentials and try again."
-        );
+      
+      // Get error message from the server response
+      let errorMsg = "Login failed. Please check your credentials and try again.";
+      
+      if (error.response && error.response.data) {
+        if (error.response.data.message) {
+          errorMsg = error.response.data.message;
+        } else if (error.response.data.error) {
+          errorMsg = error.response.data.error;
+        }
       }
+      
+      // Show error modal instead of inline error
+      setErrorModalMessage(errorMsg);
+      setErrorModalVisible(true);
     }
   };
 
@@ -211,9 +221,6 @@ const Login = () => {
               </TouchableOpacity>
             </View>
 
-            {errorMessage ? (
-              <Text style={baseScreenStyles.errorText}>{errorMessage}</Text>
-            ) : null}
 
             <TouchableOpacity style={styles.forgotPasswordContainer}>
               <Text style={styles.forgotPassword}>Forgot your password?</Text>
@@ -288,6 +295,47 @@ const Login = () => {
         selectedValue={role}
         onSelect={(value) => setRole(value)}
       />
+      <Modal
+        isVisible={errorModalVisible}
+        backdropOpacity={0.5}
+        animationIn="fadeIn"
+        animationOut="fadeOut"
+        useNativeDriver
+        style={styles.modal}
+      >
+        <View style={styles.modalContent}>
+          <Text style={styles.errorText}>{errorModalMessage}</Text>
+          <TouchableOpacity
+            style={baseScreenStyles.primaryButton}
+            onPress={() => setErrorModalVisible(false)}
+          >
+            <Text style={baseScreenStyles.buttonText}>OK</Text>
+          </TouchableOpacity>
+        </View>
+      </Modal>
+      {/* Error Modal */}
+      <Modal
+        isVisible={errorModalVisible}
+        backdropOpacity={0.5}
+        animationIn="fadeIn"
+        animationOut="fadeOut"
+        useNativeDriver
+        style={styles.modal}
+      >
+        <View style={styles.errorModalContent}>
+          <View style={styles.errorIconContainer}>
+            <Ionicons name="alert-circle" size={50} color="#FF6B6B" />
+          </View>
+          <Text style={styles.errorModalTitle}>Login Failed</Text>
+          <Text style={styles.errorModalMessage}>{errorModalMessage}</Text>
+          <TouchableOpacity 
+            style={styles.errorModalButton}
+            onPress={() => setErrorModalVisible(false)}
+          >
+            <Text style={styles.errorModalButtonText}>OK</Text>
+          </TouchableOpacity>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 };
@@ -419,6 +467,51 @@ const styles = StyleSheet.create({
   selectedRoleOptionText: {
     color: baseScreenStyles.colors.primary,
     fontWeight: '500',
+  },
+  errorText: {
+    fontSize: 18,
+    color: 'red',
+    fontWeight: '600',
+    marginBottom: 16,
+  },
+  errorModalContent: {
+    backgroundColor: 'white',
+    padding: 22,
+    borderRadius: 16,
+    alignItems: 'center',
+    width: '80%',
+  },
+  errorIconContainer: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    backgroundColor: 'rgba(255, 107, 107, 0.1)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  errorModalTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#212121',
+    marginBottom: 8,
+  },
+  errorModalMessage: {
+    fontSize: 16,
+    color: '#757575',
+    textAlign: 'center',
+    marginBottom: 24,
+  },
+  errorModalButton: {
+    backgroundColor: baseScreenStyles.colors.primary,
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    borderRadius: 8,
+  },
+  errorModalButtonText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: '600',
   },
 });
 

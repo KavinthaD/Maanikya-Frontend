@@ -3,7 +3,7 @@ import { SafeAreaView } from "react-native";
 import HomePageCustomer from "../screens/Home/HomePageCustomer";
 import Market from "../screens/Market/Market";
 import Alerts from "../screens/Notification/Alerts";
-import CustomerProfile from "../screens/UserProfile/CustomerProfile";
+import Profiles from "../screens/UserProfile/UserProfile";
 import { createCustomTabNavigator, icons } from "./NavBarUtils";
 
 const TabArr = [
@@ -29,11 +29,11 @@ const TabArr = [
     component: Alerts,
   },
   {
-    route: "CustomerProfile",
+    route: "Profiles",
     label: "Profile",
     activeIcon: icons.user.active,
     inActiveIcon: icons.user.inactive,
-    component: CustomerProfile,
+    component: Profiles,
   },
 ];
 

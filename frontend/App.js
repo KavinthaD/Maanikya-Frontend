@@ -44,7 +44,6 @@ import AddContact from "./src/screens/Contacts/AddContact";
 import Contacts from "./src/screens/Contacts/Contacts";
 import ChatScreen from "./src/screens/Chat/ChatScreen";
 import MessageInbox from "./src/screens/Chat/MessageInbox";
-import CustomerProfileEdit from "./src/screens/UserProfile/CustomerProfileEdit";
 
 const Stack = createNativeStackNavigator();
 
@@ -94,7 +93,6 @@ const App = () => {
             <Stack.Screen name="ChatScreen" component={ChatScreen} options={{ headerShown: false }} />
             <Stack.Screen name="Contacts" component={Contacts} options={{ headerShown: false }} />
             <Stack.Screen name="Customeraddseller" component={Customeraddseller} options={{ headerShown: false }} />
-            <Stack.Screen name="CustomerProfileEdit" component={CustomerProfileEdit} options={{ headerShown: false }} />
             <Stack.Screen name="FavoritesScreen" component={FavoritesScreen} options={{ headerShown: false }} />
             <Stack.Screen name="GemDetailsScreen" component={GemDetailsScreen} options={{ headerShown: false}} />
             <Stack.Screen name="GemOnDisplay" component={GemOnDisplay} options={{ headerShown: false }} />

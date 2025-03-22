@@ -15,7 +15,6 @@ import {
   StatusBar,
   ScrollView,
 } from "react-native";
-import { Picker } from "@react-native-picker/picker";
 import { useNavigation } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
 import axios from "axios";
@@ -33,6 +32,13 @@ const SignUpBusiness = () => {
     accountType: "",
   });
   const [errorMessage, setErrorMessage] = useState("");
+  const [showRoleModal, setShowRoleModal] = useState(false);
+  const [roleItems] = useState([
+    { label: "Gem business owner", value: "gem_business_owner" },
+    { label: "Cutter", value: "cutter" },
+    { label: "Burner", value: "burner" },
+    { label: "Electric Burner", value: "electric_burner" }
+  ]);
 
   const handleContinue = () => {
     // Validation logic
@@ -118,7 +124,7 @@ const SignUpBusiness = () => {
             </View>
           </View>
 
-          <Text style={baseScreenStyles.title}>Create Account</Text>
+          <Text style={baseScreenStyles.title}>Create Business Account</Text>
           <Text style={baseScreenStyles.subtitle}>
             Enter your personal details
           </Text>
@@ -126,7 +132,7 @@ const SignUpBusiness = () => {
           <View style={baseScreenStyles.formContainer}>
             <View style={baseScreenStyles.row}>
               <View style={baseScreenStyles.halfWidth}>
-                <Text style={baseScreenStyles.label}>First Name</Text>
+                
                 <View style={baseScreenStyles.inputWrapper}>
                   <Ionicons
                     name="person-outline"
@@ -136,7 +142,7 @@ const SignUpBusiness = () => {
                   />
                   <TextInput
                     style={baseScreenStyles.input}
-                    placeholder="John"
+                    placeholder="First Name"
                     placeholderTextColor={
                       baseScreenStyles.colors.input.placeholder
                     }
@@ -149,7 +155,7 @@ const SignUpBusiness = () => {
               </View>
 
               <View style={baseScreenStyles.halfWidth}>
-                <Text style={baseScreenStyles.label}>Last Name</Text>
+                
                 <View style={baseScreenStyles.inputWrapper}>
                   <Ionicons
                     name="person-outline"
@@ -159,7 +165,7 @@ const SignUpBusiness = () => {
                   />
                   <TextInput
                     style={baseScreenStyles.input}
-                    placeholder="Doe"
+                    placeholder="Last Name"
                     placeholderTextColor={
                       baseScreenStyles.colors.input.placeholder
                     }
@@ -172,7 +178,6 @@ const SignUpBusiness = () => {
               </View>
             </View>
 
-            <Text style={baseScreenStyles.label}>Email</Text>
             <View style={baseScreenStyles.inputWrapper}>
               <Ionicons
                 name="mail-outline"
@@ -182,7 +187,7 @@ const SignUpBusiness = () => {
               />
               <TextInput
                 style={baseScreenStyles.input}
-                placeholder="example@domain.com"
+                placeholder="Email"
                 placeholderTextColor={baseScreenStyles.colors.input.placeholder}
                 value={form.email}
                 onChangeText={(value) => setForm({ ...form, email: value })}
@@ -191,7 +196,6 @@ const SignUpBusiness = () => {
               />
             </View>
 
-            <Text style={baseScreenStyles.label}>Phone Number</Text>
             <View style={baseScreenStyles.inputWrapper}>
               <Ionicons
                 name="call-outline"
@@ -201,77 +205,25 @@ const SignUpBusiness = () => {
               />
               <TextInput
                 style={baseScreenStyles.input}
-                placeholder="+94 71 796 6745"
+                placeholder="Phone Number"
                 placeholderTextColor={baseScreenStyles.colors.input.placeholder}
                 value={form.phone}
                 onChangeText={(value) => setForm({ ...form, phone: value })}
                 keyboardType="phone-pad"
               />
             </View>
-
-            <Text style={baseScreenStyles.label}>Select Your Role</Text>
-            <View
-              style={[baseScreenStyles.inputWrapper, { paddingVertical: 0 }]}
-            >
+            <View style={baseScreenStyles.inputWrapper}>
               <Ionicons
                 name="briefcase-outline"
                 size={20}
                 color="#888"
                 style={baseScreenStyles.inputIcon}
               />
-              <View style={baseScreenStyles.pickerContainer}>
-                <Picker
-                  selectedValue={form.role}
-                  style={[
-                    baseScreenStyles.picker,
-                    {
-                      color: form.role
-                        ? baseScreenStyles.colors.text.dark
-                        : baseScreenStyles.colors.input.placeholder,
-                    },
-                  ]}
-                  onValueChange={(itemValue) => {
-                    setForm({ ...form, role: itemValue });
-                    if (itemValue === "gem_business_owner") {
-                      setForm((prev) => ({ ...prev, accountType: "business" }));
-                    } else if (
-                      itemValue === "cutter" ||
-                      itemValue === "burner" ||
-                      itemValue === "electric_burner"
-                    ) {
-                      setForm((prev) => ({ ...prev, accountType: "worker" }));
-                    } else {
-                      setForm((prev) => ({ ...prev, accountType: "" }));
-                    }
-                  }}
-                >
-                  <Picker.Item
-                    label="Choose your role"
-                    value=""
-                    color={baseScreenStyles.colors.input.placeholder}
-                  />
-                  <Picker.Item
-                    label="Gem business owner"
-                    value="gem_business_owner"
-                    color={baseScreenStyles.colors.text.dark}
-                  />
-                  <Picker.Item
-                    label="Cutter"
-                    value="cutter"
-                    color={baseScreenStyles.colors.text.dark}
-                  />
-                  <Picker.Item
-                    label="Burner"
-                    value="burner"
-                    color={baseScreenStyles.colors.text.dark}
-                  />
-                  <Picker.Item
-                    label="Electric Burner"
-                    value="electric_burner"
-                    color={baseScreenStyles.colors.text.dark}
-                  />
-                </Picker>
-              </View>
+              <baseScreenStyles.RoleSelectorField
+                role={roleItems.find(item => item.value === form.role)?.label}
+                placeholder="Choose your role"
+                onPress={() => setShowRoleModal(true)}
+              />
             </View>
 
             {errorMessage ? (
@@ -301,6 +253,25 @@ const SignUpBusiness = () => {
           </View>
         </KeyboardAvoidingView>
       </ScrollView>
+      <baseScreenStyles.RoleSelectorModal
+        isVisible={showRoleModal}
+        onClose={() => setShowRoleModal(false)}
+        title="Select your role"
+        options={roleItems}
+        selectedValue={form.role}
+        onSelect={(value) => {
+          setForm(prev => ({ 
+            ...prev, 
+            role: value,
+            accountType: value === "gem_business_owner" 
+              ? "business" 
+              : ["cutter", "burner", "electric_burner"].includes(value) 
+                ? "worker" 
+                : ""
+          }));
+          setShowRoleModal(false);
+        }}
+      />
     </SafeAreaView>
   );
 };
@@ -311,7 +282,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    marginTop: 0,
+    marginTop: -20,
     marginBottom: 0,
     position: "relative",
     width: "100%",
@@ -320,7 +291,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     left: 0,
     top: 0,
-    padding: 8,
+    
     zIndex: 1,
   },
   loginContainer: {

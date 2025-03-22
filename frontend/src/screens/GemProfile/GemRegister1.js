@@ -14,8 +14,10 @@ import {
   KeyboardAvoidingView,
   ScrollView,
   Platform,
+  ActivityIndicator,
 } from "react-native";
 import { baseScreenStylesNew } from "../../styles/baseStylesNew";
+import { baseScreenStyles } from "../../styles/baseStyles";
 import { useNavigation } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import HeaderBar from "../../components/HeaderBar";
@@ -83,6 +85,29 @@ export default function GemRegister1() {
 function GemRegister1Main() {
   const [hasPermission, setHasPermission] = useState(null);
   const [isModalVisible, setModalVisible] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [loadingMessage, setLoadingMessage] = useState("");
+
+  // Add this near the top of your component function (GemRegister1Main)
+  const [toast, setToast] = useState({
+    visible: false,
+    message: "",
+    type: "success", // success, error, info
+  });
+
+  // Add this function to show toast messages
+  const showToast = (message, type = "success") => {
+    setToast({
+      visible: true,
+      message,
+      type,
+    });
+    
+    // Auto-hide after 3 seconds
+    setTimeout(() => {
+      setToast(prev => ({ ...prev, visible: false }));
+    }, 3000);
+  };
 
   const handleCameraPress = async () => {
     try {
@@ -181,6 +206,10 @@ const handleAIAnalysis = async (imageInfo) => {
       photos: [imageInfo.path],
     }));
 
+    // Show loading message
+    setIsLoading(true);
+    setLoadingMessage("Analyzing image with AI...");
+
     const token = await AsyncStorage.getItem('authToken');
     if (!token) {
       throw new Error("No authentication token found");
@@ -231,23 +260,18 @@ const handleAIAnalysis = async (imageInfo) => {
         description: analysis.description,
       }));
 
-      Alert.alert(
-        "AI Analysis Complete",
-        "The form has been filled with AI suggestions. You can modify them if needed."
-      );
+      showToast("AI suggestions applied! You can modify them if needed.");
     }
   } catch (error) {
     console.error("AI Analysis error:", error);
     
     // The important part: don't remove the image if AI fails
     // Just inform the user and let them continue manually
-    Alert.alert(
-      "AI Analysis Failed",
-      "The image has been added but couldn't be analyzed. Please fill the form manually.",
-      [{ text: "OK" }]
-    );
+    showToast("Image added but AI analysis failed. Please fill manually.", "error");
     
     // We don't need to clear the image here - it's already set in the form
+  } finally {
+    setIsLoading(false);
   }
 };
 
@@ -420,19 +444,28 @@ const handleAIAnalysis = async (imageInfo) => {
         </TouchableOpacity>
       )}
       
+      {/* Loading overlay */}
+      {isLoading && (
+        <View style={styles.loadingOverlay}>
+          <ActivityIndicator size="large" color={baseScreenStyles.colors.primary} />
+          <Text style={styles.loadingText}>{loadingMessage}</Text>
+        </View>
+      )}
+      
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={[baseScreenStylesNew.container, { zIndex: 1 }]}
         keyboardVerticalOffset={Platform.OS === "ios" ? 64 : 0}
       >
         <ScrollView
-          contentContainerStyle={{ flexGrow: 1 }}
+          contentContainerStyle={{ flexGrow: 1, padding: 20 }}
           nestedScrollEnabled={true}
         >
-          <View style={[FormFieldStyles.innerContainer, { zIndex: 2 }]}>
-            <View style={styles.buttonContent}>
+          <View style={styles.formContainer}>
+            {/* Camera/AI Section */}
+            <View style={styles.cameraSection}>
               <TouchableOpacity
-                style={[styles.cameraButtonContainer, baseScreenStylesNew.themeColor]}
+                style={styles.cameraButton}
                 onPress={handleCameraPress}
               >
                 {form.photos.length > 0 ? (
@@ -441,91 +474,111 @@ const handleAIAnalysis = async (imageInfo) => {
                     style={styles.selectedImage}
                   />
                 ) : (
-                  <Icon name="camera-alt" size={60} style={baseScreenStylesNew.whiteText} />
+                  <View style={styles.cameraIconContainer}>
+                    <Icon name="camera-alt" size={40} color={baseScreenStyles.colors.background} />
+                  </View>
                 )}
               </TouchableOpacity>
-              <Text style={[baseScreenStylesNew.blackText,styles.addPhotoButtonText]}>AI auto filler</Text>
-              <Text style={baseScreenStylesNew.helperText}>
-                Below details can be filled with image of the gem or by manually
-                (Please be aware, AI auto filler can make mistakes.)
+              
+              <Text style={styles.sectionTitle}>AI Auto-Fill</Text>
+              
+              <Text style={styles.helperText}>
+                Take a photo to let AI analyze and auto-fill gem details.
+                (Be aware that AI analysis may not always be accurate.)
               </Text>
             </View>
-            <TextInput
-              style={[FormFieldStyles.input, baseScreenStylesNew.item, baseScreenStylesNew.blackText]}
-              placeholder="Gem color *"
-              placeholderTextColor={FormFieldStyles.placeholder.color}
-              value={form.color}
-              placeholderStyle={FormFieldStyles.placeholder}
-              onChangeText={(value) => handleInputChange("color", value)}
+
+            {/* Form Fields */}
+            <View style={styles.formFields}>
+              {/* Color Input */}
+              <View style={baseScreenStyles.inputWrapper}>
+                <Icon name="palette" size={20} color={baseScreenStyles.colors.input.placeholder} style={styles.inputIcon} />
+                <TextInput
+                  style={baseScreenStyles.input}
+                  placeholder="Gem color *"
+                  placeholderTextColor={baseScreenStyles.colors.input.placeholder}
+                  value={form.color}
+                  onChangeText={(value) => handleInputChange("color", value)}
+                />
+              </View>
               
-            />
-            <DropDownPicker
-              open={openShape}
-              value={form.gemShape}
-              items={shapeItems}
-              setOpen={setOpenShape}
-              setValue={(callback) => handleInputChange("gemShape", callback())}
-              placeholder="Select Gem Shape *"
-              style={[FormFieldStyles.dropdown, baseScreenStylesNew.item]}
-              dropDownContainerStyle={FormFieldStyles.dropdownContainer}
-              listItemContainerStyle={FormFieldStyles.listItemContainer}
-              listItemLabelStyle={FormFieldStyles.listItemLabel}
-              placeholderStyle={FormFieldStyles.placeholder}
-              textStyle={[FormFieldStyles.dropdownText, baseScreenStylesNew.blackText]}
-              theme="LIGHT"
-              showArrowIcon={true}
-              showTickIcon={false}
-              zIndex={3000}
-              zIndexInverse={2000}
-              listMode="SCROLLVIEW"
-              scrollViewProps={{
-                nestedScrollEnabled: true,
-              }}
-            />
-            <DropDownPicker
-              open={openGemType}
-              value={form.gemType}
-              items={gemTypeItems}
-              setOpen={setOpenGemType}
-              setValue={(callback) => handleInputChange("gemType", callback())}
-              placeholder="Select Gem Type *"
-              style={[FormFieldStyles.dropdown, baseScreenStylesNew.item]}
-              dropDownContainerStyle={FormFieldStyles.dropdownContainer}
-              listItemContainerStyle={FormFieldStyles.listItemContainer}
-              listItemLabelStyle={FormFieldStyles.listItemLabel}
-              placeholderStyle={FormFieldStyles.placeholder}
-              textStyle={[FormFieldStyles.dropdownText, baseScreenStylesNew.blackText]}
-              theme="LIGHT"
-              showArrowIcon={true}
-              showTickIcon={false}
-              zIndex={2000}
-              zIndexInverse={3000}
-              listMode="SCROLLVIEW"
-              scrollViewProps={{
-                nestedScrollEnabled: true,
-              }}
-            />
-            <TextInput
-              style={[FormFieldStyles.input, FormFieldStyles.descriptionInput, baseScreenStylesNew.item, baseScreenStylesNew.blackText]}
-              placeholder="Description"
-              placeholderTextColor={FormFieldStyles.placeholder.color}
-              value={form.description}
-              onChangeText={(value) => handleInputChange("description", value)}
-              multiline={true}
-              numberOfLines={4}
-              textAlignVertical="top"
-            />
+              {/* Gem Shape Dropdown */}
+              <View style={[styles.dropdownWrapper, { zIndex: 3000 }]}>
+                <Icon name="category" size={20} color={baseScreenStyles.colors.input.placeholder} style={styles.dropdownIcon} />
+                <DropDownPicker
+                  open={openShape}
+                  value={form.gemShape}
+                  items={shapeItems}
+                  setOpen={setOpenShape}
+                  setValue={(callback) => handleInputChange("gemShape", callback())}
+                  placeholder="Select Gem Shape *"
+                  style={styles.dropdown}
+                  containerStyle={styles.dropdownContainer}
+                  dropDownContainerStyle={styles.dropDownContainerStyle}
+                  placeholderStyle={styles.placeholderStyle}
+                  listItemLabelStyle={styles.listItemLabelStyle}
+                  textStyle={styles.dropdownTextStyle}
+                  arrowIconStyle={styles.arrowIconStyle}
+                  zIndex={3000}
+                  zIndexInverse={1000}
+                  listMode="SCROLLVIEW"
+                />
+              </View>
+              
+              {/* Gem Type Dropdown */}
+              <View style={[styles.dropdownWrapper, { zIndex: 2000 }]}>
+                <Icon name="diamond" size={20} color={baseScreenStyles.colors.input.placeholder} style={styles.dropdownIcon} />
+                <DropDownPicker
+                  open={openGemType}
+                  value={form.gemType}
+                  items={gemTypeItems}
+                  setOpen={setOpenGemType}
+                  setValue={(callback) => handleInputChange("gemType", callback())}
+                  placeholder="Select Gem Type *"
+                  style={styles.dropdown}
+                  containerStyle={styles.dropdownContainer}
+                  dropDownContainerStyle={styles.dropDownContainerStyle}
+                  placeholderStyle={styles.placeholderStyle}
+                  listItemLabelStyle={styles.listItemLabelStyle}
+                  textStyle={styles.dropdownTextStyle}
+                  arrowIconStyle={styles.arrowIconStyle}
+                  zIndex={2000}
+                  zIndexInverse={3000}
+                  listMode="SCROLLVIEW"
+                />
+              </View>
+              
+              {/* Description Input */}
+              <View style={[baseScreenStyles.inputWrapper, styles.textareaWrapper]}>
+                <Icon 
+                  name="description" 
+                  size={20} 
+                  color={baseScreenStyles.colors.input.placeholder}
+                  style={[styles.inputIcon, { alignSelf: 'flex-start', marginTop: 12 }]} 
+                />
+                <TextInput
+                  style={[baseScreenStyles.input, styles.textareaInput]}
+                  placeholder="Description"
+                  placeholderTextColor={baseScreenStyles.colors.input.placeholder}
+                  value={form.description}
+                  onChangeText={(value) => handleInputChange("description", value)}
+                  multiline={true}
+                  numberOfLines={4}
+                  textAlignVertical="top"
+                />
+              </View>
+            </View>
+            
+            {/* Continue Button */}
             <TouchableOpacity
               style={[
-                baseScreenStylesNew.Button1,
-                //{
-                  //opacity:
-                    //form.color && form.gemShape && form.gemType ? 1 : 0.5,
-                //},
+                baseScreenStyles.primaryButton,
+                {opacity: form.color && form.gemShape && form.gemType ? 1 : 0.6}
               ]}
               onPress={handleContinue}
+              disabled={!form.color || !form.gemShape || !form.gemType}
             >
-              <Text style={baseScreenStylesNew.buttonText}>Continue</Text>
+              <Text style={baseScreenStyles.buttonText}>Continue</Text>
             </TouchableOpacity>
           </View>
         </ScrollView>
@@ -564,13 +617,153 @@ const handleAIAnalysis = async (imageInfo) => {
             </TouchableOpacity>
           </View>
         </Modal>
+        {/* Add the Toast component to your return statement, right before the closing View tag */}
+        {toast.visible && (
+          <View style={[
+            styles.toastContainer, 
+            toast.type === "success" ? styles.successToast : 
+            toast.type === "error" ? styles.errorToast : styles.infoToast
+          ]}>
+            <Icon 
+              name={toast.type === "success" ? "check-circle" : 
+                    toast.type === "error" ? "error" : "info"} 
+              size={24} 
+              color="#fff" 
+              style={styles.toastIcon}
+            />
+            <Text style={styles.toastText}>{toast.message}</Text>
+          </View>
+        )}
       </KeyboardAvoidingView>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-
+  formContainer: {
+    flex: 1,
+    paddingBottom: 20,
+  },
+  cameraSection: {
+    alignItems: "center",
+    marginBottom: 30,
+  },
+  cameraButton: {
+    width: 120,
+    height: 120,
+    borderRadius: 12,
+    backgroundColor: baseScreenStyles.colors.primary,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 12,
+    overflow: 'hidden',
+    elevation: 3,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 3,
+  },
+  cameraIconContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '100%',
+    height: '100%',
+  },
+  selectedImage: {
+    width: '100%',
+    height: '100%',
+  },
+  sectionTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: baseScreenStyles.colors.text.dark,
+    marginBottom: 4,
+  },
+  helperText: {
+    fontSize: 14,
+    color: baseScreenStyles.colors.text.medium,
+    textAlign: 'center',
+    paddingHorizontal: 20,
+  },
+  formFields: {
+    marginTop: 10,
+    marginBottom: 20,
+  },
+  inputIcon: {
+    marginLeft: 12,
+    marginRight: 8,
+  },
+  dropdownWrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: baseScreenStyles.colors.input.border,
+    borderRadius: 12,
+    backgroundColor: baseScreenStyles.colors.input.background,
+    marginBottom: 16,
+    height: 50,
+  },
+  dropdownIcon: {
+    marginLeft: 12,
+    marginRight: 8,
+    position: 'absolute',
+    zIndex: 10,
+    left: 0,
+  },
+  dropdown: {
+    flex: 1,
+    height: 48,
+    borderWidth: 0,
+    backgroundColor: 'transparent',
+    paddingLeft: 40,
+  },
+  dropdownContainer: {
+    width: '100%',
+  },
+  dropDownContainerStyle: {
+    borderColor: baseScreenStyles.colors.input.border,
+    borderRadius: 8,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  placeholderStyle: {
+    color: baseScreenStyles.colors.input.placeholder,
+    fontSize: 16,
+  },
+  dropdownTextStyle: {
+    color: baseScreenStyles.colors.text.dark,
+    fontSize: 16,
+  },
+  listItemLabelStyle: {
+    color: baseScreenStyles.colors.text.dark,
+  },
+  arrowIconStyle: {
+    tintColor: baseScreenStyles.colors.input.placeholder,
+  },
+  textareaWrapper: {
+    minHeight: 120,
+    alignItems: 'flex-start',
+  },
+  textareaInput: {
+    height: 120,
+    textAlignVertical: 'top',
+    paddingTop: 12,
+  },
+  loadingOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(255,255,255,0.8)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 9999,
+  },
+  // Keep your existing modal styles or update them to match baseScreenStyles
   cameraButtonContainer: {
     alignItems: "center",
     justifyContent: "center",
@@ -676,5 +869,56 @@ const styles = StyleSheet.create({
     color: 'white',
     fontWeight: 'bold',
     fontSize: 12,
+  },
+
+  // Loading overlay
+  loadingOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 1000,
+  },
+  loadingText: {
+    marginTop: 12,
+    fontSize: 16,
+    color: baseScreenStyles.colors.text.dark,
+    fontWeight: '500',
+  },
+  // Toast styles
+  toastContainer: {
+    position: 'absolute',
+    bottom: 75,
+    left: 20,
+    right: 20,
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderRadius: 12,
+    elevation: 6,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.15,
+    shadowRadius: 5,
+    zIndex: 9999,
+  },
+  successToast: {
+    backgroundColor: baseScreenStyles.colors.success || '#4CAF50',
+  },
+  errorToast: {
+    backgroundColor: baseScreenStyles.colors.error || '#E53935',
+  },
+  infoToast: {
+    backgroundColor: baseScreenStyles.colors.primary || '#170969',
+  },
+  toastText: {
+    flex: 1,
+    color: '#FFFFFF',
+    fontSize: 14,
+    fontWeight: '500',
+  },
+  toastIcon: {
+    marginRight: 10,
   },
 });

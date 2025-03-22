@@ -26,7 +26,8 @@ import axios from "axios"; // Import axios
 import { FormFieldStyles } from "../../styles/FormFields";
 import { API_URL, ENDPOINTS } from "../../config/api"; //change api path here
 import AsyncStorage from "@react-native-async-storage/async-storage"; // Import AsyncStorage
-
+import { baseScreenStyles } from "../../styles/baseStyles";
+import Icon from "react-native-vector-icons/MaterialIcons";
 
 const Stack = createNativeStackNavigator();
 
@@ -237,107 +238,138 @@ function GemRegister2Main() {
       >
         <ScrollView
           ref={scrollViewRef}
-          contentContainerStyle={{ flexGrow: 1 }}
+          contentContainerStyle={{ padding: 20 }}
           nestedScrollEnabled={true}
           keyboardShouldPersistTaps="handled"
         >
-          <View style={[styles.innerContainer, { zIndex: 2 }]}>
-            <TextInput
-              style={[FormFieldStyles.input, baseScreenStylesNew.item, baseScreenStylesNew.blackText]}
-              placeholder="Gem Owner Name *"
-              placeholderTextColor={FormFieldStyles.placeholder.color}
-              value={form.ownerName}
-              onChangeText={(value) => handleInputChange("ownerName", value)}
-            />
+          <View style={styles.formContainer}>
+            <Text style={styles.formTitle}>Gem Details</Text>
 
-            <TextInput
-              style={[FormFieldStyles.input, baseScreenStylesNew.item, baseScreenStylesNew.blackText]}
-              placeholder="Contact Number *"
-              placeholderTextColor={FormFieldStyles.placeholder.color}
-              value={form.contactNumber.toString()}
-              onChangeText={(value) => {
-                const numericValue = value.replace(/[^0-9]/g, "");
-                handleInputChange("contactNumber", numericValue);
-              }}
-              keyboardType="phone-pad"
-            />
+            {/* Owner Name Input */}
+            <View style={baseScreenStyles.inputWrapper}>
+              <Icon name="person" size={20} color={baseScreenStyles.colors.input.placeholder} style={styles.inputIcon} />
+              <TextInput
+                style={baseScreenStyles.input}
+                placeholder="Gem Owner Name *"
+                placeholderTextColor={baseScreenStyles.colors.input.placeholder}
+                value={form.ownerName}
+                onChangeText={(value) => handleInputChange("ownerName", value)}
+              />
+            </View>
 
-            <TextInput
-              style={[FormFieldStyles.input, baseScreenStylesNew.item, baseScreenStylesNew.blackText]}
-              placeholderTextColor={FormFieldStyles.placeholder.color}
-              placeholder="Dimensions (e.g., 9.30 x 7.30 x 4.60mm.5)"
-              value={form.dimensions}
-              onChangeText={(value) => {
-                // Allow numbers, decimal points, and the characters 'x', 'X', and '*'
-                const formattedValue = value.replace(/[^0-9.xX* ]/g, "");
-                handleInputChange("dimensions", formattedValue);
-              }}
-              keyboardType="default" // Change to default to allow all characters
-            />
+            {/* Contact Number Input */}
+            <View style={baseScreenStyles.inputWrapper}>
+              <Icon name="phone" size={20} color={baseScreenStyles.colors.input.placeholder} style={styles.inputIcon} />
+              <TextInput
+                style={baseScreenStyles.input}
+                placeholder="Contact Number *"
+                placeholderTextColor={baseScreenStyles.colors.input.placeholder}
+                value={form.contactNumber.toString()}
+                onChangeText={(value) => {
+                  const numericValue = value.replace(/[^0-9]/g, "");
+                  handleInputChange("contactNumber", numericValue);
+                }}
+                keyboardType="phone-pad"
+              />
+            </View>
 
-            <TextInput
-              style={[FormFieldStyles.input, baseScreenStylesNew.item, baseScreenStylesNew.blackText]}
-              placeholder="Weight (ct)"
-              placeholderTextColor={FormFieldStyles.placeholder.color}
-              value={form.weight}
-              onChangeText={(value) => {
-                const numericValue = value
-                  .replace(/[^0-9.]/g, "")
-                  .replace(/(\..*)\./g, "$1");
-                handleInputChange("weight", numericValue);
-              }}
-              keyboardType="decimal-pad"
-            />
+            {/* Dimensions Input */}
+            <View style={baseScreenStyles.inputWrapper}>
+              <Icon name="straighten" size={20} color={baseScreenStyles.colors.input.placeholder} style={styles.inputIcon} />
+              <TextInput
+                style={baseScreenStyles.input}
+                placeholder="Dimensions (e.g., 9.30 x 7.30 x 4.60mm)"
+                placeholderTextColor={baseScreenStyles.colors.input.placeholder}
+                value={form.dimensions}
+                onChangeText={(value) => {
+                  // Allow numbers, decimal points, and the characters 'x', 'X', and '*'
+                  const formattedValue = value.replace(/[^0-9.xX* ]/g, "");
+                  handleInputChange("dimensions", formattedValue);
+                }}
+                keyboardType="default"
+              />
+            </View>
 
-            <TextInput
-              style={[FormFieldStyles.input, baseScreenStylesNew.item, baseScreenStylesNew.blackText]}
-              placeholder="Purchase price (LKR) *"
-              placeholderTextColor={FormFieldStyles.placeholder.color}
-              value={form.purchasePrice}
-              onChangeText={(value) => {
-                const numericValue = value
-                  .replace(/[^0-9.]/g, "")
-                  .replace(/(\..*)\./g, "$1");
-                handleInputChange("purchasePrice", numericValue);
-              }}
-              keyboardType="decimal-pad"
-            />
+            {/* Weight Input */}
+            <View style={baseScreenStyles.inputWrapper}>
+              <Icon name="scale" size={20} color={baseScreenStyles.colors.input.placeholder} style={styles.inputIcon} />
+              <TextInput
+                style={baseScreenStyles.input}
+                placeholder="Weight (ct)"
+                placeholderTextColor={baseScreenStyles.colors.input.placeholder}
+                value={form.weight}
+                onChangeText={(value) => {
+                  const numericValue = value
+                    .replace(/[^0-9.]/g, "")
+                    .replace(/(\..*)\./g, "$1");
+                  handleInputChange("weight", numericValue);
+                }}
+                keyboardType="decimal-pad"
+              />
+            </View>
 
-            <TextInput
-              style={[FormFieldStyles.input, FormFieldStyles.descriptionInput, baseScreenStylesNew.item, baseScreenStylesNew.blackText]}
-              placeholder="Extra Information"
-              placeholderTextColor={FormFieldStyles.placeholder.color}
-              value={form.extraInfo}
-              onChangeText={(value) => handleInputChange("extraInfo", value)}
-              multiline={true}
-              numberOfLines={4}
-              textAlignVertical="top"
-              onFocus={() => {
-                setTimeout(() => {
-                  scrollViewRef.current?.scrollToEnd({ animated: true });
-                }, 200);
-              }}
-            />
-            <View style={styles.buttonContainer}>
+            {/* Purchase Price Input */}
+            <View style={baseScreenStyles.inputWrapper}>
+              <Icon name="attach-money" size={20} color={baseScreenStyles.colors.input.placeholder} style={styles.inputIcon} />
+              <TextInput
+                style={baseScreenStyles.input}
+                placeholder="Purchase price (LKR) *"
+                placeholderTextColor={baseScreenStyles.colors.input.placeholder}
+                value={form.purchasePrice}
+                onChangeText={(value) => {
+                  const numericValue = value
+                    .replace(/[^0-9.]/g, "")
+                    .replace(/(\..*)\./g, "$1");
+                  handleInputChange("purchasePrice", numericValue);
+                }}
+                keyboardType="decimal-pad"
+              />
+            </View>
+
+            {/* Extra Information Input */}
+            <View style={[baseScreenStyles.inputWrapper, styles.textareaWrapper]}>
+              <Icon 
+                name="info" 
+                size={20} 
+                color={baseScreenStyles.colors.input.placeholder}
+                style={[styles.inputIcon, { alignSelf: 'flex-start', marginTop: 12 }]} 
+              />
+              <TextInput
+                style={[baseScreenStyles.input, styles.textareaInput]}
+                placeholder="Extra Information"
+                placeholderTextColor={baseScreenStyles.colors.input.placeholder}
+                value={form.extraInfo}
+                onChangeText={(value) => handleInputChange("extraInfo", value)}
+                multiline={true}
+                numberOfLines={4}
+                textAlignVertical="top"
+                onFocus={() => {
+                  setTimeout(() => {
+                    scrollViewRef.current?.scrollToEnd({ animated: true });
+                  }, 200);
+                }}
+              />
+            </View>
+
+            {/* Navigation Buttons */}
+            <View style={styles.buttonGroup}>
               <TouchableOpacity
-                style={baseScreenStylesNew.Button5}
+                style={styles.backButton}
                 onPress={handleBack}
               >
-                <Text style={baseScreenStylesNew.buttonText5}>Back</Text>
+                <Text style={styles.backButtonText}>Back</Text>
               </TouchableOpacity>
+              
               <TouchableOpacity
                 style={[
-                  baseScreenStylesNew.Button1,
-                  /*{
-                    opacity:
-                      form.ownerName && form.contactNumber && form.purchasePrice
-                        ? 1
-                        : 0.5,
-                  },*/
+                  baseScreenStyles.primaryButton, 
+                  styles.finalizeButton,
+                  {opacity: form.ownerName && form.contactNumber && form.purchasePrice ? 1 : 0.6}
                 ]}
                 onPress={handleFinalize}
+                disabled={!form.ownerName || !form.contactNumber || !form.purchasePrice}
               >
-                <Text style={baseScreenStylesNew.buttonText}>Finalize</Text>
+                <Text style={baseScreenStyles.buttonText}>Finalize</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -358,15 +390,6 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     justifyContent: "space-between",
   },
-  backButton: {
-    marginTop: 15,
-    marginBottom: 15,
-    backgroundColor: "#02457A",
-    width: "95%",
-    padding: 15,
-    borderRadius: 10,
-    alignSelf: "center",
-  },
 
   //dev bypass button styles
   devBypassButton: {
@@ -386,5 +409,55 @@ const styles = StyleSheet.create({
     color: 'white',
     fontWeight: 'bold',
     fontSize: 12,
+  },
+  formContainer: {
+    flex: 1,
+    paddingBottom: 20,
+  },
+  formTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: baseScreenStyles.colors.text.dark,
+    marginBottom: 20,
+    textAlign: 'center',
+  },
+  inputIcon: {
+    marginLeft: 12,
+    marginRight: 8,
+  },
+  textareaWrapper: {
+    minHeight: 120,
+    alignItems: 'flex-start',
+  },
+  textareaInput: {
+    height: 120,
+    textAlignVertical: 'top',
+    paddingTop: 12,
+  },
+  buttonGroup: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 20,
+  },
+  backButton: {
+    flex: 1,
+    backgroundColor: '#F2F2F2',
+    borderRadius: 12,
+    height: 56,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 10,
+    borderWidth: 1,
+    borderColor: baseScreenStyles.colors.input.border,
+    bottom: -75,
+  },
+  backButtonText: {
+    color: baseScreenStyles.colors.text.dark,
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  finalizeButton: {
+    flex: 2,
+    bottom: -59,
   },
 });

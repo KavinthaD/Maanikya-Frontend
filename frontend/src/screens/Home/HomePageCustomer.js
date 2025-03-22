@@ -3,37 +3,35 @@
 import React, { useState } from "react";
 import {
   View,
-  Text,
   Image,
-  TouchableOpacity,
-  SafeAreaView,
   StyleSheet,
-  StatusBar,
   Alert,
+  ScrollView,
+  TouchableOpacity,
+  Text
 } from "react-native";
-import Modal from "react-native-modal";
-import Icon from "react-native-vector-icons/MaterialIcons";
 import * as ImagePicker from 'expo-image-picker';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import { BarCodeScanner } from 'expo-barcode-scanner';
 import { baseScreenStylesNew } from "../../styles/baseStylesNew";
+import { baseScreenStyles } from "../../styles/baseStyles";
+import { homeStyles, HomeScreenComponents } from "../../styles/homeScreenStyles";
 import { useNavigation } from "@react-navigation/native";
 
-
-
-const MenuItem = ({ image, title, onPress }) => (
-  <TouchableOpacity style={styles.menuItem} onPress={onPress}>
-    <View style={styles.iconContainer}>
-      <Image source={image} style={styles.imageStyle} resizeMode="contain" />
-    </View>
-    <Text style={styles.menuText}>{title}</Text>
-  </TouchableOpacity>
-);
-
-const HomePageCustomer = ({ navigation }) => {
+const HomePageCustomer = () => {
+  const navigation = useNavigation();
   const [isModalVisible, setModalVisible] = useState(false);
   const [scanning, setScanning] = useState(false);
   const [permission, requestPermission] = useCameraPermissions();
+
+  if (!permission) {
+    // Camera permissions are still loading
+    return <View />;
+  }
+
+  if (!permission.granted) {
+    return <HomeScreenComponents.PermissionRequest onRequestPermission={requestPermission} />;
+  }
 
   const handleQrScan = () => {
     setModalVisible(true);
@@ -91,15 +89,19 @@ const HomePageCustomer = ({ navigation }) => {
 
   const menuItems = [
     {
-      image: require("../../assets/menu-icons/8.png"),
+      image: require("../../assets/menu-icons/scan-qr.jpg"),
+      onPress: handleQrScan,
+      title: "Scan QR"
     },
     {
-      image: require("../../assets/menu-icons/2.png"),
-      onPress: handleQrScan, // Add the scan handler
+      image: require("../../assets/menu-icons/contacts.jpg"),
+      screen: "Contacts",
+      title: "Contacts"
     },
     {
-      image: require("../../assets/menu-icons/7.png"),
-      screen: "Customeraddseller",
+      image: require("../../assets/menu-icons/chat.jpg"),
+      screen: "MessageInbox",
+      title: "Messages"
     },
   ];
 
@@ -108,6 +110,8 @@ const HomePageCustomer = ({ navigation }) => {
       customOnPress();
     } else if (screenName) {
       navigation.navigate(screenName);
+    } else {
+      console.log(`No screen defined for this item`);
     }
   };
 
@@ -122,184 +126,113 @@ const HomePageCustomer = ({ navigation }) => {
           }}
           onBarcodeScanned={handleBarCodeScanned}
         >
-          <View style={styles.scannerOverlay}>
-            <Text style={styles.scannerText}>Align QR code within frame</Text>
-            <TouchableOpacity 
-              style={styles.cancelScanButton}
-              onPress={() => setScanning(false)}
-            >
-              <Text style={styles.cancelScanButtonText}>Cancel</Text>
-            </TouchableOpacity>
-          </View>
+          <HomeScreenComponents.QRScannerOverlay onCancel={() => setScanning(false)} />
         </CameraView>
       ) : (
-        <>
-
-          <View style={styles.content}>
-            <Image source={require("../../assets/logo-letter.png")} style={styles.logo}/>
-            <View style={styles.menuGrid}>
+        <ScrollView 
+          style={homeStyles.scrollView}
+          showsVerticalScrollIndicator={false}
+        >
+          <View style={homeStyles.content}>
+            <Image source={require("../../assets/logo-letter.png")} style={homeStyles.logo}/>
+            
+            <View style={styles.menuGridTwoColumns}>
               {menuItems.map((item, index) => (
-                <MenuItem
+                <TouchableOpacity
                   key={index}
-                  image={item.image}
-                  title={item.title}
+                  style={styles.menuItemLarge}
                   onPress={() => handleMenuItemPress(item.screen, item.onPress)}
-                />
+                  activeOpacity={0.7}
+                >
+                  <View style={styles.menuItemContentLarge}>
+                    <View style={styles.iconContainerLarge}>
+                      <Image
+                        source={item.image}
+                        style={styles.imageStyleLarge}
+                        resizeMode="cover"
+                        onError={(error) => console.error("Image loading error:", error)}
+                      />
+                      <View style={styles.overlayContainerLarge}>
+                        <Text style={styles.menuTextLarge}>{item.title}</Text>
+                      </View>
+                    </View>
+                  </View>
+                </TouchableOpacity>
               ))}
             </View>
           </View>
-        </>
+          <View style={{ height: 20 }} />
+        </ScrollView>
       )}
-       <Modal
+
+      <HomeScreenComponents.QRScannerModal
         isVisible={isModalVisible}
-        onBackdropPress={() => setModalVisible(false)}
-        onSwipeComplete={() => setModalVisible(false)}
-        swipeDirection="down"
-        style={styles.modal}
-      >
-        <View style={styles.modalContent}>
-          <View style={styles.modalHeader}>
-            <View style={styles.modalIndicator} />
-          </View>
-          <TouchableOpacity
-            style={styles.modalButton}
-            onPress={handleScanFromCamera}
-          >
-            <Icon name="camera-alt" size={24} color="#170969" />
-            <Text style={styles.modalButtonText}>Scan with Camera</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.modalButton}
-            onPress={handleScanFromGallery}
-          >
-            <Icon name="photo-library" size={24} color="#170969" />
-            <Text style={styles.modalButtonText}>Choose QR from Gallery</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[styles.modalButton, styles.cancelButton]}
-            onPress={() => setModalVisible(false)}
-          ><Text style={[styles.modalButtonText, styles.cancelButtonText]}>
-          Cancel
-        </Text>
-      </TouchableOpacity>
+        onClose={() => setModalVisible(false)}
+        onCameraPress={handleScanFromCamera}
+        onGalleryPress={handleScanFromGallery}
+      />
     </View>
-  </Modal>
-</View>
   );
 };
 
+// Local styles for larger two-column layout
 const styles = StyleSheet.create({
-
-  content: {
-    paddingHorizontal: 16,
-    paddingTop: 25,
-  },
-  logo: {
-    width: 130,  
-    height: 70,  
-    resizeMode: "contain",
-    marginBottom: 5,
-  },
-  menuGrid: {
-    flexDirection: "column", // Changed from row to column
-    alignItems: "center", // Center items horizontally
-    justifyContent: 'flex-start',
-    rowGap: 50,
-    marginTop: 10,
-    paddingBottom: 20,
-  },
-  menuItem: {
-    width: "80%", // Increased width for single column
-    alignItems: "center",
-    borderRadius: 20,
-    paddingVertical: 25,
-    paddingHorizontal: 15,
-    aspectRatio: 2.5, // Changed aspect ratio for better horizontal layout
-    marginBottom: 16, // Added margin between items
-  },
-  iconContainer: {
-    alignItems: "center",
-    justifyContent: "center",
-    marginBottom: 12,
-    height: 100,
-    width: "100%", // Added width to ensure full width usage
-  },
-  imageStyle: {
-    width: "100%", // Changed to use percentage
-    height: 150, // Adjusted height
-    resizeMode: "contain", // Ensure image fits properly
-  },
-  menuText: {
-    fontSize: 14,
-    textAlign: "center",
-    color: "#fff",
-    fontWeight: "500",
-    marginTop: 5,
-  },
-  modal: {
-    justifyContent: "flex-end",
-    margin: 0,
-  },
-  modalContent: {
-    backgroundColor: "white",
-    padding: 22,
-    borderTopLeftRadius: 17,
-    borderTopRightRadius: 17,
-    alignItems: "center",
-  },
-  modalHeader: {
-    width: "100%",
-    alignItems: "center",
-    marginBottom: 12,
-  },
-  modalIndicator: {
-    width: 40,
-    height: 5,
-    borderRadius: 2.5,
-    backgroundColor: "#ccc",
-  }, 
-    modalButton: {
+  menuGridTwoColumns: {
     flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "space-between",
+    rowGap: 25, // Increased space between rows
+    marginTop: 25, // More top margin
+    paddingBottom: 30,
+  },
+  menuItemLarge: {
+    width: "47%", // Two items per row
+    aspectRatio: 1, // Square aspect ratio for larger buttons
+    borderRadius: 20,
+    overflow: "hidden",
+    elevation: 5, // Increased elevation for more prominence
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 3,
+    },
+    shadowOpacity: 0.27,
+    shadowRadius: 4.65,
+  },
+  menuItemContentLarge: {
+    flex: 1,
     alignItems: "center",
-    paddingVertical: 12,
-    paddingHorizontal: 20,
-    borderRadius: 5,
-    backgroundColor: "#E8F0FE",
-    marginBottom: 10,
+    justifyContent: "center",
+    position: "relative",
+  },
+  iconContainerLarge: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
     width: "100%",
+    height: "100%",
+    position: "relative",
+  },
+  imageStyleLarge: {
+    width: "100%",
+    height: "100%",
+    borderRadius: 18,
+  },
+  overlayContainerLarge: {
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: "rgba(255, 255, 255, 0.8)", // Increased opacity for better visibility
+    paddingVertical: 12, // Increased padding for larger text area
+    alignItems: "center",
     justifyContent: "center",
   },
-  modalButtonText: {
-    fontSize: 18,
-    color: "#170969",
-    marginLeft: 10,
-  },
-  cancelButton: {
-    backgroundColor: "#f8d7da",
-  },
-  cancelButtonText: {
-    color: "#721c24",
-  },
-  scannerOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.5)',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  scannerText: {
-    color: 'white',
-    fontSize: 16,
-    marginBottom: 20,
-  },
-  cancelScanButton: {
-    padding: 12,
-    backgroundColor: '#f8d7da',
-    borderRadius: 8,
-    marginTop: 20,
-  },
-  cancelScanButtonText: {
-    fontSize: 16,
-    color: '#721c24',
+  menuTextLarge: {
+    fontSize: 16, // Larger font size
+    textAlign: "center",
+    color: baseScreenStyles.colors.primary,
+    fontWeight: "600",
   },
 });
 

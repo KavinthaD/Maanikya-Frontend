@@ -5,43 +5,21 @@ import React, { useState, useEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
 import * as ImagePicker from "expo-image-picker";
 import { encode as base64Encode } from "base-64";
-import { baseScreenStylesNew } from "../../styles/baseStylesNew";
 import {
   View,
   Text,
   Image,
   TouchableOpacity,
-  SafeAreaView,
   StyleSheet,
   StatusBar,
   Alert,
-  Linking,
-  ScrollView, // Add this import
+  ScrollView,
 } from "react-native";
+import { baseScreenStylesNew } from "../../styles/baseStylesNew";
 import { baseScreenStyles } from "../../styles/baseStyles";
+import { homeStyles, HomeScreenComponents } from "../../styles/homeScreenStyles";
 import { CameraView, useCameraPermissions } from "expo-camera";
 import { BarCodeScanner } from "expo-barcode-scanner";
-
-const MenuItem = ({ image, title, onPress, backgroundColor }) => (
-  <TouchableOpacity
-    style={[styles.menuItem, { backgroundColor }]}
-    onPress={onPress}
-    activeOpacity={0.7} // Add feedback when pressed
-    hitSlop={{ top: 0, bottom: 0, left: 0, right: 0 }} // Explicit hit area
-  >
-    <View style={styles.menuItemContent}>
-      <View style={styles.iconContainer}>
-        <Image
-          source={image}
-          style={styles.imageStyle}
-          resizeMode="contain"
-          onError={(error) => console.error("Image loading error:", error)}
-        />
-      </View>
-      <Text style={styles.menuText}>{title}</Text>
-    </View>
-  </TouchableOpacity>
-);
 
 const HomeScreen = () => {
   const navigation = useNavigation();
@@ -49,26 +27,13 @@ const HomeScreen = () => {
   const [scanning, setScanning] = useState(false);
   const [permission, requestPermission] = useCameraPermissions();
 
-  // Replace old useEffect with new permission check
   if (!permission) {
     // Camera permissions are still loading
     return <View />;
   }
 
   if (!permission.granted) {
-    return (
-      <View style={styles.container}>
-        <Text style={styles.message}>
-          We need your permission to use the camera
-        </Text>
-        <TouchableOpacity
-          style={styles.permissionButton}
-          onPress={requestPermission}
-        >
-          <Text style={styles.buttonText}>Grant Permission</Text>
-        </TouchableOpacity>
-      </View>
-    );
+    return <HomeScreenComponents.PermissionRequest onRequestPermission={requestPermission} />;
   }
 
   const handleQrScan = () => {
@@ -86,7 +51,7 @@ const HomeScreen = () => {
     }
 
     navigation.navigate("MyGems", {
-      qrCodeUrl: finalData, // Changed from qrCodeImage to qrCodeUrl
+      qrCodeUrl: finalData,
     });
   };
 
@@ -129,7 +94,7 @@ const HomeScreen = () => {
 
             setModalVisible(false);
             navigation.navigate("MyGems", {
-              qrCodeUrl: scannedUrl, // Changed from qrCodeImage to qrCodeUrl
+              qrCodeUrl: scannedUrl,
             });
           } else {
             Alert.alert("Error", "No valid QR code found in the image");
@@ -145,35 +110,42 @@ const HomeScreen = () => {
     }
   };
 
-  // Updated menu items to match the screenshot
+  // Menu items with standardized format
   const menuItems = [
     {
-      image: require("../../assets/menu-icons/1.png"),
+      image: require("../../assets/menu-icons/gem-inventory.jpg"),
       screen: "HomeMyGems",
+      title: "Gems Inventory"
     },
     {
-      image: require("../../assets/menu-icons/2.png"),
+      image: require("../../assets/menu-icons/scan-qr.jpg"),
       onPress: handleQrScan,
+      title: "Scan QR"
     },
     {
-      image: require("../../assets/menu-icons/3.png"),
+      image: require("../../assets/menu-icons/financial.jpg"),
       screen: "OwnerFinancialRecords",
+      title: "Financial Records"
     },
     {
-      image: require("../../assets/menu-icons/4.png"),
+      image: require("../../assets/menu-icons/tracker.jpg"),
       screen: "Tracker",
+      title: "Gem orders"
     },
     {
-      image: require("../../assets/menu-icons/5.png"),
+      image: require("../../assets/menu-icons/contacts.jpg"),
       screen: "Contacts",
+      title: "Contacts"
     },
     {
-      image: require("../../assets/menu-icons/6.png"),
+      image: require("../../assets/menu-icons/gems-on-market.jpg"),
       screen: "GemOnDisplay",
+      title: "Gems on Market"
     },
     {
-      image: require("../../assets/menu-icons/chat.jpeg"),
+      image: require("../../assets/menu-icons/chat.jpg"),
       screen: "MessageInbox",
+      title: "Messages"
     },
   ];
 
@@ -198,249 +170,92 @@ const HomeScreen = () => {
           }}
           onBarcodeScanned={handleBarCodeScanned}
         >
-          <View style={styles.scannerOverlay}>
-            <Text style={styles.scannerText}>Align QR code within frame</Text>
-            <TouchableOpacity
-              style={styles.cancelScanButton}
-              onPress={() => setScanning(false)}
-            >
-              <Text style={styles.cancelScanButtonText}>Cancel</Text>
-            </TouchableOpacity>
-          </View>
+          <HomeScreenComponents.QRScannerOverlay onCancel={() => setScanning(false)} />
         </CameraView>
       ) : (
-        <>
-          {/* Replace the View with ScrollView here */}
-          <ScrollView 
-            style={styles.scrollView}
-            showsVerticalScrollIndicator={false}
-          >
-            <View style={styles.content}>
-              <Image source={require("../../assets/logo-letter.png")} style={styles.logo}/>
-              
-              <View style={styles.menuGrid}>
-                {menuItems.map((item, index) => (
-                  <MenuItem
-                    key={index}
-                    image={item.image}
-                    title={item.title}
-                    onPress={() => handleMenuItemPress(item.screen, item.onPress)}
-                    backgroundColor={item.backgroundColor}
-                  />
-                ))}
-              </View>
+        <ScrollView 
+          style={homeStyles.scrollView}
+          showsVerticalScrollIndicator={false}
+        >
+          <View style={homeStyles.content}>
+            <Image source={require("../../assets/logo-letter.png")} style={homeStyles.logo}/>
+            
+            <View style={styles.menuGridThreeColumns}>
+              {menuItems.map((item, index) => (
+                <TouchableOpacity
+                  key={index}
+                  style={styles.menuItemThreeColumn}
+                  onPress={() => handleMenuItemPress(item.screen, item.onPress)}
+                  activeOpacity={0.7}
+                >
+                  <View style={homeStyles.menuItemContent}>
+                    <View style={homeStyles.iconContainer}>
+                      <Image
+                        source={item.image}
+                        style={styles.imageStyleThreeColumn}
+                        resizeMode="cover"
+                        onError={(error) => console.error("Image loading error:", error)}
+                      />
+                      <View style={homeStyles.overlayContainer}>
+                        <Text style={styles.menuTextSmaller}>{item.title}</Text>
+                      </View>
+                    </View>
+                  </View>
+                </TouchableOpacity>
+              ))}
             </View>
-            {/* Add some padding at the bottom for better scrolling */}
-            <View style={{ height: 20 }} />
-          </ScrollView>
-        </>
+          </View>
+          {/* Add some padding at the bottom for better scrolling */}
+          <View style={{ height: 20 }} />
+        </ScrollView>
       )}
 
-      <Modal
+      <HomeScreenComponents.QRScannerModal
         isVisible={isModalVisible}
-        onBackdropPress={() => setModalVisible(false)}
-        onSwipeComplete={() => setModalVisible(false)}
-        swipeDirection="down"
-        style={styles.modal}
-      >
-        <View style={styles.modalContent}>
-          <View style={styles.modalHeader}>
-            <View style={styles.modalIndicator} />
-          </View>
-          <TouchableOpacity
-            style={styles.modalButton}
-            onPress={handleScanFromCamera}
-          >
-            <Icon name="camera-alt" size={24} color="#170969" />
-            <Text style={styles.modalButtonText}>Scan with Camera</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.modalButton}
-            onPress={handleScanFromGallery}
-          >
-            <Icon name="photo-library" size={24} color="#170969" />
-            <Text style={styles.modalButtonText}>Choose QR from Gallery</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[styles.modalButton, styles.cancelButton]}
-            onPress={() => setModalVisible(false)}
-          >
-            <Text style={[styles.modalButtonText, styles.cancelButtonText]}>
-              Cancel
-            </Text>
-          </TouchableOpacity>
-        </View>
-      </Modal>
+        onClose={() => setModalVisible(false)}
+        onCameraPress={handleScanFromCamera}
+        onGalleryPress={handleScanFromGallery}
+      />
     </View>
   );
 };
 
+// Local styles specific to the 3-column layout
 const styles = StyleSheet.create({
-
-  content: {
-    paddingHorizontal: 16,
-    paddingTop: 26,
-  },
-
-  logo: {
-    width: 140,  // Adjust based on your logo size
-    height: 75,   // Adjust height accordingly
-    resizeMode: "contain",
-    marginBottom: 5,
-  },
-  menuGrid: {
+  menuGridThreeColumns: {
     flexDirection: "row",
-    justifyContent: "space-between",
     flexWrap: "wrap",
-    rowGap: 16,
-    columnGap: 16, // Add explicit gap between columns
-    marginTop: 10,
-    paddingBottom: 20, // Space for bottom nav bar
+    justifyContent: "space-between",
+    rowGap: 15,
+    marginTop: 16,
+    paddingBottom: 30,
   },
-  menuItem: {
-    width: "47%", // Slightly smaller to ensure proper spacing
-    aspectRatio: 1,
-    borderRadius: 20,
-    overflow: "hidden", // Ensure touch events don't leak
+  menuItemThreeColumn: {
+    width: "31%", // Adjusted to fit 3 items per row with spacing
+    aspectRatio: 0.78, // Slightly taller for better proportions with smaller width
+    borderRadius: 16,
+    overflow: "hidden",
+    elevation: 4,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.23,
+    shadowRadius: 2.62,
   },
-  menuItemContent: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    
-  },
-  iconContainer: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    width: "100%",
-  },
-  imageStyle: {
+  imageStyleThreeColumn: {
     width: "100%",
     height: "100%",
-    aspectRatio: 1,
-    borderRadius: 15,
+    aspectRatio: 0.78,
+    borderRadius: 12,
   },
-  menuText: {
-    fontSize: 14,
+  menuTextSmaller: {
+    fontSize: 12, // Smaller font for the narrower items
     textAlign: "center",
-    color: "#fff",
-    fontWeight: "500", // Medium weight for better readability
-    marginTop: 5,
-  },
-  modalContent: {
-    backgroundColor: "white",
-    padding: 22,
-    justifyContent: "center",
-    alignItems: "center",
-    borderRadius: 4,
-    borderColor: "rgba(0, 0, 0, 0.1)",
-  },
-  modalTitle: {
-    fontSize: 18,
-    marginBottom: 12,
-  },
-  modalButton: {
-    backgroundColor: "#2196F3",
-    padding: 10,
-    marginTop: 10,
-    borderRadius: 4,
-  },
-  modalButtonText: {
-    color: "white",
-    fontSize: 16,
-  },
-  modal: {
-    justifyContent: "flex-end",
-    margin: 0,
-  },
-  modalContent: {
-    backgroundColor: "white",
-    padding: 22,
-    borderTopLeftRadius: 17,
-    borderTopRightRadius: 17,
-    alignItems: "center",
-  },
-  modalHeader: {
-    width: "100%",
-    alignItems: "center",
-    marginBottom: 12,
-  },
-  modalIndicator: {
-    width: 40,
-    height: 5,
-    borderRadius: 2.5,
-    backgroundColor: "#ccc",
-  },
-  modalButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingVertical: 12,
-    paddingHorizontal: 20,
-    borderRadius: 5,
-    backgroundColor: "#E8F0FE",
-    marginBottom: 10,
-    width: "100%",
-    justifyContent: "center",
-  },
-  modalButtonText: {
-    fontSize: 18,
-    color: "#170969",
-    marginLeft: 10,
-  },
-  cancelButton: {
-    backgroundColor: "#f8d7da",
-  },
-  cancelButtonText: {
-    color: "#721c24",
-  },
-  scannerOverlay: {
-    flex: 1,
-    backgroundColor: "rgba(0,0,0,0.5)",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  scannerText: {
-    color: "white",
-    fontSize: 16,
-    marginBottom: 20,
-  },
-  cancelScanButton: {
-    padding: 12,
-    backgroundColor: "#f8d7da",
-    borderRadius: 8,
-    marginTop: 20,
-  },
-  cancelScanButtonText: {
-    fontSize: 16,
-    color: "#721c24",
-  },
-  permissionButton: {
-    backgroundColor: "#2196F3",
-    padding: 12,
-    borderRadius: 8,
-    marginTop: 20,
-  },
-  message: {
-    fontSize: 16,
-    textAlign: "center",
-    marginBottom: 20,
-  },
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 20,
-  },
-  buttonText: {
-    color: "white",
-    fontSize: 16,
-    fontWeight: "bold",
-  },
-  scrollView: {
-    flex: 1,
-    width: '100%',
-  },
+    color: baseScreenStyles.colors.primary,
+    fontWeight: "600",
+  }
 });
 
 export default HomeScreen;

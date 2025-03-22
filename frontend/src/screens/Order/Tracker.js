@@ -1338,7 +1338,7 @@ const confirmPayment = async () => {
   return (
     <View style={baseScreenStylesNew.container}>
       <HeaderBar
-        title="My gems"
+        title="Gem orders"
         navigation={navigation}
         showBack={true}
         leftIcon="menu"

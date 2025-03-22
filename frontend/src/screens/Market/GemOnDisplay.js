@@ -17,12 +17,12 @@ import {
   RefreshControl,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import HeaderBar from "../components/HeaderBar";
+import HeaderBar from "../../components/HeaderBar";
 import LinearGradient from "react-native-linear-gradient";
 import axios from "axios";
-import { API_URL, ENDPOINTS } from "../config/api";
+import { API_URL, ENDPOINTS } from "../../config/api";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { baseScreenStylesNew } from "../styles/baseStylesNew";
+import { baseScreenStylesNew } from "../../styles/baseStylesNew";
 
 const THEME_COLOR = '#9CCDDB'; // Light blue theme color
 const GemOnDisplay = ({ navigation }) => {
@@ -245,7 +245,7 @@ const GemOnDisplay = ({ navigation }) => {
       <Image 
         source={item.image} 
         style={styles.gemImg} 
-        defaultSource={require("../assets/logo.png")}
+        defaultSource={require("../../assets/logo.png")}
       />
       <View style={styles.gemInfo}>
         <Text style={styles.gemId}>{item.id}</Text>
@@ -294,7 +294,7 @@ const GemOnDisplay = ({ navigation }) => {
                 <Image 
                   source={gemToRemove?.image} 
                   style={styles.previewGemImg} 
-                  defaultSource={require("../assets/logo.png")}
+                  defaultSource={require("../../assets/logo.png")}
                 />
                 <Text style={styles.previewGemId}>{gemToRemove?.id}</Text>
               </View>
@@ -430,7 +430,7 @@ const GemOnDisplay = ({ navigation }) => {
                   <Image 
                     source={item.image} 
                     style={styles.gemImg}
-                    defaultSource={require("../assets/logo.png")}
+                    defaultSource={require("../../assets/logo.png")}
                   />
                   <View style={styles.gemInfo}>
                     <Text style={[baseScreenStylesNew.whiteText,styles.gemId]}>{item.id}</Text>

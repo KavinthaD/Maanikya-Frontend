@@ -17,9 +17,9 @@ import {
 } from "react-native";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import axios from "axios";
-import { API_URL } from "../config/api";
-import { baseScreenStylesNew } from "../styles/baseStylesNew";
-import HeaderBar from "../components/HeaderBar";
+import { API_URL } from "../../config/api";
+import { baseScreenStylesNew } from "../../styles/baseStylesNew";
+import HeaderBar from "../../components/HeaderBar";
 
 const { width } = Dimensions.get("window");
 const THEME_COLOR = "#9CCDDB"; // Light blue theme color
@@ -182,7 +182,7 @@ const GemDetailsScreen = ({ route, navigation }) => {
       >
         <View style={[styles.imageContainer, baseScreenStylesNew.backgroundColor]}>
           <Image
-            source={gem.photo ? { uri: gem.photo } : require("../assets/gems/no_gem.jpeg")}
+            source={gem.photo ? { uri: gem.photo } : require("../../assets/gems/no_gem.jpeg")}
             style={styles.gemImage}
             resizeMode="contain"
           />

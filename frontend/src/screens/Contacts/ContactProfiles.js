@@ -13,11 +13,11 @@ import {
   ScrollView
 } from "react-native";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
-import { baseScreenStylesNew } from "../styles/baseStylesNew";
+import { baseScreenStylesNew } from "../../styles/baseStylesNew";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
-import { API_URL, ENDPOINTS } from "../config/api";
-import HeaderBar from "../components/HeaderBar";
+import { API_URL, ENDPOINTS } from "../../config/api";
+import HeaderBar from "../../components/HeaderBar";
 
 // Match theme color from Contact screens
 const THEME_COLOR = '#9CCDDB';
@@ -136,7 +136,7 @@ export default function ContactProfiles({ route, navigation }) {
         {/* Profile Header Section */}
         <View style={styles.profileHeader}>
           <Image 
-            source={contact.avatar ? { uri: contact.avatar } : require("../assets/default-images/user_with_gem.jpeg")} 
+            source={contact.avatar ? { uri: contact.avatar } : require("../../assets/default-images/user_with_gem.jpeg")} 
             style={styles.profileImage} 
           />
           

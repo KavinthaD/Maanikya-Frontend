@@ -15,9 +15,9 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
-import { API_URL, ENDPOINTS } from "../config/api";
-import HeaderBar from "../components/HeaderBar";
-import { baseScreenStylesNew } from "../styles/baseStylesNew";
+import { API_URL, ENDPOINTS } from "../../config/api";
+import HeaderBar from "../../components/HeaderBar";
+import { baseScreenStylesNew } from "../../styles/baseStylesNew";
 
 const FavoritesScreen = ({ route, navigation }) => {
   // 1. State variables
@@ -196,7 +196,7 @@ const FavoritesScreen = ({ route, navigation }) => {
           source={
             item.avatar 
               ? { uri: item.avatar }
-              : require("../assets/default-images/user_with_gem.jpeg")
+              : require("../../assets/default-images/user_with_gem.jpeg")
           }
           style={styles.workerImage} 
         />
@@ -249,7 +249,7 @@ const FavoritesScreen = ({ route, navigation }) => {
                 source={
                   selectedWorker.avatar 
                     ? { uri: selectedWorker.avatar }
-                    : require("../assets/default-images/user_with_gem.jpeg")
+                    : require("../../assets/default-images/user_with_gem.jpeg")
                 }
                 style={styles.modalWorkerImage} 
               />
@@ -277,7 +277,7 @@ const FavoritesScreen = ({ route, navigation }) => {
                         source={
                           item.photo || item.image
                             ? { uri: item.photo || item.image }
-                            : require("../assets/default-images/no_gem.jpeg")
+                            : require("../../assets/default-images/no_gem.jpeg")
                         }
                         style={styles.gemImage} 
                       />

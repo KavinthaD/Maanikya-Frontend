@@ -1,7 +1,7 @@
 import React from "react";
 import { SafeAreaView } from "react-native";
 import HomePageCustomer from "../screens/Home/HomePageCustomer";
-import Market from "../screens/Market";
+import Market from "../screens/Market/Market";
 import Alerts from "../screens/Notification/Alerts";
 import CustomerProfile from "../screens/UserProfile/CustomerProfile";
 import { createCustomTabNavigator, icons } from "./NavBarUtils";

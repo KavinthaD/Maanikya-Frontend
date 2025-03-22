@@ -16,12 +16,12 @@ import {
   RefreshControl
 } from "react-native";
 import { FontAwesome, MaterialIcons, AntDesign, Ionicons } from "@expo/vector-icons";
-import { baseScreenStylesNew } from "../styles/baseStylesNew";
+import { baseScreenStylesNew } from "../../styles/baseStylesNew";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
-import { API_URL, ENDPOINTS } from "../config/api";
+import { API_URL, ENDPOINTS } from "../../config/api";
 import { useFocusEffect } from '@react-navigation/native';
-import HeaderBar from "../components/HeaderBar"; 
+import HeaderBar from "../../components/HeaderBar"; 
 
 // Sort categories
 const categories = ["All", "Favorites", "Burner", "Elec. Burner", "Cutter", "Owner"];
@@ -196,7 +196,7 @@ const Contacts = ({ navigation }) => {
 
   // Render each contact card
   const renderContactItem = ({ item }) => {
-    const defaultAvatar = require("../assets/default-images/user_with_gem.jpeg");
+    const defaultAvatar = require("../../assets/default-images/user_with_gem.jpeg");
     const avatarSource = item.avatar ? { uri: item.avatar } : defaultAvatar;
     
     return (

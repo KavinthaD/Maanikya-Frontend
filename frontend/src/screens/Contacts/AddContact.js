@@ -13,11 +13,11 @@ import {
   StatusBar
 } from "react-native";
 import { MaterialIcons, Ionicons } from "@expo/vector-icons";
-import { baseScreenStylesNew } from "../styles/baseStylesNew";
+import { baseScreenStylesNew } from "../../styles/baseStylesNew";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
-import { API_URL, ENDPOINTS } from "../config/api";
-import HeaderBar from "../components/HeaderBar";
+import { API_URL, ENDPOINTS } from "../../config/api";
+import HeaderBar from "../../components/HeaderBar";
 import { debounce } from 'lodash'; // Add lodash as a dependency if not already installed
 
 // Match theme color from ConnectScreen
@@ -132,7 +132,7 @@ const AddContact = ({ navigation }) => {
 
   // Render each search result
   const renderSearchResult = ({ item }) => {
-    const defaultAvatar = require("../assets/default-images/user_with_gem.jpeg");
+    const defaultAvatar = require("../../assets/default-images/user_with_gem.jpeg");
     const avatarSource = item.avatar ? { uri: item.avatar } : defaultAvatar;
     
     return (

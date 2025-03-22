@@ -1,7 +1,7 @@
 import React from "react";
 import { SafeAreaView } from "react-native";
 import HomePageBusiness from "../screens/Home/HomePageBusiness";
-import Market from "../screens/Market";
+import Market from "../screens/Market/Market";
 import AddGem from "../screens/GemProfile/GemRegister1";
 import Alerts from "../screens/Notification/Alerts";
 import Profiles from "../screens/UserProfile/BusinessOwnerProfile";

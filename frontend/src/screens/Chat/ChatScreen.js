@@ -14,12 +14,12 @@ import {
   StatusBar
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { API_URL, ENDPOINTS } from '../config/api';
+import { API_URL, ENDPOINTS } from '../../config/api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
-import HeaderBar from '../components/HeaderBar';import { useFocusEffect } from '@react-navigation/native';
+import HeaderBar from '../../components/HeaderBar';import { useFocusEffect } from '@react-navigation/native';
 import { useCallback } from 'react';
-import { baseScreenStylesNew } from '../styles/baseStylesNew';
+import { baseScreenStylesNew } from '../../styles/baseStylesNew';
 
 
 const POLLING_INTERVAL = 5000; // Poll every 5 seconds for new messages
@@ -260,7 +260,7 @@ const sendMessage = async () => {
         source={
           contactAvatar
             ? { uri: contactAvatar }
-            : require('../assets/default-images/user_with_gem.jpeg')
+            : require('../../assets/default-images/user_with_gem.jpeg')
         }
         style={styles.headerAvatar}
       />

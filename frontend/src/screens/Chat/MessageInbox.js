@@ -11,11 +11,11 @@ import {
   RefreshControl
 } from "react-native";
 import { Ionicons,Feather, MaterialIcons } from "@expo/vector-icons";
-import { baseScreenStylesNew } from "../styles/baseStylesNew";
+import { baseScreenStylesNew } from "../../styles/baseStylesNew";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
-import { API_URL, ENDPOINTS } from "../config/api";
-import HeaderBar from "../components/HeaderBar";
+import { API_URL, ENDPOINTS } from "../../config/api";
+import HeaderBar from "../../components/HeaderBar";
 import { useFocusEffect } from '@react-navigation/native';
 
 const THEME_COLOR = '#9CCDDB';

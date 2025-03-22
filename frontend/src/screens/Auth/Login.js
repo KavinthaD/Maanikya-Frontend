@@ -1,6 +1,6 @@
 //Screen creator: Dulith   // login
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -15,13 +15,15 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from "react-native";
-import { Picker } from "@react-native-picker/picker";
 import { baseScreenStyles } from "../../styles/baseStyles";
 import { useNavigation } from "@react-navigation/native";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { API_URL, ENDPOINTS } from "../../config/api";
 import { Ionicons } from "@expo/vector-icons";
+import LottieView from 'lottie-react-native';
+import Modal from 'react-native-modal';
+import DropDownPicker from "react-native-dropdown-picker";
 
 const Login = () => {
   const navigation = useNavigation();
@@ -30,6 +32,20 @@ const Login = () => {
   const [role, setRole] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [animationFinished, setAnimationFinished] = useState(false);
+  const [openRoleDropdown, setOpenRoleDropdown] = useState(false);
+  const [roleItems, setRoleItems] = useState([
+    { label: "Gem business owner", value: "gem_business_owner" },
+    { label: "Cutter/Burner", value: "cutter_burner" },
+    { label: "Customer", value: "customer" }
+  ]);
+  const [showRoleModal, setShowRoleModal] = useState(false);
+
+  const getRoleLabel = () => {
+    const selectedRole = roleItems.find(item => item.value === role);
+    return selectedRole ? selectedRole.label : null;
+  };
 
   const handleLogin = async () => {
     // Validation
@@ -64,20 +80,28 @@ const Login = () => {
         loginRole: backendLoginRole,
       });
 
-      // Store token and navigate
+      // Store token
       await AsyncStorage.setItem("authToken", response.data.token);
 
-      if (response.data.user.loginRole === "Gem business owner") {
-        navigation.navigate("BS_NavBar");
-      } else if (
-        response.data.user.loginRole === "Burner" ||
-        response.data.user.loginRole === "Cutter" ||
-        response.data.user.loginRole === "Electric Burner"
-      ) {
-        navigation.navigate("W_NavBar");
-      } else if (response.data.user.loginRole === "Customer") {
-        navigation.navigate("C_NavBar");
-      }
+      // Show success animation
+      setShowSuccessModal(true);
+
+      // Navigate after animation completes
+      setTimeout(() => {
+        setShowSuccessModal(false);
+        if (response.data.user.loginRole === "Gem business owner") {
+          navigation.navigate("BS_NavBar");
+        } else if (
+          response.data.user.loginRole === "Burner" ||
+          response.data.user.loginRole === "Cutter" ||
+          response.data.user.loginRole === "Electric Burner"
+        ) {
+          navigation.navigate("W_NavBar");
+        } else if (response.data.user.loginRole === "Customer") {
+          navigation.navigate("C_NavBar");
+        }
+      }, 2000); // Wait for 2 seconds after animation starts
+
     } catch (error) {
       console.error(
         "Login failed:",
@@ -122,7 +146,7 @@ const Login = () => {
             />
           </View>
 
-          <View style={baseScreenStyles.formContainer}>
+          <View style={[baseScreenStyles.formContainer, { zIndex: 1000 }]}>
             <Text style={baseScreenStyles.title}>Welcome Back</Text>
             <Text style={baseScreenStyles.subtitle}>Sign in to continue</Text>
 
@@ -144,36 +168,19 @@ const Login = () => {
               />
             </View>
 
-            <View style={baseScreenStyles.inputWrapper}>
-              <Ionicons
-                name="person-outline"
-                size={22}
-                color="#888"
-                style={baseScreenStyles.inputIcon}
-              />
-              <View style={baseScreenStyles.pickerContainer}>
-                <Picker
-                  selectedValue={role}
-                  style={[baseScreenStyles.picker, { color: role ? baseScreenStyles.colors.text.dark : "#888" }]}
-                  onValueChange={(itemValue) => setRole(itemValue)}
-                >
-                  <Picker.Item label="Select your role" value="" color="#888" />
-                  <Picker.Item
-                    label="Gem business owner"
-                    value="gem_business_owner"
-                    color={baseScreenStyles.colors.text.dark}
-                  />
-                  <Picker.Item
-                    label="Cutter/Burner"
-                    value="cutter_burner"
-                    color={baseScreenStyles.colors.text.dark}
-                  />
-                  <Picker.Item 
-                    label="Customer" 
-                    value="customer" 
-                    color={baseScreenStyles.colors.text.dark}
-                  />
-                </Picker>
+            <View style={{zIndex: 9999, elevation: 1000}}>
+              <View style={baseScreenStyles.inputWrapper}>
+                <Ionicons
+                  name="person-outline"
+                  size={22}
+                  color="#888"
+                  style={baseScreenStyles.inputIcon}
+                />
+                <baseScreenStyles.RoleSelectorField
+                  role={getRoleLabel()}
+                  placeholder="Select your role"
+                  onPress={() => setShowRoleModal(true)}
+                />
               </View>
             </View>
 
@@ -254,12 +261,42 @@ const Login = () => {
           </View>
         </KeyboardAvoidingView>
       </ScrollView>
+      <Modal
+        isVisible={showSuccessModal}
+        backdropOpacity={0.5}
+        animationIn="fadeIn"
+        animationOut="fadeOut"
+        useNativeDriver
+        style={styles.modal}
+      >
+        <View style={styles.modalContent}>
+          <LottieView
+            source={require('../../assets/success-animation.json')}
+            autoPlay
+            loop={false}
+            style={styles.animation}
+            onAnimationFinish={() => setAnimationFinished(true)}
+          />
+          <Text style={styles.successText}>Login Successful!</Text>
+        </View>
+      </Modal>
+      <baseScreenStyles.RoleSelectorModal
+        isVisible={showRoleModal}
+        onClose={() => setShowRoleModal(false)}
+        title="Select your role"
+        options={roleItems}
+        selectedValue={role}
+        onSelect={(value) => setRole(value)}
+      />
     </SafeAreaView>
   );
 };
 
 // Only keep screen-specific styles that aren't already in baseScreenStyles
 const styles = StyleSheet.create({
+  noAutoFillBackground: {
+    backgroundColor: 'transparent !important',
+  },
   forgotPasswordContainer: {
     alignSelf: "flex-end",
     marginBottom: 24,
@@ -302,6 +339,86 @@ const styles = StyleSheet.create({
     color: "#FFFFFF",
     fontSize: 18,
     fontWeight: "bold",
+  },
+  modal: {
+    margin: 0,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalContent: {
+    backgroundColor: 'white',
+    padding: 22,
+    borderRadius: 16,
+    alignItems: 'center',
+    width: '80%',
+  },
+  animation: {
+    width: 150,
+    height: 150,
+  },
+  successText: {
+    marginTop: 16,
+    fontSize: 18,
+    color: baseScreenStyles.colors.primary,
+    fontWeight: '600',
+  },
+  roleSelector: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    height: 50,
+    paddingRight: 12,
+  },
+  roleSelectorText: {
+    fontSize: 16,
+    color: baseScreenStyles.colors.text.dark,
+  },
+  roleModal: {
+    margin: 0,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  roleModalContent: {
+    backgroundColor: 'white',
+    width: '80%',
+    borderRadius: 16,
+    padding: 20,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  roleModalTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: baseScreenStyles.colors.text.dark,
+    marginBottom: 16,
+    textAlign: 'center',
+  },
+  roleOption: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingVertical: 14,
+    paddingHorizontal: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#f0f0f0',
+  },
+  selectedRoleOption: {
+    backgroundColor: `${baseScreenStyles.colors.primary}10`,
+  },
+  roleOptionText: {
+    fontSize: 16,
+    color: baseScreenStyles.colors.text.dark,
+  },
+  selectedRoleOptionText: {
+    color: baseScreenStyles.colors.primary,
+    fontWeight: '500',
   },
 });
 

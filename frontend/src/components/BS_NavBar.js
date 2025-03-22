@@ -4,7 +4,7 @@ import HomePageBusiness from "../screens/Home/HomePageBusiness";
 import Market from "../screens/Market/Market";
 import AddGem from "../screens/GemProfile/GemRegister1";
 import Alerts from "../screens/Notification/Alerts";
-import Profiles from "../screens/UserProfile/BusinessOwnerProfile";
+import Profiles from "../screens/UserProfile/UserProfile";
 import { createCustomTabNavigator, icons } from "./NavBarUtils";
 
 const TabArr = [

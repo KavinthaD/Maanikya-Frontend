@@ -2,7 +2,7 @@ import React from "react";
 import { SafeAreaView } from "react-native";
 import HomePageWorker from "../screens/Home/HomePageWorker";
 import Alerts from "../screens/Notification/Alerts";
-import Profiles from "../screens/UserProfile/BusinessOwnerProfile";
+import Profiles from "../screens/UserProfile/UserProfile";
 import { createCustomTabNavigator, icons } from "./NavBarUtils";
 
 const TabArr = [

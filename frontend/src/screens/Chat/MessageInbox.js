@@ -10,15 +10,14 @@ import {
   ActivityIndicator,
   RefreshControl
 } from "react-native";
-import { Ionicons,Feather, MaterialIcons } from "@expo/vector-icons";
+import { Ionicons, Feather, MaterialIcons } from "@expo/vector-icons";
 import { baseScreenStylesNew } from "../../styles/baseStylesNew";
+import { baseScreenStyles } from "../../styles/baseStyles";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import { API_URL, ENDPOINTS } from "../../config/api";
 import HeaderBar from "../../components/HeaderBar";
 import { useFocusEffect } from '@react-navigation/native';
-
-const THEME_COLOR = '#9CCDDB';
 
 export default function MessageInbox({ navigation }) {
   const [conversations, setConversations] = useState([]);
@@ -65,16 +64,12 @@ export default function MessageInbox({ navigation }) {
         return;
       }
       
-      console.log("Fetching conversations from:", `${API_URL}${ENDPOINTS.GET_CONVERSATIONS}`);
-      
       const response = await axios.get(
         `${API_URL}${ENDPOINTS.GET_CONVERSATIONS}`,
         {
           headers: { Authorization: `Bearer ${token}` }
         }
       );
-      
-      console.log("Conversations response:", response.data);
       
       // Handle the response format from your backend
       const formattedConversations = response.data.map(conv => ({
@@ -87,7 +82,12 @@ export default function MessageInbox({ navigation }) {
         unreadCount: conv.unreadCount || 0
       }));
       
-      setConversations(formattedConversations);
+      // Sort by timestamp - most recent first
+      const sortedConversations = formattedConversations.sort((a, b) => {
+        return new Date(b.timestamp) - new Date(a.timestamp);
+      });
+      
+      setConversations(sortedConversations);
       setLoading(false);
       setRefreshing(false);
     } catch (error) {
@@ -107,7 +107,7 @@ export default function MessageInbox({ navigation }) {
       fetchConversations();
       
       // Set up periodic refreshing while on this screen
-      const intervalId = setInterval(fetchConversations, 20000); // 10 seconds
+      const intervalId = setInterval(fetchConversations, 20000); // 20 seconds
       
       return () => clearInterval(intervalId);
     }, [])
@@ -140,7 +140,7 @@ export default function MessageInbox({ navigation }) {
       {item.avatar ? (
         <Image source={{ uri: item.avatar }} style={styles.avatar} />
       ) : (
-        <View style={[styles.avatarPlaceholder, baseScreenStylesNew.themeColor]}>
+        <View style={[styles.avatarPlaceholder, { backgroundColor: baseScreenStyles.colors.primary }]}>
           <Text style={styles.avatarInitial}>{getInitial(item.name)}</Text>
         </View>
       )}
@@ -148,8 +148,8 @@ export default function MessageInbox({ navigation }) {
       {/* Conversation details */}
       <View style={styles.conversationDetails}>
         <View style={styles.conversationHeader}>
-          <Text style={[styles.name, baseScreenStylesNew.blackText]} numberOfLines={1}>{item.name}</Text>
-          <Text style={[styles.time, baseScreenStylesNew.blackText]}>{formatMessageTime(item.timestamp)}</Text>
+          <Text style={styles.name} numberOfLines={1}>{item.name}</Text>
+          <Text style={styles.time}>{formatMessageTime(item.timestamp)}</Text>
         </View>
         
         <View style={styles.messagePreviewContainer}>
@@ -161,7 +161,7 @@ export default function MessageInbox({ navigation }) {
           </Text>
           
           {item.unreadCount > 0 && (
-            <View style={styles.unreadBadge}>
+            <View style={[styles.unreadBadge, { backgroundColor: baseScreenStyles.colors.primary }]}>
               <Text style={styles.unreadCount}>
                 {item.unreadCount > 99 ? '99+' : item.unreadCount}
               </Text>
@@ -175,13 +175,17 @@ export default function MessageInbox({ navigation }) {
   // Empty conversations state
   const renderEmptyState = () => (
     <View style={styles.emptyContainer}>
-      <Ionicons name="chatbubbles-outline" size={70} color="#CCCCCC" />
+      <Ionicons 
+        name="chatbubbles-outline" 
+        size={70} 
+        color={baseScreenStyles.colors.input.border} 
+      />
       <Text style={styles.emptyText}>No conversations yet</Text>
       <Text style={styles.emptySubText}>
         Start messaging your contacts to see them here
       </Text>
       <TouchableOpacity 
-        style={styles.newChatButton}
+        style={[styles.newChatButton, { backgroundColor: baseScreenStyles.colors.primary }]}
         onPress={() => navigation.navigate('Contacts')}
       >
         <Text style={styles.newChatButtonText}>Find Contacts</Text>
@@ -201,18 +205,19 @@ export default function MessageInbox({ navigation }) {
             onPress={() => navigation.navigate('Contacts')}
             style={styles.headerButton}
           >
-            <Feather name="user-plus" size={24} color="#333" />
+            <Feather name="user-plus" size={24} color={baseScreenStyles.colors.text.dark} />
           </TouchableOpacity>
         }
       />
       
       {loading ? (
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color={THEME_COLOR} />
+          <ActivityIndicator size="large" color={baseScreenStyles.colors.primary} />
+          <Text style={styles.loadingText}>Loading conversations...</Text>
         </View>
       ) : (
         <FlatList
-          data={conversations}
+          data={conversations} // Already sorted by timestamp in fetchConversations
           keyExtractor={(item) => item.contactId || item.id || `conv-${Math.random()}`}
           renderItem={renderItem}
           contentContainerStyle={styles.listContainer}
@@ -221,7 +226,8 @@ export default function MessageInbox({ navigation }) {
             <RefreshControl
               refreshing={refreshing}
               onRefresh={onRefresh}
-              colors={[THEME_COLOR]}
+              colors={[baseScreenStyles.colors.primary]}
+              tintColor={baseScreenStyles.colors.primary}
             />
           }
         />
@@ -231,11 +237,15 @@ export default function MessageInbox({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-
   loadingContainer: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+  },
+  loadingText: {
+    marginTop: 12,
+    fontSize: 16,
+    color: baseScreenStyles.colors.text.medium,
   },
   listContainer: {
     flexGrow: 1,
@@ -245,6 +255,7 @@ const styles = StyleSheet.create({
     padding: 16,
     borderBottomWidth: 1,
     borderBottomColor: "#F0F0F0",
+    backgroundColor: baseScreenStyles.colors.background,
   },
   avatar: {
     width: 50,
@@ -277,13 +288,13 @@ const styles = StyleSheet.create({
   name: {
     fontSize: 16,
     fontWeight: "600",
-    color: "#333333",
+    color: baseScreenStyles.colors.text.dark,
     flex: 1,
     marginRight: 8,
   },
   time: {
     fontSize: 12,
-    color: "#999999",
+    color: baseScreenStyles.colors.text.light,
   },
   messagePreviewContainer: {
     flexDirection: "row",
@@ -292,16 +303,15 @@ const styles = StyleSheet.create({
   },
   messagePreview: {
     fontSize: 14,
-    color: "#999999",
+    color: baseScreenStyles.colors.text.light,
     flex: 1,
     marginRight: 8,
   },
   unreadMessage: {
     fontWeight: "500",
-    color: "#333333",
+    color: baseScreenStyles.colors.text.dark,
   },
   unreadBadge: {
-    backgroundColor: THEME_COLOR,
     minWidth: 20,
     height: 20,
     borderRadius: 10,
@@ -323,21 +333,25 @@ const styles = StyleSheet.create({
   emptyText: {
     fontSize: 18,
     fontWeight: "bold",
-    color: "#666666",
+    color: baseScreenStyles.colors.text.dark,
     marginTop: 16,
   },
   emptySubText: {
     fontSize: 14,
-    color: "#999999",
+    color: baseScreenStyles.colors.text.medium,
     marginTop: 8,
     textAlign: "center",
   },
   newChatButton: {
     marginTop: 24,
-    backgroundColor: THEME_COLOR,
     paddingHorizontal: 20,
     paddingVertical: 10,
     borderRadius: 20,
+    elevation: 2,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
   },
   newChatButtonText: {
     color: "#FFFFFF",

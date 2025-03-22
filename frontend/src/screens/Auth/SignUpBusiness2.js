@@ -15,12 +15,11 @@ import {
   KeyboardAvoidingView,
   Platform
 } from "react-native";
-import { baseScreenStylesNew } from "../../styles/baseStylesNew";
+import { Ionicons } from "@expo/vector-icons";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import axios from "axios";
 import { API_URL, ENDPOINTS } from "../../config/api";
-
-const THEME_COLOR = '#9CCDDB';
+import { baseScreenStyles } from "../../styles/baseStyles";
 
 const SignUpScreen = () => {
   const navigation = useNavigation();
@@ -29,7 +28,8 @@ const SignUpScreen = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [reEnterPassword, setReEnterPassword] = useState("");
-  const [popupVisible, setPopupVisible] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
   const handleCreateAccount = async () => {
@@ -88,71 +88,141 @@ const SignUpScreen = () => {
   };
 
   return (
-    <SafeAreaView style={baseScreenStylesNew.container}>
-      <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
+    <SafeAreaView style={baseScreenStyles.container}>
+      <StatusBar 
+        barStyle="dark-content" 
+        backgroundColor={baseScreenStyles.colors.background} 
+      />
       
       <ScrollView 
-        contentContainerStyle={styles.scrollViewContent}
+        contentContainerStyle={baseScreenStyles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
         <KeyboardAvoidingView
           behavior={Platform.OS === "ios" ? "padding" : "height"}
-          style={styles.container}
+          style={baseScreenStyles.contentContainer}
         >
-          <Image
-            source={require("../../assets/logo.png")}
-            style={styles.logo}
-          />
-          <Text style={[styles.subtitle, baseScreenStylesNew.blackText]}>Create Account</Text>
-          <Text style={[styles.prompt, baseScreenStylesNew.blackText]}>Enter your details to complete registration</Text>
+          <View style={styles.headerContainer}>
+            <TouchableOpacity
+              style={styles.backButton}
+              onPress={() => navigation.goBack()}
+            >
+              <Ionicons
+                name="arrow-back"
+                size={24}
+                color={baseScreenStyles.colors.primary}
+              />
+            </TouchableOpacity>
+
+            <View style={baseScreenStyles.logoContainer}>
+              <Image
+                source={require("../../assets/logo.png")}
+                style={baseScreenStyles.logo}
+              />
+            </View>
+          </View>
+
+          <Text style={baseScreenStyles.title}>Create Account</Text>
+          <Text style={baseScreenStyles.subtitle}>
+            Enter your details to complete registration
+          </Text>
           
-          <View style={styles.formContainer}>
-            <View style={styles.inputContainer}>
-              <Text style={styles.inputLabel}>Username</Text>
+          <View style={baseScreenStyles.formContainer}>
+            <View style={baseScreenStyles.inputWrapper}>
+              <Ionicons
+                name="person-outline"
+                size={20}
+                color="#888"
+                style={baseScreenStyles.inputIcon}
+              />
               <TextInput
-                style={baseScreenStylesNew.input}
-                placeholder="Choose a username"
-                placeholderTextColor="#999"
+                style={baseScreenStyles.input}
+                placeholder="Username"
+                placeholderTextColor={baseScreenStyles.colors.input.placeholder}
                 value={username}
                 onChangeText={setUsername}
                 autoCapitalize="none"
               />
             </View>
-            
-            <View style={styles.inputContainer}>
-              <Text style={styles.inputLabel}>Password</Text>
+          
+            <View style={baseScreenStyles.inputWrapper}>
+              <Ionicons
+                name="lock-closed-outline"
+                size={20}
+                color="#888"
+                style={baseScreenStyles.inputIcon}
+              />
               <TextInput
-                style={baseScreenStylesNew.input}
-                placeholder="Create a password"
-                placeholderTextColor="#999"
-                secureTextEntry={true}
+                style={baseScreenStyles.input}
+                placeholder="Entrer Password"
+                placeholderTextColor={baseScreenStyles.colors.input.placeholder}
+                secureTextEntry={!showPassword}
                 value={password}
                 onChangeText={setPassword}
               />
+              <TouchableOpacity 
+                style={baseScreenStyles.eyeIcon}
+                onPress={() => setShowPassword(!showPassword)}
+              >
+                <Ionicons
+                  name={showPassword ? "eye-off-outline" : "eye-outline"}
+                  size={20}
+                  color="#888"
+                />
+              </TouchableOpacity>
             </View>
             
-            <View style={styles.inputContainer}>
-              <Text style={styles.inputLabel}>Confirm Password</Text>
+            <View style={baseScreenStyles.inputWrapper}>
+              <Ionicons
+                name="lock-closed-outline"
+                size={20}
+                color="#888"
+                style={baseScreenStyles.inputIcon}
+              />
               <TextInput
-                style={baseScreenStylesNew.input}
+                style={baseScreenStyles.input}
                 placeholder="Re-enter your password"
-                placeholderTextColor="#999"
-                secureTextEntry={true}
+                placeholderTextColor={baseScreenStyles.colors.input.placeholder}
+                secureTextEntry={!showConfirmPassword}
                 value={reEnterPassword}
                 onChangeText={setReEnterPassword}
               />
+              <TouchableOpacity
+                style={baseScreenStyles.eyeIcon}
+                onPress={() => setShowConfirmPassword(!showConfirmPassword)}
+              >
+                <Ionicons
+                  name={showConfirmPassword ? "eye-off-outline" : "eye-outline"}
+                  size={20}
+                  color="#888"
+                />
+              </TouchableOpacity>
             </View>
             
             {errorMessage ? (
-              <Text style={styles.errorText}>{errorMessage}</Text>
+              <Text style={baseScreenStyles.errorText}>{errorMessage}</Text>
             ) : null}
             
             <TouchableOpacity
-              style={baseScreenStylesNew.Button1}
+              style={baseScreenStyles.primaryButton}
               onPress={handleCreateAccount}
             >
-              <Text style={baseScreenStylesNew.buttonText}>Create Account</Text>
+              <Text style={baseScreenStyles.buttonText}>Create Account</Text>
             </TouchableOpacity>
+            
+            <View style={styles.loginContainer}>
+              <Text style={baseScreenStyles.regularText}>
+                Already have an account?{" "}
+              </Text>
+              <TouchableOpacity onPress={() => navigation.navigate("Login")}>
+                <Text style={baseScreenStyles.linkText}>Login</Text>
+              </TouchableOpacity>
+            </View>
+
+            <View style={styles.stepIndicator}>
+              <View style={styles.stepInactive}></View>
+              <View style={styles.stepActive}></View>
+            </View>
           </View>
         </KeyboardAvoidingView>
       </ScrollView>
@@ -160,71 +230,47 @@ const SignUpScreen = () => {
   );
 };
 
+// Only include styles specific to this component that aren't in baseScreenStyles
 const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-  },
-  scrollViewContent: {
-    flexGrow: 1,
-  },
-  container: {
-    flex: 1,
+  headerContainer: {
+    flexDirection: "row",
     alignItems: "center",
-    padding: 20,
-    paddingTop: 0,
-  },
-  logo: {
-    width: 200,
-    height: 100,
-    marginTop: 30,
-    marginBottom: 5,
-    resizeMode: "contain"
-  },
-  subtitle: {
-    fontSize: 28,
-    fontWeight: "bold",
-    color: "#333333",
-    marginBottom: 4,
-  },
-  prompt: {
-    fontSize: 16,
-    color: "#666666",
-    marginBottom: 20,
-  },
-  formContainer: {
-    width: "100%",
-
-    borderRadius: 12,
-    padding: 5,
-  },
-  inputContainer: {
-    marginBottom: 16,
+    justifyContent: "center",
+    marginTop: -20,
+    marginBottom: 0,
+    position: "relative",
     width: "100%",
   },
-  inputLabel: {
-    fontSize: 14,
-    fontWeight: "500",
-    color: "#555555",
-    marginBottom: 8,
-    paddingLeft: 2,
+  backButton: {
+    position: "absolute",
+    left: 0,
+    top: 0,
+    zIndex: 1,
   },
-  input: {
-    width: "100%",
-    height: 50,
-    borderWidth: 1,
-    borderColor: "#DDDDDD",
-    borderRadius: 8,
-    paddingHorizontal: 12,
-    backgroundColor: "#FFFFFF",
-    color: "#333333",
-    fontSize: 16,
+  loginContainer: {
+    flexDirection: "row",
+    justifyContent: "center",
+    marginTop: 16,
   },
-  errorText: {
-    color: "#FF6B6B",
-    marginBottom: 16,
-    fontSize: 14,
+  stepIndicator: {
+    flexDirection: "row",
+    justifyContent: "center",
+    marginTop: 40,
   },
-  
+  stepActive: {
+    width: 30,
+    height: 6,
+    backgroundColor: baseScreenStyles.colors.primary,
+    borderRadius: 3,
+    marginHorizontal: 4,
+  },
+  stepInactive: {
+    width: 30,
+    height: 6,
+    backgroundColor: "#DDD",
+    borderRadius: 3,
+    marginHorizontal: 4,
+  },
 });
 
 export default SignUpScreen;

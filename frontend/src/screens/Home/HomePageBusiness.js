@@ -17,9 +17,13 @@ import {
 } from "react-native";
 import { baseScreenStylesNew } from "../../styles/baseStylesNew";
 import { baseScreenStyles } from "../../styles/baseStyles";
-import { homeStyles, HomeScreenComponents } from "../../styles/homeScreenStyles";
+import {
+  homeStyles,
+  HomeScreenComponents,
+} from "../../styles/homeScreenStyles";
 import { CameraView, useCameraPermissions } from "expo-camera";
 import { BarCodeScanner } from "expo-barcode-scanner";
+import { Camera } from "expo-camera";
 
 const HomeScreen = () => {
   const navigation = useNavigation();
@@ -27,16 +31,32 @@ const HomeScreen = () => {
   const [scanning, setScanning] = useState(false);
   const [permission, requestPermission] = useCameraPermissions();
 
-  if (!permission) {
-    // Camera permissions are still loading
-    return <View />;
-  }
-
-  if (!permission.granted) {
-    return <HomeScreenComponents.PermissionRequest onRequestPermission={requestPermission} />;
-  }
-
-  const handleQrScan = () => {
+  const handleQrScan = async () => {
+    try {
+      const { status } = await Camera.requestCameraPermissionsAsync();
+      if (status !== "granted") {
+        Alert.alert(
+          "Permission Required",
+          "This app needs camera and gallery access to get Gem image. Pleasse go to settings and enable permissions for camera",
+          [
+            {
+              text: "Open Settings",
+              onPress: () => Linking.openSettings(),
+            },
+            { text: "Cancel", style: "cancel" },
+          ]
+        );
+        return;
+      }
+      setHasPermission(status === "granted");
+      setModalVisible(true);
+    } catch (error) {
+      console.error("Error requesting camera permission:", error);
+      Alert.alert(
+        "Error",
+        "Failed to request camera permissions. Please try again."
+      );
+    }
     setModalVisible(true);
   };
 
@@ -115,37 +135,37 @@ const HomeScreen = () => {
     {
       image: require("../../assets/menu-icons/gem-inventory.jpg"),
       screen: "HomeMyGems",
-      title: "Gems Inventory"
+      title: "Gems Inventory",
     },
     {
       image: require("../../assets/menu-icons/scan-qr.jpg"),
       onPress: handleQrScan,
-      title: "Scan QR"
+      title: "Scan QR",
     },
     {
       image: require("../../assets/menu-icons/financial.jpg"),
       screen: "OwnerFinancialRecords",
-      title: "Financial Records"
+      title: "Financial Records",
     },
     {
       image: require("../../assets/menu-icons/tracker.jpg"),
       screen: "Tracker",
-      title: "Gem orders"
+      title: "Gem orders",
     },
     {
       image: require("../../assets/menu-icons/contacts.jpg"),
       screen: "Contacts",
-      title: "Contacts"
+      title: "Contacts",
     },
     {
       image: require("../../assets/menu-icons/gems-on-market.jpg"),
       screen: "GemOnDisplay",
-      title: "Gems On Market"
+      title: "Gems On Market",
     },
     {
       image: require("../../assets/menu-icons/chat.jpg"),
       screen: "MessageInbox",
-      title: "Messages"
+      title: "Messages",
     },
   ];
 
@@ -170,16 +190,21 @@ const HomeScreen = () => {
           }}
           onBarcodeScanned={handleBarCodeScanned}
         >
-          <HomeScreenComponents.QRScannerOverlay onCancel={() => setScanning(false)} />
+          <HomeScreenComponents.QRScannerOverlay
+            onCancel={() => setScanning(false)}
+          />
         </CameraView>
       ) : (
-        <ScrollView 
+        <ScrollView
           style={homeStyles.scrollView}
           showsVerticalScrollIndicator={false}
         >
           <View style={homeStyles.content}>
-            <Image source={require("../../assets/logo-letter.png")} style={homeStyles.logo}/>
-            
+            <Image
+              source={require("../../assets/logo-letter.png")}
+              style={homeStyles.logo}
+            />
+
             <View style={styles.menuGridThreeColumns}>
               {menuItems.map((item, index) => (
                 <TouchableOpacity
@@ -194,7 +219,9 @@ const HomeScreen = () => {
                         source={item.image}
                         style={styles.imageStyleThreeColumn}
                         resizeMode="cover"
-                        onError={(error) => console.error("Image loading error:", error)}
+                        onError={(error) =>
+                          console.error("Image loading error:", error)
+                        }
                       />
                       <View style={homeStyles.overlayContainer}>
                         <Text style={styles.menuTextSmaller}>{item.title}</Text>
@@ -255,7 +282,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
     color: baseScreenStyles.colors.primary,
     fontWeight: "600",
-  }
+  },
 });
 
 export default HomeScreen;

@@ -14,6 +14,7 @@ import { homeStyles, HomeScreenComponents } from "../../styles/homeScreenStyles"
 import * as ImagePicker from 'expo-image-picker';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import { BarCodeScanner } from 'expo-barcode-scanner';
+import { Camera } from "expo-camera";
 
 const HomeScreen = () => {
   const navigation = useNavigation();
@@ -21,17 +22,32 @@ const HomeScreen = () => {
   const [scanning, setScanning] = useState(false);
   const [permission, requestPermission] = useCameraPermissions();
 
-  if (!permission) {
-    // Camera permissions are still loading
-    return <View />;
-  }
-
-  if (!permission.granted) {
-    return <HomeScreenComponents.PermissionRequest onRequestPermission={requestPermission} />;
-  }
-
-  const handleQrScan = () => {
-    setModalVisible(true);
+  const handleQrScan = async () => {
+    try {
+          const { status } = await Camera.requestCameraPermissionsAsync();
+          if (status !== "granted") {
+            Alert.alert(
+              "Permission Required",
+              "This app needs camera and gallery access to get Gem image. Pleasse go to settings and enable permissions for camera",
+              [
+                {
+                  text: "Open Settings",
+                  onPress: () => Linking.openSettings(),
+                },
+                { text: "Cancel", style: "cancel" },
+              ]
+            );
+            return;
+          }
+          setHasPermission(status === "granted");
+          setModalVisible(true);
+        } catch (error) {
+          console.error("Error requesting camera permission:", error);
+          Alert.alert(
+            "Error",
+            "Failed to request camera permissions. Please try again."
+          );
+        }
   };
 
   const handleBarCodeScanned = ({ data }) => {

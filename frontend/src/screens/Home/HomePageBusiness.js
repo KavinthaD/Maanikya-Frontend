@@ -57,7 +57,6 @@ const HomeScreen = () => {
         "Failed to request camera permissions. Please try again."
       );
     }
-    setModalVisible(true);
   };
 
   const handleBarCodeScanned = ({ data }) => {

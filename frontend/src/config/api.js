@@ -69,5 +69,7 @@ export const ENDPOINTS = {
   UPDATE_ORDER: "/api/orders", // For updating order status
   UPDATE_ORDER_STATUS: "/api/orders/worker", // This will be used with /:id/status
   
+  FORGOT_PASSWORD: "/api/auth/forgot-password",
+  RESET_PASSWORD: "/api/auth/reset-password",
   // Add other endpoints here
 };

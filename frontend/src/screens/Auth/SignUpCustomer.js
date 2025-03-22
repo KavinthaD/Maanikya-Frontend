@@ -275,8 +275,11 @@ const SignUpScreenCustomer = () => {
             </View>
             
             {errorMessage ? (
-              <Text style={baseScreenStyles.errorText}>{errorMessage}</Text>
-            ) : null}
+  <View style={styles.inlineErrorContainer}>
+    <Ionicons name="alert-circle" size={18} color="#FF3B30" />
+    <Text style={styles.inlineErrorText}>{errorMessage}</Text>
+  </View>
+) : null}
             
             <TouchableOpacity
               style={baseScreenStyles.primaryButton}
@@ -324,6 +327,23 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "center",
     marginTop: 6,
+  },
+  inlineErrorContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 16,
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    backgroundColor: '#FFEBEE',
+    borderRadius: 8,
+    borderLeftWidth: 3,
+    borderLeftColor: '#FF3B30',
+  },
+  inlineErrorText: {
+    marginLeft: 8,
+    color: '#FF3B30',
+    fontSize: 14,
+    flex: 1,
   },
 });
 

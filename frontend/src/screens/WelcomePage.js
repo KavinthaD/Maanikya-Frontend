@@ -1,17 +1,65 @@
 import React, { useEffect, useRef } from "react";
 import { View, StyleSheet, Animated } from "react-native";
 import { baseScreenStylesNew } from "../styles/baseStylesNew";
-
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const WelcomePage = ({ navigation }) => {
   const fadeValue = useRef(new Animated.Value(0)).current;
   const revealValue = useRef(new Animated.Value(0)).current;
 
+  // Function to check for auto-login eligibility
+  const checkAutoLogin = async () => {
+    try {
+      // Get auth token, login time and role
+      const authToken = await AsyncStorage.getItem("authToken");
+      const lastLoginTimeStr = await AsyncStorage.getItem("lastLoginTime");
+      const loginRole = await AsyncStorage.getItem("loginRole");
+      
+      if (!authToken || !lastLoginTimeStr || !loginRole) {
+        // If any required info is missing, continue to purpose selection page
+        return false;
+      }
+      
+      // Calculate time difference in milliseconds
+      const lastLoginTime = parseInt(lastLoginTimeStr);
+      const currentTime = new Date().getTime();
+      const timeDifference = currentTime - lastLoginTime;
+      
+      // Check if login was within the last hour (3600000 milliseconds = 1 hour)
+      const oneHourInMs = 3600000;
+      
+      if (timeDifference < oneHourInMs) {
+        // Auto-login based on role
+        setTimeout(() => {
+          if (loginRole === "Gem business owner") {
+            navigation.replace("BS_NavBar");
+          } else if (
+            loginRole === "Burner" ||
+            loginRole === "Cutter" ||
+            loginRole === "Electric Burner"
+          ) {
+            navigation.replace("W_NavBar");
+          } else if (loginRole === "Customer") {
+            navigation.replace("C_NavBar");
+          } else {
+            navigation.replace("PurposeSelectionPage");
+          }
+        }, ); // Give time to show animation
+        return true;
+      }
+      
+      return false;
+    } catch (error) {
+      console.error("Auto-login check failed:", error);
+      return false;
+    }
+  };
+
   useEffect(() => {
     // First: Fade in the gem
     Animated.timing(fadeValue, {
       toValue: 1,
-      duration: 1500,
+      duration: 1000,
       useNativeDriver: true,
     }).start(() => {
       // Second: Reveal text from left to right
@@ -19,10 +67,16 @@ const WelcomePage = ({ navigation }) => {
         toValue: 350, // Full width of text container
         duration: 1000,
         useNativeDriver: false,
-      }).start(() => {
-        setTimeout(() => {
-          navigation.replace("PurposeSelectionPage");
-        }, 1000);
+      }).start(async () => {
+        // Check if we should auto-login
+        const shouldAutoLogin = await checkAutoLogin();
+        
+        // If not auto-login, continue to purpose selection after a delay
+        if (!shouldAutoLogin) {
+          setTimeout(() => {
+            navigation.replace("PurposeSelectionPage");
+          }, 1000);
+        }
       });
     });
   }, [navigation]);

@@ -140,7 +140,7 @@ const HomeScreen = () => {
     {
       image: require("../../assets/menu-icons/gems-on-market.jpg"),
       screen: "GemOnDisplay",
-      title: "Gems on Market"
+      title: "Gems On Market"
     },
     {
       image: require("../../assets/menu-icons/chat.jpg"),

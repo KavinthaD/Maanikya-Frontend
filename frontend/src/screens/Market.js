@@ -13,16 +13,20 @@ import {
   Dimensions,
   ActivityIndicator,
   SafeAreaView,
-  StatusBar
+  StatusBar,
+  Modal,
+  FlatList
 } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import axios from 'axios';
-import { API_URL } from '../config/api';
+import { API_URL } from '../../config/api';
 import { Ionicons } from '@expo/vector-icons';
+import { baseScreenStylesNew } from '../../styles/baseStylesNew';
+import { baseScreenStyles } from '../../styles/baseStyles';
+import HeaderBar from '../../components/HeaderBar';
 
 const { width } = Dimensions.get('window');
 const CARD_WIDTH = (width - 40) / 2; // 2 cards per row with margins
-const THEME_COLOR = '#9CCDDB'; // Light blue theme color
 
 const Market = ({ navigation }) => {
   const [gemstones, setGemstones] = useState([]);
@@ -30,7 +34,11 @@ const Market = ({ navigation }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
-  const [sortAscending, setSortAscending] = useState(true);
+  
+  // Sort state variables
+  const [sortOption, setSortOption] = useState("price");
+  const [sortDirection, setSortDirection] = useState("asc");
+  const [sortModalVisible, setSortModalVisible] = useState(false);
 
   const fetchGems = async () => {
     try {
@@ -62,8 +70,22 @@ const Market = ({ navigation }) => {
     setSearchQuery(text);
   };
 
-  const handleSort = () => {
-    setSortAscending(!sortAscending);
+  const showSortOptions = () => {
+    setSortModalVisible(true);
+  };
+  
+  const handleSortOptionSelect = (option) => {
+    if (sortOption === option) {
+      setSortDirection(sortDirection === "asc" ? "desc" : "asc");
+    } else {
+      setSortOption(option);
+      setSortDirection("asc");
+    }
+    setSortModalVisible(false);
+  };
+
+  const getSortIcon = () => {
+    return sortDirection === "asc" ? "arrow-up" : "arrow-down";
   };
 
   // Format price with commas
@@ -71,10 +93,19 @@ const Market = ({ navigation }) => {
     return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   };
 
+  // Format gem type
+  const formatGemType = (type) => {
+    if (!type) return "Unknown";
+    return type
+      .split('_')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
+  };
+
   // Format gem details
   const formatGemDetails = (weight, gemType) => {
     const formattedWeight = weight ? `${weight} ct` : '';
-    const formattedType = gemType ? gemType.charAt(0).toUpperCase() + gemType.slice(1) : '';
+    const formattedType = gemType ? formatGemType(gemType) : '';
     
     if (formattedWeight && formattedType) {
       return `${formattedWeight} ${formattedType}`;
@@ -86,195 +117,307 @@ const Market = ({ navigation }) => {
     return '';
   };
 
-  // Filter and sort gemstones
-  const filteredAndSortedGemstones = gemstones
-    .filter((gem) => {
-      const searchLower = searchQuery.toLowerCase();
-      return (
-        (gem.gemId && gem.gemId.toLowerCase().includes(searchLower)) ||
-        (gem.gemType && gem.gemType.toLowerCase().includes(searchLower)) ||
-        (gem.owner && gem.owner.toLowerCase().includes(searchLower))
-      );
-    })
-    .sort((a, b) => {
-      if (sortAscending) {
-        return a.price - b.price;
-      } else {
-        return b.price - a.price;
-      }
-    });
+  // Filter gemstones based on search query
+  const filteredGems = gemstones.filter((gem) => {
+    if (!searchQuery) return true;
+    
+    const searchLower = searchQuery.toLowerCase();
+    const gemIdMatch = gem.gemId && gem.gemId.toLowerCase().includes(searchLower);
+    const gemTypeMatch = gem.gemType && gem.gemType.toLowerCase().includes(searchLower);
+    const ownerMatch = gem.owner && gem.owner.toLowerCase().includes(searchLower);
+    
+    return gemIdMatch || gemTypeMatch || ownerMatch;
+  });
+
+  // Sort gemstones based on selected option and direction
+  const sortedGems = [...filteredGems].sort((a, b) => {
+    const direction = sortDirection === "asc" ? 1 : -1;
+    
+    switch(sortOption) {
+      case "gemId":
+        return direction * (a.gemId || "").localeCompare(b.gemId || "");
+      case "date":
+        return direction * (new Date(a.listedDate) - new Date(b.listedDate));
+      case "weight":
+        const weightA = a.weight || 0;
+        const weightB = b.weight || 0;
+        return direction * (weightA - weightB);
+      case "price":
+        const priceA = a.price || 0;
+        const priceB = b.price || 0;
+        return direction * (priceA - priceB);
+      case "type":
+        const typeA = a.gemType || "";
+        const typeB = b.gemType || "";
+        return direction * typeA.localeCompare(typeB);
+      default:
+        return direction * (a.price - b.price);
+    }
+  });
+
+  // Render the sort modal
+  const renderSortModal = () => {
+    return (
+      <Modal
+        visible={sortModalVisible}
+        transparent={true}
+        animationType="fade"
+        onRequestClose={() => setSortModalVisible(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.sortModalContent}>
+            <View style={styles.sortModalHeader}>
+              <Text style={styles.sortModalTitle}>Sort By</Text>
+              <TouchableOpacity
+                onPress={() => setSortModalVisible(false)}
+                style={styles.modalCloseButton}
+              >
+                <Text style={styles.modalCloseButtonText}>✕</Text>
+              </TouchableOpacity>
+            </View>
+            
+            {[
+              { key: "price", label: "Price" },
+              { key: "gemId", label: "Gem ID" },
+              { key: "date", label: "Listed Date" },
+              { key: "weight", label: "Weight" },
+              { key: "type", label: "Gem Type" }
+            ].map(option => (
+              <TouchableOpacity
+                key={option.key}
+                style={[
+                  styles.sortOption,
+                  sortOption === option.key ? styles.selectedSortOption : null
+                ]}
+                onPress={() => handleSortOptionSelect(option.key)}
+              >
+                <Text style={[
+                  styles.sortOptionText,
+                  sortOption === option.key ? { color: baseScreenStyles.colors.primary } : null
+                ]}>
+                  {option.label}
+                </Text>
+                {sortOption === option.key && (
+                  <Ionicons 
+                    name={getSortIcon()} 
+                    size={20} 
+                    color={baseScreenStyles.colors.primary}
+                  />
+                )}
+              </TouchableOpacity>
+            ))}
+          </View>
+        </View>
+      </Modal>
+    );
+  };
+
+  // Render a gem card
+  const renderGemCard = ({ item }) => (
+    <TouchableOpacity
+      style={styles.gemstoneCard}
+      onPress={() => navigation.navigate("GemDetailsScreen", { gemId: item.gemId })}
+    >
+      <View style={styles.gemImageContainer}>
+        <Image
+          source={{ uri: item.photo }}
+          style={styles.gemImage}
+          resizeMode="cover"
+          defaultSource={require("../../assets/gems/no_gem.jpeg")}
+        />
+        <Text style={styles.gemId}>{item.gemId}</Text>
+      </View>
+      <View style={styles.gemDetails}>
+        <Text style={styles.gemSpecs} numberOfLines={1}>
+          {formatGemDetails(item.weight, item.gemType)}
+        </Text>
+        <Text style={styles.gemOwner} numberOfLines={1}>
+          Owner: {item.owner}
+        </Text>
+        <Text style={styles.gemPrice}>
+          LKR {formatPrice(item.price)}
+        </Text>
+      </View>
+    </TouchableOpacity>
+  );
 
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <SafeAreaView style={baseScreenStylesNew.container}>
       <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
-      
+      <HeaderBar 
+        title="Marketplace"
+        navigation={navigation}
+        showBack={true} 
+      />
+
+      {/* Search and Sort Section */}
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>Market</Text>
-      </View>
-      
-      <ScrollView
-        style={styles.scrollView}
-        contentContainerStyle={styles.contentContainer}
-        refreshControl={
-          <RefreshControl 
-            refreshing={refreshing} 
-            onRefresh={fetchGems}
-            colors={[THEME_COLOR]} 
-            tintColor={THEME_COLOR}
-          />
-        }
-      >
         <View style={styles.searchContainer}>
-          <View style={styles.searchBar}>
-            <Ionicons name="search" size={20} color="#666" style={styles.searchIcon} />
+          {/* Search Box */}
+          <View style={styles.searchInputContainer}>
+            <Ionicons 
+              name="search" 
+              size={20} 
+              color={baseScreenStyles.colors.text.medium} 
+              style={styles.searchIcon} 
+            />
             <TextInput
               style={styles.searchInput}
-              placeholder="Search gems..."
-              placeholderTextColor="#999"
+              placeholderTextColor={baseScreenStyles.colors.input.placeholder}
+              placeholder="Search marketplace..."
               value={searchQuery}
               onChangeText={handleSearch}
             />
-            <TouchableOpacity style={styles.sortButton} onPress={handleSort}>
-              <Ionicons name={sortAscending ? "arrow-up" : "arrow-down"} size={16} color="#FFF" />
-              <Text style={styles.sortButtonText}>Price</Text>
-            </TouchableOpacity>
-          </View>
-
-          <Text style={styles.sectionTitle}>Available Gems</Text>
-
-          {loading ? (
-            <View style={styles.loadingContainer}>
-              <ActivityIndicator size="large" color={THEME_COLOR} />
-              <Text style={styles.loadingText}>Loading gems...</Text>
-            </View>
-          ) : error ? (
-            <View style={styles.errorContainer}>
-              <Text style={styles.errorText}>{error}</Text>
-              <TouchableOpacity style={styles.retryButton} onPress={fetchGems}>
-                <Text style={styles.retryButtonText}>Retry</Text>
+            {searchQuery.length > 0 && (
+              <TouchableOpacity onPress={() => setSearchQuery("")} style={styles.clearButton}>
+                <Ionicons name="close-circle" size={18} color={baseScreenStyles.colors.text.medium} />
               </TouchableOpacity>
-            </View>
-          ) : filteredAndSortedGemstones.length === 0 ? (
-            <View style={styles.emptyContainer}>
-              <Ionicons name="diamond-outline" size={64} color={THEME_COLOR} />
-              <Text style={styles.emptyText}>No gems available</Text>
-            </View>
-          ) : (
-            <View style={styles.gemstoneGrid}>
-              {filteredAndSortedGemstones.map((gem) => (
-                <TouchableOpacity
-                  key={gem._id}
-                  style={styles.gemstoneCard}
-                  onPress={() => navigation.navigate("GemDetailsScreen", { gemId: gem.gemId })}
-                >
-                  <View style={styles.gemImageContainer}>
-                    <Image
-                      source={{ uri: gem.photo || require("../assets/gems/no_gem.jpeg") }}
-                      style={styles.gemImage}
-                      resizeMode="cover"
-                    />
-                    <Text style={styles.gemId}>{gem.gemId}</Text>
-                  </View>
-                  <View style={styles.gemDetails}>
-                    <Text style={styles.gemSpecs} numberOfLines={1}>
-                      {formatGemDetails(gem.weight, gem.gemType)}
-                    </Text>
-                    <Text style={styles.gemOwner} numberOfLines={1}>
-                      Owner: {gem.owner}
-                    </Text>
-                    <Text style={styles.gemPrice}>
-                      LKR {formatPrice(gem.price)}
-                    </Text>
-                  </View>
-                </TouchableOpacity>
-              ))}
-            </View>
-          )}
+            )}
+          </View>
+          
+          {/* Sort Button */}
+          <TouchableOpacity
+            style={styles.sortButton}
+            onPress={showSortOptions}
+          >
+            <Ionicons
+              name={getSortIcon()}
+              size={18}
+              color={baseScreenStyles.colors.background}
+            />
+            <Text style={styles.sortButtonText}>
+              Sort
+            </Text>
+          </TouchableOpacity>
         </View>
-      </ScrollView>
+      </View>
+
+      {loading ? (
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color={baseScreenStyles.colors.primary} />
+          <Text style={styles.loadingText}>Loading gems...</Text>
+        </View>
+      ) : error ? (
+        <View style={styles.errorContainer}>
+          <Ionicons name="alert-circle-outline" size={64} color="#FF6B6B" />
+          <Text style={styles.errorText}>{error}</Text>
+          <TouchableOpacity 
+            style={[styles.retryButton, { backgroundColor: baseScreenStyles.colors.primary }]} 
+            onPress={fetchGems}
+          >
+            <Text style={styles.retryButtonText}>Retry</Text>
+          </TouchableOpacity>
+        </View>
+      ) : (
+        <FlatList
+          data={sortedGems}
+          renderItem={renderGemCard}
+          keyExtractor={(item) => item._id}
+          numColumns={2}
+          contentContainerStyle={styles.gemListContainer}
+          ListHeaderComponent={
+            <Text style={styles.sectionTitle}>Available Gems</Text>
+          }
+          ListEmptyComponent={
+            <View style={styles.emptyContainer}>
+              <Ionicons name="diamond-outline" size={64} color={baseScreenStyles.colors.text.light} />
+              <Text style={styles.emptyText}>
+                {searchQuery ? "No gems match your search" : "No gems available"}
+              </Text>
+            </View>
+          }
+          refreshControl={
+            <RefreshControl 
+              refreshing={refreshing} 
+              onRefresh={fetchGems}
+              colors={[baseScreenStyles.colors.primary]} 
+              tintColor={baseScreenStyles.colors.primary}
+            />
+          }
+        />
+      )}
+
+      {/* Sort Modal */}
+      {renderSortModal()}
     </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: '#FFFFFF',
-  },
+  // Header Section
   header: {
-    backgroundColor: '#FFFFFF',
-    paddingVertical: 16,
-    paddingHorizontal: 20,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
     borderBottomWidth: 1,
-    borderBottomColor: '#F0F0F0',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  headerTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#333333',
-  },
-  scrollView: {
-    backgroundColor: '#FFFFFF',
-  },
-  contentContainer: {
-    paddingBottom: 20,
+    borderBottomColor: '#EEEEEE',
+    backgroundColor: baseScreenStyles.colors.background,
   },
   searchContainer: {
-    padding: 15,
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 0,
   },
-  searchBar: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#F5F5F5',
-    borderRadius: 12,
-    paddingHorizontal: 15,
-    marginBottom: 20,
+  searchInputContainer: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: baseScreenStyles.colors.input.background,
     borderWidth: 1,
-    borderColor: '#EEEEEE',
+    borderColor: baseScreenStyles.colors.input.border,
+    borderRadius: 8,
+    paddingHorizontal: 10,
+    height: 40,
   },
   searchIcon: {
-    marginRight: 10,
+    marginRight: 8,
   },
   searchInput: {
     flex: 1,
-    height: 46,
-    color: '#333333',
-    fontSize: 16,
+    height: 40,
+    fontSize: 14,
+    color: baseScreenStyles.colors.text.dark,
+  },
+  clearButton: {
+    padding: 4,
   },
   sortButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: THEME_COLOR,
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: baseScreenStyles.colors.primary,
     paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 15,
+    paddingVertical: 8,
+    borderRadius: 8,
     marginLeft: 8,
+    elevation: 2,
   },
   sortButtonText: {
-    color: '#FFF',
-    marginLeft: 5,
     fontSize: 14,
-    fontWeight: '500',
+    marginLeft: 4,
+    color: baseScreenStyles.colors.background,
+    fontWeight: "500",
   },
+  
+  // Section Title
   sectionTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#333333',
-    marginBottom: 15,
+    color: baseScreenStyles.colors.text.dark,
+    marginHorizontal: 15,
+    marginTop: 15,
+    marginBottom: 10,
   },
-  gemstoneGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
+  
+  // Gem List Container
+  gemListContainer: {
+    paddingBottom: 20,
   },
+  
+  // Gem Card Styles  
   gemstoneCard: {
     width: CARD_WIDTH,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: baseScreenStyles.colors.background,
     borderRadius: 12,
-    marginBottom: 16,
+    margin: 8,
     overflow: 'hidden',
     elevation: 2,
     shadowColor: '#000',
@@ -314,19 +457,21 @@ const styles = StyleSheet.create({
   gemSpecs: {
     fontSize: 15,
     fontWeight: 'bold',
-    color: '#333333',
+    color: baseScreenStyles.colors.text.dark,
     marginBottom: 3,
   },
   gemOwner: {
     fontSize: 13,
-    color: '#666666',
+    color: baseScreenStyles.colors.text.medium,
     marginBottom: 5,
   },
   gemPrice: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: THEME_COLOR,
+    color: baseScreenStyles.colors.primary,
   },
+  
+  // Loading, Error, and Empty States
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
@@ -334,22 +479,24 @@ const styles = StyleSheet.create({
     paddingVertical: 50,
   },
   loadingText: {
-    color: '#333333',
+    color: baseScreenStyles.colors.text.medium,
     marginTop: 12,
     fontSize: 16,
   },
   errorContainer: {
+    flex: 1,
     alignItems: 'center',
-    paddingVertical: 50,
+    justifyContent: 'center',
+    paddingHorizontal: 30,
   },
   errorText: {
     color: '#FF6B6B',
     fontSize: 16,
     textAlign: 'center',
     marginBottom: 15,
+    marginTop: 10,
   },
   retryButton: {
-    backgroundColor: THEME_COLOR,
     paddingHorizontal: 20,
     paddingVertical: 10,
     borderRadius: 8,
@@ -359,14 +506,76 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   emptyContainer: {
+    flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
     paddingVertical: 50,
   },
   emptyText: {
-    color: '#333333',
+    color: baseScreenStyles.colors.text.medium,
     fontSize: 16,
     marginTop: 12,
+    textAlign: 'center',
+  },
+  
+  // Modal Styles
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.5)",
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 20,
+  },
+  sortModalContent: {
+    width: "80%",
+    backgroundColor: baseScreenStyles.colors.background,
+    borderRadius: 12,
+    overflow: "hidden",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.27,
+    shadowRadius: 4.65,
+    elevation: 6,
+  },
+  sortModalHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    backgroundColor: baseScreenStyles.colors.primary,
+  },
+  sortModalTitle: {
+    color: baseScreenStyles.colors.background,
+    fontSize: 16,
+    fontWeight: "600",
+  },
+  modalCloseButton: {
+    width: 24,
+    height: 24,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  modalCloseButtonText: {
+    color: baseScreenStyles.colors.background,
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+  sortOption: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingVertical: 14,
+    paddingHorizontal: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: "#EEEEEE",
+  },
+  selectedSortOption: {
+    backgroundColor: "#F0F9FB",
+  },
+  sortOptionText: {
+    fontSize: 15,
+    color: baseScreenStyles.colors.text.dark,
   },
 });
 

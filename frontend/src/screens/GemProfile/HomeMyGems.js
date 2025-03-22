@@ -1,5 +1,4 @@
-//Screen Creator Tilmi
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -12,459 +11,804 @@ import {
   Platform,
   StatusBar,
   Modal,
+  Alert,
+  ActivityIndicator,
+  Dimensions,
 } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import { baseScreenStylesNew } from "../../styles/baseStylesNew";
 import { baseScreenStyles } from "../../styles/baseStyles";
-import Header_2 from "../../components/Header_2";
-import BS_NavBar from "../../components/BS_NavBar";
-import { LinearGradient } from 'expo-linear-gradient';
+import HeaderBar from "../../components/HeaderBar";
+import axios from "axios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { API_URL, ENDPOINTS } from "../../config/api";
 
-const searchIcon =
-  "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAABmJLR0QA/wD/AP+gvaeTAAAAqklEQVRYhe2UQQ6AIAwEWeL/v6wHY0QK3W0JiYns0VB2h1YUiDQD2oABGdAFaW+AAawR+ybXPQBJupO0SPq6FylBLyeXx56klSkqgCRJc+YARxvQzg1oxwW0E3+PMue8/BR/+wqSZ0B6CpLvgHYKktfAkT+h1eb1i3B1BrRjAO1fB2g/TNqJv0eZc15+ir99BckzID0FyXdAOwXJa+DIn9Bq83oAVx0DTyemB+GeqEUAAAAASUVORK5CYII=";
+// Get screen dimensions to calculate gem card sizes properly
+const { width } = Dimensions.get('window');
+// Calculate width for 4 gems per row (with margins)
+const CARD_WIDTH = (width - 40) / 4; // 40 accounts for padding and margins
 
-const gems = [
-  { id: "BS001", image: require("../../assets/gems/BS001.png") },
-  { id: "EM001", image: require("../../assets/gems/EM001.png") },
-  { id: "RR001", image: require("../../assets/gems/RR001.png") },
-  { id: "YS001", image: require("../../assets/gems/YS001.png") },
-  { id: "BS002", image: require("../../assets/gems/BS002.png") },
-  { id: "PS001", image: require("../../assets/gems/PS001.png") },
-  { id: "PT001", image: require("../../assets/gems/PT001.png") },
-  { id: "EM002", image: require("../../assets/gems/EM002.png") },
-  { id: "YS002", image: require("../../assets/gems/YS002.png") },
-];
+// Add a unique key for the FlatList
+const flatListKey = "four-column-grid";
 
 const GemCollectionScreen = ({ navigation }) => {
   const [searchQuery, setSearchQuery] = useState("");
+  const [gems, setGems] = useState([]);
   const [isSelectMode, setIsSelectMode] = useState(false);
   const [selectedGems, setSelectedGems] = useState([]);
-  const [sortAscending, setSortAscending] = useState(true);
+  const [sortOption, setSortOption] = useState("gemId");
+  const [sortDirection, setSortDirection] = useState("asc");
   const [isSellModalVisible, setSellModalVisible] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [gemPrices, setGemPrices] = useState({});
+  const [historyModalVisible, setHistoryModalVisible] = useState(false);
+  const [soldOutGems, setSoldOutGems] = useState([]);
+  const [sortModalVisible, setSortModalVisible] = useState(false);
 
-  const filteredGems = gems.filter((gem) =>
-    gem.id.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const fetchGems = async () => {
+    setLoading(true);
+    const token = await AsyncStorage.getItem("authToken");
+    if (!token) {
+      console.error("Authentication token not found");
+      setLoading(false);
+      return;
+    }
+    try {
+      const response = await axios.get(
+        `${API_URL}${ENDPOINTS.GET_MY_GEMS}?includeAll=true`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      setGems(response.data.gems.filter((gem) => gem.status !== "SoldOut"));
+      setSoldOutGems(
+        response.data.gems.filter((gem) => gem.status === "SoldOut")
+      );
+    } catch (error) {
+      console.error(
+        "Error fetching gems:",
+        error.response ? error.response.data : error.message
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
 
-  const sortedGems = [...filteredGems].sort((a, b) => {
-    return sortAscending ? a.id.localeCompare(b.id) : b.id.localeCompare(a.id);
+  useEffect(() => {
+    fetchGems();
+  }, []);
+
+  const formatGemType = (type) => {
+    if (!type) return "Unknown";
+    return type
+      .split('_')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
+  };
+
+  const getFormattedWeight = (weight) => {
+    if (weight === null || weight === undefined) return "N/A";
+    return `${weight} ct`;
+  };
+
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const options = { day: '2-digit', month: 'short', year: 'numeric' };
+    return date.toLocaleDateString('en-US', options);
+  };
+
+  const formatCost = (cost) => {
+    if (cost === null || cost === undefined) return "N/A";
+    return `LKR ${cost}`;
+  };
+
+  const filteredGems = gems.filter((gem) => {
+    if (!gem.gemId || !searchQuery) return true;
+    const searchLower = searchQuery.toLowerCase();
+    const gemIdMatch = gem.gemId.toLowerCase().includes(searchLower);
+    const gemTypeMatch = gem.details?.gemType?.toLowerCase().includes(searchLower);
+    const statusMatch = gem.status.toLowerCase().includes(searchLower);
+    return gemIdMatch || gemTypeMatch || statusMatch;
   });
 
-  const toggleSort = () => {
-    setSortAscending(!sortAscending);
+  const sortedGems = [...filteredGems].sort((a, b) => {
+    const direction = sortDirection === "asc" ? 1 : -1;
+    
+    switch(sortOption) {
+      case "gemId":
+        return direction * a.gemId.localeCompare(b.gemId);
+      case "date":
+        return direction * (new Date(a.createdAt) - new Date(b.createdAt));
+      case "weight":
+        const weightA = a.details?.weight || 0;
+        const weightB = b.details?.weight || 0;
+        return direction * (weightA - weightB);
+      case "cost":
+        const costA = a.cost || 0;
+        const costB = b.cost || 0;
+        return direction * (costA - costB);
+      case "type":
+        const typeA = a.details?.gemType || "";
+        const typeB = b.details?.gemType || "";
+        return direction * typeA.localeCompare(typeB);
+      default:
+        return direction * a.gemId.localeCompare(b.gemId);
+    }
+  });
+
+  const showSortOptions = () => {
+    setSortModalVisible(true);
+  };
+  
+  const handleSortOptionSelect = (option) => {
+    if (sortOption === option) {
+      setSortDirection(sortDirection === "asc" ? "desc" : "asc");
+    } else {
+      setSortOption(option);
+      setSortDirection("asc");
+    }
+    setSortModalVisible(false);
+  };
+
+  const getSortIcon = () => {
+    return sortDirection === "asc" ? "arrow-up" : "arrow-down";
   };
 
   const toggleSelect = () => {
     setIsSelectMode(!isSelectMode);
-    setSelectedGems([]);
+    if (isSelectMode) {
+      setSelectedGems([]);
+    }
   };
 
   const toggleGemSelection = (gemId) => {
-    if (!isSelectMode) return;
-
-    setSelectedGems((prev) => {
-      if (prev.includes(gemId)) {
-        return prev.filter((id) => id !== gemId);
-      } else {
-        return [...prev, gemId];
-      }
-    });
+    if (selectedGems.includes(gemId)) {
+      setSelectedGems(selectedGems.filter(id => id !== gemId));
+    } else {
+      setSelectedGems([...selectedGems, gemId]);
+    }
   };
 
-  const handleSendOrder = () => {
-    console.log("Sending order for gems:", selectedGems);
-    setIsSelectMode(false);
-    setSelectedGems([]);
-    navigation.navigate("FavoritesScreen");
+  const handleShowHistory = () => {
+    setHistoryModalVisible(true);
   };
 
-  const handleSellPress = () => {
-    setSellModalVisible(true);
+  const getValidImageSource = (photoUrl) => {
+    if (typeof photoUrl === 'string' && photoUrl) {
+      return { uri: photoUrl };
+    }
+    return require("../../assets/gems/no_gem.jpeg");
   };
 
-  const handleSellConfirm = () => {
-    console.log("Selling gems:", selectedGems);
-    setSellModalVisible(false);
-    setIsSelectMode(false);
-    setSelectedGems([]);
-    navigation.navigate("GemstoneMarketplace");
-  };
+  // Gem card render function - optimized for 4 columns
+  const renderGemItem = React.useCallback(
+    ({ item }) => {
+      const isSelected = selectedGems.includes(item.gemId);
+      const isInOrder = item.status === "InOrder" || item.status === "Requested";
+      const isInMarket = item.inMarket === true;
 
-  const handleSellCancel = () => {
-    setSellModalVisible(false);
-  };
+      return (
+        <TouchableOpacity
+          style={[
+            styles.gemCard,
+            isSelectMode && isSelected ? styles.selectedGemCard : null,
+            isSelectMode && !isSelected ? { opacity: 0.7 } : { opacity: 1 },
+          ]}
+          onPress={() => {
+            if (isSelectMode) {
+              if (isInOrder) {
+                Alert.alert(
+                  "Cannot Select",
+                  `Gem ${item.gemId} is already in an order request.`
+                );
+                return;
+              }
+              if (isInMarket) {
+                Alert.alert(
+                  "Cannot Select",
+                  `Gem ${item.gemId} is currently on sale in the market.`
+                );
+                return;
+              }
+              toggleGemSelection(item.gemId);
+            } else {
+              navigation.navigate("MyGems", { gemId: item.gemId });
+            }
+          }}
+        >
+          <Image
+            source={getValidImageSource(item.photo)}
+            style={styles.gemImage}
+            resizeMode="cover"
+          />
 
-  const renderSelectedGemItem = ({ item }) => {
-    const gemData = gems.find((g) => g.id === item);
+          {/* Status Indicators */}
+          {isInOrder && (
+            <View style={styles.statusIndicator}>
+              <Ionicons name="time-outline" size={16} color="#FFFFFF" />
+            </View>
+          )}
+
+          {isInMarket && (
+            <View style={[styles.statusIndicator, styles.marketIndicator]}>
+              <Ionicons name="pricetag-outline" size={16} color="#FFFFFF" />
+            </View>
+          )}
+
+          {/* Gem Details */}
+          <View style={styles.gemDetailsContainer}>
+            <Text style={styles.gemId} numberOfLines={1}>{item.gemId}</Text>
+            <Text style={styles.gemType} numberOfLines={1}>
+              {formatGemType(item.details?.gemType)}
+            </Text>
+            <Text style={styles.gemWeight}>
+              {getFormattedWeight(item.details?.weight)}
+            </Text>
+          </View>
+
+          {/* Selection Indicator */}
+          {isSelectMode && isSelected && (
+            <View style={styles.selectionIndicator}>
+              <Ionicons name="checkmark-circle" size={20} color={baseScreenStyles.colors.primary} />
+            </View>
+          )}
+        </TouchableOpacity>
+      );
+    },
+    [isSelectMode, selectedGems, navigation]
+  );
+
+  // Sort modal with improved styling
+  const renderSortModal = () => {
     return (
-      <View style={styles.modalGemItem}>
-        <Image
-          source={gemData.image}
-          style={styles.modalGemImage}
-          resizeMode="cover"
-        />
-        <Text style={[styles.modalGemId, { marginTop: 0 }]}>{gemData.id}</Text>
-      </View>
+      <Modal
+        visible={sortModalVisible}
+        transparent={true}
+        animationType="fade"
+        onRequestClose={() => setSortModalVisible(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.sortModalContent}>
+            <View style={styles.sortModalHeader}>
+              <Text style={styles.sortModalTitle}>Sort By</Text>
+              <TouchableOpacity
+                onPress={() => setSortModalVisible(false)}
+                style={styles.modalCloseButton}
+              >
+                <Text style={styles.modalCloseButtonText}>✕</Text>
+              </TouchableOpacity>
+            </View>
+            
+            {[
+              { key: "gemId", label: "Gem ID" },
+              { key: "date", label: "Registration Date" },
+              { key: "weight", label: "Weight" },
+              { key: "cost", label: "Cost" },
+              { key: "type", label: "Gem Type" }
+            ].map(option => (
+              <TouchableOpacity
+                key={option.key}
+                style={[
+                  styles.sortOption,
+                  sortOption === option.key ? styles.selectedSortOption : null
+                ]}
+                onPress={() => handleSortOptionSelect(option.key)}
+              >
+                <Text style={[
+                  styles.sortOptionText,
+                  sortOption === option.key ? { color: baseScreenStyles.colors.primary } : null
+                ]}>
+                  {option.label}
+                </Text>
+                {sortOption === option.key && (
+                  <Ionicons 
+                    name={getSortIcon()} 
+                    size={20} 
+                    color={baseScreenStyles.colors.primary}
+                  />
+                )}
+              </TouchableOpacity>
+            ))}
+          </View>
+        </View>
+      </Modal>
     );
   };
 
-  const renderGemItem = ({ item }) => (
-    <TouchableOpacity
-      style={[
-        styles.gemCard,
-        isSelectMode &&
-          selectedGems.length > 0 && {
-            opacity: selectedGems.includes(item.id) ? 1 : 0.7,
-          },
-      ]}
-      onPress={() => toggleGemSelection(item.id)}
-    >
-      <Image
-        source={item.image}
-        style={[
-          styles.gemImage,
-          isSelectMode &&
-            selectedGems.length > 0 && {
-              opacity: selectedGems.includes(item.id) ? 1 : 0.7,
-            },
-        ]}
-        resizeMode="cover"
-      />
-      {isSelectMode && (
-        <View style={styles.selectionCircle}>
-          {selectedGems.includes(item.id) && (
-            <View style={styles.selectedDot} />
-          )}
-        </View>
-      )}
-      <Text
-        style={[
-          styles.gemId,
-          isSelectMode &&
-            selectedGems.length > 0 && {
-              opacity: selectedGems.includes(item.id) ? 1 : 0.7,
-            },
-        ]}
+  // Add the history modal render function after the renderSortModal function
+  const renderHistoryModal = () => {
+    return (
+      <Modal
+        visible={historyModalVisible}
+        transparent={true}
+        animationType="fade"
+        onRequestClose={() => setHistoryModalVisible(false)}
       >
-        {item.id}
-      </Text>
-    </TouchableOpacity>
-  );
+        <View style={styles.modalOverlay}>
+          <View style={styles.historyModalContent}>
+            <View style={styles.sortModalHeader}>
+              <Text style={styles.sortModalTitle}>Gem History</Text>
+              <TouchableOpacity
+                onPress={() => setHistoryModalVisible(false)}
+                style={styles.modalCloseButton}
+              >
+                <Text style={styles.modalCloseButtonText}>✕</Text>
+              </TouchableOpacity>
+            </View>
+            
+            {soldOutGems.length === 0 ? (
+              <View style={styles.emptyHistoryContainer}>
+                <Ionicons 
+                  name="time-outline" 
+                  size={40} 
+                  color={baseScreenStyles.colors.text.light} 
+                />
+                <Text style={styles.emptyHistoryText}>
+                  No gem history found
+                </Text>
+                <Text style={styles.emptyHistorySubtext}>
+                  Gems that have been sold will appear here
+                </Text>
+              </View>
+            ) : (
+              <FlatList
+                data={soldOutGems}
+                renderItem={({ item }) => (
+                  <View style={styles.historyItem}>
+                    <Image
+                      source={getValidImageSource(item.photo)}
+                      style={styles.historyItemImage}
+                      resizeMode="cover"
+                    />
+                    <View style={styles.historyItemDetails}>
+                      <Text style={styles.historyItemId}>{item.gemId}</Text>
+                      <Text style={styles.historyItemType}>
+                        {formatGemType(item.details?.gemType)}
+                      </Text>
+                      <Text style={styles.historyItemWeight}>
+                        {getFormattedWeight(item.details?.weight)}
+                      </Text>
+                      <Text style={styles.historyItemDate}>
+                        Sold on: {formatDate(item.updatedAt || item.createdAt)}
+                      </Text>
+                    </View>
+                  </View>
+                )}
+                keyExtractor={(item) => item.gemId || item._id}
+                contentContainerStyle={styles.historyList}
+              />
+            )}
+          </View>
+        </View>
+      </Modal>
+    );
+  };
 
   return (
-    <LinearGradient
-      colors={[
-        'rgba(107, 131, 145, 1)',
-        'rgba(67, 96, 114, 1)',
-        'rgba(37, 71, 91, 0.88)',
-        'rgba(22, 58, 79, 0.81)',
-        'rgba(7, 45, 68, 0.75)'
+    <SafeAreaView
+      style={[
+        baseScreenStylesNew.backgroundColor,
+        baseScreenStylesNew.container,
       ]}
-      style={styles.gradientContainer}
     >
-      <SafeAreaView style={styles.container}>
-        <Header_2 title="My Gems" />
-        <StatusBar barStyle="light-content" />
-
-        <View style={styles.header}>
-          <View style={styles.searchSection}>
-            <View style={styles.searchRow}>
-              <View style={styles.searchBar}>
-                <Image source={{ uri: searchIcon }} style={styles.searchIcon} />
-                <TextInput
-                  placeholder="Search"
-                  style={styles.searchInput}
-                  value={searchQuery}
-                  onChangeText={setSearchQuery}
-                />
-              </View>
-              <TouchableOpacity style={styles.sortButton} onPress={toggleSort}>
-                <Text style={styles.sortButtonText}>
-                  Sort {sortAscending ? "↑" : "↓"}
-                </Text>
+      <HeaderBar
+        title="Gem Inventory"
+        navigation={navigation}
+        showBack={true}
+        leftIcon="menu"
+        onLeftPress={() => navigation.openDrawer()}
+      />
+      
+      {/* Improved Search and Filter Section */}
+      <View style={styles.header}>
+        <View style={styles.searchContainer}>
+          {/* Search Box */}
+          <View style={styles.searchInputContainer}>
+            <Ionicons 
+              name="search" 
+              size={20} 
+              color={baseScreenStyles.colors.text.medium} 
+              style={styles.searchIcon} 
+            />
+            <TextInput
+              style={styles.searchInput}
+              placeholderTextColor={baseScreenStyles.colors.input.placeholder}
+              placeholder="Search gems..."
+              value={searchQuery}
+              onChangeText={setSearchQuery}
+            />
+            {searchQuery.length > 0 && (
+              <TouchableOpacity onPress={() => setSearchQuery("")} style={styles.clearButton}>
+                <Ionicons name="close-circle" size={18} color={baseScreenStyles.colors.text.medium} />
               </TouchableOpacity>
-            </View>
-            <View style={styles.selectButtonContainer}>
-              <TouchableOpacity
-                style={styles.selectButton}
-                onPress={toggleSelect}
-              >
-                <Text style={styles.selectButtonText}>
-                  {isSelectMode ? "Cancel" : "Select"}
-                </Text>
-              </TouchableOpacity>
-            </View>
+            )}
           </View>
+          
+          {/* Sort Button */}
+          <TouchableOpacity
+            style={styles.sortButton}
+            onPress={showSortOptions}
+          >
+            <Ionicons
+              name={getSortIcon()}
+              size={18}
+              color={baseScreenStyles.colors.background}
+            />
+            <Text style={styles.sortButtonText}>
+              Sort
+            </Text>
+          </TouchableOpacity>
         </View>
 
-        <FlatList
-          data={sortedGems}
-          renderItem={renderGemItem}
-          keyExtractor={(item) => item.id}
-          numColumns={3}
-          contentContainerStyle={styles.gemGrid}
-        />
+        {/* Action Buttons */}
+        <View style={styles.buttonsRow}>
+          <View style={styles.buttonSpacer} />
+          <TouchableOpacity
+            style={styles.historyButton}
+            onPress={handleShowHistory}
+          >
+            <Ionicons 
+              name="time-outline" 
+              size={16} 
+              color={baseScreenStyles.colors.primary} 
+            />
+            <Text style={styles.historyButtonText}>History</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.selectButton}
+            onPress={toggleSelect}
+          >
+            <Text style={styles.selectButtonText}>
+              {isSelectMode ? "Cancel" : "Select"}
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </View>
 
-        <Modal visible={isSellModalVisible} transparent={true} animationType="fade">
-          <View style={styles.modalOverlay}>
-            <View style={styles.modalContent}>
-              <LinearGradient
-                colors={[
-                  'rgba(67, 96, 114, 1)',
-                  'rgba(7, 45, 68, 1)'
-                ]}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 0, y: 1 }}
-                style={styles.modalContentGradient}
-              />
-              <FlatList
-                data={selectedGems}
-                renderItem={renderSelectedGemItem}
-                keyExtractor={(item) => item}
-                showsVerticalScrollIndicator={false}
-                contentContainerStyle={styles.modalGemList}
-              />
-              <View style={styles.modalActions}>
-                <TouchableOpacity
-                  style={[styles.modalButton, styles.cancelButton]}
-                  onPress={handleSellCancel}
-                >
-                  <Text style={styles.cancelButtonText}>Cancel</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={[styles.modalButton, styles.confirmButton]}
-                  onPress={handleSellConfirm}
-                >
-                  <Text style={styles.confirmButtonText}>Confirm</Text>
-                </TouchableOpacity>
-              </View>
+      {loading ? (
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color={baseScreenStyles.colors.primary} />
+          <Text style={styles.loadingText}>Loading gems...</Text>
+        </View>
+      ) : (
+        <>
+          {sortedGems.length === 0 ? (
+            <View style={styles.noGemsContainer}>
+              <Text style={styles.noGemsText}>No gems found</Text>
             </View>
-          </View>
-        </Modal>
+          ) : (
+            <FlatList
+              key={flatListKey}
+              data={sortedGems}
+              renderItem={renderGemItem}
+              keyExtractor={(item) => item.gemId || item._id || Math.random().toString()}
+              numColumns={4} // Changed to 4 columns
+              contentContainerStyle={styles.gemGrid}
+            />
+          )}
 
-        {isSelectMode && (
-          <View style={styles.selectionActions}>
-            <TouchableOpacity style={styles.sellButton} onPress={handleSellPress}>
-              <Text style={styles.actionButtonText}>Sell</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.sendOrderButton}
-              onPress={handleSendOrder}
-            >
-              <Text style={styles.actionButtonText}>Send Order</Text>
-            </TouchableOpacity>
-          </View>
-        )}
-      </SafeAreaView>
-    </LinearGradient>
+          {/* Sort Modal */}
+          {renderSortModal()}
+
+          {/* History Modal */}
+          {renderHistoryModal()}
+
+          {/* Other modals would go here */}
+        </>
+      )}
+    </SafeAreaView>
   );
 };
 
+// Updated styles with improved styling
 const styles = StyleSheet.create({
-  gradientContainer: {
-    flex: 1,
-  },
-  container: {
-    flex: 1,
-  },
+  // Header Section
   header: {
-    padding: 16,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#EEEEEE',
+    backgroundColor: baseScreenStyles.colors.background,
   },
-  searchSection: {
-    marginBottom: 8,
-  },
-  searchRow: {
+  searchContainer: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 8,
+    marginBottom: 10,
   },
-  searchBar: {
+  searchInputContainer: {
     flex: 1,
     flexDirection: "row",
-    backgroundColor: "white",
-    borderRadius: 8,
-    padding: 8,
-    marginRight: 8,
     alignItems: "center",
+    backgroundColor: baseScreenStyles.colors.input.background,
+    borderWidth: 1,
+    borderColor: baseScreenStyles.colors.input.border,
+    borderRadius: 8,
+    paddingHorizontal: 10,
+    height: 40,
   },
   searchIcon: {
-    width: 20,
-    height: 20,
     marginRight: 8,
   },
   searchInput: {
     flex: 1,
-    fontSize: 16,
+    height: 40,
+    fontSize: 14,
+    color: baseScreenStyles.colors.text.dark,
+  },
+  clearButton: {
+    padding: 4,
   },
   sortButton: {
-    backgroundColor: "white",
-    padding: 8,
-    borderRadius: 8,
-    minWidth: 70,
+    flexDirection: "row",
     alignItems: "center",
+    backgroundColor: baseScreenStyles.colors.primary,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 8,
+    marginLeft: 8,
+    elevation: 2,
   },
   sortButtonText: {
-    color: "#003366",
+    fontSize: 14,
+    marginLeft: 4,
+    color: baseScreenStyles.colors.background,
     fontWeight: "500",
   },
-  selectButtonContainer: {
-    alignItems: "flex-end",
-  },
-  selectButton: {
-    backgroundColor: "#003366",
-    paddingVertical: 6,
-    paddingHorizontal: 16,
-    borderRadius: 8,
-    minWidth: 70,
+  
+  // Action Buttons
+  buttonsRow: {
+    flexDirection: "row",
     alignItems: "center",
   },
-  selectButtonText: {
-    color: "white",
-    fontWeight: "600",
-    fontSize: 14,
+  buttonSpacer: {
+    flex: 1,
   },
+  historyButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 6,
+    marginRight: 10,
+    borderWidth: 1,
+    borderColor: baseScreenStyles.colors.primary,
+  },
+  historyButtonText: {
+    marginLeft: 4,
+    fontSize: 13,
+    color: baseScreenStyles.colors.primary,
+    fontWeight: "500",
+  },
+  selectButton: {
+    backgroundColor: baseScreenStyles.colors.primary,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 6,
+  },
+  selectButtonText: {
+    fontSize: 13,
+    fontWeight: "500",
+    color: baseScreenStyles.colors.background,
+  },
+  
+  // Loading and Empty States
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  loadingText: {
+    marginTop: 10,
+    fontSize: 15,
+    color: baseScreenStyles.colors.text.medium,
+  },
+  noGemsContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  noGemsText: {
+    fontSize: 16,
+    color: baseScreenStyles.colors.text.medium,
+  },
+  
+  // Gem Grid and Cards
   gemGrid: {
     padding: 8,
   },
   gemCard: {
-    flex: 1 / 3,
-    aspectRatio: 1,
+    width: CARD_WIDTH,
     margin: 4,
-    alignItems: "center",
-    justifyContent: "center",
+    backgroundColor: baseScreenStyles.colors.background,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: "#E0E0E0",
+    overflow: "hidden",
+  },
+  selectedGemCard: {
+    borderColor: baseScreenStyles.colors.primary,
+    borderWidth: 2,
+    opacity: 1,
   },
   gemImage: {
-    width: "80%",
-    height: "80%",
-    borderRadius: 4,
+    width: "100%",
+    height: CARD_WIDTH, // Square aspect ratio
+    borderTopLeftRadius: 7,
+    borderTopRightRadius: 7,
   },
-  selectionCircle: {
-    position: "absolute",
-    bottom: 8,
-    right: 8,
-    width: 20,
-    height: 20,
-    borderRadius: 10,
-    borderWidth: 2,
-    borderColor: "#003366",
-    backgroundColor: "white",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  selectedDot: {
-    width: 10,
-    height: 10,
-    borderRadius: 5,
-    backgroundColor: "#003366",
+  gemDetailsContainer: {
+    padding: 6,
   },
   gemId: {
-    marginTop: 4,
     fontSize: 12,
-    color: "#ffffff",
+    fontWeight: "600",
+    color: baseScreenStyles.colors.text.dark,
+    marginBottom: 2,
+  },
+  gemType: {
+    fontSize: 10,
+    color: baseScreenStyles.colors.text.medium,
+    marginBottom: 2,
+  },
+  gemWeight: {
+    fontSize: 10,
+    color: baseScreenStyles.colors.text.medium,
     fontWeight: "500",
   },
-  selectionActions: {
+  selectionIndicator: {
+    position: "absolute",
+    top: 4,
+    right: 4,
+    backgroundColor: "rgba(255, 255, 255, 0.7)",
+    borderRadius: 10,
+    padding: 2,
+  },
+  statusIndicator: {
+    position: "absolute",
+    top: 4,
+    left: 4,
+    backgroundColor: "#f47c48",
+    borderRadius: 10,
+    width: 20,
+    height: 20,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  marketIndicator: {
+    backgroundColor: baseScreenStyles.colors.success,
+  },
+  
+  // Modal Styles
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.5)",
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 20,
+  },
+  sortModalContent: {
+    width: "80%",
+    backgroundColor: baseScreenStyles.colors.background,
+    borderRadius: 12,
+    overflow: "hidden",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.27,
+    shadowRadius: 4.65,
+    elevation: 6,
+  },
+  sortModalHeader: {
     flexDirection: "row",
-    padding: 16,
-    paddingBottom: Platform.OS === "ios" ? 34 : 16,
-    backgroundColor: "#072D44",
-
-  },
-  sellButton: {
-    flex: 1,
-    backgroundColor: "#170969",
-    padding: 16,
-    borderRadius: 25,
-    marginRight: 8,
+    justifyContent: "space-between",
     alignItems: "center",
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    backgroundColor: baseScreenStyles.colors.primary,
   },
-  sendOrderButton: {
-    flex: 1,
-    backgroundColor: "#170969",
-    padding: 16,
-    borderRadius: 25,
-    marginLeft: 8,
-    alignItems: "center",
-  },
-  actionButtonText: {
-    color: "white",
+  sortModalTitle: {
+    color: baseScreenStyles.colors.background,
     fontSize: 16,
     fontWeight: "600",
   },
-  modalOverlay: {
+  modalCloseButton: {
+    width: 24,
+    height: 24,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  modalCloseButtonText: {
+    color: baseScreenStyles.colors.background,
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+  sortOption: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingVertical: 14,
+    paddingHorizontal: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: "#EEEEEE",
+  },
+  selectedSortOption: {
+    backgroundColor: "#F0F9FB",
+  },
+  sortOptionText: {
+    fontSize: 15,
+    color: baseScreenStyles.colors.text.dark,
+  },
+  historyModalContent: {
+    width: "80%",
+    backgroundColor: baseScreenStyles.colors.background,
+    borderRadius: 12,
+    overflow: "hidden",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.27,
+    shadowRadius: 4.65,
+    elevation: 6,
+  },
+  emptyHistoryContainer: {
     flex: 1,
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
     justifyContent: "center",
     alignItems: "center",
+    padding: 20,
   },
-  modalContent: {
-    width: 288,
-    height: 390,
-    borderRadius: 10,
+  emptyHistoryText: {
+    fontSize: 16,
+    color: baseScreenStyles.colors.text.light,
+    marginTop: 10,
+  },
+  emptyHistorySubtext: {
+    fontSize: 14,
+    color: baseScreenStyles.colors.text.light,
+    marginTop: 5,
+    textAlign: "center",
+  },
+  historyList: {
     padding: 16,
-    alignItems: "center",
-    background: "transparent", // Remove background color since we're using gradient
   },
-  modalContentGradient: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    borderRadius: 10,
-  },
-  modalGemList: {
-    paddingVertical: 8,
-    width: "100%",
-    alignItems: "center",
-  },
-  modalGemItem: {
+  historyItem: {
     flexDirection: "row",
     alignItems: "center",
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-    width: "80%",
+    marginBottom: 16,
+    backgroundColor: baseScreenStyles.colors.background,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: "#E0E0E0",
+    overflow: "hidden",
   },
-  modalGemImage: {
+  historyItemImage: {
     width: 60,
     height: 60,
-    borderRadius: 8,
-    backgroundColor: "white",
-    marginRight: 12,
+    borderTopLeftRadius: 7,
+    borderBottomLeftRadius: 7,
   },
-  modalGemId: {
-    marginTop: 4,
+  historyItemDetails: {
+    flex: 1,
+    padding: 10,
+  },
+  historyItemId: {
     fontSize: 14,
-    color: "#ffff",
+    fontWeight: "600",
+    color: baseScreenStyles.colors.text.dark,
+    marginBottom: 2,
+  },
+  historyItemType: {
+    fontSize: 12,
+    color: baseScreenStyles.colors.text.medium,
+    marginBottom: 2,
+  },
+  historyItemWeight: {
+    fontSize: 12,
+    color: baseScreenStyles.colors.text.medium,
     fontWeight: "500",
   },
-  modalActions: {
-    flexDirection: "row",
-    justifyContent: "center",
-    marginTop: 16,
-    gap: 50,
-    width: "100%",
-  },
-  modalButton: {
-    paddingVertical: 12,
-    paddingHorizontal: 24,
-    borderRadius: 6,
-    alignItems: "center",
-    minWidth: 100,
-  },
-  cancelButton: {
-    backgroundColor: "#FF3B30",
-  },
-  confirmButton: {
-    backgroundColor: "#4CD964",
-  },
-  cancelButtonText: {
-    color: "white",
-    fontSize: 14,
-    fontWeight: "600",
-  },
-  confirmButtonText: {
-    color: "white",
-    fontSize: 14,
-    fontWeight: "600",
+  historyItemDate: {
+    fontSize: 12,
+    color: baseScreenStyles.colors.text.medium,
   },
 });
 

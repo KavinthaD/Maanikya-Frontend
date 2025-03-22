@@ -6,6 +6,8 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import { baseScreenStyles } from "./src/styles/baseStyles";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as ScreenOrientation from "expo-screen-orientation";
+import { StatusBar as ExpoStatusBar } from 'expo-status-bar';
+import * as NavigationBar from 'expo-navigation-bar';
 
 // Import screens
 import PurposeSelectionPage from "./src/screens/Auth/PurposeSelectionPage";
@@ -49,13 +51,20 @@ const Stack = createNativeStackNavigator();
 const App = () => {
   const [initialRouteName, setInitialRouteName] = useState("WelcomePage");
 
-  // Lock orientation to portrait when the app starts
+  // Lock orientation to portrait and set navigation bar color when the app starts
   useEffect(() => {
-    const lockOrientation = async () => {
+    const setupApp = async () => {
+      // Lock screen orientation
       await ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT);
+      
+      // Set Android navigation bar color to white
+      if (Platform.OS === 'android') {
+        await NavigationBar.setBackgroundColorAsync('#FFFFFF');
+        await NavigationBar.setButtonStyleAsync('dark');
+      }
     };
 
-    lockOrientation();
+    setupApp();
   }, []);
 
   return (
@@ -67,10 +76,14 @@ const App = () => {
           paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
         }}
       >
-        <StatusBar barStyle="dark-content" backgroundColor={baseScreenStyles.container.backgroundColor} translucent={true} />
+        {Platform.OS === 'ios' ? (
+          <StatusBar barStyle="dark-content" backgroundColor="white" translucent={true} />
+        ) : (
+          <ExpoStatusBar style="dark" backgroundColor="white" translucent={true} />
+        )}
+        
         <NavigationContainer>
           <Stack.Navigator initialRouteName={initialRouteName}>
-            
             <Stack.Screen name="AddContact" component={AddContact} options={{ headerShown: false }} />
             <Stack.Screen name="BS_NavBar" component={BS_NavBar} options={{ headerShown: false }} />
             <Stack.Screen name="BusinessOwnerEditProfile" component={BusinessOwnerEditProfile} options={{ headerShown: false }} />

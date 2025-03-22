@@ -8,16 +8,21 @@ import {
   TouchableOpacity,
   StyleSheet,
   Image,
-  Alert, // Import Alert
+  Alert,
+  SafeAreaView,
+  StatusBar,
+  ScrollView,
+  KeyboardAvoidingView,
+  Platform,
 } from "react-native";
-import { baseScreenStylesNew } from "../../styles/baseStylesNew";
-import SuccessPopup from "../../components/SuccessPopup"; 
-import axios from 'axios'; // Import axios
+import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
+import axios from 'axios';
+import { API_URL, ENDPOINTS } from '../../config/api';
+import { baseScreenStyles } from "../../styles/baseStyles";
 
-import { API_URL, ENDPOINTS } from '../../config/api'; 
-
-const SignUpScreenCustomer = ({ navigation }) => {
+const SignUpScreenCustomer = () => {
+  const navigation = useNavigation();
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
@@ -25,15 +30,22 @@ const SignUpScreenCustomer = ({ navigation }) => {
   const [userName, setUserName] = useState("");
   const [password, setPassword] = useState("");
   const [reEnterPassword, setReEnterPassword] = useState("");
-  const [popupVisible, setPopupVisible] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
-  const handleCreateAccount = async () => { // Make async
-
+  const handleCreateAccount = async () => {
     if (!firstName || !lastName || !email || !phoneNumber || !userName || !password || !reEnterPassword) {
       setErrorMessage("All fields are required");
       return;
     }
+    
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailPattern.test(email)) {
+      setErrorMessage("Invalid email format.");
+      return;
+    }
+    
     if (password !== reEnterPassword) {
       setErrorMessage("Passwords do not match");
       return;
@@ -43,192 +55,276 @@ const SignUpScreenCustomer = ({ navigation }) => {
       return;
     }
     
-
     setErrorMessage(""); // Clear previous errors
 
     try {
       const response = await axios.post(`${API_URL}${ENDPOINTS.REGISTER_CUSTOMER}`, { 
-        firstName: firstName,
         firstName: firstName,
         lastName: lastName,
         email: email,
         phone: phoneNumber,
         username: userName,
         password: password,
-        confirmPassword: reEnterPassword, // Include confirmPassword in request
+        confirmPassword: reEnterPassword,
       });
 
       // **Successful Customer Registration:**
       console.log("Customer registration successful:", response.data);
-      Alert.alert("Registration Successful!", response.data.message, [ // Use Alert for success
-        { text: "OK", onPress: () => navigation.navigate("Login") } // Navigate to Login after successful registration
+      Alert.alert("Registration Successful!", response.data.message, [
+        { text: "OK", onPress: () => navigation.navigate("Login") }
       ]);
-      // Optionally, you might want to store the token or user data here if needed for immediate login
 
     } catch (error) {
       // **Customer Registration Error:**
       console.error("Customer registration failed:", error.response ? error.response.data : error.message);
       if (error.response && error.response.data && error.response.data.errors) {
-        // Backend is sending validation errors as an array
         const errorList = error.response.data.errors.map(err => err.msg).join("\n");
         setErrorMessage("Registration failed:\n" + errorList);
       } else if (error.response && error.response.data && error.response.data.message) {
-        // Backend is sending a single error message
         setErrorMessage("Registration failed: " + error.response.data.message);
       }
       else {
-        setErrorMessage("Customer registration failed. Please try again."); // Generic error message
+        setErrorMessage("Customer registration failed. Please try again.");
       }
     }
   };
+  
   return (
-    <View style={[baseScreenStylesNew.container, styles.container]}>
-      <Image source={require("../../assets/logo.png")} style={styles.logo} />
-      <Text style={[styles.subtitle, baseScreenStylesNew.blackText]}>Sign Up</Text>
-      <Text style={[styles.instructions, baseScreenStylesNew.blackText]}>Create Your Customer Account</Text>
-      <View style={styles.row}>
-        <View style={styles.inputHalfContainer}>
-        <Text style={styles.inputLabel}>First Name</Text>
-        <TextInput
-          style={baseScreenStylesNew.input}
-          placeholder="John"
-          placeholderTextColor="#B0B0B0"
-          value={firstName}
-          onChangeText={setFirstName}
-        />
-        </View>
-        <View style={styles.inputHalfContainer}>
-        <Text style={styles.inputLabel}>Last Name</Text>
-        <TextInput
-          style={baseScreenStylesNew.input}
-          placeholder="Doe"
-          placeholderTextColor="#B0B0B0"
-          value={lastName}
-          onChangeText={setLastName}
-        />
-        </View>
-      </View>
-      <View style={styles.inputContainer}>
-      <Text style={styles.inputLabel}>Email Address</Text>
-      <TextInput
-        style={baseScreenStylesNew.input}
-        placeholder="example@domain.com"
-        keyboardType="email-address"
-        placeholderTextColor="#B0B0B0"
-        value={email}
-        onChangeText={setEmail}
+    <SafeAreaView style={baseScreenStyles.container}>
+      <StatusBar 
+        barStyle="dark-content" 
+        backgroundColor={baseScreenStyles.colors.background} 
       />
-      </View>
-      <View style={styles.inputContainer}>
-      <Text style={styles.inputLabel}>Phone Number</Text>
-      <TextInput
-        style={baseScreenStylesNew.input}
-        placeholder="+94 71 796 7845"
-        keyboardType="phone-pad"
-        placeholderTextColor="#B0B0B0"
-        value={phoneNumber}
-        onChangeText={setPhoneNumber}
-      />
-      </View>
-      <View style={styles.inputContainer}>
-      <Text style={styles.inputLabel}>Username</Text>
-      <TextInput
-        style={baseScreenStylesNew.input}
-        placeholder="Choose a username"
-        placeholderTextColor="#B0B0B0"
-        value={userName}
-        onChangeText={setUserName}
-      />
-      </View>
-      <View style={styles.inputContainer}>
-      <Text style={styles.inputLabel}>Password</Text>
-      <TextInput
-        style={baseScreenStylesNew.input}
-        placeholder="Enter password"
-        placeholderTextColor="#B0B0B0"
-        secureTextEntry
-        value={password}
-        onChangeText={setPassword}
-      />
-      </View>
-      <View style={styles.inputContainer}>
-      <Text style={styles.inputLabel}>Confirm Password</Text>
-      <TextInput
-        style={baseScreenStylesNew.input}
-        placeholder="Re-enter password"
-        placeholderTextColor="#B0B0B0"
-        secureTextEntry
-        value={reEnterPassword}
-        onChangeText={setReEnterPassword}
-      />
-      </View>
-      {errorMessage ? (
-        <Text style={styles.errorText}>{errorMessage}</Text>
-      ) : null}
-      <TouchableOpacity
-        style={baseScreenStylesNew.Button1}
-        onPress={handleCreateAccount}>
-        <Text style={baseScreenStylesNew.buttonText}>Create account</Text>
-      </TouchableOpacity>
       
-      {/* <SuccessPopup
-        visible={popupVisible}
-        onClose={() => setPopupVisible(false)}
-        message="Account created successfully!"
-      /> */}
-    </View>
-    
+      <ScrollView 
+        contentContainerStyle={baseScreenStyles.scrollContent}
+        showsVerticalScrollIndicator={false}
+      >
+        <KeyboardAvoidingView
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+          style={baseScreenStyles.contentContainer}
+        >
+          <View style={styles.headerContainer}>
+            <TouchableOpacity
+              style={styles.backButton}
+              onPress={() => navigation.goBack()}
+            >
+              <Ionicons
+                name="arrow-back"
+                size={24}
+                color={baseScreenStyles.colors.primary}
+              />
+            </TouchableOpacity>
+
+            <View style={baseScreenStyles.logoContainer}>
+              <Image
+                source={require("../../assets/logo.png")}
+                style={baseScreenStyles.logo}
+              />
+            </View>
+          </View>
+
+          <Text style={[baseScreenStyles.title,styles.title]}>Create Customer Account</Text>
+          <Text style={baseScreenStyles.subtitle}>
+            Enter your details to get started
+          </Text>
+          
+          <View style={baseScreenStyles.formContainer}>
+            <View style={baseScreenStyles.row}>
+              <View style={baseScreenStyles.halfWidth}>
+                <View style={baseScreenStyles.inputWrapper}>
+                  <Ionicons
+                    name="person-outline"
+                    size={20}
+                    color="#888"
+                    style={baseScreenStyles.inputIcon}
+                  />
+                  <TextInput
+                    style={baseScreenStyles.input}
+                    placeholder="First Name"
+                    placeholderTextColor={baseScreenStyles.colors.input.placeholder}
+                    value={firstName}
+                    onChangeText={setFirstName}
+                  />
+                </View>
+              </View>
+
+              <View style={baseScreenStyles.halfWidth}>
+                <View style={baseScreenStyles.inputWrapper}>
+                  <Ionicons
+                    name="person-outline"
+                    size={20}
+                    color="#888"
+                    style={baseScreenStyles.inputIcon}
+                  />
+                  <TextInput
+                    style={baseScreenStyles.input}
+                    placeholder="Last Name"
+                    placeholderTextColor={baseScreenStyles.colors.input.placeholder}
+                    value={lastName}
+                    onChangeText={setLastName}
+                  />
+                </View>
+              </View>
+            </View>
+
+            <View style={baseScreenStyles.inputWrapper}>
+              <Ionicons
+                name="mail-outline"
+                size={20}
+                color="#888"
+                style={baseScreenStyles.inputIcon}
+              />
+              <TextInput
+                style={baseScreenStyles.input}
+                placeholder="Email Address"
+                placeholderTextColor={baseScreenStyles.colors.input.placeholder}
+                keyboardType="email-address"
+                autoCapitalize="none"
+                value={email}
+                onChangeText={setEmail}
+              />
+            </View>
+
+            <View style={baseScreenStyles.inputWrapper}>
+              <Ionicons
+                name="call-outline"
+                size={20}
+                color="#888"
+                style={baseScreenStyles.inputIcon}
+              />
+              <TextInput
+                style={baseScreenStyles.input}
+                placeholder="Phone Number"
+                placeholderTextColor={baseScreenStyles.colors.input.placeholder}
+                keyboardType="phone-pad"
+                value={phoneNumber}
+                onChangeText={setPhoneNumber}
+              />
+            </View>
+
+            <View style={baseScreenStyles.inputWrapper}>
+              <Ionicons
+                name="person-outline"
+                size={20}
+                color="#888"
+                style={baseScreenStyles.inputIcon}
+              />
+              <TextInput
+                style={baseScreenStyles.input}
+                placeholder="Choose a username"
+                placeholderTextColor={baseScreenStyles.colors.input.placeholder}
+                autoCapitalize="none"
+                value={userName}
+                onChangeText={setUserName}
+              />
+            </View>
+
+            <View style={baseScreenStyles.inputWrapper}>
+              <Ionicons
+                name="lock-closed-outline"
+                size={20}
+                color="#888"
+                style={baseScreenStyles.inputIcon}
+              />
+              <TextInput
+                style={baseScreenStyles.input}
+                placeholder="Create a password"
+                placeholderTextColor={baseScreenStyles.colors.input.placeholder}
+                secureTextEntry={!showPassword}
+                value={password}
+                onChangeText={setPassword}
+              />
+              <TouchableOpacity 
+                style={baseScreenStyles.eyeIcon}
+                onPress={() => setShowPassword(!showPassword)}
+              >
+                <Ionicons
+                  name={showPassword ? "eye-off-outline" : "eye-outline"}
+                  size={20}
+                  color="#888"
+                />
+              </TouchableOpacity>
+            </View>
+
+            <View style={baseScreenStyles.inputWrapper}>
+              <Ionicons
+                name="lock-closed-outline"
+                size={20}
+                color="#888"
+                style={baseScreenStyles.inputIcon}
+              />
+              <TextInput
+                style={baseScreenStyles.input}
+                placeholder="Re-enter your password"
+                placeholderTextColor={baseScreenStyles.colors.input.placeholder}
+                secureTextEntry={!showConfirmPassword}
+                value={reEnterPassword}
+                onChangeText={setReEnterPassword}
+              />
+              <TouchableOpacity
+                style={baseScreenStyles.eyeIcon}
+                onPress={() => setShowConfirmPassword(!showConfirmPassword)}
+              >
+                <Ionicons
+                  name={showConfirmPassword ? "eye-off-outline" : "eye-outline"}
+                  size={20}
+                  color="#888"
+                />
+              </TouchableOpacity>
+            </View>
+            
+            {errorMessage ? (
+              <Text style={baseScreenStyles.errorText}>{errorMessage}</Text>
+            ) : null}
+            
+            <TouchableOpacity
+              style={baseScreenStyles.primaryButton}
+              onPress={handleCreateAccount}
+            >
+              <Text style={baseScreenStyles.buttonText}>Create Account</Text>
+            </TouchableOpacity>
+            
+            <View style={styles.loginContainer}>
+              <Text style={baseScreenStyles.regularText}>
+                Already have an account?{" "}
+              </Text>
+              <TouchableOpacity onPress={() => navigation.navigate("Login")}>
+                <Text style={baseScreenStyles.linkText}>Login</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </KeyboardAvoidingView>
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 
+// Only include styles specific to this component that aren't in baseScreenStyles
 const styles = StyleSheet.create({
-  container: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 20,
+  title:{
+    marginTop: -30,
   },
-  logo: {
-    paddingTop: 120,
-    width: 170,
-    height: 80,
-    marginTop: 90,
-    marginBottom: 8,
-},
-  subtitle: {
-    fontSize: 30,
-    marginBottom: 5,
-    fontWeight: "bold",
-    color: "#000"
-  },
-  instructions: {
-    fontSize: 18,
-    marginBottom: 20,
-    fontWeight: 'bold',
-    color: "#000"
-  },
-  row: {
+  headerContainer: {
     flexDirection: "row",
-    justifyContent: "space-between",
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: -20,
+    marginBottom: 0,
+    position: "relative",
     width: "100%",
   },
-  inputHalfContainer: {
-    width: "48%",
-    marginBottom: 4,
+  backButton: {
+    position: "absolute",
+    left: 0,
+    top: 0,
+    zIndex: 1,
   },
-  inputContainer: {
-    marginBottom: 4,
-    width: "100%",
-  },
-  inputLabel: {
-    fontSize: 14,
-    fontWeight: "500",
-    color: "#555555",
-    paddingLeft: 2,
-  },
-  errorText: {
-    color: 'red',
-    marginBottom: 10,
+  loginContainer: {
+    flexDirection: "row",
+    justifyContent: "center",
+    marginTop: 6,
   },
 });
 
-export default SignUpScreenCustomer; 
+export default SignUpScreenCustomer;

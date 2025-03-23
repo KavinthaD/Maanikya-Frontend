@@ -25,24 +25,27 @@ import { baseScreenStylesNew } from '../../styles/baseStylesNew';
 import { baseScreenStyles } from '../../styles/baseStyles';
 import HeaderBar from '../../components/HeaderBar';
 
-const { width } = Dimensions.get('window');
+const { width } = Dimensions.get('window'); // screen width for responsive design
 const CARD_WIDTH = (width - 40) / 2; // 2 cards per row with margins
 
 const Market = ({ navigation }) => {
-  const [gemstones, setGemstones] = useState([]);
-  const [refreshing, setRefreshing] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [gemstones, setGemstones] = useState([]); //list of gem stones fetched from the API
+  const [refreshing, setRefreshing] = useState(false); //refreshing state of the FlatList
+  const [loading, setLoading] = useState(true); //loading state of data fetching
+  const [error, setError] = useState(null); //error message to display if data fetching fails
+  const [searchQuery, setSearchQuery] = useState(''); //search query state
   
   // Sort state variables
   const [sortOption, setSortOption] = useState("price");
   const [sortDirection, setSortDirection] = useState("asc");
   const [sortModalVisible, setSortModalVisible] = useState(false);
 
+  // Fetch gemstones from the API
   const fetchGems = async () => {
     try {
+      // refreshing state is set to true while fetching data
       setRefreshing(true);
+      // GET request to fetch gemstones from the API
       const response = await axios.get(`${API_URL}/api/market/view`);
       
       if (response.data.success) {
@@ -62,20 +65,22 @@ const Market = ({ navigation }) => {
 
   useFocusEffect(
     React.useCallback(() => {
+      // Fetch gemstones when the screen is focused
       fetchGems();
-    }, [])
+    }, []) //empty array to run only once when the screen is focused
   );
 
   const handleSearch = (text) => {
-    setSearchQuery(text);
+    setSearchQuery(text); //update search query state
   };
 
   const showSortOptions = () => {
     setSortModalVisible(true);
   };
-  
+
   const handleSortOptionSelect = (option) => {
     if (sortOption === option) {
+      // toggle sort direction if the same option is selected
       setSortDirection(sortDirection === "asc" ? "desc" : "asc");
     } else {
       setSortOption(option);
@@ -85,6 +90,7 @@ const Market = ({ navigation }) => {
   };
 
   const getSortIcon = () => {
+    // arrow up if ascending, arrow down if descending
     return sortDirection === "asc" ? "arrow-up" : "arrow-down";
   };
 
@@ -119,35 +125,43 @@ const Market = ({ navigation }) => {
 
   // Filter gemstones based on search query
   const filteredGems = gemstones.filter((gem) => {
+    // Return all gems if search query is empty
     if (!searchQuery) return true;
     
-    const searchLower = searchQuery.toLowerCase();
-    const gemIdMatch = gem.gemId && gem.gemId.toLowerCase().includes(searchLower);
-    const gemTypeMatch = gem.gemType && gem.gemType.toLowerCase().includes(searchLower);
-    const ownerMatch = gem.owner && gem.owner.toLowerCase().includes(searchLower);
+    const searchLower = searchQuery.toLowerCase(); //search query in lowercase
+    const gemIdMatch = gem.gemId && gem.gemId.toLowerCase().includes(searchLower); //check if gemId includes search query
+    const gemTypeMatch = gem.gemType && gem.gemType.toLowerCase().includes(searchLower); //check if gemType includes search query
+    const ownerMatch = gem.owner && gem.owner.toLowerCase().includes(searchLower); //check if owner includes search query
     
-    return gemIdMatch || gemTypeMatch || ownerMatch;
+    return gemIdMatch || gemTypeMatch || ownerMatch;  //return true if any of the above conditions are true
   });
 
   // Sort gemstones based on selected option and direction
   const sortedGems = [...filteredGems].sort((a, b) => {
+    // Sort based on the selected option and direction
     const direction = sortDirection === "asc" ? 1 : -1;
     
     switch(sortOption) {
+      // sort by gem id
       case "gemId":
         return direction * (a.gemId || "").localeCompare(b.gemId || "");
+      // sort by listed date
       case "date":
+        // converts dates to milliseconds and sorts them
         return direction * (new Date(a.listedDate) - new Date(b.listedDate));
-      case "weight":
-        const weightA = a.weight || 0;
+      // sort by weight
+        case "weight":
+        const weightA = a.weight || 0; //if weight is null, set it to 0
         const weightB = b.weight || 0;
         return direction * (weightA - weightB);
-      case "price":
-        const priceA = a.price || 0;
+      // sort by price
+        case "price":
+        const priceA = a.price || 0; //if price is null, set it to 0
         const priceB = b.price || 0;
         return direction * (priceA - priceB);
-      case "type":
-        const typeA = a.gemType || "";
+      // sort by gem type
+        case "type":
+        const typeA = a.gemType || ""; //if gemType is null, set it to empty string
         const typeB = b.gemType || "";
         return direction * typeA.localeCompare(typeB);
       default:

@@ -473,7 +473,6 @@ const Contacts = ({ navigation }) => {
 };
 
 const styles = StyleSheet.create({
-  // Add these styles to your StyleSheet
 categoriesOuterContainer: {
   marginVertical: 5,
   marginBottom: 15,

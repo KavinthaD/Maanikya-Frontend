@@ -15,7 +15,9 @@ import { Ionicons } from "@expo/vector-icons";
 
 
 const PurposeSelectionPage = ({ navigation }) => {
+  // visibility of the language modal
     const [showLanguageModal, setShowLanguageModal] = useState(false);
+  // store the selected language - default is english  
     const [selectedLanguage, setSelectedLanguage] = useState("English");
     const [languageOptions] = useState([
       { label: "English", value: "en" },
@@ -24,6 +26,7 @@ const PurposeSelectionPage = ({ navigation }) => {
 
   const scaleValue = useRef(new Animated.Value(1)).current;
 
+  //handle logo animation
   useEffect(() => {
     Animated.sequence([
       Animated.timing(scaleValue, {
@@ -40,7 +43,8 @@ const PurposeSelectionPage = ({ navigation }) => {
   }, []);
 
   return (
-        <SafeAreaView style={baseScreenStyles.container}>
+    // SafeAreaView to display the content within the safe area of the screen
+        <SafeAreaView style={baseScreenStyles.container}> 
           <StatusBar barStyle="dark-content" backgroundColor={baseScreenStyles.colors.background} />
           
           <View style={baseScreenStyles.headerContainer}>

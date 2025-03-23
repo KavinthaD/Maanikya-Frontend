@@ -34,10 +34,10 @@ export default function Gem_register_3() {
   const qrContainerRef = useRef();
   const [showEnlargedQR, setShowEnlargedQR] = useState(false);
 
-  // =============================================
-  // === LOGGING RETRIEVED DATA ===================
+
+  // LOGGING RETRIEVED DATA 
   // console.log("Received Data from GemRegister2:", { gemId, createdAt, qrCode });
-  // =============================================
+
   
   // Disable back navigation
   useEffect(() => {

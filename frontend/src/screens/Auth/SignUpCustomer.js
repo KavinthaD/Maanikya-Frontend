@@ -23,7 +23,8 @@ import { API_URL, ENDPOINTS } from "../../config/api";
 import { baseScreenStyles } from "../../styles/baseStyles";
 
 const SignUpScreenCustomer = () => {
-  const navigation = useNavigation();
+  const navigation = useNavigation();  // Navigation hook
+  //states for customer detqails
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
@@ -33,6 +34,7 @@ const SignUpScreenCustomer = () => {
   const [reEnterPassword, setReEnterPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
   const [errorMessage, setErrorMessage] = useState("");
   const [keyboardVisible, setKeyboardVisible] = useState(false);
 
@@ -51,6 +53,7 @@ const SignUpScreenCustomer = () => {
     const keyboardDidShowListener = Keyboard.addListener(
       "keyboardDidShow",
       () => {
+        // set to true when the keyboard is shown
         setKeyboardVisible(true);
       }
     );
@@ -60,12 +63,12 @@ const SignUpScreenCustomer = () => {
         setKeyboardVisible(false);
       }
     );
-
+// remove listeners when the component is disconnected
     return () => {
       keyboardDidShowListener.remove();
       keyboardDidHideListener.remove();
     };
-  }, []);
+  }, []); //empty array to run only once
 
   // Clear error message when any input changes
   useEffect(() => {
@@ -129,18 +132,20 @@ const SignUpScreenCustomer = () => {
         }
       );
 
-      // **Successful Customer Registration:**
+      // Successful Customer Registration:
       console.log("Customer registration successful:", response.data);
       Alert.alert("Registration Successful!", response.data.message, [
         { text: "OK", onPress: () => navigation.navigate("Login") },
       ]);
     } catch (error) {
-      // **Customer Registration Error:**
+      //Customer Registration Error
       console.error(
         "Customer registration failed:",
         error.response ? error.response.data : error.message
       );
+      //handle different types of errors from the API response
       if (error.response && error.response.data && error.response.data.errors) {
+        // format and display validation errors from the API
         const errorList = error.response.data.errors
           .map((err) => err.msg)
           .join("\n");
@@ -150,8 +155,10 @@ const SignUpScreenCustomer = () => {
         error.response.data &&
         error.response.data.message
       ) {
+        //display specific error message from API
         setErrorMessage("Registration failed: " + error.response.data.message);
       } else {
+        //display generic error message
         setErrorMessage("Customer registration failed. Please try again.");
       }
 
@@ -184,6 +191,7 @@ const SignUpScreenCustomer = () => {
         style={{ flex: 1 }}
         keyboardVerticalOffset={Platform.OS === "ios" ? 64 : 0}
       >
+        {/* ScrollView allows the user to scroll if the content overflows the screen. */}
         <ScrollView
           ref={scrollViewRef}
           contentContainerStyle={[
@@ -240,8 +248,8 @@ const SignUpScreenCustomer = () => {
                       }
                       value={firstName}
                       onChangeText={setFirstName}
-                      returnKeyType="next"
-                      onSubmitEditing={() => lastNameRef.current?.focus()}
+                      returnKeyType="next" //move to next input field
+                      onSubmitEditing={() => lastNameRef.current?.focus()} //focus on next input field
                     />
                   </View>
                 </View>

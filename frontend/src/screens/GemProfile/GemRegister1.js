@@ -1,5 +1,5 @@
 //Screen creator: Kavintha
-//dev button search "dev bypass"
+//dev button search "bypass"
 import React, { useState, useEffect } from "react";
 import {
   Linking,
@@ -411,22 +411,22 @@ const handleAIAnalysis = async (imageInfo) => {
   };
 
   // Add dev bypass function (dev bypass)
-  const handleDevBypass = () => {
-    // Create mock data
-    const mockFormData = {
-      color: form.color || "Blue",
-      gemShape: form.gemShape || "round",
-      gemType: form.gemType || "sapphire",
-      description: form.description || "Development test gem",
-      photos: form.photos.length > 0 ? form.photos : [],
-      photo: form.photos.length > 0 ? form.photos[0] : null
-    };
+  // const handleDevBypass = () => {
+  //   // Create mock data
+  //   const mockFormData = {
+  //     color: form.color || "Blue",
+  //     gemShape: form.gemShape || "round",
+  //     gemType: form.gemType || "sapphire",
+  //     description: form.description || "Development test gem",
+  //     photos: form.photos.length > 0 ? form.photos : [],
+  //     photo: form.photos.length > 0 ? form.photos[0] : null
+  //   };
     
-    // Navigate to next screen
-    navigation.navigate("GemRegister2", {
-      formData: mockFormData,
-    });
-  };
+  //   // Navigate to next screen
+  //   navigation.navigate("GemRegister2", {
+  //     formData: mockFormData,
+  //   });
+  // };
   
   return (
     <View style={baseScreenStylesNew.container}>
@@ -436,14 +436,14 @@ const handleAIAnalysis = async (imageInfo) => {
       />
       
       {/* Dev bypass button (only in dev) */}
-      {__DEV__ && (
+      {/* {__DEV__ && (
         <TouchableOpacity 
           style={styles.devBypassButton} 
           onPress={handleDevBypass}
         >
           <Text style={styles.devBypassText}>DEV</Text>
         </TouchableOpacity>
-      )}
+      )} */}
       
       {/* Loading overlay */}
       {isLoading && (

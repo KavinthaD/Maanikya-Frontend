@@ -1,5 +1,5 @@
 //Screen creator: Kavintha
-//dev button search "dev bypass"
+//dev button search "bypass"
 
 import React, { useState, useEffect, useRef } from "react";
 import {
@@ -202,16 +202,16 @@ function GemRegister2Main() {
   };
 
   // Add dev bypass function
-  const handleDevBypass = () => {
-    // Create mock response data
-    const mockGemData = {
-      gemId: "DEV" + Math.floor(Math.random() * 10000),
-      createdAt: new Date().toISOString(),
-      qrCode: "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=DEV-SAMPLE-QR"
-    };
+  // const handleDevBypass = () => {
+  //   // Create mock response data
+  //   const mockGemData = {
+  //     gemId: "DEV" + Math.floor(Math.random() * 10000),
+  //     createdAt: new Date().toISOString(),
+  //     qrCode: "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=DEV-SAMPLE-QR"
+  //   };
     
-    navigation.navigate("GemRegister3", mockGemData);
-  };
+  //   navigation.navigate("GemRegister3", mockGemData);
+  // };
   
   return (
     <View style={[baseScreenStylesNew.backgroundColor,baseScreenStylesNew.container]}>
@@ -222,14 +222,14 @@ function GemRegister2Main() {
       />
       
       {/* Dev bypass button (only in dev) */}
-      {__DEV__ && (
+      {/* {__DEV__ && (
         <TouchableOpacity 
           style={styles.devBypassButton} 
           onPress={handleDevBypass}
         >
           <Text style={styles.devBypassText}>DEV</Text>
         </TouchableOpacity>
-      )}
+      )} */}
       
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}

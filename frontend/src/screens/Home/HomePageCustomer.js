@@ -8,7 +8,7 @@ import {
   Alert,
   ScrollView,
   TouchableOpacity,
-  Text
+  Text,
   Linking
 } from "react-native";
 import * as ImagePicker from 'expo-image-picker';

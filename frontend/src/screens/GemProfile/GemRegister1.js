@@ -15,7 +15,6 @@ import {
   ScrollView,
   Platform,
   ActivityIndicator,
-  Linking
 } from "react-native";
 import { baseScreenStylesNew } from "../../styles/baseStylesNew";
 import { baseScreenStyles } from "../../styles/baseStyles";

@@ -25,20 +25,24 @@ import LottieView from "lottie-react-native";
 import Modal from "react-native-modal";
 
 const Login = () => {
-  const navigation = useNavigation();
-  const [email, setEmail] = useState("");
+  const navigation = useNavigation();  //get access to navigation functions
+  
+  const [email, setEmail] = useState("");  // store form input values
   const [password, setPassword] = useState("");
   const [role, setRole] = useState("");
-  const [errorMessage, setErrorMessage] = useState("");
+  
+  const [errorMessage, setErrorMessage] = useState(""); //store error messages
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [animationFinished, setAnimationFinished] = useState(false);
-  const [roleItems, setRoleItems] = useState([
+  
+  const [roleItems, setRoleItems] = useState([  //role options for the dropdown
     { label: "Gem business owner", value: "gem_business_owner" },
     { label: "Cutter/Burner", value: "cutter_burner" },
     { label: "Customer", value: "customer" },
   ]);
-  const [showRoleModal, setShowRoleModal] = useState(false);
+
+  const [showRoleModal, setShowRoleModal] = useState(false); //visibility of the modal
   const [errorModalVisible, setErrorModalVisible] = useState(false);
   const [errorModalMessage, setErrorModalMessage] = useState("");
   const [autoLoginToastVisible, setAutoLoginToastVisible] = useState(false);
@@ -47,7 +51,7 @@ const Login = () => {
   const [resetPasswordModalVisible, setResetPasswordModalVisible] =
     useState(false);
   const [forgotPasswordEmail, setForgotPasswordEmail] = useState("");
-  const [resetCode, setResetCode] = useState("");
+  const [resetCode, setResetCode] = useState(""); //store password reset code entered by the user
   const [newPassword, setNewPassword] = useState("");
   const [confirmNewPassword, setConfirmNewPassword] = useState("");
   const [resetEmailSent, setResetEmailSent] = useState(false);
@@ -58,19 +62,21 @@ const Login = () => {
   const [errorModalTitle, setErrorModalTitle] = useState("Login Failed");
   const [successModalMessage, setSuccessModalMessage] = useState("Login Successful!");
 
+  // Get the label for the selected role 
   const getRoleLabel = () => {
     const selectedRole = roleItems.find((item) => item.value === role);
     return selectedRole ? selectedRole.label : null;
   };
 
   const handleLogin = async () => {
-    // Validation
+    // Validation: all fields filled
     if (!email || !password || !role) {
       setInlineErrorMessage("Please fill all fields.");
       return;
     }
 
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    // validation: email format
     if (!emailPattern.test(email)) {
       setInlineErrorMessage("Invalid email format.");
       return;
@@ -79,7 +85,7 @@ const Login = () => {
     // Clear error message when proceeding with login
     setInlineErrorMessage("");
 
-    // Role Mapping for Backend
+    // Role Mapping for Backend - convert frontend role to backend role
     let backendLoginRole = "";
     if (role === "gem_business_owner") {
       backendLoginRole = "Gem business owner";
@@ -93,16 +99,17 @@ const Login = () => {
     }
 
     try {
+      // make an API call to the login endpoint using axios
       const response = await axios.post(`${API_URL}${ENDPOINTS.LOGIN}`, {
         email: email,
         password: password,
         loginRole: backendLoginRole,
       });
 
-      // Store token
+      // Store token received from the API in AsyncStorage
       await AsyncStorage.setItem("authToken", response.data.token);
 
-      // Store login timestamp
+      // Store login timestamp and role in AsyncStorage
       const loginTime = new Date().getTime();
       await AsyncStorage.setItem("lastLoginTime", loginTime.toString());
       await AsyncStorage.setItem("loginRole", response.data.user.loginRole);

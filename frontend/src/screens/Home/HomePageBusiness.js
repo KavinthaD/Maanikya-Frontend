@@ -34,8 +34,9 @@ const HomeScreen = () => {
 
   const handleQrScan = async () => {
     try {
+      // request camera permissions from user
       const { status } = await Camera.requestCameraPermissionsAsync();
-      if (status !== "granted") {
+      if (status !== "granted") { //if denied error message
         Alert.alert(
           "Permission Required",
           "This app needs camera and gallery access to get QR code. Pleasse go to settings and enable permissions for camera",
@@ -69,7 +70,7 @@ const HomeScreen = () => {
     if (data.includes("base64,")) {
       finalData = data.split("base64,")[1];
     }
-
+// navigate to mygems screen and pass the QR code data
     navigation.navigate("MyGems", {
       qrCodeUrl: finalData,
     });
@@ -101,13 +102,14 @@ const HomeScreen = () => {
         height: 300,
         aspect: [1, 1],
       });
-
+// if an image was selected
       if (!result.canceled && result.assets[0]) {
         try {
+          //scan the image for barcodes
           const scannedBarcodes = await BarCodeScanner.scanFromURLAsync(
             result.assets[0].uri
           );
-
+//if found navigate to mygems screen and pass the QR code data
           if (scannedBarcodes.length > 0) {
             const scannedUrl = scannedBarcodes[0].data;
             console.log("Scanned URL:", scannedUrl);
@@ -184,17 +186,18 @@ const HomeScreen = () => {
       {scanning ? (
         <CameraView
           style={StyleSheet.absoluteFillObject}
-          facing="back"
+          facing="back" // use the back camera
           barcodeScannerSettings={{
-            barCodeTypes: ["qr"],
+            barCodeTypes: ["qr"], // only scan QR codes
           }}
-          onBarcodeScanned={handleBarCodeScanned}
+          onBarcodeScanned={handleBarCodeScanned} 
         >
           <HomeScreenComponents.QRScannerOverlay
-            onCancel={() => setScanning(false)}
+            onCancel={() => setScanning(false)} // cancel scanning
           />
         </CameraView>
       ) : (
+        // Display the home screen content
         <ScrollView
           style={homeStyles.scrollView}
           showsVerticalScrollIndicator={false}

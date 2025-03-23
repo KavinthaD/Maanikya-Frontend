@@ -180,54 +180,64 @@ const TrackerScreen = ({ route, navigation }) => {
     }
   };
 
-// Update handleOrderClick to optionally send a view notification
-const handleOrderClick = async (order) => {
-  try {
-    // First show the modal with basic details
-    setSelectedOrder(order);
-    setTrackingModalVisible(true);
+  // Update handleOrderClick to properly format gem data
+  const handleOrderClick = async (order) => {
+    try {
+      // First show the modal with basic details
+      setSelectedOrder(order);
+      setTrackingModalVisible(true);
 
-    const token = await AsyncStorage.getItem("authToken");
-    if (!token) {
-      console.error("Authentication token missing");
-      return;
-    }
-
-    // Debug: Extract the correct order ID
-    const orderId = order.orderId || order._id || order.id;
-
-    // Make the request to get detailed order info including gems
-    const response = await axios.get(
-      `${API_URL}${ENDPOINTS.ORDERS}/owner-view/${orderId}`,
-      {
-        headers: { Authorization: `Bearer ${token}` },
+      const token = await AsyncStorage.getItem("authToken");
+      if (!token) {
+        console.error("Authentication token missing");
+        return;
       }
-    );
 
-    if (response.data && response.data.success) {
-      const detailedOrder = response.data.order;
+      // Debug: Extract the correct order ID
+      const orderId = order.orderId || order._id || order.id;
 
-      // Format gems and update selected order as before...
-      const formattedGems = // ... (keep existing code)
+      // Make the request to get detailed order info including gems
+      const response = await axios.get(
+        `${API_URL}${ENDPOINTS.ORDERS}/owner-view/${orderId}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
 
-      setSelectedOrder((prevOrder) => ({
-        ...prevOrder,
-        gems: formattedGems,
-        workerId: detailedOrder.workerId,
-        statusHistory: detailedOrder.statusHistory || [],
-        specialNote: detailedOrder.specialNote || prevOrder.specialNote || "",
-        price: detailedOrder.price || prevOrder.price,
-        orderType: detailedOrder.orderType || prevOrder.orderType,
-        receiptPhoto: detailedOrder.payment?.receiptPhoto || prevOrder.receiptPhoto,
-        payment: detailedOrder.payment || prevOrder.payment || {},
-        cancellation: detailedOrder.cancellation || prevOrder.cancellation || {},
-      }));
-      
+      if (response.data && response.data.success) {
+        const detailedOrder = response.data.order;
+
+        // Format gems properly - THIS IS THE KEY FIX
+        const formattedGems =
+          detailedOrder.gems?.map((gem) => ({
+            _id: gem._id?.toString() || "",
+            id: gem.gemId || gem._id?.toString() || "",
+            type: gem.details?.gemType || "Unknown",
+            weight: gem.details?.weight || gem.weight || 0,
+            color: gem.details?.color || gem.color || "",
+            photo: gem.photo || "",
+            status: gem.status || "",
+          })) || [];
+
+        setSelectedOrder((prevOrder) => ({
+          ...prevOrder,
+          gems: formattedGems,
+          workerId: detailedOrder.workerId,
+          statusHistory: detailedOrder.statusHistory || [],
+          specialNote: detailedOrder.specialNote || prevOrder.specialNote || "",
+          price: detailedOrder.price || prevOrder.price,
+          orderType: detailedOrder.orderType || prevOrder.orderType,
+          receiptPhoto:
+            detailedOrder.payment?.receiptPhoto || prevOrder.receiptPhoto,
+          payment: detailedOrder.payment || prevOrder.payment || {},
+          cancellation:
+            detailedOrder.cancellation || prevOrder.cancellation || {},
+        }));
+      }
+    } catch (error) {
+      console.error("Error fetching order details:", error);
     }
-  } catch (error) {
-    console.error("Error fetching order details:", error);
-  }
-};
+  };
 
   //handle order cancellation
   const handleCancelOrder = async () => {
@@ -272,10 +282,10 @@ const handleOrderClick = async (order) => {
             relatedTo: "order",
             relatedId: orderId,
             priority: "medium",
-            clickAction: "openOrderHistory"
+            clickAction: "openOrderHistory",
           },
           { headers: { Authorization: `Bearer ${token}` } }
-        )
+        ),
       ]);
 
       if (orderResponse.data.success) {
@@ -325,95 +335,95 @@ const handleOrderClick = async (order) => {
     }
   };
 
-// Update confirmPayment function to send an alert to the worker
-const confirmPayment = async () => {
-  try {
-    if (!selectedOrder) return;
-    if (!receiptPhoto) {
-      Alert.alert("Error", "Please upload a receipt photo first");
-      return;
-    }
-
-    const token = await AsyncStorage.getItem("authToken");
-    if (!token) {
-      Alert.alert("Error", "Authentication required. Please log in.");
-      return;
-    }
-
-    setLoading(true);
-
-    // Get file extension from URI
-    const uriParts = receiptPhoto.split(".");
-    const fileType = uriParts[uriParts.length - 1];
-
-    // Create form data with proper filename and type
-    const formData = new FormData();
-    formData.append("receiptPhoto", {
-      uri: receiptPhoto,
-      name: `receipt.${fileType || "jpg"}`,
-      type: `image/${fileType || "jpeg"}`,
-    });
-    formData.append("status", "pendingPayment");
-    formData.append(
-      "note",
-      "Payment made and receipt uploaded by owner. Awaiting confirmation."
-    );
-
-    const orderId = selectedOrder.orderId || selectedOrder._id;
-    console.log("Uploading payment receipt for order:", orderId);
-
-    // Upload receipt and update status
-    const response = await axios.patch(
-      `${API_URL}/api/orders/owner/${orderId}/payment`,
-      formData,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "multipart/form-data",
-        },
+  // Update confirmPayment function to send an alert to the worker
+  const confirmPayment = async () => {
+    try {
+      if (!selectedOrder) return;
+      if (!receiptPhoto) {
+        Alert.alert("Error", "Please upload a receipt photo first");
+        return;
       }
-    );
 
-    // Send alert to worker about payment submission
-    await axios.post(
-      `${API_URL}/api/alerts`,
-      {
-        recipient: selectedOrder.workerId,
-        message: `Payment receipt uploaded for order #${selectedOrder.id}. Please review and confirm.`,
-        relatedTo: "order",
-        relatedId: orderId,
-        priority: "high", // High priority since it's a payment notification
-        clickAction: "openOrderRequests"
-      },
-      { headers: { Authorization: `Bearer ${token}` } }
-    );
+      const token = await AsyncStorage.getItem("authToken");
+      if (!token) {
+        Alert.alert("Error", "Authentication required. Please log in.");
+        return;
+      }
 
-    // Close modal and update state
-    setIsReceiptModalVisible(false);
-    setReceiptPhoto(null);
+      setLoading(true);
 
-    // Update the local order status
-    setSelectedOrder((prev) => ({
-      ...prev,
-      status: "pendingPayment",
-      receiptPhoto: response.data.order.receiptPhoto,
-      statusHistory: response.data.order.statusHistory || prev.statusHistory,
-    }));
+      // Get file extension from URI
+      const uriParts = receiptPhoto.split(".");
+      const fileType = uriParts[uriParts.length - 1];
 
-    // Refresh orders list
-    fetchOrders();
+      // Create form data with proper filename and type
+      const formData = new FormData();
+      formData.append("receiptPhoto", {
+        uri: receiptPhoto,
+        name: `receipt.${fileType || "jpg"}`,
+        type: `image/${fileType || "jpeg"}`,
+      });
+      formData.append("status", "pendingPayment");
+      formData.append(
+        "note",
+        "Payment made and receipt uploaded by owner. Awaiting confirmation."
+      );
 
-    Alert.alert("Success", "Payment receipt uploaded successfully");
-  } catch (error) {
-    console.error("Error uploading receipt:", error.response?.data || error);
-    Alert.alert(
-      "Error",
-      error.response?.data?.message || "Failed to upload receipt"
-    );
-  } finally {
-    setLoading(false);
-  }
-};
+      const orderId = selectedOrder.orderId || selectedOrder._id;
+      console.log("Uploading payment receipt for order:", orderId);
+
+      // Upload receipt and update status
+      const response = await axios.patch(
+        `${API_URL}/api/orders/owner/${orderId}/payment`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      // Send alert to worker about payment submission
+      await axios.post(
+        `${API_URL}/api/alerts`,
+        {
+          recipient: selectedOrder.workerId,
+          message: `Payment receipt uploaded for order #${selectedOrder.id}. Please review and confirm.`,
+          relatedTo: "order",
+          relatedId: orderId,
+          priority: "high", // High priority since it's a payment notification
+          clickAction: "openOrderRequests",
+        },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      // Close modal and update state
+      setIsReceiptModalVisible(false);
+      setReceiptPhoto(null);
+
+      // Update the local order status
+      setSelectedOrder((prev) => ({
+        ...prev,
+        status: "pendingPayment",
+        receiptPhoto: response.data.order.receiptPhoto,
+        statusHistory: response.data.order.statusHistory || prev.statusHistory,
+      }));
+
+      // Refresh orders list
+      fetchOrders();
+
+      Alert.alert("Success", "Payment receipt uploaded successfully");
+    } catch (error) {
+      console.error("Error uploading receipt:", error.response?.data || error);
+      Alert.alert(
+        "Error",
+        error.response?.data?.message || "Failed to upload receipt"
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // Function to render content based on active tab
   const renderContent = () => {
@@ -726,69 +736,49 @@ const confirmPayment = async () => {
                 ]}
               >
                 {selectedOrder.gems && selectedOrder.gems.length > 0 ? (
-                  selectedOrder.gems.map((gem, index) => {
-                    // Ensure all gem properties are properly formatted as strings
-                    const gemId =
-                      typeof gem.id === "string"
-                        ? gem.id
-                        : String(gem.id || "");
-                    const gemType =
-                      typeof gem.type === "string"
-                        ? gem.type
-                        : String(gem.type || "Unknown");
-                    const gemWeight =
-                      gem.weight !== undefined ? Number(gem.weight) : 0;
-                    const gemPhoto =
-                      typeof gem.photo === "string" ? gem.photo : "";
-
-                    return (
-                      <View
-                        key={`gem-${index}`}
-                        style={orderStyles.gemContainer}
+                  selectedOrder.gems.map((gem, index) => (
+                    <View key={`gem-${index}`} style={orderStyles.gemContainer}>
+                      <Image
+                        source={
+                          gem.photo && gem.photo.startsWith("http")
+                            ? { uri: gem.photo }
+                            : require("../../assets/gem-images/gem1.jpeg")
+                        }
+                        style={orderStyles.gemModalImage}
+                        defaultSource={require("../../assets/gem-images/gem1.jpeg")}
+                      />
+                      <Text
+                        style={[
+                          orderStyles.gemModalType,
+                          baseScreenStylesNew.blackText,
+                        ]}
                       >
-                        <Image
-                          source={
-                            gemPhoto && gemPhoto.startsWith("http")
-                              ? { uri: gemPhoto }
-                              : require("../../assets/gem-images/gem1.jpeg")
-                          }
-                          style={orderStyles.gemModalImage}
-                          defaultSource={require("../../assets/gem-images/gem1.jpeg")}
-                        />
+                        {gem.type !== "Unknown"
+                          ? gem.type
+                              .replace("_", " ")
+                              .replace(/\b\w/g, (c) => c.toUpperCase())
+                          : "Gem"}
+                      </Text>
+                      {gem.weight !== undefined && gem.weight !== null && (
                         <Text
                           style={[
-                            orderStyles.gemModalType,
+                            orderStyles.gemModalWeight,
                             baseScreenStylesNew.blackText,
                           ]}
                         >
-                          {gemType !== "Unknown"
-                            ? gemType
-                                .replace("_", " ")
-                                .replace(/\b\w/g, (c) => c.toUpperCase())
-                            : "Gem"}
+                          {gem.weight} ct
                         </Text>
-                        {/* Changed condition to explicitly check if weight is a number and not undefined */}
-                        {gemWeight !== undefined && gemWeight !== null && (
-                          <Text
-                            style={[
-                              orderStyles.gemModalWeight,
-                              baseScreenStylesNew.blackText,
-                            ]}
-                          >
-                            {gemWeight} ct
-                          </Text>
-                        )}
-                        <Text
-                          style={[
-                            orderStyles.gemId,
-                            baseScreenStylesNew.blackText,
-                          ]}
-                        >
-                          ID: {gemId.substring(0, 8)}
-                        </Text>
-                      </View>
-                    );
-                  })
+                      )}
+                      <Text
+                        style={[
+                          orderStyles.gemId,
+                          baseScreenStylesNew.blackText,
+                        ]}
+                      >
+                        ID: {(gem.id || "").substring(0, 8)}
+                      </Text>
+                    </View>
+                  ))
                 ) : (
                   <View style={orderStyles.gemContainer}>
                     <Text style={orderStyles.noGemsText}>No gems attached</Text>

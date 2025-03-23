@@ -14,7 +14,7 @@ const getBaseUrl = () => {
     }
   }
   // Production environment
-  return "https://your-production-api.com";
+  return "https://maanikya-backend.onrender.com";
 };
 
 export const API_URL = getBaseUrl();

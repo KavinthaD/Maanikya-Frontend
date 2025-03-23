@@ -491,13 +491,205 @@ const GemCollectionScreen = ({ navigation }) => {
             />
           )}
 
+          {/* Selection Actions - Show when gems are selected */}
+          {isSelectMode && selectedGems.length > 0 && (
+            <View style={styles.selectionActions}>
+              <TouchableOpacity
+                style={[styles.actionButton, styles.sellButton]}
+                onPress={() => {
+                  // Initialize prices for all selected gems
+                  const initialPrices = {};
+                  selectedGems.forEach((gemId) => {
+                    initialPrices[gemId] = "";
+                  });
+                  setGemPrices(initialPrices);
+                  setSellModalVisible(true);
+                }}
+              >
+                <Ionicons name="pricetag-outline" size={18} color="#FFFFFF" />
+                <Text style={styles.actionButtonText}>Sell</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.actionButton, styles.orderButton]}
+                onPress={() => {
+                  // Verify all selected gems are available
+                  if (selectedGems.length === 0) {
+                    Alert.alert("Error", "Please select at least one gem");
+                    return;
+                  }
+
+                  // Find the complete gem objects that match the selected gem IDs
+                  const selectedGemObjects = gems.filter((gem) => selectedGems.includes(gem.gemId));
+
+                  // Navigate to Favorites screen with the selected gem objects
+                  navigation.navigate("FavoritesScreen", {
+                    selectedGems: selectedGemObjects,
+                  });
+
+                  // Reset selection mode and clear selected gems
+                  setIsSelectMode(false);
+                  setSelectedGems([]);
+                }}
+              >
+                <Ionicons name="cart-outline" size={18} color="#FFFFFF" />
+                <Text style={styles.actionButtonText}>Send Order</Text>
+              </TouchableOpacity>
+            </View>
+          )}
+
           {/* Sort Modal */}
           {renderSortModal()}
 
           {/* History Modal */}
           {renderHistoryModal()}
 
-          {/* Other modals would go here */}
+          {/* Sell Modal */}
+          <Modal
+            visible={isSellModalVisible}
+            transparent={true}
+            animationType="fade"
+            onRequestClose={() => setSellModalVisible(false)}
+          >
+            <View style={styles.modalOverlay}>
+              <View style={styles.sellModalContent}>
+                <View style={styles.sortModalHeader}>
+                  <Text style={styles.sortModalTitle}>Set Prices for Gems</Text>
+                  <TouchableOpacity
+                    onPress={() => setSellModalVisible(false)}
+                    style={styles.modalCloseButton}
+                  >
+                    <Text style={styles.modalCloseButtonText}>✕</Text>
+                  </TouchableOpacity>
+                </View>
+                
+                {selectedGems.length === 0 ? (
+                  <View style={styles.emptyHistoryContainer}>
+                    <Text style={styles.emptyHistoryText}>No gems selected</Text>
+                  </View>
+                ) : (
+                  <View style={styles.sellModalListContainer}>
+                    <View style={styles.sellModalColumnHeaders}>
+                      <Text style={styles.sellColumnHeaderGem}>Gem</Text>
+                      <Text style={styles.sellColumnHeaderPrice}>Price (LKR)</Text>
+                    </View>
+
+                    <FlatList
+                      data={selectedGems}
+                      renderItem={({ item: gemId }) => {
+                        const gemData = gems.find((g) => g.gemId === gemId);
+                        if (!gemData) return null;
+
+                        return (
+                          <View style={styles.sellModalGemItem}>
+                            <Image
+                              source={getValidImageSource(gemData.photo)}
+                              style={styles.sellModalGemImage}
+                              resizeMode="cover"
+                            />
+                            <View style={styles.sellModalGemInfo}>
+                              <Text style={styles.sellModalGemId}>{gemData.gemId}</Text>
+                              <Text style={styles.sellModalGemType}>
+                                {formatGemType(gemData.details?.gemType)}
+                                {gemData.details?.weight ? ` - ${getFormattedWeight(gemData.details.weight)}` : ''}
+                              </Text>
+                            </View>
+                            <View style={styles.sellModalPriceContainer}>
+                              <View style={styles.priceInputWrapper}>
+                                <TextInput
+                                  style={styles.priceInput}
+                                  placeholder="0.00"
+                                  placeholderTextColor="#999999"
+                                  keyboardType="decimal-pad"
+                                  value={gemPrices[gemId]}
+                                  onChangeText={(text) => {
+                                    setGemPrices((prev) => ({
+                                      ...prev,
+                                      [gemId]: text,
+                                    }));
+                                  }}
+                                />
+                              </View>
+                            </View>
+                          </View>
+                        );
+                      }}
+                      keyExtractor={(item) => item}
+                      contentContainerStyle={styles.sellModalGemList}
+                    />
+                  </View>
+                )}
+
+                <View style={styles.sellModalActions}>
+                  <TouchableOpacity
+                    style={[styles.sellModalButton, styles.cancelButton]}
+                    onPress={() => setSellModalVisible(false)}
+                  >
+                    <Text style={styles.cancelButtonText}>Cancel</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={[styles.sellModalButton, styles.confirmButton]}
+                    onPress={async () => {
+                      // Check if all gems have prices
+                      const missingPrices = selectedGems.filter((gemId) => !gemPrices[gemId]);
+                      if (missingPrices.length > 0) {
+                        Alert.alert("Missing Prices", "Please set prices for all selected gems.");
+                        return;
+                      }
+
+                      const token = await AsyncStorage.getItem("authToken");
+                      if (!token) {
+                        console.error("Authentication token not found");
+                        return;
+                      }
+
+                      try {
+                        // Create gemData array with prices
+                        const gemData = selectedGems.map((gemId) => ({
+                          gemId,
+                          price: parseFloat(gemPrices[gemId]),
+                        }));
+
+                        const response = await axios.post(
+                          `${API_URL}${ENDPOINTS.ADD_GEMS_TO_MARKET}`,
+                          { gems: gemData },
+                          {
+                            headers: {
+                              Authorization: `Bearer ${token}`,
+                            },
+                          }
+                        );
+
+                        if (response.status === 201) {
+                          // Close modal and reset selection states
+                          setSellModalVisible(false);
+                          setSelectedGems([]);
+                          setGemPrices({});
+                          setIsSelectMode(false);
+
+                          // Show success alert and refresh gems
+                          Alert.alert("Success", "Gems have been added to the market.", [
+                            {
+                              text: "OK",
+                              onPress: () => fetchGems(),
+                            },
+                          ]);
+                        }
+                      } catch (error) {
+                        console.error("Error adding gems to market:", error);
+                        Alert.alert(
+                          "Error",
+                          error.response?.data?.message || "Failed to add gems to market."
+                        );
+                      }
+                    }}
+                    disabled={selectedGems.length === 0}
+                  >
+                    <Text style={styles.confirmButtonText}>Confirm</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </View>
+          </Modal>
         </>
       )}
     </SafeAreaView>
@@ -811,6 +1003,168 @@ const styles = StyleSheet.create({
   historyItemDate: {
     fontSize: 12,
     color: baseScreenStyles.colors.text.medium,
+  },
+  selectionActions: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    flexDirection: "row",
+    padding: 16,
+    paddingBottom: Platform.OS === "ios" ? 34 : 16,
+    backgroundColor: "rgba(255, 255, 255, 0.95)",
+    borderTopWidth: 1,
+    borderTopColor: "#EEEEEE",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: -2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
+    elevation: 5,
+  },
+  actionButton: {
+    flex: 1,
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    paddingVertical: 12,
+    borderRadius: 8,
+    marginHorizontal: 8,
+  },
+  sellButton: {
+    backgroundColor: baseScreenStyles.colors.success,
+  },
+  orderButton: {
+    backgroundColor: baseScreenStyles.colors.primary,
+  },
+  actionButtonText: {
+    color: "#FFFFFF",
+    fontSize: 16,
+    fontWeight: "600",
+    marginLeft: 6,
+  },
+  
+  // Sell Modal Styles
+  sellModalContent: {
+    width: "90%",
+    maxHeight: "80%",
+    backgroundColor: baseScreenStyles.colors.background,
+    borderRadius: 12,
+    overflow: "hidden",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.27,
+    shadowRadius: 4.65,
+    elevation: 6,
+  },
+  sellModalListContainer: {
+    padding: 0,
+    width: "100%",
+  },
+  sellModalColumnHeaders: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    backgroundColor: "#F5F5F5",
+    borderBottomWidth: 1,
+    borderBottomColor: "#EEEEEE",
+  },
+  sellColumnHeaderGem: {
+    flex: 1,
+    color: baseScreenStyles.colors.text.dark,
+    fontSize: 15,
+    fontWeight: "600",
+  },
+  sellColumnHeaderPrice: {
+    width: 120,
+    color: baseScreenStyles.colors.text.dark,
+    fontSize: 15,
+    fontWeight: "600",
+    textAlign: "right",
+  },
+  sellModalGemList: {
+    padding: 8,
+    maxHeight: 400,
+  },
+  sellModalGemItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: 10,
+    paddingHorizontal: 8,
+    borderBottomWidth: 1,
+    borderBottomColor: "#EEEEEE",
+  },
+  sellModalGemImage: {
+    width: 50,
+    height: 50,
+    borderRadius: 6,
+    marginRight: 12,
+  },
+  sellModalGemInfo: {
+    flex: 1,
+  },
+  sellModalGemId: {
+    fontSize: 14,
+    fontWeight: "600",
+    color: baseScreenStyles.colors.text.dark,
+    marginBottom: 2,
+  },
+  sellModalGemType: {
+    fontSize: 13,
+    color: baseScreenStyles.colors.text.medium,
+  },
+  sellModalPriceContainer: {
+    width: 120,
+    paddingLeft: 8,
+  },
+  priceInputWrapper: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: baseScreenStyles.colors.input.background,
+    borderRadius: 6,
+    borderWidth: 1,
+    borderColor: baseScreenStyles.colors.input.border,
+    paddingHorizontal: 8,
+    height: 36,
+  },
+  priceInput: {
+    flex: 1,
+    color: baseScreenStyles.colors.text.dark,
+    fontSize: 14,
+    paddingVertical: 6,
+  },
+  sellModalActions: {
+    flexDirection: "row",
+    justifyContent: "space-evenly",
+    paddingVertical: 16,
+    paddingHorizontal: 16,
+    borderTopWidth: 1,
+    borderTopColor: "#EEEEEE",
+  },
+  sellModalButton: {
+    flex: 1,
+    paddingVertical: 12,
+    borderRadius: 8,
+    alignItems: "center",
+    marginHorizontal: 8,
+  },
+  cancelButton: {
+    backgroundColor: "#F8F8F8",
+    borderWidth: 1,
+    borderColor: "#E0E0E0",
+  },
+  confirmButton: {
+    backgroundColor: baseScreenStyles.colors.success,
+  },
+  cancelButtonText: {
+    color: baseScreenStyles.colors.text.dark,
+    fontSize: 15,
+    fontWeight: "600",
+  },
+  confirmButtonText: {
+    color: "#FFFFFF",
+    fontSize: 15,
+    fontWeight: "600",
   },
 });
 

@@ -229,14 +229,12 @@ const Contacts = ({ navigation }) => {
                 throw new Error("Authentication token not found");
               }
 
-              // When the API is implemented, uncomment this code
-              /*
               await axios.delete(`${API_URL}${ENDPOINTS.REMOVE_CONTACT}/${contactId}`, {
                 headers: {
                   Authorization: `Bearer ${token}`
                 }
               });
-              */
+              
 
               // For now, just filter out the contact locally
               setContacts((prev) =>

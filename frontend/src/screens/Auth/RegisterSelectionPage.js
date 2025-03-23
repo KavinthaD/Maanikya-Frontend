@@ -49,7 +49,7 @@ const RegisterSelectionPage = ({ navigation }) => {
     
               <TouchableOpacity
                 style={styles.secondaryButton}
-                onPress={() => navigation.navigate("Market")}
+                onPress={() => navigation.navigate("GemstoneMarketplace")}
               >
                 <Ionicons 
                   name="eye-outline" 

@@ -110,7 +110,6 @@ const styles = StyleSheet.create({
     height: 56,
     justifyContent: "center",
     alignItems: "center",
-    marginVertical: 16,
     elevation: 2,
     shadowColor: "#000",
     shadowOffset: {

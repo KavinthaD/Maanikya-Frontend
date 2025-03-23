@@ -24,6 +24,7 @@ import { BackHandler } from "react-native";
 import HeaderBar from "../../components/HeaderBar";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Gem_register_3() {
   const navigation = useNavigation();
@@ -208,7 +209,13 @@ export default function Gem_register_3() {
   };
 
   return (
-    <View style={baseScreenStylesNew.container}>
+    <SafeAreaView
+      style={[
+        baseScreenStylesNew.backgroundColor,
+        baseScreenStylesNew.container,
+      ]}
+      edges={["bottom"]}
+    >
       <HeaderBar title="Registration Complete" />
 
       <ScrollView contentContainerStyle={styles.contentContainer}>
@@ -384,7 +391,7 @@ export default function Gem_register_3() {
           </TouchableOpacity>
         </View>
       </ScrollView>
-    </View>
+    </SafeAreaView>
   );
 }
 
@@ -402,7 +409,7 @@ const styles = StyleSheet.create({
     fontSize: 22,
     fontWeight: 'bold',
     color: baseScreenStyles.colors.text?.dark || "#212121",
-    marginTop: 10,
+    marginTop: 8,
     marginBottom: 5,
   },
   successSubtitle: {
@@ -411,15 +418,15 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   qrContainer: {
-    width: 180,
-    height: 180,
+    width: 150,
+    height: 150,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: "#FFFFFF",
     borderRadius: 12,
     borderWidth: 1,
     borderColor: "#E0E0E0",
-    marginVertical: 20,
+    marginVertical: 8,
     padding: 10,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },

@@ -3,7 +3,6 @@
 import React, { useState, useEffect } from "react";
 import {
   Linking,
-  PermissionsAndroid,
   View,
   Text,
   StyleSheet,
@@ -24,7 +23,6 @@ import HeaderBar from "../../components/HeaderBar";
 import Gem_register_2 from "./GemRegister2";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import DropDownPicker from "react-native-dropdown-picker";
-import { FormFieldStyles } from "../../styles/FormFields";
 import Modal from "react-native-modal";
 import ImageCropPicker from "react-native-image-crop-picker";
 import { gemTypeItems } from "./gemTypes"; // Import gem types from gemTypes.js
@@ -32,6 +30,7 @@ import axios from "axios";
 import { API_URL } from "../../config/api";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Camera } from "expo-camera";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 // Update IMAGE_CONSTRAINTS
 const IMAGE_CONSTRAINTS = {
@@ -444,7 +443,13 @@ function GemRegister1Main() {
   // };
 
   return (
-    <View style={baseScreenStylesNew.container}>
+    <SafeAreaView
+          style={[
+            baseScreenStylesNew.backgroundColor,
+            baseScreenStylesNew.container,
+          ]}
+          edges={["bottom"]}
+        >
       <HeaderBar title="Register Gem" />
 
       {/* Dev bypass button (only in dev) */}
@@ -777,7 +782,7 @@ function GemRegister1Main() {
           </View>
         )}
       </KeyboardAvoidingView>
-    </View>
+    </SafeAreaView>
   );
 }
 
@@ -791,8 +796,8 @@ const styles = StyleSheet.create({
     marginBottom: 30,
   },
   cameraButton: {
-    width: 120,
-    height: 120,
+    width: 80,
+    height: 80,
     borderRadius: 12,
     backgroundColor: baseScreenStyles.colors.primary,
     justifyContent: "center",

@@ -28,6 +28,7 @@ import { API_URL, ENDPOINTS } from "../../config/api"; //change api path here
 import AsyncStorage from "@react-native-async-storage/async-storage"; // Import AsyncStorage
 import { baseScreenStyles } from "../../styles/baseStyles";
 import Icon from "react-native-vector-icons/MaterialIcons";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const Stack = createNativeStackNavigator();
 
@@ -209,18 +210,20 @@ function GemRegister2Main() {
   //     createdAt: new Date().toISOString(),
   //     qrCode: "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=DEV-SAMPLE-QR"
   //   };
-    
+
   //   navigation.navigate("GemRegister3", mockGemData);
   // };
-  
+
   return (
-    <View style={[baseScreenStylesNew.backgroundColor,baseScreenStylesNew.container]}>
-      <HeaderBar 
-        title="Register Gem" 
-        navigation={navigation} 
-        showBack={true} 
-      />
-      
+    <SafeAreaView
+      style={[
+        baseScreenStylesNew.backgroundColor,
+        baseScreenStylesNew.container,
+      ]}
+      edges={["bottom"]}
+    >
+      <HeaderBar title="Register Gem" navigation={navigation} showBack={true} />
+
       {/* Dev bypass button (only in dev) */}
       {/* {__DEV__ && (
         <TouchableOpacity 
@@ -230,7 +233,7 @@ function GemRegister2Main() {
           <Text style={styles.devBypassText}>DEV</Text>
         </TouchableOpacity>
       )} */}
-      
+
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={[baseScreenStylesNew.container, { zIndex: 1 }]}
@@ -238,7 +241,7 @@ function GemRegister2Main() {
       >
         <ScrollView
           ref={scrollViewRef}
-          contentContainerStyle={{ padding: 20 }}
+          contentContainerStyle={{ padding: 20, paddingBottom: 30 }} // Add extra padding at bottom
           nestedScrollEnabled={true}
           keyboardShouldPersistTaps="handled"
         >
@@ -247,7 +250,12 @@ function GemRegister2Main() {
 
             {/* Owner Name Input */}
             <View style={baseScreenStyles.inputWrapper}>
-              <Icon name="person" size={20} color={baseScreenStyles.colors.input.placeholder} style={styles.inputIcon} />
+              <Icon
+                name="person"
+                size={20}
+                color={baseScreenStyles.colors.input.placeholder}
+                style={styles.inputIcon}
+              />
               <TextInput
                 style={baseScreenStyles.input}
                 placeholder="Gem Owner Name *"
@@ -259,7 +267,12 @@ function GemRegister2Main() {
 
             {/* Contact Number Input */}
             <View style={baseScreenStyles.inputWrapper}>
-              <Icon name="phone" size={20} color={baseScreenStyles.colors.input.placeholder} style={styles.inputIcon} />
+              <Icon
+                name="phone"
+                size={20}
+                color={baseScreenStyles.colors.input.placeholder}
+                style={styles.inputIcon}
+              />
               <TextInput
                 style={baseScreenStyles.input}
                 placeholder="Contact Number *"
@@ -275,7 +288,12 @@ function GemRegister2Main() {
 
             {/* Dimensions Input */}
             <View style={baseScreenStyles.inputWrapper}>
-              <Icon name="straighten" size={20} color={baseScreenStyles.colors.input.placeholder} style={styles.inputIcon} />
+              <Icon
+                name="straighten"
+                size={20}
+                color={baseScreenStyles.colors.input.placeholder}
+                style={styles.inputIcon}
+              />
               <TextInput
                 style={baseScreenStyles.input}
                 placeholder="Dimensions (e.g., 9.30 x 7.30 x 4.60mm)"
@@ -292,7 +310,12 @@ function GemRegister2Main() {
 
             {/* Weight Input */}
             <View style={baseScreenStyles.inputWrapper}>
-              <Icon name="scale" size={20} color={baseScreenStyles.colors.input.placeholder} style={styles.inputIcon} />
+              <Icon
+                name="scale"
+                size={20}
+                color={baseScreenStyles.colors.input.placeholder}
+                style={styles.inputIcon}
+              />
               <TextInput
                 style={baseScreenStyles.input}
                 placeholder="Weight (ct)"
@@ -310,7 +333,12 @@ function GemRegister2Main() {
 
             {/* Purchase Price Input */}
             <View style={baseScreenStyles.inputWrapper}>
-              <Icon name="attach-money" size={20} color={baseScreenStyles.colors.input.placeholder} style={styles.inputIcon} />
+              <Icon
+                name="attach-money"
+                size={20}
+                color={baseScreenStyles.colors.input.placeholder}
+                style={styles.inputIcon}
+              />
               <TextInput
                 style={baseScreenStyles.input}
                 placeholder="Purchase price (LKR) *"
@@ -327,12 +355,17 @@ function GemRegister2Main() {
             </View>
 
             {/* Extra Information Input */}
-            <View style={[baseScreenStyles.inputWrapper, styles.textareaWrapper]}>
-              <Icon 
-                name="info" 
-                size={20} 
+            <View
+              style={[baseScreenStyles.inputWrapper, styles.textareaWrapper]}
+            >
+              <Icon
+                name="info"
+                size={20}
                 color={baseScreenStyles.colors.input.placeholder}
-                style={[styles.inputIcon, { alignSelf: 'flex-start', marginTop: 12 }]} 
+                style={[
+                  styles.inputIcon,
+                  { alignSelf: "flex-start", marginTop: 12 },
+                ]}
               />
               <TextInput
                 style={[baseScreenStyles.input, styles.textareaInput]}
@@ -353,21 +386,25 @@ function GemRegister2Main() {
 
             {/* Navigation Buttons */}
             <View style={styles.buttonGroup}>
-              <TouchableOpacity
-                style={styles.backButton}
-                onPress={handleBack}
-              >
+              <TouchableOpacity style={styles.backButton} onPress={handleBack}>
                 <Text style={styles.backButtonText}>Back</Text>
               </TouchableOpacity>
-              
+
               <TouchableOpacity
                 style={[
-                  baseScreenStyles.primaryButton, 
+                  baseScreenStyles.primaryButton,
                   styles.finalizeButton,
-                  {opacity: form.ownerName && form.contactNumber && form.purchasePrice ? 1 : 0.6}
+                  {
+                    opacity:
+                      form.ownerName && form.contactNumber && form.purchasePrice
+                        ? 1
+                        : 0.6,
+                  },
                 ]}
                 onPress={handleFinalize}
-                disabled={!form.ownerName || !form.contactNumber || !form.purchasePrice}
+                disabled={
+                  !form.ownerName || !form.contactNumber || !form.purchasePrice
+                }
               >
                 <Text style={baseScreenStyles.buttonText}>Finalize</Text>
               </TouchableOpacity>
@@ -375,7 +412,7 @@ function GemRegister2Main() {
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
-    </View>
+    </SafeAreaView>
   );
 }
 
@@ -393,21 +430,21 @@ const styles = StyleSheet.create({
 
   //dev bypass button styles
   devBypassButton: {
-    position: 'absolute',
+    position: "absolute",
     right: 15,
     top: 15,
     zIndex: 1000,
-    backgroundColor: '#FF6B6B',
+    backgroundColor: "#FF6B6B",
     paddingHorizontal: 10,
     paddingVertical: 5,
     borderRadius: 5,
     borderWidth: 1,
-    borderColor: '#721c24',
-    borderStyle: 'dashed',
+    borderColor: "#721c24",
+    borderStyle: "dashed",
   },
   devBypassText: {
-    color: 'white',
-    fontWeight: 'bold',
+    color: "white",
+    fontWeight: "bold",
     fontSize: 12,
   },
   formContainer: {
@@ -416,10 +453,10 @@ const styles = StyleSheet.create({
   },
   formTitle: {
     fontSize: 20,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     color: baseScreenStyles.colors.text.dark,
     marginBottom: 20,
-    textAlign: 'center',
+    textAlign: "center",
   },
   inputIcon: {
     marginLeft: 12,
@@ -427,37 +464,38 @@ const styles = StyleSheet.create({
   },
   textareaWrapper: {
     minHeight: 120,
-    alignItems: 'flex-start',
+    alignItems: "flex-start",
   },
   textareaInput: {
     height: 120,
-    textAlignVertical: 'top',
+    textAlignVertical: "top",
     paddingTop: 12,
   },
   buttonGroup: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginTop: 20,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginTop: 30,
+    marginBottom: 20,
   },
   backButton: {
     flex: 1,
-    backgroundColor: '#F2F2F2',
+    backgroundColor: "#F2F2F2",
     borderRadius: 12,
     height: 56,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     marginRight: 10,
     borderWidth: 1,
     borderColor: baseScreenStyles.colors.input.border,
-    bottom: -75,
+    marginTop: 10,
   },
   backButtonText: {
     color: baseScreenStyles.colors.text.dark,
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   finalizeButton: {
     flex: 2,
-    bottom: -59,
+    marginTop: 10,
   },
 });

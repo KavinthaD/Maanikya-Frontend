@@ -35,11 +35,12 @@
     "android": {
       "package": "com.maanikya.app",
       "permissions": [
-        "CAMERA",
-        "READ_MEDIA_IMAGES",
-        "MEDIA_LIBRARY",
-        "READ_EXTERNAL_STORAGE",
-        "WRITE_EXTERNAL_STORAGE"
+        "android.permission.CAMERA",
+        "android.permission.READ_MEDIA_IMAGES",
+        "android.permission.MEDIA_LIBRARY",
+        "android.permission.READ_EXTERNAL_STORAGE",
+        "android.permission.WRITE_EXTERNAL_STORAGE",
+        "android.permission.RECORD_AUDIO"
       ],
       "adaptiveIcon": {
         "foregroundImage": "./src/assets/adaptive-icon.png",
@@ -54,9 +55,15 @@
       "infoPlist": {
         "NSCameraUsageDescription": "Allow Maanikya to access your camera to scan QR codes.",
         "NSPhotoLibraryUsageDescription": "Allow Maanikya to access your photos to save QR codes.",
-        "NSPhotoLibraryAddUsageDescription": "Allow Maanikya to save QR codes to your gallery."
+        "NSPhotoLibraryAddUsageDescription": "Allow Maanikya to save QR codes to your gallery.",
+        "ITSAppUsesNonExemptEncryption": false
       },
       "icon": "./src//assets/icon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "4eb995a0-0506-4270-b1e5-dcc59390452c"
+      }
     }
   }
 }

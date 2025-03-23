@@ -55,6 +55,8 @@ const Login = () => {
   const [isConfirmNewPasswordVisible, setIsConfirmNewPasswordVisible] =
     useState(false);
   const [inlineErrorMessage, setInlineErrorMessage] = useState("");
+  const [errorModalTitle, setErrorModalTitle] = useState("Login Failed");
+  const [successModalMessage, setSuccessModalMessage] = useState("Login Successful!");
 
   const getRoleLabel = () => {
     const selectedRole = roleItems.find((item) => item.value === role);
@@ -67,13 +69,13 @@ const Login = () => {
       setInlineErrorMessage("Please fill all fields.");
       return;
     }
-    
+
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailPattern.test(email)) {
       setInlineErrorMessage("Invalid email format.");
       return;
     }
-    
+
     // Clear error message when proceeding with login
     setInlineErrorMessage("");
 
@@ -119,9 +121,7 @@ const Login = () => {
         setShowSuccessModal(false);
         if (response.data.user.loginRole === "Gem business owner") {
           navigation.navigate("BS_NavBar");
-        } else if (
-          response.data.user.loginRole === "Cutter/Burner" 
-        ) {
+        } else if (response.data.user.loginRole === "Cutter/Burner") {
           navigation.navigate("W_NavBar");
         } else if (response.data.user.loginRole === "Customer") {
           navigation.navigate("C_NavBar");
@@ -206,12 +206,14 @@ const Login = () => {
   const handleResetPassword = async () => {
     // Validate inputs
     if (!resetCode || !newPassword || !confirmNewPassword) {
+      setErrorModalTitle("Input Error");
       setErrorModalMessage("Please fill all fields");
       setErrorModalVisible(true);
       return;
     }
 
     if (newPassword !== confirmNewPassword) {
+      setErrorModalTitle("Password Error");
       setErrorModalMessage("Passwords don't match");
       setErrorModalVisible(true);
       return;
@@ -221,6 +223,7 @@ const Login = () => {
     const passwordRegex =
       /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9]).{8,}$/;
     if (!passwordRegex.test(newPassword)) {
+      setErrorModalTitle("Password Requirements");
       setErrorModalMessage(
         "Password must be at least 8 characters and contain at least one number, one lowercase letter, one uppercase letter, and one special character"
       );
@@ -242,27 +245,25 @@ const Login = () => {
       // Close reset modal
       setResetPasswordModalVisible(false);
 
+      // Set success message before showing the success modal
+      setSuccessModalMessage("Your password has been successfully reset. You can now log in with your new password.");
+
       // Show success animation
       setShowSuccessModal(true);
 
-      // Show success message
+      // Clear form fields
+      setResetCode("");
+      setNewPassword("");
+      setConfirmNewPassword("");
+      setForgotPasswordEmail("");
+      setResetEmailSent(false);
+
+      // Hide success modal after 3 seconds
       setTimeout(() => {
         setShowSuccessModal(false);
-
-        // Show a custom success modal message for password reset
-        setErrorModalTitle("Password Reset Successful");
-        setErrorModalMessage(
-          "Your password has been successfully reset. You can now log in with your new password."
-        );
-        setErrorModalVisible(true);
-
-        // Reset form fields
-        setResetCode("");
-        setNewPassword("");
-        setConfirmNewPassword("");
-        setForgotPasswordEmail("");
-        setResetEmailSent(false);
-      }, 2000);
+        // Reset the success message back to default for future logins
+        setSuccessModalMessage("Login Successful!");
+      }, 3000);
     } catch (error) {
       console.error("Password reset failed:", error);
 
@@ -276,6 +277,7 @@ const Login = () => {
         errorMsg = error.response.data.message;
       }
 
+      setErrorModalTitle("Reset Failed");
       setErrorModalMessage(errorMsg);
       setErrorModalVisible(true);
     }
@@ -399,7 +401,9 @@ const Login = () => {
               {inlineErrorMessage ? (
                 <View style={styles.inlineErrorContainer}>
                   <Ionicons name="alert-circle" size={18} color="#FF3B30" />
-                  <Text style={styles.inlineErrorText}>{inlineErrorMessage}</Text>
+                  <Text style={styles.inlineErrorText}>
+                    {inlineErrorMessage}
+                  </Text>
                 </View>
               ) : null}
 
@@ -409,7 +413,6 @@ const Login = () => {
               >
                 <Text style={baseScreenStyles.buttonText}>Login</Text>
               </TouchableOpacity>
-              
 
               <View style={styles.registerContainer}>
                 <Text style={baseScreenStyles.regularText}>
@@ -452,183 +455,226 @@ const Login = () => {
           </KeyboardAvoidingView>
         </ScrollView>
         {/* Forgot Password Modal - Step 1 */}
-<Modal
-  isVisible={forgotPasswordModalVisible}
-  backdropOpacity={0.5}
-  animationIn="fadeIn"
-  animationOut="fadeOut"
-  useNativeDriver
-  style={styles.modal}
->
-  <View style={styles.forgotPasswordModalContent}>
-    <View style={styles.forgotPasswordIconContainer}>
-      <Ionicons name="key-outline" size={40} color={baseScreenStyles.colors.primary} />
-    </View>
-    
-    {!resetEmailSent ? (
-      <>
-        <Text style={styles.forgotPasswordTitle}>Forgot Password</Text>
-        <Text style={styles.forgotPasswordDescription}>
-          Enter your email address and we'll send you a code to reset your password.
-        </Text>
-        
-        <View style={[baseScreenStyles.inputWrapper, styles.forgotPasswordInput]}>
-          <Ionicons
-            name="mail-outline"
-            size={22}
-            color="#888"
-            style={baseScreenStyles.inputIcon}
-          />
-          <TextInput
-            style={baseScreenStyles.input}
-            placeholder="Email Address"
-            placeholderTextColor={baseScreenStyles.colors.input.placeholder}
-            value={forgotPasswordEmail}
-            onChangeText={setForgotPasswordEmail}
-            keyboardType="email-address"
-            autoCapitalize="none"
-          />
-        </View>
-        
-        <View style={styles.forgotPasswordButtonsContainer}>
-          <TouchableOpacity
-            style={styles.forgotPasswordCancelButton}
-            onPress={() => setForgotPasswordModalVisible(false)}
-          >
-            <Text style={styles.forgotPasswordCancelText}>Cancel</Text>
-          </TouchableOpacity>
-          
-          <TouchableOpacity
-            style={styles.forgotPasswordSendButton}
-            onPress={handleRequestResetCode}
-          >
-            <Text style={styles.forgotPasswordSendText}>Send Code</Text>
-          </TouchableOpacity>
-        </View>
-      </>
-    ) : (
-      <>
-        <LottieView
-          source={require("../../assets/success-animation.json")}
-          autoPlay
-          loop={false}
-          style={styles.smallAnimation}
-        />
-        <Text style={styles.forgotPasswordTitle}>Code Sent!</Text>
-        <Text style={styles.forgotPasswordDescription}>
-          A password reset code has been sent to your email address.
-        </Text>
-      </>
-    )}
-  </View>
-</Modal>
+        <Modal
+          isVisible={forgotPasswordModalVisible}
+          backdropOpacity={0.5}
+          animationIn="fadeIn"
+          animationOut="fadeOut"
+          useNativeDriver
+          style={styles.modal}
+        >
+          <View style={styles.forgotPasswordModalContent}>
+            <View style={styles.forgotPasswordIconContainer}>
+              <Ionicons
+                name="key-outline"
+                size={40}
+                color={baseScreenStyles.colors.primary}
+              />
+            </View>
 
-{/* Reset Password Modal - Step 2 */}
-<Modal
-  isVisible={resetPasswordModalVisible}
-  backdropOpacity={0.5}
-  animationIn="fadeIn"
-  animationOut="fadeOut"
-  useNativeDriver
-  style={styles.modal}
->
-  <View style={styles.forgotPasswordModalContent}>
-    <View style={styles.forgotPasswordIconContainer}>
-      <Ionicons name="lock-open-outline" size={40} color={baseScreenStyles.colors.primary} />
-    </View>
-    
-    <Text style={styles.forgotPasswordTitle}>Reset Password</Text>
-    <Text style={styles.forgotPasswordDescription}>
-      Enter the code sent to your email and create a new password. (Check spam folder as well)
-    </Text>
-    
-    <View style={[baseScreenStyles.inputWrapper, styles.forgotPasswordInput]}>
-      <Ionicons
-        name="key-outline"
-        size={22}
-        color="#888"
-        style={baseScreenStyles.inputIcon}
-      />
-      <TextInput
-        style={baseScreenStyles.input}
-        placeholder="Reset Code"
-        placeholderTextColor={baseScreenStyles.colors.input.placeholder}
-        value={resetCode}
-        onChangeText={setResetCode}
-      />
-    </View>
-    
-    <View style={[baseScreenStyles.inputWrapper, styles.forgotPasswordInput]}>
-      <Ionicons
-        name="lock-closed-outline"
-        size={22}
-        color="#888"
-        style={baseScreenStyles.inputIcon}
-      />
-      <TextInput
-        style={baseScreenStyles.input}
-        placeholder="New Password"
-        placeholderTextColor={baseScreenStyles.colors.input.placeholder}
-        secureTextEntry={!isNewPasswordVisible}
-        value={newPassword}
-        onChangeText={setNewPassword}
-      />
-      <TouchableOpacity
-        style={baseScreenStyles.eyeIcon}
-        onPress={() => setIsNewPasswordVisible(!isNewPasswordVisible)}
-      >
-        <Ionicons
-          name={isNewPasswordVisible ? "eye-off-outline" : "eye-outline"}
-          size={22}
-          color="#888"
-        />
-      </TouchableOpacity>
-    </View>
-    
-    <View style={[baseScreenStyles.inputWrapper, styles.forgotPasswordInput]}>
-      <Ionicons
-        name="lock-closed-outline"
-        size={22}
-        color="#888"
-        style={baseScreenStyles.inputIcon}
-      />
-      <TextInput
-        style={baseScreenStyles.input}
-        placeholder="Confirm New Password"
-        placeholderTextColor={baseScreenStyles.colors.input.placeholder}
-        secureTextEntry={!isConfirmNewPasswordVisible}
-        value={confirmNewPassword}
-        onChangeText={setConfirmNewPassword}
-      />
-      <TouchableOpacity
-        style={baseScreenStyles.eyeIcon}
-        onPress={() => setIsConfirmNewPasswordVisible(!isConfirmNewPasswordVisible)}
-      >
-        <Ionicons
-          name={isConfirmNewPasswordVisible ? "eye-off-outline" : "eye-outline"}
-          size={22}
-          color="#888"
-        />
-      </TouchableOpacity>
-    </View>
-    
-    <View style={styles.forgotPasswordButtonsContainer}>
-      <TouchableOpacity
-        style={styles.forgotPasswordCancelButton}
-        onPress={() => setResetPasswordModalVisible(false)}
-      >
-        <Text style={styles.forgotPasswordCancelText}>Cancel</Text>
-      </TouchableOpacity>
-      
-      <TouchableOpacity
-        style={styles.forgotPasswordSendButton}
-        onPress={handleResetPassword}
-      >
-        <Text style={styles.forgotPasswordSendText}>Reset Password</Text>
-      </TouchableOpacity>
-    </View>
-  </View>
-</Modal>
+            {!resetEmailSent ? (
+              <>
+                <Text style={styles.forgotPasswordTitle}>Forgot Password</Text>
+                <Text style={styles.forgotPasswordDescription}>
+                  Enter your email address and we'll send you a code to reset
+                  your password.
+                </Text>
+
+                <View
+                  style={[
+                    baseScreenStyles.inputWrapper,
+                    styles.forgotPasswordInput,
+                  ]}
+                >
+                  <Ionicons
+                    name="mail-outline"
+                    size={22}
+                    color="#888"
+                    style={baseScreenStyles.inputIcon}
+                  />
+                  <TextInput
+                    style={baseScreenStyles.input}
+                    placeholder="Email Address"
+                    placeholderTextColor={
+                      baseScreenStyles.colors.input.placeholder
+                    }
+                    value={forgotPasswordEmail}
+                    onChangeText={setForgotPasswordEmail}
+                    keyboardType="email-address"
+                    autoCapitalize="none"
+                  />
+                </View>
+
+                <View style={styles.forgotPasswordButtonsContainer}>
+                  <TouchableOpacity
+                    style={styles.forgotPasswordCancelButton}
+                    onPress={() => setForgotPasswordModalVisible(false)}
+                  >
+                    <Text style={styles.forgotPasswordCancelText}>Cancel</Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    style={styles.forgotPasswordSendButton}
+                    onPress={handleRequestResetCode}
+                  >
+                    <Text style={styles.forgotPasswordSendText}>Send Code</Text>
+                  </TouchableOpacity>
+                </View>
+              </>
+            ) : (
+              <>
+                <LottieView
+                  source={require("../../assets/success-animation.json")}
+                  autoPlay
+                  loop={false}
+                  style={styles.smallAnimation}
+                />
+                <Text style={styles.forgotPasswordTitle}>Code Sent!</Text>
+                <Text style={styles.forgotPasswordDescription}>
+                  A password reset code has been sent to your email address.
+                </Text>
+              </>
+            )}
+          </View>
+        </Modal>
+
+        {/* Reset Password Modal - Step 2 */}
+        <Modal
+          isVisible={resetPasswordModalVisible}
+          backdropOpacity={0.5}
+          animationIn="fadeIn"
+          animationOut="fadeOut"
+          useNativeDriver
+          style={styles.modal}
+        >
+          <View style={styles.forgotPasswordModalContent}>
+            <View style={styles.forgotPasswordIconContainer}>
+              <Ionicons
+                name="lock-open-outline"
+                size={40}
+                color={baseScreenStyles.colors.primary}
+              />
+            </View>
+
+            <Text style={styles.forgotPasswordTitle}>Reset Password</Text>
+            <Text style={styles.forgotPasswordDescription}>
+              Enter the code sent to your email and create a new password.
+              (Check spam folder as well)
+            </Text>
+
+            <View
+              style={[
+                baseScreenStyles.inputWrapper,
+                styles.forgotPasswordInput,
+              ]}
+            >
+              <Ionicons
+                name="key-outline"
+                size={22}
+                color="#888"
+                style={baseScreenStyles.inputIcon}
+              />
+              <TextInput
+                style={baseScreenStyles.input}
+                placeholder="Reset Code"
+                placeholderTextColor={baseScreenStyles.colors.input.placeholder}
+                value={resetCode}
+                onChangeText={setResetCode}
+              />
+            </View>
+
+            <View
+              style={[
+                baseScreenStyles.inputWrapper,
+                styles.forgotPasswordInput,
+              ]}
+            >
+              <Ionicons
+                name="lock-closed-outline"
+                size={22}
+                color="#888"
+                style={baseScreenStyles.inputIcon}
+              />
+              <TextInput
+                style={baseScreenStyles.input}
+                placeholder="New Password"
+                placeholderTextColor={baseScreenStyles.colors.input.placeholder}
+                secureTextEntry={!isNewPasswordVisible}
+                value={newPassword}
+                onChangeText={setNewPassword}
+              />
+              <TouchableOpacity
+                style={baseScreenStyles.eyeIcon}
+                onPress={() => setIsNewPasswordVisible(!isNewPasswordVisible)}
+              >
+                <Ionicons
+                  name={
+                    isNewPasswordVisible ? "eye-off-outline" : "eye-outline"
+                  }
+                  size={22}
+                  color="#888"
+                />
+              </TouchableOpacity>
+            </View>
+
+            <View
+              style={[
+                baseScreenStyles.inputWrapper,
+                styles.forgotPasswordInput,
+              ]}
+            >
+              <Ionicons
+                name="lock-closed-outline"
+                size={22}
+                color="#888"
+                style={baseScreenStyles.inputIcon}
+              />
+              <TextInput
+                style={baseScreenStyles.input}
+                placeholder="Confirm New Password"
+                placeholderTextColor={baseScreenStyles.colors.input.placeholder}
+                secureTextEntry={!isConfirmNewPasswordVisible}
+                value={confirmNewPassword}
+                onChangeText={setConfirmNewPassword}
+              />
+              <TouchableOpacity
+                style={baseScreenStyles.eyeIcon}
+                onPress={() =>
+                  setIsConfirmNewPasswordVisible(!isConfirmNewPasswordVisible)
+                }
+              >
+                <Ionicons
+                  name={
+                    isConfirmNewPasswordVisible
+                      ? "eye-off-outline"
+                      : "eye-outline"
+                  }
+                  size={22}
+                  color="#888"
+                />
+              </TouchableOpacity>
+            </View>
+
+            <View style={styles.forgotPasswordButtonsContainer}>
+              <TouchableOpacity
+                style={styles.forgotPasswordCancelButton}
+                onPress={() => setResetPasswordModalVisible(false)}
+              >
+                <Text style={styles.forgotPasswordCancelText}>Cancel</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={styles.forgotPasswordSendButton}
+                onPress={handleResetPassword}
+              >
+                <Text style={styles.forgotPasswordSendText}>
+                  Reset Password
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
+        {/* Success Modal */}
         <Modal
           isVisible={showSuccessModal}
           backdropOpacity={0.5}
@@ -646,7 +692,7 @@ const Login = () => {
               style={styles.animation}
               onAnimationFinish={() => setAnimationFinished(true)}
             />
-            <Text style={styles.successText}>Login Successful!</Text>
+            <Text style={styles.successText}>{successModalMessage}</Text>
           </View>
         </Modal>
         <baseScreenStyles.RoleSelectorModal
@@ -657,24 +703,6 @@ const Login = () => {
           selectedValue={role}
           onSelect={(value) => setRole(value)}
         />
-        <Modal
-          isVisible={errorModalVisible}
-          backdropOpacity={0.5}
-          animationIn="fadeIn"
-          animationOut="fadeOut"
-          useNativeDriver
-          style={styles.modal}
-        >
-          <View style={styles.modalContent}>
-            <Text style={styles.errorText}>{errorModalMessage}</Text>
-            <TouchableOpacity
-              style={baseScreenStyles.primaryButton}
-              onPress={() => setErrorModalVisible(false)}
-            >
-              <Text style={baseScreenStyles.buttonText}>OK</Text>
-            </TouchableOpacity>
-          </View>
-        </Modal>
         {/* Error Modal */}
         <Modal
           isVisible={errorModalVisible}
@@ -688,7 +716,7 @@ const Login = () => {
             <View style={styles.errorIconContainer}>
               <Ionicons name="alert-circle" size={50} color="#FF6B6B" />
             </View>
-            <Text style={styles.errorModalTitle}>Login Failed</Text>
+            <Text style={styles.errorModalTitle}>{errorModalTitle}</Text>
             <Text style={styles.errorModalMessage}>{errorModalMessage}</Text>
             <TouchableOpacity
               style={styles.errorModalButton}
@@ -987,19 +1015,19 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   inlineErrorContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     marginBottom: 16,
     paddingVertical: 8,
     paddingHorizontal: 12,
-    backgroundColor: '#FFEBEE',
+    backgroundColor: "#FFEBEE",
     borderRadius: 8,
     borderLeftWidth: 3,
-    borderLeftColor: '#FF3B30',
+    borderLeftColor: "#FF3B30",
   },
   inlineErrorText: {
     marginLeft: 8,
-    color: '#FF3B30',
+    color: "#FF3B30",
     fontSize: 14,
     flex: 1,
   },

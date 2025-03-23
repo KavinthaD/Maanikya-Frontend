@@ -9,6 +9,7 @@ import {
   ScrollView,
   TouchableOpacity,
   Text
+  Linking
 } from "react-native";
 import * as ImagePicker from 'expo-image-picker';
 import { CameraView, useCameraPermissions } from 'expo-camera';

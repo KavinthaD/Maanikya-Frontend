@@ -8,6 +8,7 @@ import {
   Image,
   ScrollView,
   Alert,
+  Linking
 } from "react-native";
 import { baseScreenStylesNew } from "../../styles/baseStylesNew";
 import { homeStyles, HomeScreenComponents } from "../../styles/homeScreenStyles";

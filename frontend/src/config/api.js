@@ -26,8 +26,8 @@ export const ENDPOINTS = {
   REGISTER_CUSTOMER: "/api/auth/register-step2",
   LOGIN: "/api/auth/login",
   LOGOUT: "/api/auth/logout",
-  GET_USER_PROFILE: "/api/auth/me",
-  UPDATE_PROFILE: "/api/auth/update-profile",
+  GET_USER_PROFILE: "/api/userProfile/me",
+  UPDATE_PROFILE: "/api/userProfile/update-profile",
   GET_MY_GEMS: "/api/gems/my-gems",
 
   ADD_GEMS_TO_MARKET: "/api/market/add",

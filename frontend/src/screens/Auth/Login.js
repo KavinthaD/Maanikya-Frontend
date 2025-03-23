@@ -539,7 +539,7 @@ const Login = () => {
     
     <Text style={styles.forgotPasswordTitle}>Reset Password</Text>
     <Text style={styles.forgotPasswordDescription}>
-      Enter the code sent to your email and create a new password.
+      Enter the code sent to your email and create a new password. (Check spam folder as well)
     </Text>
     
     <View style={[baseScreenStyles.inputWrapper, styles.forgotPasswordInput]}>

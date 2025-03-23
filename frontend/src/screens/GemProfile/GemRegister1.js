@@ -30,7 +30,7 @@ import ImageCropPicker from "react-native-image-crop-picker";
 import { gemTypeItems } from "./gemTypes"; // Import gem types from gemTypes.js
 import axios from "axios";
 import { API_URL } from "../../config/api";
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Camera } from "expo-camera";
 
 // Update IMAGE_CONSTRAINTS
@@ -102,39 +102,39 @@ function GemRegister1Main() {
       message,
       type,
     });
-    
+
     // Auto-hide after 3 seconds
     setTimeout(() => {
-      setToast(prev => ({ ...prev, visible: false }));
+      setToast((prev) => ({ ...prev, visible: false }));
     }, 3000);
   };
 
   const handleCameraPress = async () => {
     try {
-          const { status } = await Camera.requestCameraPermissionsAsync();
-          if (status !== "granted") {
-            Alert.alert(
-              "Permission Required",
-              "This app needs camera and gallery access to get Gem image. Pleasse go to settings and enable permissions for camera",
-              [
-                {
-                  text: "Open Settings",
-                  onPress: () => Linking.openSettings(),
-                },
-                { text: "Cancel", style: "cancel" }
-              ]
-            );
-            return;
-          }
-          setHasPermission(status === "granted");
-          setModalVisible(true);
-        } catch (error) {
-          console.error("Error requesting camera permission:", error);
-          Alert.alert(
-            "Error",
-            "Failed to request camera permissions. Please try again."
-          );
-        }
+      const { status } = await Camera.requestCameraPermissionsAsync();
+      if (status !== "granted") {
+        Alert.alert(
+          "Permission Required",
+          "This app needs camera and gallery access to get Gem image. Pleasse go to settings and enable permissions for camera",
+          [
+            {
+              text: "Open Settings",
+              onPress: () => Linking.openSettings(),
+            },
+            { text: "Cancel", style: "cancel" },
+          ]
+        );
+        return;
+      }
+      setHasPermission(status === "granted");
+      setModalVisible(true);
+    } catch (error) {
+      console.error("Error requesting camera permission:", error);
+      Alert.alert(
+        "Error",
+        "Failed to request camera permissions. Please try again."
+      );
+    }
   };
 
   // Add image validation function
@@ -182,98 +182,104 @@ function GemRegister1Main() {
 
   // Update handleAIAnalysis function to handle failures better
 
-const handleAIAnalysis = async (imageInfo) => {
-  try {
-    console.log("Image Stats before API call:", {
-      width: imageInfo.width,
-      height: imageInfo.height,
-      size: `${(imageInfo.size / (1024 * 1024)).toFixed(2)}MB`,
-      mime: imageInfo.mime,
-    });
+  const handleAIAnalysis = async (imageInfo) => {
+    try {
+      console.log("Image Stats before API call:", {
+        width: imageInfo.width,
+        height: imageInfo.height,
+        size: `${(imageInfo.size / (1024 * 1024)).toFixed(2)}MB`,
+        mime: imageInfo.mime,
+      });
 
-    // Validate image before processing
-    const validationResult = await validateImage(imageInfo);
-    if (!validationResult.isValid) {
-      Alert.alert("Invalid Image", validationResult.errors.join("\n"), [
-        { text: "OK" },
-      ]);
-      return;
-    }
+      // Validate image before processing
+      const validationResult = await validateImage(imageInfo);
+      if (!validationResult.isValid) {
+        Alert.alert("Invalid Image", validationResult.errors.join("\n"), [
+          { text: "OK" },
+        ]);
+        return;
+      }
 
-    // Update the form with the image regardless of AI analysis success
-    setForm((prev) => ({
-      ...prev,
-      photos: [imageInfo.path],
-    }));
-
-    // Show loading message
-    setIsLoading(true);
-    setLoadingMessage("Analyzing image with AI...");
-
-    const token = await AsyncStorage.getItem('authToken');
-    if (!token) {
-      throw new Error("No authentication token found");
-    }
-
-    const formData = new FormData();
-    formData.append("image", {
-      uri:
-        Platform.OS === "ios"
-          ? imageInfo.path.replace("file://", "")
-          : imageInfo.path,
-      type: "image/jpeg",
-      name: "gem_image.jpg",
-    });
-
-    // Set a timeout to prevent long waits
-    const timeoutPromise = new Promise((_, reject) =>
-      setTimeout(() => reject(new Error("AI analysis request timed out")), 20000)
-    );
-
-    // Try AI analysis with a timeout
-    const response = await Promise.race([
-      axios.post(`${API_URL}/api/ai/analyze`, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-          Authorization: `Bearer ${token}`,
-        },
-      }),
-      timeoutPromise,
-    ]);
-
-    console.log("Raw API Response:", JSON.stringify(response.data, null, 2));
-
-    if (response.data.success) {
-      const analysis = response.data.analysis;
-
-      // Find the matching gem type in gemTypeItems
-      const matchingGemType =
-        gemTypeItems.find((item) => item.label === analysis.gemTypes[0])
-          ?.value || analysis.gemTypes[0];
-
-      // Auto-fill the form with AI analysis results
+      // Update the form with the image regardless of AI analysis success
       setForm((prev) => ({
         ...prev,
-        color: analysis.color.name,
-        gemShape: analysis.shape.toLowerCase(),
-        gemType: matchingGemType,
-        description: analysis.description,
+        photos: [imageInfo.path],
       }));
 
-      showToast("AI suggestions applied! You can modify them if needed.");
+      // Show loading message
+      setIsLoading(true);
+      setLoadingMessage("Analyzing image with AI...");
+
+      const token = await AsyncStorage.getItem("authToken");
+      if (!token) {
+        throw new Error("No authentication token found");
+      }
+
+      const formData = new FormData();
+      formData.append("image", {
+        uri:
+          Platform.OS === "ios"
+            ? imageInfo.path.replace("file://", "")
+            : imageInfo.path,
+        type: "image/jpeg",
+        name: "gem_image.jpg",
+      });
+
+      // Set a timeout to prevent long waits
+      const timeoutPromise = new Promise((_, reject) =>
+        setTimeout(
+          () => reject(new Error("AI analysis request timed out")),
+          20000
+        )
+      );
+
+      // Try AI analysis with a timeout
+      const response = await Promise.race([
+        axios.post(`${API_URL}/api/ai/analyze`, formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${token}`,
+          },
+        }),
+        timeoutPromise,
+      ]);
+
+      console.log("Raw API Response:", JSON.stringify(response.data, null, 2));
+
+      if (response.data.success) {
+        const analysis = response.data.analysis;
+
+        // Find the matching gem type in gemTypeItems
+        const matchingGemType =
+          gemTypeItems.find((item) => item.label === analysis.gemTypes[0])
+            ?.value || analysis.gemTypes[0];
+
+        // Auto-fill the form with AI analysis results
+        setForm((prev) => ({
+          ...prev,
+          color: analysis.color.name,
+          gemShape: analysis.shape.toLowerCase(),
+          gemType: matchingGemType,
+          description: analysis.description,
+        }));
+
+        showToast("AI suggestions applied! You can modify them if needed.");
+      }
+    } catch (error) {
+      console.error("AI Analysis error:", error);
+
+      // The important part: don't remove the image if AI fails
+      // Just inform the user and let them continue manually
+      showToast(
+        "Image added but AI analysis failed. Please fill manually.",
+        "error"
+      );
+
+      // We don't need to clear the image here - it's already set in the form
+    } finally {
+      setIsLoading(false);
     }
-  } catch (error) {
-    console.error("AI Analysis error:", error);
-    
-    // The important part: don't remove the image if AI fails
-    // Just inform the user and let them continue manually
-    showToast("Image added but AI analysis failed. Please fill manually.", "error");
-    
-    // We don't need to clear the image here - it's already set in the form
-  } finally {
-    setIsLoading(false);
-  }
-};
+  };
 
   // Update handleTakePhoto and handleChooseFromGallery configurations
   const imagePickerConfig = {
@@ -284,8 +290,8 @@ const handleAIAnalysis = async (imageInfo) => {
     cropping: true,
     cropperCircleOverlay: false,
     cropperStatusBarColor: baseScreenStyles.colors.primary || "#170969",
-            cropperToolbarColor: baseScreenStyles.colors.primary || "#170969",
-            cropperToolbarWidgetColor: "#FFFFFF", 
+    cropperToolbarColor: baseScreenStyles.colors.primary || "#170969",
+    cropperToolbarWidgetColor: "#FFFFFF",
     compressImageQuality: IMAGE_CONSTRAINTS.quality,
     compressImageMaxWidth: IMAGE_CONSTRAINTS.maxWidth,
     compressImageMaxHeight: IMAGE_CONSTRAINTS.maxHeight,
@@ -302,18 +308,21 @@ const handleAIAnalysis = async (imageInfo) => {
           Alert.alert("Invalid Image", validation.errors.join("\n"));
           return;
         }
-        
+
         // Always update the form with the image
         setForm((prev) => ({
           ...prev,
           photos: [result.path],
         }));
-        
+
         // Try AI analysis but don't block on failure
         try {
           await handleAIAnalysis(result);
         } catch (aiError) {
-          console.error("AI analysis failed but continuing with image:", aiError);
+          console.error(
+            "AI analysis failed but continuing with image:",
+            aiError
+          );
           Alert.alert(
             "AI Analysis Failed",
             "The image has been added but couldn't be analyzed. Please fill the form manually."
@@ -340,18 +349,21 @@ const handleAIAnalysis = async (imageInfo) => {
           Alert.alert("Invalid Image", validation.errors.join("\n"));
           return;
         }
-        
+
         // Always update the form with the image
         setForm((prev) => ({
           ...prev,
           photos: [result.path],
         }));
-        
+
         // Try AI analysis but don't block on failure
         try {
           await handleAIAnalysis(result);
         } catch (aiError) {
-          console.error("AI analysis failed but continuing with image:", aiError);
+          console.error(
+            "AI analysis failed but continuing with image:",
+            aiError
+          );
           Alert.alert(
             "AI Analysis Failed",
             "The image has been added but couldn't be analyzed. Please fill the form manually."
@@ -361,7 +373,10 @@ const handleAIAnalysis = async (imageInfo) => {
     } catch (error) {
       console.error("Error choosing from gallery:", error);
       if (error.message !== "User cancelled image selection") {
-        Alert.alert("Error", "Failed to select image from gallery. Please try again.");
+        Alert.alert(
+          "Error",
+          "Failed to select image from gallery. Please try again."
+        );
       }
     } finally {
       setModalVisible(false);
@@ -421,20 +436,17 @@ const handleAIAnalysis = async (imageInfo) => {
   //     photos: form.photos.length > 0 ? form.photos : [],
   //     photo: form.photos.length > 0 ? form.photos[0] : null
   //   };
-    
+
   //   // Navigate to next screen
   //   navigation.navigate("GemRegister2", {
   //     formData: mockFormData,
   //   });
   // };
-  
+
   return (
     <View style={baseScreenStylesNew.container}>
-      <HeaderBar 
-        title="Register Gem" 
-        
-      />
-      
+      <HeaderBar title="Register Gem" />
+
       {/* Dev bypass button (only in dev) */}
       {/* {__DEV__ && (
         <TouchableOpacity 
@@ -444,23 +456,27 @@ const handleAIAnalysis = async (imageInfo) => {
           <Text style={styles.devBypassText}>DEV</Text>
         </TouchableOpacity>
       )} */}
-      
+
       {/* Loading overlay */}
       {isLoading && (
         <View style={styles.loadingOverlay}>
-          <ActivityIndicator size="large" color={baseScreenStyles.colors.primary} />
+          <ActivityIndicator
+            size="large"
+            color={baseScreenStyles.colors.primary}
+          />
           <Text style={styles.loadingText}>{loadingMessage}</Text>
         </View>
       )}
-      
+
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
-        style={[baseScreenStylesNew.container, { zIndex: 1 }]}
+        style={[baseScreenStylesNew.container]}  // Remove zIndex: 1
         keyboardVerticalOffset={Platform.OS === "ios" ? 64 : 0}
       >
         <ScrollView
           contentContainerStyle={{ flexGrow: 1, padding: 20 }}
           nestedScrollEnabled={true}
+          keyboardShouldPersistTaps="handled"
         >
           <View style={styles.formContainer}>
             {/* Camera/AI Section */}
@@ -476,16 +492,20 @@ const handleAIAnalysis = async (imageInfo) => {
                   />
                 ) : (
                   <View style={styles.cameraIconContainer}>
-                    <Icon name="camera-alt" size={40} color={baseScreenStyles.colors.background} />
+                    <Icon
+                      name="camera-alt"
+                      size={40}
+                      color={baseScreenStyles.colors.background}
+                    />
                   </View>
                 )}
               </TouchableOpacity>
-              
+
               <Text style={styles.sectionTitle}>AI Auto-Fill</Text>
-              
+
               <Text style={styles.helperText}>
-                Take a photo to let AI analyze and auto-fill gem details.
-                (Be aware that AI analysis may not always be accurate.)
+                Take a photo to let AI analyze and auto-fill gem details. (Be
+                aware that AI analysis may not always be accurate.)
               </Text>
             </View>
 
@@ -493,88 +513,199 @@ const handleAIAnalysis = async (imageInfo) => {
             <View style={styles.formFields}>
               {/* Color Input */}
               <View style={baseScreenStyles.inputWrapper}>
-                <Icon name="palette" size={20} color={baseScreenStyles.colors.input.placeholder} style={styles.inputIcon} />
+                <Icon
+                  name="palette"
+                  size={20}
+                  color={baseScreenStyles.colors.input.placeholder}
+                  style={styles.inputIcon}
+                />
                 <TextInput
                   style={baseScreenStyles.input}
                   placeholder="Gem color *"
-                  placeholderTextColor={baseScreenStyles.colors.input.placeholder}
+                  placeholderTextColor={
+                    baseScreenStyles.colors.input.placeholder
+                  }
                   value={form.color}
                   onChangeText={(value) => handleInputChange("color", value)}
                 />
               </View>
-              
+
               {/* Gem Shape Dropdown */}
-              <View style={[styles.dropdownWrapper, { zIndex: 3000 }]}>
-                <Icon name="category" size={20} color={baseScreenStyles.colors.input.placeholder} style={styles.dropdownIcon} />
+              <View style={[styles.dropdownWrapper]}>
+                <Icon
+                  name="category"
+                  size={20}
+                  color={baseScreenStyles.colors.input.placeholder}
+                  style={styles.dropdownIcon}
+                />
                 <DropDownPicker
                   open={openShape}
                   value={form.gemShape}
                   items={shapeItems}
-                  setOpen={setOpenShape}
-                  setValue={(callback) => handleInputChange("gemShape", callback())}
+                  setOpen={(isOpen) => {
+                    // Close the other dropdown if opening this one
+                    if (isOpen && openGemType) setOpenGemType(false);
+                    setOpenShape(isOpen);
+                  }}
+                  setValue={(callback) =>
+                    handleInputChange("gemShape", callback())
+                  }
                   placeholder="Select Gem Shape *"
                   style={styles.dropdown}
                   containerStyle={styles.dropdownContainer}
-                  dropDownContainerStyle={styles.dropDownContainerStyle}
+                  dropDownContainerStyle={
+                    Platform.OS === "android"
+                      ? {
+                          backgroundColor: "#fff",
+                          position: "relative",
+                          top: 0,
+                          borderColor: baseScreenStyles.colors.input.border,
+                          borderWidth: 1,
+                          elevation: 5,
+                          shadowColor: "#000",
+                          shadowOffset: { width: 0, height: 2 },
+                          shadowOpacity: 0.2,
+                          shadowRadius: 4,
+                        }
+                      : {
+                          backgroundColor: "#fff",
+                          borderColor: baseScreenStyles.colors.input.border,
+                          borderWidth: 1,
+                          elevation: 5,
+                          shadowColor: "#000",
+                          shadowOffset: { width: 0, height: 2 },
+                          shadowOpacity: 0.2,
+                          shadowRadius: 4,
+                        }
+                  }
                   placeholderStyle={styles.placeholderStyle}
                   listItemLabelStyle={styles.listItemLabelStyle}
                   textStyle={styles.dropdownTextStyle}
                   arrowIconStyle={styles.arrowIconStyle}
-                  zIndex={3000}
-                  zIndexInverse={1000}
-                  listMode="SCROLLVIEW"
+                  showArrowIcon={true}
+                  showTickIcon={true}
+                  listMode={Platform.OS === "android" ? "MODAL" : "DROPDOWN"}
+                  maxHeight={200}
+                  modalContentContainerStyle={{
+                    backgroundColor: "#fff",
+                    padding: 0,
+                    borderRadius: 12,
+                  }}
+                  modalProps={{
+                    transparent: true,
+                    presentationStyle: "overFullScreen",
+                  }}
+                  searchable={false}
                 />
               </View>
-              
+
               {/* Gem Type Dropdown */}
-              <View style={[styles.dropdownWrapper, { zIndex: 2000 }]}>
-                <Icon name="diamond" size={20} color={baseScreenStyles.colors.input.placeholder} style={styles.dropdownIcon} />
+              <View style={[styles.dropdownWrapper]}>
+                <Icon
+                  name="diamond"
+                  size={20}
+                  color={baseScreenStyles.colors.input.placeholder}
+                  style={styles.dropdownIcon}
+                />
                 <DropDownPicker
                   open={openGemType}
                   value={form.gemType}
                   items={gemTypeItems}
-                  setOpen={setOpenGemType}
-                  setValue={(callback) => handleInputChange("gemType", callback())}
+                  setOpen={(isOpen) => {
+                    if (isOpen && openShape) setOpenShape(false);
+                    setOpenGemType(isOpen);
+                  }}
+                  setValue={(callback) =>
+                    handleInputChange("gemType", callback())
+                  }
                   placeholder="Select Gem Type *"
                   style={styles.dropdown}
                   containerStyle={styles.dropdownContainer}
-                  dropDownContainerStyle={styles.dropDownContainerStyle}
+                  dropDownContainerStyle={
+                    Platform.OS === "android"
+                      ? {
+                          backgroundColor: "#fff",
+                          position: "relative",
+                          top: 0,
+                          borderColor: baseScreenStyles.colors.input.border,
+                          borderWidth: 1,
+                          elevation: 5,
+                          shadowColor: "#000",
+                          shadowOffset: { width: 0, height: 2 },
+                          shadowOpacity: 0.2,
+                          shadowRadius: 4,
+                        }
+                      : {
+                          backgroundColor: "#fff",
+                          borderColor: baseScreenStyles.colors.input.border,
+                          borderWidth: 1,
+                          elevation: 5,
+                          shadowColor: "#000",
+                          shadowOffset: { width: 0, height: 2 },
+                          shadowOpacity: 0.2,
+                          shadowRadius: 4,
+                        }
+                  }
                   placeholderStyle={styles.placeholderStyle}
                   listItemLabelStyle={styles.listItemLabelStyle}
                   textStyle={styles.dropdownTextStyle}
                   arrowIconStyle={styles.arrowIconStyle}
-                  zIndex={2000}
-                  zIndexInverse={3000}
-                  listMode="SCROLLVIEW"
+                  showArrowIcon={true}
+                  showTickIcon={true}
+                  listMode={Platform.OS === "android" ? "MODAL" : "DROPDOWN"}
+                  maxHeight={200}
+                  modalContentContainerStyle={{
+                    backgroundColor: "#fff",
+                    padding: 0,
+                    borderRadius: 12,
+                  }}
+                  modalProps={{
+                    transparent: true,
+                    presentationStyle: "overFullScreen",
+                  }}
+                  searchable={true}
+                  searchPlaceholder="Search gem types..."
                 />
               </View>
-              
+
               {/* Description Input */}
-              <View style={[baseScreenStyles.inputWrapper, styles.textareaWrapper]}>
-                <Icon 
-                  name="description" 
-                  size={20} 
+              <View
+                style={[baseScreenStyles.inputWrapper, styles.textareaWrapper]}
+              >
+                <Icon
+                  name="description"
+                  size={20}
                   color={baseScreenStyles.colors.input.placeholder}
-                  style={[styles.inputIcon, { alignSelf: 'flex-start', marginTop: 12 }]} 
+                  style={[
+                    styles.inputIcon,
+                    { alignSelf: "flex-start", marginTop: 12 },
+                  ]}
                 />
                 <TextInput
                   style={[baseScreenStyles.input, styles.textareaInput]}
                   placeholder="Description"
-                  placeholderTextColor={baseScreenStyles.colors.input.placeholder}
+                  placeholderTextColor={
+                    baseScreenStyles.colors.input.placeholder
+                  }
                   value={form.description}
-                  onChangeText={(value) => handleInputChange("description", value)}
+                  onChangeText={(value) =>
+                    handleInputChange("description", value)
+                  }
                   multiline={true}
                   numberOfLines={4}
                   textAlignVertical="top"
                 />
               </View>
             </View>
-            
+
             {/* Continue Button */}
             <TouchableOpacity
               style={[
                 baseScreenStyles.primaryButton,
-                {opacity: form.color && form.gemShape && form.gemType ? 1 : 0.6}
+                {
+                  opacity:
+                    form.color && form.gemShape && form.gemType ? 1 : 0.6,
+                },
               ]}
               onPress={handleContinue}
               disabled={!form.color || !form.gemShape || !form.gemType}
@@ -620,16 +751,26 @@ const handleAIAnalysis = async (imageInfo) => {
         </Modal>
         {/* Add the Toast component to your return statement, right before the closing View tag */}
         {toast.visible && (
-          <View style={[
-            styles.toastContainer, 
-            toast.type === "success" ? styles.successToast : 
-            toast.type === "error" ? styles.errorToast : styles.infoToast
-          ]}>
-            <Icon 
-              name={toast.type === "success" ? "check-circle" : 
-                    toast.type === "error" ? "error" : "info"} 
-              size={24} 
-              color="#fff" 
+          <View
+            style={[
+              styles.toastContainer,
+              toast.type === "success"
+                ? styles.successToast
+                : toast.type === "error"
+                ? styles.errorToast
+                : styles.infoToast,
+            ]}
+          >
+            <Icon
+              name={
+                toast.type === "success"
+                  ? "check-circle"
+                  : toast.type === "error"
+                  ? "error"
+                  : "info"
+              }
+              size={24}
+              color="#fff"
               style={styles.toastIcon}
             />
             <Text style={styles.toastText}>{toast.message}</Text>
@@ -654,36 +795,36 @@ const styles = StyleSheet.create({
     height: 120,
     borderRadius: 12,
     backgroundColor: baseScreenStyles.colors.primary,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     marginBottom: 12,
-    overflow: 'hidden',
+    overflow: "hidden",
     elevation: 3,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
     shadowRadius: 3,
   },
   cameraIconContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: '100%',
-    height: '100%',
+    alignItems: "center",
+    justifyContent: "center",
+    width: "100%",
+    height: "100%",
   },
   selectedImage: {
-    width: '100%',
-    height: '100%',
+    width: "100%",
+    height: "100%",
   },
   sectionTitle: {
     fontSize: 20,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     color: baseScreenStyles.colors.text.dark,
     marginBottom: 4,
   },
   helperText: {
     fontSize: 14,
     color: baseScreenStyles.colors.text.medium,
-    textAlign: 'center',
+    textAlign: "center",
     paddingHorizontal: 20,
   },
   formFields: {
@@ -695,31 +836,32 @@ const styles = StyleSheet.create({
     marginRight: 8,
   },
   dropdownWrapper: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     borderWidth: 1,
     borderColor: baseScreenStyles.colors.input.border,
     borderRadius: 12,
     backgroundColor: baseScreenStyles.colors.input.background,
     marginBottom: 16,
     height: 50,
+    position: "relative",
   },
   dropdownIcon: {
     marginLeft: 12,
     marginRight: 8,
-    position: 'absolute',
-    zIndex: 10,
+    position: "absolute",
+    zIndex: 10, 
     left: 0,
   },
   dropdown: {
     flex: 1,
     height: 48,
     borderWidth: 0,
-    backgroundColor: 'transparent',
+    backgroundColor: "transparent",
     paddingLeft: 40,
   },
   dropdownContainer: {
-    width: '100%',
+    width: "100%",
   },
   dropDownContainerStyle: {
     borderColor: baseScreenStyles.colors.input.border,
@@ -746,22 +888,22 @@ const styles = StyleSheet.create({
   },
   textareaWrapper: {
     minHeight: 120,
-    alignItems: 'flex-start',
+    alignItems: "flex-start",
   },
   textareaInput: {
     height: 120,
-    textAlignVertical: 'top',
+    textAlignVertical: "top",
     paddingTop: 12,
   },
   loadingOverlay: {
-    position: 'absolute',
+    position: "absolute",
     top: 0,
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: 'rgba(255,255,255,0.8)',
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: "rgba(255,255,255,0.8)",
+    justifyContent: "center",
+    alignItems: "center",
     zIndex: 9999,
   },
   // Keep your existing modal styles or update them to match baseScreenStyles
@@ -854,70 +996,70 @@ const styles = StyleSheet.create({
 
   //dev bypass button styles
   devBypassButton: {
-    position: 'absolute',
+    position: "absolute",
     right: 15,
     top: 15,
     zIndex: 1000,
-    backgroundColor: '#FF6B6B',
+    backgroundColor: "#FF6B6B",
     paddingHorizontal: 10,
     paddingVertical: 5,
     borderRadius: 5,
     borderWidth: 1,
-    borderColor: '#721c24',
-    borderStyle: 'dashed',
+    borderColor: "#721c24",
+    borderStyle: "dashed",
   },
   devBypassText: {
-    color: 'white',
-    fontWeight: 'bold',
+    color: "white",
+    fontWeight: "bold",
     fontSize: 12,
   },
 
   // Loading overlay
   loadingOverlay: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(255, 255, 255, 0.8)',
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: "rgba(255, 255, 255, 0.8)",
+    justifyContent: "center",
+    alignItems: "center",
     zIndex: 1000,
   },
   loadingText: {
     marginTop: 12,
     fontSize: 16,
     color: baseScreenStyles.colors.text.dark,
-    fontWeight: '500',
+    fontWeight: "500",
   },
   // Toast styles
   toastContainer: {
-    position: 'absolute',
+    position: "absolute",
     bottom: 75,
     left: 20,
     right: 20,
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     paddingVertical: 12,
     paddingHorizontal: 16,
     borderRadius: 12,
     elevation: 6,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.15,
     shadowRadius: 5,
     zIndex: 9999,
   },
   successToast: {
-    backgroundColor: baseScreenStyles.colors.success || '#4CAF50',
+    backgroundColor: baseScreenStyles.colors.success || "#4CAF50",
   },
   errorToast: {
-    backgroundColor: baseScreenStyles.colors.error || '#E53935',
+    backgroundColor: baseScreenStyles.colors.error || "#E53935",
   },
   infoToast: {
-    backgroundColor: baseScreenStyles.colors.primary || '#170969',
+    backgroundColor: baseScreenStyles.colors.primary || "#170969",
   },
   toastText: {
     flex: 1,
-    color: '#FFFFFF',
+    color: "#FFFFFF",
     fontSize: 14,
-    fontWeight: '500',
+    fontWeight: "500",
   },
   toastIcon: {
     marginRight: 10,

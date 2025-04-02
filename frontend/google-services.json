@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "628515734594",
+    "project_id": "maanikya-36b41",
+    "storage_bucket": "maanikya-36b41.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:628515734594:android:d56348f55b9795ed79d9db",
+        "android_client_info": {
+          "package_name": "com.maanikya.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB7BHs_NRTFCbN8y3fPKae5-kmbOQlo2yY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

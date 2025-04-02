@@ -13,8 +13,13 @@ import {
 import { Picker } from "@react-native-picker/picker";
 import { baseScreenStyles } from "../../styles/baseStyles";
 import { useNavigation } from "@react-navigation/native";
-import axios from 'axios'; // Import axios
-import AsyncStorage from '@react-native-async-storage/async-storage'; // Import AsyncStorage
+import axios from "axios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { API_URL, ENDPOINTS } from "../../config/api";
+import { Ionicons } from "@expo/vector-icons";
+import LottieView from "lottie-react-native";
+import Modal from "react-native-modal";
+import messaging from '@react-native-firebase/messaging';
 
 const Login = () => {
   const navigation = useNavigation();
@@ -62,13 +67,66 @@ const Login = () => {
       // **Store the JWT token securely (using AsyncStorage):**
       await AsyncStorage.setItem('authToken', response.data.token);
 
-      // **Navigate based on user role after successful login:**
-      if (response.data.user.loginRole === "Gem business owner") {
-        navigation.navigate("BS_NavBar");
-      } else if (response.data.user.loginRole === "Cutter/Burner") {
-        navigation.navigate("W_NavBar");
-      } else if (response.data.user.loginRole === "Customer") {
-        navigation.navigate("C_NavBar");
+      // NEW CODE: Register FCM token after successful login
+      try {
+        const fcmToken = await messaging().getToken();
+        console.log('Registering FCM token after login:', fcmToken);
+        
+        if (fcmToken) {
+          // Send the token to your backend
+          await axios.post(
+            `${API_URL}${ENDPOINTS.PUSH_TOKEN}/register`,
+            { token: fcmToken },
+            {
+              headers: {
+                Authorization: `Bearer ${response.data.token}`,
+                'Content-Type': 'application/json'
+              }
+            }
+          );
+          console.log('FCM token registered successfully');
+        }
+      } catch (fcmError) {
+        // Don't block the login process if token registration fails
+        console.error('Error registering FCM token:', fcmError);
+      }
+
+      // Show success animation and auto-login toast simultaneously
+      setShowSuccessModal(true);
+      setAutoLoginToastVisible(true);
+
+      // Hide toast after 5 seconds
+      setTimeout(() => {
+        setAutoLoginToastVisible(false);
+      }, 5000);
+
+      // Navigate after animation completes
+      setTimeout(() => {
+        setShowSuccessModal(false);
+        if (response.data.user.loginRole === "Gem business owner") {
+          navigation.navigate("BS_NavBar");
+        } else if (response.data.user.loginRole === "Cutter/Burner") {
+          navigation.navigate("W_NavBar");
+        } else if (response.data.user.loginRole === "Customer") {
+          navigation.navigate("C_NavBar");
+        }
+      }, 2000); // Wait for 2 seconds after animation starts
+    } catch (error) {
+      console.error(
+        "Login failed:",
+        error.response ? error.response.data : error.message
+      );
+
+      // Get error message from the server response
+      let errorMsg =
+        "Login failed. Please check your credentials and try again.";
+
+      if (error.response && error.response.data) {
+        if (error.response.data.message) {
+          errorMsg = error.response.data.message;
+        } else if (error.response.data.error) {
+          errorMsg = error.response.data.error;
+        }
       }
 
     } catch (error) {

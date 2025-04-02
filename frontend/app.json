@@ -23,22 +23,43 @@
     "orientation": "portrait",
     "android": {
       "package": "com.maanikya.app",
+      "googleServicesFile": "./google-services.json",
       "permissions": [
-        "CAMERA",
-        "READ_MEDIA_IMAGES",
-        "MEDIA_LIBRARY",
-        "READ_EXTERNAL_STORAGE",
-        "WRITE_EXTERNAL_STORAGE"
-      ]
+        "android.permission.CAMERA",
+        "android.permission.READ_MEDIA_IMAGES",
+        "android.permission.MEDIA_LIBRARY",
+        "android.permission.READ_EXTERNAL_STORAGE",
+        "android.permission.WRITE_EXTERNAL_STORAGE",
+        "android.permission.RECORD_AUDIO",
+        "android.permission.INTERNET",
+        "android.permission.RECEIVE_BOOT_COMPLETED",
+        "android.permission.VIBRATE",
+        "android.permission.WAKE_LOCK",
+        "android.permission.POST_NOTIFICATIONS"
+      ],
+      "adaptiveIcon": {
+        "foregroundImage": "./src/assets/adaptive-icon.png",
+        "backgroundColor": "#082f4f"
+      },
+      "icon": "./src//assets/icon.png"
     },
     "ios": {
       "bundleIdentifier": "com.maanikya.app",
       "buildNumber": "1.0.0",
       "supportsTablet": true,
+      "googleServicesFile": "./GoogleService-Info.plist",
       "infoPlist": {
         "NSCameraUsageDescription": "Allow Maanikya to access your camera to scan QR codes.",
         "NSPhotoLibraryUsageDescription": "Allow Maanikya to access your photos to save QR codes.",
-        "NSPhotoLibraryAddUsageDescription": "Allow Maanikya to save QR codes to your gallery."
+        "NSPhotoLibraryAddUsageDescription": "Allow Maanikya to save QR codes to your gallery.",
+        "ITSAppUsesNonExemptEncryption": false,
+        "UIBackgroundModes": ["remote-notification"]
+      },
+      "icon": "./src//assets/icon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "4eb995a0-0506-4270-b1e5-dcc59390452c"
       }
     }
   }

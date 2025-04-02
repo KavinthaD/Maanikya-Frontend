@@ -11,19 +11,165 @@ import {
   StatusBar,
 } from "react-native";
 import { baseScreenStyles } from "../../styles/baseStyles";
-import Header_1 from "../../components/Header_1";
+import {
+  homeStyles,
+  HomeScreenComponents,
+} from "../../styles/homeScreenStyles";
+import { CameraView, useCameraPermissions } from "expo-camera";
+import { BarCodeScanner } from "expo-barcode-scanner";
+import { Camera } from "expo-camera";
+import messaging from '@react-native-firebase/messaging';
+import axios from 'axios';
+import { API_URL, ENDPOINTS } from '../../config/api';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { usePushNotifications } from '../../services/pushNotificationService';
+import { useNotification } from "../../services/NotificationManager";
 
-const MenuItem = ({ image, title, onPress }) => (
-  <TouchableOpacity style={styles.menuItem} onPress={onPress}>
-    <View style={styles.iconContainer}>
-      <Image source={image} style={styles.imageStyle} resizeMode="contain" />
-    </View>
-    <Text style={styles.menuText}>{title}</Text>
-  </TouchableOpacity>
-);
+
 
 const HomeScreen = () => {
   const navigation = useNavigation();
+  const [isModalVisible, setModalVisible] = useState(false);
+  const [scanning, setScanning] = useState(false);
+  const [hasPermission, setHasPermission] = useState(null);
+  
+  // Get the showNotification function from the context
+  const { showNotification } = useNotification();
+
+  const requestUserPermission = async () => {
+    const authStatus = await messaging().requestPermission();
+    const enabled =
+      authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+      authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+  
+    if (enabled) {
+      console.log('Authorization status:', authStatus);
+    }
+  };
+  
+  useEffect(() => {
+    requestUserPermission();
+  }, []);
+
+  const handleQrScan = async () => {
+    try {
+      // request camera permissions from user
+      const { status } = await Camera.requestCameraPermissionsAsync();
+      if (status !== "granted") { //if denied error message
+        Alert.alert(
+          "Permission Required",
+          "This app needs camera and gallery access to get QR code. Pleasse go to settings and enable permissions for camera",
+          [
+            {
+              text: "Open Settings",
+              onPress: () => Linking.openSettings(),
+            },
+            { text: "Cancel", style: "cancel" },
+          ]
+        );
+        return;
+      }
+      setHasPermission(status === "granted");
+      setModalVisible(true);
+    } catch (error) {
+      console.error("Error requesting camera permission:", error);
+      Alert.alert(
+        "Error",
+        "Failed to request camera permissions. Please try again."
+      );
+    }
+  };
+
+  const handleBarCodeScanned = ({ data }) => {
+    setScanning(false);
+    setModalVisible(false);
+
+    let finalData = data;
+    // Check if the data is a data URL and extract base64
+    if (data.includes("base64,")) {
+      finalData = data.split("base64,")[1];
+    }
+// navigate to mygems screen and pass the QR code data
+    navigation.navigate("MyGems", {
+      qrCodeUrl: finalData,
+    });
+  };
+
+  const handleScanFromCamera = () => {
+    setModalVisible(false);
+    setScanning(true);
+  };
+
+  const handleScanFromGallery = async () => {
+    try {
+      const { status } =
+        await ImagePicker.requestMediaLibraryPermissionsAsync();
+      if (status !== "granted") {
+        Alert.alert(
+          "Permission needed",
+          "Please grant camera roll permissions"
+        );
+        return;
+      }
+
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        quality: 1,
+        allowsEditing: true,
+        base64: true,
+        width: 300,
+        height: 300,
+        aspect: [1, 1],
+      });
+// if an image was selected
+      if (!result.canceled && result.assets[0]) {
+        try {
+          //scan the image for barcodes
+          const scannedBarcodes = await BarCodeScanner.scanFromURLAsync(
+            result.assets[0].uri
+          );
+//if found navigate to mygems screen and pass the QR code data
+          if (scannedBarcodes.length > 0) {
+            const scannedUrl = scannedBarcodes[0].data;
+            console.log("Scanned URL:", scannedUrl);
+
+            setModalVisible(false);
+            navigation.navigate("MyGems", {
+              qrCodeUrl: scannedUrl,
+            });
+          } else {
+            Alert.alert("Error", "No valid QR code found in the image");
+          }
+        } catch (error) {
+          console.error("QR scanning error:", error);
+          Alert.alert("Error", "Failed to scan QR code");
+        }
+      }
+    } catch (error) {
+      console.error("Gallery error:", error);
+      Alert.alert("Error", "Failed to process image");
+    }
+  };
+
+  const { sendTestNotification } = usePushNotifications(navigation);
+  
+  const testFirebaseNotification = async () => {
+    try {
+      const success = await sendTestNotification();
+      if (success) {
+        // Use the notification manager instead of Alert
+        showNotification({
+          title: 'Test Notification Sent',
+          body: 'Check for the notification',
+          autoClose: true
+        });
+      }
+    } catch (error) {
+      console.error('Error testing notification:', error);
+    }
+  };
+
+  // Menu items with standardized format
   const menuItems = [
     {
       image: require("../../assets/menu-icons/addGem.png"),
@@ -82,9 +228,51 @@ const HomeScreen = () => {
               title={item.title}
               onPress={() => handleMenuItemPress(item.screen)}
             />
-          ))}
-        </View>
-      </View>
+
+            <View style={styles.menuGridThreeColumns}>
+              {menuItems.map((item, index) => (
+                <TouchableOpacity
+                  key={index}
+                  style={styles.menuItemThreeColumn}
+                  onPress={() => handleMenuItemPress(item.screen, item.onPress)}
+                  activeOpacity={0.7}
+                >
+                  <View style={homeStyles.menuItemContent}>
+                    <View style={homeStyles.iconContainer}>
+                      <Image
+                        source={item.image}
+                        style={styles.imageStyleThreeColumn}
+                        resizeMode="cover"
+                        onError={(error) =>
+                          console.error("Image loading error:", error)
+                        }
+                      />
+                      <View style={homeStyles.overlayContainer}>
+                        <Text style={styles.menuTextSmaller}>{item.title}</Text>
+                      </View>
+                    </View>
+                  </View>
+                </TouchableOpacity>
+              ))}
+            </View>
+            <TouchableOpacity 
+              style={styles.testButton}
+              onPress={testFirebaseNotification}
+            >
+              <Text style={styles.testButtonText}>Test In-App Notification</Text>
+            </TouchableOpacity>
+          </View>
+          {/* Add some padding at the bottom for better scrolling */}
+          <View style={{ height: 20 }} />
+        </ScrollView>
+      )}
+
+      <HomeScreenComponents.QRScannerModal
+        isVisible={isModalVisible}
+        onClose={() => setModalVisible(false)}
+        onCameraPress={handleScanFromCamera}
+        onGalleryPress={handleScanFromGallery}
+      />
     </View>
   );
 };
@@ -134,6 +322,17 @@ const styles = StyleSheet.create({
     fontSize: 12,
     textAlign: "center",
     color: "#000",
+  },
+  testButton: {
+    backgroundColor: '#082f4f',
+    padding: 10,
+    borderRadius: 5,
+    marginVertical: 10,
+    alignItems: 'center',
+  },
+  testButtonText: {
+    color: 'white',
+    fontWeight: 'bold',
   },
 });
 

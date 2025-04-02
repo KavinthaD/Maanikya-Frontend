@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { SafeAreaView, StatusBar, Platform } from "react-native";
@@ -8,6 +8,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as ScreenOrientation from "expo-screen-orientation";
 import { StatusBar as ExpoStatusBar } from 'expo-status-bar';
 import * as NavigationBar from 'expo-navigation-bar';
+import NotificationProvider from './src/services/NotificationManager';
+import { initializeNotifications } from './src/services/pushNotificationService';
 
 // Import screens
 import PurposeSelectionPage from "./src/screens/Auth/PurposeSelectionPage";
@@ -50,6 +52,35 @@ const Stack = createNativeStackNavigator();
 const App = () => {
   const [initialRouteName, setInitialRouteName] = useState("WelcomePage");
 
+  // Create a ref to access the navigation object
+  const navigationRef = useRef();
+  
+  // Function to handle navigation from notifications
+  const handleNotificationNavigation = (screenName, params = {}) => {
+    console.log('Navigation request to:', screenName, params);
+    
+    // Check if navigationRef is ready and has the current method
+    if (navigationRef.current && navigationRef.current.isReady()) {
+      navigationRef.current.navigate(screenName, params);
+    } else {
+      console.log('Navigation ref not ready yet, will retry');
+      // You could store this navigation intent and retry when ready
+    }
+  };
+
+  // Initialize notifications when app loads
+  useEffect(() => {
+    const setup = async () => {
+      try {
+        await initializeNotifications(handleNotificationNavigation);
+      } catch (error) {
+        console.error('Error setting up notifications:', error);
+      }
+    };
+    
+    setup();
+  }, []);
+
   // Lock orientation to portrait and set navigation bar color when the app starts
   useEffect(() => {
     const setupApp = async () => {
@@ -67,61 +98,63 @@ const App = () => {
   }, []);
 
   return (
-    <SafeAreaProvider>
-      <SafeAreaView
-        style={{
-          flex: 1,
-          backgroundColor: "white",
-          paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
-        }}
-      >
-        {Platform.OS === 'ios' ? (
-          <StatusBar barStyle="dark-content" backgroundColor="white" translucent={true} />
-        ) : (
-          <ExpoStatusBar style="dark" backgroundColor="white" translucent={true} />
-        )}
-        
-        <NavigationContainer>
-          <Stack.Navigator initialRouteName={initialRouteName}>
-            <Stack.Screen name="AddContact" component={AddContact} options={{ headerShown: false }} />
-            <Stack.Screen name="BS_NavBar" component={BS_NavBar} options={{ headerShown: false }} />
-            <Stack.Screen name="BusinessOwnerEditProfile" component={BusinessOwnerEditProfile} options={{ headerShown: false }} />
-            <Stack.Screen name="BusinessOwnerProfile" component={BusinessOwnerProfile} options={{ headerShown: false }} />
-            <Stack.Screen name="C_NavBar" component={C_NavBar} options={{ headerShown: false }} />
-            <Stack.Screen name="CompletedTrackerScreen" component={NotificationScreen} options={{ headerShown: false }} />
-            <Stack.Screen name="ContactProfiles" component={ContactProfiles} options={{ headerShown: false }} />
-            <Stack.Screen name="ChatScreen" component={ChatScreen} options={{ headerShown: false }} />
-            <Stack.Screen name="Contacts" component={Contacts} options={{ headerShown: false }} />
-            <Stack.Screen name="Customeraddseller" component={Customeraddseller} options={{ headerShown: false }} />
-            <Stack.Screen name="FavoritesScreen" component={FavoritesScreen} options={{ headerShown: false }} />
-            <Stack.Screen name="GemDetailsScreen" component={GemDetailsScreen} options={{ headerShown: false}} />
-            <Stack.Screen name="GemOnDisplay" component={GemOnDisplay} options={{ headerShown: false }} />
-            <Stack.Screen name="GemRegister1" component={GemRegister1} options={{ headerShown: false }} />
-            <Stack.Screen name="GemstoneMarketplace" component={GemstoneMarketplace} options={{ headerShown: false }} />
-            <Stack.Screen name="HomeMyGems" component={HomeMyGems} options={{ headerShown: false }} />
-            <Stack.Screen name="InProgressTrackerScreen" component={InProgressTrackerScreen} options={{ headerShown: false }} />
-            <Stack.Screen name="Login" component={Login} options={{ headerShown: false }} />
-            <Stack.Screen name="MyGems" component={MyGems} options={{ headerShown: false }} />
-            <Stack.Screen name="MessageInbox" component={MessageInbox} options={{ headerShown: false }} />
-            <Stack.Screen name="Orders" component={Orders} options={{ headerShown: false }} />
-            <Stack.Screen name="OwnerFinancialRecords" component={OwnerFinancialRecords} options={{ headerShown: false }} />
-            <Stack.Screen name="OwnerOrderTrackDetails" component={OwnerOrderTrackDetails} options={{ headerShown: false}} />
-            <Stack.Screen name="PurposeSelectionPage" component={PurposeSelectionPage} options={{ headerShown: false }} />
-            <Stack.Screen name="RegisterSelectionPage" component={RegisterSelectionPage} options={{ headerShown: false }} />
-            <Stack.Screen name="SellerProfile" component={SellerProfile} options={{ headerShown: false }} />
-            <Stack.Screen name="SignUpBusiness" component={SignUpBusiness} options={{ headerShown: false }} />
-            <Stack.Screen name="SignUpScreen" component={SignUpBusiness2} options={{ headerShown: false }} />
-            <Stack.Screen name="SignUpScreenCustomer" component={SignUpScreenCustomer} options={{ headerShown: false }} />
-            <Stack.Screen name="Tracker" component={Tracker} options={{ headerShown: false }} />
-            <Stack.Screen name="W_NavBar" component={W_NavBar} options={{ headerShown: false }} />
-            <Stack.Screen name="WelcomePage" component={WelcomePage} options={{ headerShown: false }} />
-            <Stack.Screen name="WorkerFinancialRecords" component={WorkerFinancialRecords} options={{ headerShown: false }} />
-            <Stack.Screen name="WorkerOrderTrackDetails" component={WorkerOrderTrackDetails} options={{ headerShown: false}} />
+    <NotificationProvider>
+      <SafeAreaProvider>
+        <SafeAreaView
+          style={{
+            flex: 1,
+            backgroundColor: "white",
+            paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
+          }}
+        >
+          {Platform.OS === 'ios' ? (
+            <StatusBar barStyle="dark-content" backgroundColor="white" translucent={true} />
+          ) : (
+            <ExpoStatusBar style="dark" backgroundColor="white" translucent={true} />
+          )}
+          
+          <NavigationContainer ref={navigationRef}>
+            <Stack.Navigator initialRouteName={initialRouteName}>
+              <Stack.Screen name="AddContact" component={AddContact} options={{ headerShown: false }} />
+              <Stack.Screen name="BS_NavBar" component={BS_NavBar} options={{ headerShown: false }} />
+              <Stack.Screen name="BusinessOwnerEditProfile" component={BusinessOwnerEditProfile} options={{ headerShown: false }} />
+              <Stack.Screen name="BusinessOwnerProfile" component={BusinessOwnerProfile} options={{ headerShown: false }} />
+              <Stack.Screen name="C_NavBar" component={C_NavBar} options={{ headerShown: false }} />
+              <Stack.Screen name="CompletedTrackerScreen" component={NotificationScreen} options={{ headerShown: false }} />
+              <Stack.Screen name="ContactProfiles" component={ContactProfiles} options={{ headerShown: false }} />
+              <Stack.Screen name="ChatScreen" component={ChatScreen} options={{ headerShown: false }} />
+              <Stack.Screen name="Contacts" component={Contacts} options={{ headerShown: false }} />
+              <Stack.Screen name="Customeraddseller" component={Customeraddseller} options={{ headerShown: false }} />
+              <Stack.Screen name="FavoritesScreen" component={FavoritesScreen} options={{ headerShown: false }} />
+              <Stack.Screen name="GemDetailsScreen" component={GemDetailsScreen} options={{ headerShown: false}} />
+              <Stack.Screen name="GemOnDisplay" component={GemOnDisplay} options={{ headerShown: false }} />
+              <Stack.Screen name="GemRegister1" component={GemRegister1} options={{ headerShown: false }} />
+              <Stack.Screen name="GemstoneMarketplace" component={GemstoneMarketplace} options={{ headerShown: false }} />
+              <Stack.Screen name="HomeMyGems" component={HomeMyGems} options={{ headerShown: false }} />
+              <Stack.Screen name="InProgressTrackerScreen" component={InProgressTrackerScreen} options={{ headerShown: false }} />
+              <Stack.Screen name="Login" component={Login} options={{ headerShown: false }} />
+              <Stack.Screen name="MyGems" component={MyGems} options={{ headerShown: false }} />
+              <Stack.Screen name="MessageInbox" component={MessageInbox} options={{ headerShown: false }} />
+              <Stack.Screen name="Orders" component={Orders} options={{ headerShown: false }} />
+              <Stack.Screen name="OwnerFinancialRecords" component={OwnerFinancialRecords} options={{ headerShown: false }} />
+              <Stack.Screen name="OwnerOrderTrackDetails" component={OwnerOrderTrackDetails} options={{ headerShown: false}} />
+              <Stack.Screen name="PurposeSelectionPage" component={PurposeSelectionPage} options={{ headerShown: false }} />
+              <Stack.Screen name="RegisterSelectionPage" component={RegisterSelectionPage} options={{ headerShown: false }} />
+              <Stack.Screen name="SellerProfile" component={SellerProfile} options={{ headerShown: false }} />
+              <Stack.Screen name="SignUpBusiness" component={SignUpBusiness} options={{ headerShown: false }} />
+              <Stack.Screen name="SignUpScreen" component={SignUpBusiness2} options={{ headerShown: false }} />
+              <Stack.Screen name="SignUpScreenCustomer" component={SignUpScreenCustomer} options={{ headerShown: false }} />
+              <Stack.Screen name="Tracker" component={Tracker} options={{ headerShown: false }} />
+              <Stack.Screen name="W_NavBar" component={W_NavBar} options={{ headerShown: false }} />
+              <Stack.Screen name="WelcomePage" component={WelcomePage} options={{ headerShown: false }} />
+              <Stack.Screen name="WorkerFinancialRecords" component={WorkerFinancialRecords} options={{ headerShown: false }} />
+              <Stack.Screen name="WorkerOrderTrackDetails" component={WorkerOrderTrackDetails} options={{ headerShown: false}} />
 
-          </Stack.Navigator>
-        </NavigationContainer>
-      </SafeAreaView>
-    </SafeAreaProvider>
+            </Stack.Navigator>
+          </NavigationContainer>
+        </SafeAreaView>
+      </SafeAreaProvider>
+    </NotificationProvider>
   );
 };
 

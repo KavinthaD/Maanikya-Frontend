@@ -4,7 +4,7 @@ const getBaseUrl = () => {
   if (__DEV__) {
     // Development environment
     if (Platform.OS === "android") {
-      return "http://10.0.2.2:5000"; // Primary IP
+      return "http://192.168.1.2:5000"; // Primary IP
       // andorid emulator ip : 10.0.2.2
     } else if (Platform.OS === "ios") {
       return "http://localhost:5000"; // iOS simulator
@@ -72,4 +72,7 @@ export const ENDPOINTS = {
   FORGOT_PASSWORD: "/api/auth/forgot-password",
   RESET_PASSWORD: "/api/auth/reset-password",
   // Add other endpoints here
+
+  // Push notification endpoints
+  PUSH_TOKEN: "/api/push-token",
 };

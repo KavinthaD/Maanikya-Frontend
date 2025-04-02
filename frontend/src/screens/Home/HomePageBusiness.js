@@ -14,7 +14,7 @@ import {
   StatusBar,
   Alert,
   ScrollView,
-  Linking
+  Linking,
 } from "react-native";
 import { baseScreenStylesNew } from "../../styles/baseStylesNew";
 import { baseScreenStyles } from "../../styles/baseStyles";
@@ -25,6 +25,8 @@ import {
 import { CameraView, useCameraPermissions } from "expo-camera";
 import { BarCodeScanner } from "expo-barcode-scanner";
 import { Camera } from "expo-camera";
+import { usePushNotifications } from "../../services/pushNotificationService";
+import { useNotification } from "../../services/NotificationManager";
 
 const HomeScreen = () => {
   const navigation = useNavigation();
@@ -32,11 +34,35 @@ const HomeScreen = () => {
   const [scanning, setScanning] = useState(false);
   const [hasPermission, setHasPermission] = useState(null);
 
+  // Use the push notifications hook
+  const { sendTestNotification } = usePushNotifications(navigation);
+
+  // Get the showNotification function from the context
+  const { showNotification } = useNotification();
+
+  // Test notification function
+  const testFirebaseNotification = async () => {
+    try {
+      const success = await sendTestNotification();
+      if (success) {
+        showNotification({
+          title: "Test Notification Sent",
+          body: "Check for the notification",
+          data: { notificationType: "system" },
+          autoClose: true,
+        });
+      }
+    } catch (error) {
+      console.error("Error testing notification:", error);
+    }
+  };
+
   const handleQrScan = async () => {
     try {
       // request camera permissions from user
       const { status } = await Camera.requestCameraPermissionsAsync();
-      if (status !== "granted") { //if denied error message
+      if (status !== "granted") {
+        //if denied error message
         Alert.alert(
           "Permission Required",
           "This app needs camera and gallery access to get QR code. Pleasse go to settings and enable permissions for camera",
@@ -70,7 +96,7 @@ const HomeScreen = () => {
     if (data.includes("base64,")) {
       finalData = data.split("base64,")[1];
     }
-// navigate to mygems screen and pass the QR code data
+    // navigate to mygems screen and pass the QR code data
     navigation.navigate("MyGems", {
       qrCodeUrl: finalData,
     });
@@ -102,14 +128,14 @@ const HomeScreen = () => {
         height: 300,
         aspect: [1, 1],
       });
-// if an image was selected
+      // if an image was selected
       if (!result.canceled && result.assets[0]) {
         try {
           //scan the image for barcodes
           const scannedBarcodes = await BarCodeScanner.scanFromURLAsync(
             result.assets[0].uri
           );
-//if found navigate to mygems screen and pass the QR code data
+          //if found navigate to mygems screen and pass the QR code data
           if (scannedBarcodes.length > 0) {
             const scannedUrl = scannedBarcodes[0].data;
             console.log("Scanned URL:", scannedUrl);
@@ -190,7 +216,7 @@ const HomeScreen = () => {
           barcodeScannerSettings={{
             barCodeTypes: ["qr"], // only scan QR codes
           }}
-          onBarcodeScanned={handleBarCodeScanned} 
+          onBarcodeScanned={handleBarCodeScanned}
         >
           <HomeScreenComponents.QRScannerOverlay
             onCancel={() => setScanning(false)} // cancel scanning
@@ -232,11 +258,20 @@ const HomeScreen = () => {
                     </View>
                   </View>
                 </TouchableOpacity>
+                
               ))}
             </View>
+            {/* Add a test button somewhere in your UI */}
+          <TouchableOpacity
+            style={styles.testButton}
+            onPress={testFirebaseNotification}
+          >
+            <Text style={styles.testButtonText}>Test Notification</Text>
+          </TouchableOpacity>
           </View>
           {/* Add some padding at the bottom for better scrolling */}
           <View style={{ height: 20 }} />
+          
         </ScrollView>
       )}
 
@@ -285,6 +320,17 @@ const styles = StyleSheet.create({
     textAlign: "center",
     color: baseScreenStyles.colors.primary,
     fontWeight: "600",
+  },
+  testButton: {
+    backgroundColor: "#082f4f",
+    padding: 10,
+    borderRadius: 5,
+    marginVertical: 10,
+    alignItems: "center",
+  },
+  testButtonText: {
+    color: "white",
+    fontWeight: "bold",
   },
 });
 

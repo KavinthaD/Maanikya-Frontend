@@ -151,7 +151,7 @@ const sendMessage = async () => {
       
       setMessages(prevMessages => [...prevMessages, optimisticMessage]);
       
-      // Send message and alert in parallel
+      // Send message, alert, and push notification in parallel
       const [messageResponse, alertResponse] = await Promise.all([
         // Send message
         axios.post(
@@ -163,16 +163,24 @@ const sendMessage = async () => {
           { headers: { Authorization: `Bearer ${token}` } }
         ),
         
-        // Send alert - using complete URL path
+        // Send alert with push notification - using complete URL path
         axios.post(
-          `${API_URL}/api/alerts`, // Added /api prefix
+          `${API_URL}/api/alerts`, 
           {
             recipient: contactUsername,
             message: messageText.length > 50 ? `${messageText.substring(0, 47)}...` : messageText,
             relatedTo: "message",
             relatedId: userId,
             priority: "medium",
-            clickAction: "openMessage"
+            clickAction: "ChatScreen", // Updated to navigate to chat screen
+            sendPushNotification: true, // Flag to send push notification
+            notificationTitle: `New message from ${await getMyUsername()}`,
+            notificationBody: messageText.length > 100 ? `${messageText.substring(0, 97)}...` : messageText,
+            additionalData: {
+              contactId: userId, // The sender's ID becomes the recipient's contact
+              contactName: await getMyName(), // Add your name so they can open your chat
+              contactUsername: await getMyUsername(), // Add your username
+            }
           },
           { headers: { Authorization: `Bearer ${token}` } }
         )
@@ -200,6 +208,35 @@ const sendMessage = async () => {
       setSending(false);
     }
   };
+
+// Helper functions to get current user info
+const getMyUsername = async () => {
+  try {
+    const userData = await AsyncStorage.getItem('userData');
+    if (userData) {
+      const parsed = JSON.parse(userData);
+      return parsed.username || 'User';
+    }
+    return 'User';
+  } catch (error) {
+    console.error('Error fetching username:', error);
+    return 'User';
+  }
+};
+
+const getMyName = async () => {
+  try {
+    const userData = await AsyncStorage.getItem('userData');
+    if (userData) {
+      const parsed = JSON.parse(userData);
+      return parsed.fullName || parsed.firstname || parsed.username || 'User';
+    }
+    return 'User';
+  } catch (error) {
+    console.error('Error fetching user name:', error);
+    return 'User';
+  }
+};
   
   // Render message bubble
   const renderMessage = ({ item, index }) => {

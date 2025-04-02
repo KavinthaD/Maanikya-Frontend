@@ -1,15 +1,22 @@
 //Screen Creator Tilmi
-import React from "react";
+import Modal from "react-native-modal";
+import Icon from "react-native-vector-icons/MaterialIcons";
+import React, { useState, useEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
+import * as ImagePicker from "expo-image-picker";
+import { encode as base64Encode } from "base-64";
 import {
   View,
   Text,
   Image,
   TouchableOpacity,
-  SafeAreaView,
   StyleSheet,
   StatusBar,
+  Alert,
+  ScrollView,
+  Linking
 } from "react-native";
+import { baseScreenStylesNew } from "../../styles/baseStylesNew";
 import { baseScreenStyles } from "../../styles/baseStyles";
 import {
   homeStyles,
@@ -172,61 +179,77 @@ const HomeScreen = () => {
   // Menu items with standardized format
   const menuItems = [
     {
-      image: require("../../assets/menu-icons/addGem.png"),
-      title: "Add Gem",
-      screen: "GemRegister1",
-    },
-    {
-      image: require("../../assets/menu-icons/myGems.png"),
-      title: "My Gems",
+      image: require("../../assets/menu-icons/gem-inventory.jpg"),
       screen: "HomeMyGems",
+      title: "Gems Inventory",
     },
     {
-      image: require("../../assets/menu-icons/scan.png"),
-      title: "Scan",
+      image: require("../../assets/menu-icons/scan-qr.jpg"),
+      onPress: handleQrScan,
+      title: "Scan QR",
     },
     {
-      image: require("../../assets/menu-icons/financialRecords.png"),
-      title: "Financial\nRecords",
+      image: require("../../assets/menu-icons/financial.jpg"),
       screen: "OwnerFinancialRecords",
+      title: "Financial Records",
     },
     {
-      image: require("../../assets/menu-icons/Tracker.png"),
-      title: "Tracker",
+      image: require("../../assets/menu-icons/tracker.jpg"),
       screen: "Tracker",
+      title: "Gem orders",
     },
     {
-      image: require("../../assets/menu-icons/connect.png"),
-      title: "Connect",
-      screen: "ConnectScreen",
+      image: require("../../assets/menu-icons/contacts.jpg"),
+      screen: "Contacts",
+      title: "Contacts",
     },
     {
-      image: require("../../assets/menu-icons/GemsOnDisplay.png"),
-      title: "Gems on\ndisplay",
+      image: require("../../assets/menu-icons/gems-on-market.jpg"),
       screen: "GemOnDisplay",
+      title: "Gems On Market",
+    },
+    {
+      image: require("../../assets/menu-icons/chat.jpg"),
+      screen: "MessageInbox",
+      title: "Messages",
     },
   ];
 
-  const handleMenuItemPress = (screenName) => {
-    if (screenName) {
-      navigation.navigate(screenName); // Navigate to the specified screen
+  const handleMenuItemPress = (screenName, customOnPress) => {
+    if (customOnPress) {
+      customOnPress();
+    } else if (screenName) {
+      navigation.navigate(screenName);
     } else {
-      console.log(`No screen defined for this item`); // Optional: Handle cases where no screen is specified
+      console.log(`No screen defined for this item`);
     }
   };
 
   return (
-    <View style={baseScreenStyles.container}>
-      <Header_1 title="Home" />
-      <View style={styles.content}>
-        <Text style={styles.greeting}>Hello Rathnasiri,</Text>
-        <View style={styles.menuGrid}>
-          {menuItems.map((item, index) => (
-            <MenuItem
-              key={index}
-              image={item.image}
-              title={item.title}
-              onPress={() => handleMenuItemPress(item.screen)}
+    <View style={baseScreenStylesNew.container}>
+      {scanning ? (
+        <CameraView
+          style={StyleSheet.absoluteFillObject}
+          facing="back" // use the back camera
+          barcodeScannerSettings={{
+            barCodeTypes: ["qr"], // only scan QR codes
+          }}
+          onBarcodeScanned={handleBarCodeScanned} 
+        >
+          <HomeScreenComponents.QRScannerOverlay
+            onCancel={() => setScanning(false)} // cancel scanning
+          />
+        </CameraView>
+      ) : (
+        // Display the home screen content
+        <ScrollView
+          style={homeStyles.scrollView}
+          showsVerticalScrollIndicator={false}
+        >
+          <View style={homeStyles.content}>
+            <Image
+              source={require("../../assets/logo-letter.png")}
+              style={homeStyles.logo}
             />
 
             <View style={styles.menuGridThreeColumns}>
@@ -277,51 +300,41 @@ const HomeScreen = () => {
   );
 };
 
+// Local styles specific to the 3-column layout
 const styles = StyleSheet.create({
-  
-
-  content: {
-    padding: 16,
-    paddingTop: StatusBar.currentHeight ? StatusBar.currentHeight + 16 : 32,
-  },
-  greeting: {
-    fontSize: 16,
-    marginBottom: 20,
-    color: "#000",
-  },
-  menuGrid: {
+  menuGridThreeColumns: {
     flexDirection: "row",
     flexWrap: "wrap",
-    justifyContent: "flex-start",
-    gap: 16,
+    justifyContent: "space-between",
+    rowGap: 15,
+    marginTop: 16,
+    paddingBottom: 30,
   },
-  menuItem: {
-    width: "30%",
-    alignItems: "center",
-    marginBottom: 16,
-  },
-  iconContainer: {
-    width: 70,
-    height: 70,
-    backgroundColor: "white",
+  menuItemThreeColumn: {
+    width: "31%", // Adjusted to fit 3 items per row with spacing
+    aspectRatio: 0.78, // Slightly taller for better proportions with smaller width
     borderRadius: 16,
-    alignItems: "center",
-    justifyContent: "center",
-    marginBottom: 8,
-    elevation: 2,
+    overflow: "hidden",
+    elevation: 4,
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.23,
+    shadowRadius: 2.62,
   },
-  imageStyle: {
-    width: 40,
-    height: 40,
+  imageStyleThreeColumn: {
+    width: "100%",
+    height: "100%",
+    aspectRatio: 0.78,
+    borderRadius: 12,
   },
-  menuText: {
-    fontSize: 12,
+  menuTextSmaller: {
+    fontSize: 12, // Smaller font for the narrower items
     textAlign: "center",
-    color: "#000",
+    color: baseScreenStyles.colors.primary,
+    fontWeight: "600",
   },
   testButton: {
     backgroundColor: '#082f4f',

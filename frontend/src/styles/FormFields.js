@@ -3,25 +3,27 @@ import { StyleSheet } from "react-native";
 export const FormFieldStyles = StyleSheet.create({
   innerContainer: {
     padding: 20,
-    paddingVertical: 60,
   },
   input: {
     backgroundColor: "#E8F0FE",
     color: "black",
     padding: 13,
     borderRadius: 10,
-    marginBottom: 15,
+    marginBottom: 12,
     fontSize: 16,
+  },
+  descriptionInput: {
+    height: 100,
+    textAlignVertical: "top",
+    paddingTop: 13,
   },
   dropdown: {
     backgroundColor: "#E8F0FE",
     borderRadius: 10,
-    marginBottom: 15,
     borderWidth: 0,
     height: 50,
     fontSize: 20,
-    marginVertical: 8,
-    zIndex: 2000,
+    marginBottom: 12,
   },
   dropdownText: {
     color: "#000",
@@ -39,7 +41,6 @@ export const FormFieldStyles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
     elevation: 5,
-    zIndex: 2000,
   },
   listItemContainer: {
     backgroundColor: "#E8F0FE",

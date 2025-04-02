@@ -1,4 +1,5 @@
 //Screen creator: Kavintha
+//dev button search "bypass"
 
 import React, { useState, useEffect, useRef } from "react";
 import {
@@ -12,21 +13,22 @@ import {
   ScrollView,
   Platform,
 } from "react-native";
-import DropDownPicker from "react-native-dropdown-picker"; // Import DropDownPicker
-import { baseScreenStyles } from "../../styles/baseStyles"; // Import base styles
+import { baseScreenStylesNew } from "../../styles/baseStylesNew"; // Import base styles
 import {
   useNavigation,
   useRoute,
   useFocusEffect,
 } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import Header_1 from "../../components/Header_1";
-import Header_2 from "../../components/Header_2";
+import HeaderBar from "../../components/HeaderBar";
 import Gem_register_3 from "./GemRegister3"; // Import GemRegister3
 import axios from "axios"; // Import axios
 import { FormFieldStyles } from "../../styles/FormFields";
 import { API_URL, ENDPOINTS } from "../../config/api"; //change api path here
 import AsyncStorage from "@react-native-async-storage/async-storage"; // Import AsyncStorage
+import { baseScreenStyles } from "../../styles/baseStyles";
+import Icon from "react-native-vector-icons/MaterialIcons";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const Stack = createNativeStackNavigator();
 
@@ -34,7 +36,7 @@ export default function GemRegister2({ route }) {
   const { formData } = route.params; // Destructure formData instead of name
 
   return (
-    <Stack.Navigator screenOptions={{ headerShown: true }}>
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen
         name="GemRegister2Main"
         component={GemRegister2Main}
@@ -64,20 +66,11 @@ function GemRegister2Main() {
     contactNumber: "",
     dimensions: "",
     weight: "",
-    shape: "",
-    gemType: "",
     purchasePrice: "",
     extraInfo: "",
   });
 
   const scrollViewRef = useRef(null);
-  const [open, setOpen] = useState(false);
-  const [items, setItems] = useState([
-    { label: "Ruby", value: "ruby" },
-    { label: "Emerald", value: "emerald" },
-    { label: "Diamond", value: "diamond" },
-    { label: "Sapphire", value: "sapphire" },
-  ]);
 
   const handleInputChange = (key, value) => {
     setForm({ ...form, [key]: value });
@@ -130,7 +123,7 @@ function GemRegister2Main() {
       ...form, // Data from GemRegister2
     };
 
-    console.log("Form Submitted combined with:", combinedForm);
+    console.log("Form Submitted");
 
     // Create FormData object
     const formDataToSend = new FormData();
@@ -160,9 +153,7 @@ function GemRegister2Main() {
       console.log("Form Data to Send:", formDataToSend);
 
       // Get the token from storage
-      // const token = await AsyncStorage.getItem("userToken");
-      const token =
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2N2M0NWRmMWZlYWFhMzc5YmQzYTMxOGQiLCJ1c2VybmFtZSI6ImpvaG5kb2UiLCJsb2dpblJvbGUiOiJHZW0gYnVzaW5lc3Mgb3duZXIiLCJ0eXBlIjoiYnVzaW5lc3MiLCJpYXQiOjE3NDA5MjcxNDksImV4cCI6MTc0MTAxMzU0OX0.FT2fG9DDySsf8on2MuvSy5kZwARYu6loAK5H7Mjgla4";
+      const token = await AsyncStorage.getItem("authToken");
       if (!token) {
         throw new Error("Authentication token not found");
       }
@@ -178,14 +169,18 @@ function GemRegister2Main() {
           timeout: 10000, // 10 second timeout
         }
       );
+      // =============================================
+      // === LOGGING RETURNED DATA ===================
+      // console.log("Returned Data:", response.data);
+      // =============================================
 
       if (response.status === 201) {
-        console.log("Gem registered successfully:", response.data);
+        console.log("Gem registered successfully:");
         await AsyncStorage.removeItem("gemRegister2Form");
         navigation.navigate("GemRegister3", {
           gemId: response.data.gem.gemId,
           createdAt: response.data.gem.createdAt,
-          qrCode: response.data.qrCode,
+          qrCode: response.data.gem.qrCode,
         });
       }
     } catch (error) {
@@ -207,134 +202,217 @@ function GemRegister2Main() {
     navigation.goBack();
   };
 
+  // Add dev bypass function
+  // const handleDevBypass = () => {
+  //   // Create mock response data
+  //   const mockGemData = {
+  //     gemId: "DEV" + Math.floor(Math.random() * 10000),
+  //     createdAt: new Date().toISOString(),
+  //     qrCode: "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=DEV-SAMPLE-QR"
+  //   };
+
+  //   navigation.navigate("GemRegister3", mockGemData);
+  // };
+
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-      style={[baseScreenStyles.container, { zIndex: 1 }]}
-      keyboardVerticalOffset={Platform.OS === "ios" ? 90 : 0}
+    <SafeAreaView
+      style={[
+        baseScreenStylesNew.backgroundColor,
+        baseScreenStylesNew.container,
+      ]}
+      edges={["bottom"]}
     >
-      <ScrollView
-        ref={scrollViewRef}
-        contentContainerStyle={{ flexGrow: 1 }}
-        nestedScrollEnabled={true}
-        keyboardShouldPersistTaps="handled"
+      <HeaderBar title="Register Gem" navigation={navigation} showBack={true} />
+
+      {/* Dev bypass button (only in dev) */}
+      {/* {__DEV__ && (
+        <TouchableOpacity 
+          style={styles.devBypassButton} 
+          onPress={handleDevBypass}
+        >
+          <Text style={styles.devBypassText}>DEV</Text>
+        </TouchableOpacity>
+      )} */}
+
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        style={[baseScreenStylesNew.container, { zIndex: 1 }]}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 90 : 0}
       >
-        <View style={[styles.innerContainer, { zIndex: 2 }]}>
-          <TextInput
-            style={FormFieldStyles.input}
-            placeholder="Gem Owner Name *"
-            value={form.ownerName}
-            onChangeText={(value) => handleInputChange("ownerName", value)}
-          />
+        <ScrollView
+          ref={scrollViewRef}
+          contentContainerStyle={{ padding: 20, paddingBottom: 30 }} // Add extra padding at bottom
+          nestedScrollEnabled={true}
+          keyboardShouldPersistTaps="handled"
+        >
+          <View style={styles.formContainer}>
+            <Text style={styles.formTitle}>Gem Details</Text>
 
-          <TextInput
-            style={FormFieldStyles.input}
-            placeholder="Contact Number *"
-            value={form.contactNumber.toString()}
-            onChangeText={(value) => {
-              const numericValue = value.replace(/[^0-9]/g, "");
-              handleInputChange("contactNumber", numericValue);
-            }}
-            keyboardType="phone-pad"
-          />
+            {/* Owner Name Input */}
+            <View style={baseScreenStyles.inputWrapper}>
+              <Icon
+                name="person"
+                size={20}
+                color={baseScreenStyles.colors.input.placeholder}
+                style={styles.inputIcon}
+              />
+              <TextInput
+                style={baseScreenStyles.input}
+                placeholder="Gem Owner Name *"
+                placeholderTextColor={baseScreenStyles.colors.input.placeholder}
+                value={form.ownerName}
+                onChangeText={(value) => handleInputChange("ownerName", value)}
+              />
+            </View>
 
-          <TextInput
-            style={FormFieldStyles.input}
-            placeholder="Dimensions"
-            value={form.dimensions}
-            onChangeText={(value) => {
-              const numericValue = value
-                .replace(/[^0-9.]/g, "")
-                .replace(/(\..*)\./g, "$1");
-              handleInputChange("dimensions", numericValue);
-            }}
-            keyboardType="decimal-pad"
-          />
+            {/* Contact Number Input */}
+            <View style={baseScreenStyles.inputWrapper}>
+              <Icon
+                name="phone"
+                size={20}
+                color={baseScreenStyles.colors.input.placeholder}
+                style={styles.inputIcon}
+              />
+              <TextInput
+                style={baseScreenStyles.input}
+                placeholder="Contact Number *"
+                placeholderTextColor={baseScreenStyles.colors.input.placeholder}
+                value={form.contactNumber.toString()}
+                onChangeText={(value) => {
+                  const numericValue = value.replace(/[^0-9]/g, "");
+                  handleInputChange("contactNumber", numericValue);
+                }}
+                keyboardType="phone-pad"
+              />
+            </View>
 
-          <TextInput
-            style={FormFieldStyles.input}
-            placeholder="Weight (ct)"
-            value={form.weight}
-            onChangeText={(value) => {
-              const numericValue = value
-                .replace(/[^0-9.]/g, "")
-                .replace(/(\..*)\./g, "$1");
-              handleInputChange("weight", numericValue);
-            }}
-            keyboardType="decimal-pad"
-          />
+            {/* Dimensions Input */}
+            <View style={baseScreenStyles.inputWrapper}>
+              <Icon
+                name="straighten"
+                size={20}
+                color={baseScreenStyles.colors.input.placeholder}
+                style={styles.inputIcon}
+              />
+              <TextInput
+                style={baseScreenStyles.input}
+                placeholder="Dimensions (e.g., 9.30 x 7.30 x 4.60mm)"
+                placeholderTextColor={baseScreenStyles.colors.input.placeholder}
+                value={form.dimensions}
+                onChangeText={(value) => {
+                  // Allow numbers, decimal points, and the characters 'x', 'X', and '*'
+                  const formattedValue = value.replace(/[^0-9.xX* ]/g, "");
+                  handleInputChange("dimensions", formattedValue);
+                }}
+                keyboardType="default"
+              />
+            </View>
 
-          <DropDownPicker
-            open={open}
-            value={form.gemType}
-            items={items}
-            setOpen={setOpen}
-            setValue={(value) => handleInputChange("gemType", value())}
-            setItems={setItems}
-            placeholder="Select Gem Type"
-            style={FormFieldStyles.dropdown}
-            dropDownContainerStyle={FormFieldStyles.dropdownContainer}
-            listItemContainerStyle={FormFieldStyles.listItemContainer}
-            listItemLabelStyle={FormFieldStyles.listItemLabel}
-            placeholderStyle={FormFieldStyles.placeholder}
-            textStyle={FormFieldStyles.dropdownText}
-            theme="LIGHT"
-            showArrowIcon={true}
-            showTickIcon={false}
-            zIndex={3000}
-            zIndexInverse={1000}
-            listMode="SCROLLVIEW"
-            scrollViewProps={{
-              nestedScrollEnabled: true,
-            }}
-          />
+            {/* Weight Input */}
+            <View style={baseScreenStyles.inputWrapper}>
+              <Icon
+                name="scale"
+                size={20}
+                color={baseScreenStyles.colors.input.placeholder}
+                style={styles.inputIcon}
+              />
+              <TextInput
+                style={baseScreenStyles.input}
+                placeholder="Weight (ct)"
+                placeholderTextColor={baseScreenStyles.colors.input.placeholder}
+                value={form.weight}
+                onChangeText={(value) => {
+                  const numericValue = value
+                    .replace(/[^0-9.]/g, "")
+                    .replace(/(\..*)\./g, "$1");
+                  handleInputChange("weight", numericValue);
+                }}
+                keyboardType="decimal-pad"
+              />
+            </View>
 
-          <TextInput
-            style={FormFieldStyles.input}
-            placeholder="Purchase price *"
-            value={form.purchasePrice}
-            onChangeText={(value) => {
-              const numericValue = value
-                .replace(/[^0-9.]/g, "")
-                .replace(/(\..*)\./g, "$1");
-              handleInputChange("purchasePrice", numericValue);
-            }}
-            keyboardType="decimal-pad"
-          />
+            {/* Purchase Price Input */}
+            <View style={baseScreenStyles.inputWrapper}>
+              <Icon
+                name="attach-money"
+                size={20}
+                color={baseScreenStyles.colors.input.placeholder}
+                style={styles.inputIcon}
+              />
+              <TextInput
+                style={baseScreenStyles.input}
+                placeholder="Purchase price (LKR) *"
+                placeholderTextColor={baseScreenStyles.colors.input.placeholder}
+                value={form.purchasePrice}
+                onChangeText={(value) => {
+                  const numericValue = value
+                    .replace(/[^0-9.]/g, "")
+                    .replace(/(\..*)\./g, "$1");
+                  handleInputChange("purchasePrice", numericValue);
+                }}
+                keyboardType="decimal-pad"
+              />
+            </View>
 
-          <TextInput
-            style={FormFieldStyles.input}
-            placeholder="Extra Information"
-            value={form.extraInfo}
-            onChangeText={(value) => handleInputChange("extraInfo", value)}
-            multiline={true}
-            onFocus={() => {
-              setTimeout(() => {
-                scrollViewRef.current?.scrollToEnd({ animated: true });
-              }, 200);
-            }}
-          />
+            {/* Extra Information Input */}
+            <View
+              style={[baseScreenStyles.inputWrapper, styles.textareaWrapper]}
+            >
+              <Icon
+                name="info"
+                size={20}
+                color={baseScreenStyles.colors.input.placeholder}
+                style={[
+                  styles.inputIcon,
+                  { alignSelf: "flex-start", marginTop: 12 },
+                ]}
+              />
+              <TextInput
+                style={[baseScreenStyles.input, styles.textareaInput]}
+                placeholder="Extra Information"
+                placeholderTextColor={baseScreenStyles.colors.input.placeholder}
+                value={form.extraInfo}
+                onChangeText={(value) => handleInputChange("extraInfo", value)}
+                multiline={true}
+                numberOfLines={4}
+                textAlignVertical="top"
+                onFocus={() => {
+                  setTimeout(() => {
+                    scrollViewRef.current?.scrollToEnd({ animated: true });
+                  }, 200);
+                }}
+              />
+            </View>
 
-          <TouchableOpacity style={styles.backButton} onPress={handleBack}>
-            <Text style={baseScreenStyles.buttonText}>Back</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[
-              baseScreenStyles.blueButton,
-              {
-                opacity:
-                  form.ownerName && form.contactNumber && form.purchasePrice
-                    ? 1
-                    : 0.5,
-              },
-            ]}
-            onPress={handleFinalize}
-          >
-            <Text style={baseScreenStyles.buttonText}>Finalize</Text>
-          </TouchableOpacity>
-        </View>
-      </ScrollView>
-    </KeyboardAvoidingView>
+            {/* Navigation Buttons */}
+            <View style={styles.buttonGroup}>
+              <TouchableOpacity style={styles.backButton} onPress={handleBack}>
+                <Text style={styles.backButtonText}>Back</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={[
+                  baseScreenStyles.primaryButton,
+                  styles.finalizeButton,
+                  {
+                    opacity:
+                      form.ownerName && form.contactNumber && form.purchasePrice
+                        ? 1
+                        : 0.6,
+                  },
+                ]}
+                onPress={handleFinalize}
+                disabled={
+                  !form.ownerName || !form.contactNumber || !form.purchasePrice
+                }
+              >
+                <Text style={baseScreenStyles.buttonText}>Finalize</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 }
 
@@ -348,15 +426,76 @@ const styles = StyleSheet.create({
   buttonContainer: {
     flexDirection: "column",
     justifyContent: "space-between",
-    marginTop: 20,
+  },
+
+  //dev bypass button styles
+  devBypassButton: {
+    position: "absolute",
+    right: 15,
+    top: 15,
+    zIndex: 1000,
+    backgroundColor: "#FF6B6B",
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 5,
+    borderWidth: 1,
+    borderColor: "#721c24",
+    borderStyle: "dashed",
+  },
+  devBypassText: {
+    color: "white",
+    fontWeight: "bold",
+    fontSize: 12,
+  },
+  formContainer: {
+    flex: 1,
+    paddingBottom: 20,
+  },
+  formTitle: {
+    fontSize: 20,
+    fontWeight: "bold",
+    color: baseScreenStyles.colors.text.dark,
+    marginBottom: 20,
+    textAlign: "center",
+  },
+  inputIcon: {
+    marginLeft: 12,
+    marginRight: 8,
+  },
+  textareaWrapper: {
+    minHeight: 120,
+    alignItems: "flex-start",
+  },
+  textareaInput: {
+    height: 120,
+    textAlignVertical: "top",
+    paddingTop: 12,
+  },
+  buttonGroup: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginTop: 30,
+    marginBottom: 20,
   },
   backButton: {
-    marginTop: 15,
-    marginBottom: 15,
-    backgroundColor: "#02457A",
-    width: "95%",
-    padding: 15,
-    borderRadius: 10,
-    alignSelf: "center",
+    flex: 1,
+    backgroundColor: "#F2F2F2",
+    borderRadius: 12,
+    height: 56,
+    justifyContent: "center",
+    alignItems: "center",
+    marginRight: 10,
+    borderWidth: 1,
+    borderColor: baseScreenStyles.colors.input.border,
+    marginTop: 10,
+  },
+  backButtonText: {
+    color: baseScreenStyles.colors.text.dark,
+    fontSize: 18,
+    fontWeight: "bold",
+  },
+  finalizeButton: {
+    flex: 2,
+    marginTop: 10,
   },
 });

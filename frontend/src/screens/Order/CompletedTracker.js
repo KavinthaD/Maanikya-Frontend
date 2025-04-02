@@ -1,6 +1,6 @@
 //Screen creator: Dulith
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -8,86 +8,87 @@ import {
   FlatList,
   StyleSheet,
   Image,
+  TouchableOpacity,
 } from "react-native";
-import { baseScreenStyles } from "../../styles/baseStyles";
+import { baseScreenStylesNew } from "../../styles/baseStylesNew";
 import Header_2 from "../../components/Header_2";
+import Ionicons from "react-native-vector-icons/Ionicons";
+import { useNavigation } from "@react-navigation/native";
+import { API_URL, ENDPOINTS } from "../../config/api"; // **Routes are imported from api.js**
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const CompletedTracker = [
-  {
-    id: "TPK476",
-    dateTime: "20-12-2024, 3:00 PM",
-    cost: "Rs.2500",
-    type: "Burn",
-    completedDate: "22/05/2025",
-    person: "Mehara",
-    gemImage: require("../../assets/gemimg/gem1.jpg"),
-  },
-  {
-    id: "MW963",
-    dateTime: "12-01-2025, 7:00 PM",
-    cost: "Rs.1800",
-    type: "Burn",
-    completedDate: "23/02/2025",
-    person: "Tilmi",
-    gemImage: require("../../assets/gemimg/gem2.jpg"),
-  },
-  {
-    id: "DCW030",
-    dateTime: "06-11-2024, 9:00 AM",
-    cost: "Rs.12000",
-    type: "Cut",
-    completedDate: "13/03/2025",
-    person: "Kavintha",
-    gemImage: require("../../assets/gemimg/gem3.jpg"),
-  },
-  {
-    id: "TPK476",
-    dateTime: "20-12-2024, 3:00 PM",
-    cost: "Rs.2500",
-    type: "Cut",
-    completedDate: "22/05/2025",
-    person: "Dulith",
-    gemImage: require("../../assets/gemimg/gem4.jpg"),
-  },
-];
+const CompletedTrackerItem = ({ item}) => {
+  const navigation = useNavigation();
 
-const CompletedTrackerScreen = ({ item }) => (
+  return(
+  <TouchableOpacity onPress={() => navigation.navigate("OwnerOrderTrackDetails")}>
   <View style={styles.notificationItem}>
     <View style={styles.textContainer}>
-      <Text style={styles.text}>ID: {item.id}</Text>
-      <Text style={styles.text}>Date and Time: {item.dateTime}</Text>
-      <Text style={styles.text}>Cost: {item.cost}</Text>
-      <Text style={styles.text}>Type: {item.type}</Text>
-      <Text style={[styles.text, { color: "#22C232" }]}>
-        Completed Date: {item.completedDate}
-      </Text>
+    <Text style={styles.personName}>{item.person}</Text>
+      <Text style={styles.text}>{item.dateTime}</Text>
+      <Text style={styles.text}>{item.cost}</Text>
+      <View style={styles.miniContainer}>
+      <Text style={[styles.text,{fontWeight: "bold", }]}>{item.type}</Text>
+      <Text style={[styles.text,baseScreenStylesNew.themeText, {fontWeight: "bold" }]}>Completed Date: {item.completedDate}</Text>
+      </View>
     </View>
     <View style={styles.imageContainer}>
-      <Image source={item.gemImage} style={styles.gemImage} />
-      <Text style={styles.personName}>{item.person}</Text>
+      <Image source={{ uri: item.gemImage }} style={styles.gemImage} />
+      <Text style={styles.text}>{item.id}</Text>
     </View>
   </View>
+  </TouchableOpacity>
 );
+};
 
 const NotificationScreen = () => {
   const [searchQuery, setSearchQuery] = useState("");
-  const filteredOrders = CompletedTracker.filter((order) =>
+  const [completedOrders, setCompletedOrders] = useState([]);
+
+  useEffect(() => {
+    const fetchCompletedOrders = async () => {
+      try {
+        const token = await AsyncStorage.getItem('authToken');
+        const response = await fetch(`${API_URL}${ENDPOINTS.OWNER_COMPLETED_ORDERS}`, { // **Route from ENDPOINTS**
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        });
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        setCompletedOrders(data);
+      } catch (error) {
+        console.error("Error fetching completed orders:", error);
+      }
+    };
+
+    fetchCompletedOrders();
+  }, []);
+
+  const filteredOrders = completedOrders.filter((order) =>
     order.id.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   return (
-    <View style={[baseScreenStyles.container,styles.container]}>
+    <View style={baseScreenStylesNew.container}>
       <Header_2 title="Completed "/>
       <View style={styles.container}>
+      <View style={baseScreenStylesNew.search}>
+       <Ionicons name="search" style={baseScreenStylesNew.searchIcon} />
       <TextInput
-        style={styles.searchBar}
+        style={styles.searchData}
         placeholder="Search Order ID"
+        placeholderTextColor={baseScreenStylesNew.searchIcon.color}
         value={searchQuery}
         onChangeText={setSearchQuery}
       />
+      </View>
       <FlatList
         data={filteredOrders}
-        renderItem={({ item }) => <NotificationItem item={item} />}
+        renderItem={({ item }) => <CompletedTrackerItem item={item} />}
         keyExtractor={(item) => item.id}
       />
     </View>
@@ -97,45 +98,28 @@ const NotificationScreen = () => {
 
 const styles = StyleSheet.create({
   container: {
-    
-    padding: 16,
+    padding: 10,
   },
-  header: {
-    backgroundColor: "#072D44",
-    padding: 16,
-    alignItems: "center",
-    width: "100%", // Extend header width
-    marginBottom: 20,
-  },
-  headerText: {
-    color: "#fff",
-    fontSize: 18,
-    fontWeight: "bold",
-  },
-  searchBar: {
-    height: 40,
-    borderColor: "#ccc",
-    borderWidth: 1,
-    borderRadius: 12,
-    paddingHorizontal: 10,
-    marginBottom: 20,
-    backgroundColor: "rgba(255, 255, 255, 0.8)",
-    width: "95%", // Slightly reduce search bar width
-    alignSelf: "center",
+  searchData: {
+    flex: 1,
+    fontSize: 16
   },
   notificationItem: {
+    marginTop: 8,
     flexDirection: "row",
-    backgroundColor: "#fff",
-    padding: 15,
-    marginBottom: 35,
-    borderRadius: 12,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 5,
-    elevation: 2,
-    width: "95%", // Slightly reduce notification item width
+    padding: 5,
+    backgroundColor: "rgb(255, 255, 255)",
+    marginBottom: 15,
+    borderRadius: 8,
+    borderWidth: 2,
+    borderColor: "rgba(228, 227, 227, 0.61)",
+    width: "100%",
     alignSelf: "center",
+    elevation: 9
+  },
+  miniContainer: {
+    flex: 1,
+    marginTop: 9
   },
   textContainer: {
     flex: 1,
@@ -145,18 +129,26 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   gemImage: {
-    width: 50,
-    height: 50,
-    marginBottom: 10,
+    width: 90,
+    height: 90,
+    marginTop: 8,
+    marginBottom: 6,
+    marginRight: 5,
+    borderRadius: 12,
+    elevation: 9
   },
   personName: {
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: "bold",
+    color: "black",
+    marginLeft: 6
   },
   text: {
     fontSize: 14,
-    marginBottom: 5,
+    marginBottom: 2,
+    color: "black",
+    marginLeft: 6,
   },
 });
 
-export default CompletedTrackerScreen;
+export default NotificationScreen;

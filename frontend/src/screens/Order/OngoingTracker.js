@@ -11,6 +11,7 @@ import {
 } from "react-native";
 import { baseScreenStyles } from "../../styles/baseStyles";
 import Header_2 from "../../components/Header_2";
+import GradientContainer from "../../components/GradientContainer";
 
 const OngoingTracker = [
   {
@@ -19,7 +20,8 @@ const OngoingTracker = [
     type: "Burn",
     estimatedDate: "22/05/2025",
     person: "Mehara",
-    gemImage: require("../assets/gemimg/gem1.jpg"),
+    price: "Rs. 3000",
+    gemImage: require("../../assets/gemimg/gem1.jpg"),
   },
   {
     id: "KDD437",
@@ -27,7 +29,8 @@ const OngoingTracker = [
     type: "Cut",
     estimatedDate: "23/02/2025",
     person: "Tilmi",
-    gemImage: require("../assets/gemimg/gem2.jpg"),
+    price: "Rs. 2500",
+    gemImage: require("../../assets/gemimg/gem2.jpg"),
   },
   {
     id: "DCW030",
@@ -35,23 +38,25 @@ const OngoingTracker = [
     type: "Cut",
     estimatedDate: "13/03/2025",
     person: "Kavintha",
-    gemImage: require("../assets/gemimg/gem3.jpg"),
+    price: "Rs. 5000",
+    gemImage: require("../../assets/gemimg/gem3.jpg"),
   },
 ];
 
 const NotificationItem = ({ item }) => (
   <View style={styles.notificationItem}>
     <View style={styles.textContainer}>
-      <Text style={styles.text}>ID: {item.id}</Text>
-      <Text style={styles.text}>Date and Time: {item.dateTime}</Text>
-      <Text style={styles.text}>Type: {item.type}</Text>
-      <Text style={[styles.text, { color: "#22C232" }]}>
-        Estimated Completion Date: {item.estimatedDate}
+      <Text style={[styles.text, { fontWeight: "bold", color: "#fff" }]}>{item.id}</Text>
+      <Text style={[styles.text,{ color: "#fff" }]}> {item.dateTime}</Text>
+      <Text style={[styles.text,{ color: "#fff" }]}> {item.price}</Text>
+      <Text style={[styles.text,{ color: "#fff", fontWeight: "bold", }]}> {item.type}</Text>
+     <Text style={[styles.text, { color: "#00D4FF" }]}>
+        stimated  Date: {item.estimatedDate}
       </Text>
     </View>
     <View style={styles.imageContainer}>
       <Image source={item.gemImage} style={styles.gemImage} />
-      <Text style={styles.personName}>{item.person}</Text>
+      <Text style={[styles.personName,{ color: "#fff" }]}>{item.person}</Text>
     </View>
   </View>
 );
@@ -63,6 +68,7 @@ const OngoingTrackerScreen = () => {
   );
 
   return (
+    <GradientContainer>
     <View style={[baseScreenStyles.container]}>
       <Header_2 title="On-going Orders"/>
       <View style={styles.container}>
@@ -79,15 +85,16 @@ const OngoingTrackerScreen = () => {
       />
     </View>
     </View>
+    </GradientContainer>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    padding: 16,
+    padding: 10,
   },
   header: {
-    backgroundColor: "#072D44",
+    backgroundColor: "#red",
     padding: 16,
     alignItems: "center",
     width: "100%", // Extend header width
@@ -111,20 +118,22 @@ const styles = StyleSheet.create({
   },
   notificationItem: {
     flexDirection: "row",
-    backgroundColor: "#fff",
-    padding: 15,
-    marginBottom: 35,
+    backgroundColor: 'rgba(123, 150, 172, 0.4)',
+    padding: 5,
+    marginBottom: 15,
     borderRadius: 12,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 5,
     elevation: 2,
-    width: "95%", // Slightly reduce notification item width
+    width: "100%", // Slightly reduce notification item width
     alignSelf: "center",
+    
   },
   textContainer: {
     flex: 1,
+   
   },
   imageContainer: {
     justifyContent: "center",
@@ -134,6 +143,7 @@ const styles = StyleSheet.create({
     width: 50,
     height: 50,
     marginBottom: 10,
+    borderRadius: 12,
   },
   personName: {
     fontSize: 16,

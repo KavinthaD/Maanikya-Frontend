@@ -1,6 +1,6 @@
 //Screen creator: Dulith
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -8,70 +8,84 @@ import {
   FlatList,
   StyleSheet,
   Image,
+  TouchableOpacity
 } from "react-native";
-import { baseScreenStyles } from "../../styles/baseStyles";
+import { baseScreenStylesNew } from "../../styles/baseStylesNew";
 import Header_2 from "../../components/Header_2";
+import Ionicons from "react-native-vector-icons/Ionicons";
+import { useNavigation } from "@react-navigation/native";
+import { API_URL, ENDPOINTS } from "../../config/api"; // **Routes are imported from api.js**
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const InProgressTracker = [
-  {
-    id: "IHP164",
-    dateTime: "20-12-2024, 3:00 PM",
-    type: "Burn",
-    estimatedDate: "22/05/2025",
-    person: "Mehara",
-    gemImage: require("../../assets/gemimg/gem1.jpg"),
-  },
-  {
-    id: "KDD437",
-    dateTime: "12-01-2025, 7:00 PM",
-    type: "Cut",
-    estimatedDate: "23/02/2025",
-    person: "Tilmi",
-    gemImage: require("../../assets/gemimg/gem2.jpg"),
-  },
-  {
-    id: "DCW030",
-    dateTime: "06-11-2024, 9:00 AM",
-    type: "Cut",
-    estimatedDate: "13/03/2025",
-    person: "Kavintha",
-    gemImage: require("../../assets/gemimg/gem3.jpg"),
-  },
-];
+const NotificationItem = ({ item }) => {
+  const navigation = useNavigation();
 
-const NotificationItem = ({ item }) => (
-  <View style={styles.notificationItem}>
+  return (
+    <TouchableOpacity onPress={() => navigation.navigate("OwnerOrderTrackDetails")}>
+    <View style={styles.notificationItem}>
     <View style={styles.textContainer}>
-      <Text style={styles.text}>ID: {item.id}</Text>
-      <Text style={styles.text}>Date and Time: {item.dateTime}</Text>
-      <Text style={styles.text}>Type: {item.type}</Text>
-      <Text style={[styles.text, { color: "#22C232" }]}>
-        Estimated Completion Date: {item.estimatedDate}
-      </Text>
+      <Text style={[styles.personName,,{ color: "#000" }]}>{item.person}</Text>
+      <Text style={[styles.text,{ color: "#000" }]}> {item.price}</Text>
+      <Text style={[styles.text,{ color: "#000" }]}> {item.dateTime}</Text>
+      <View style={styles.miniContainer}>
+      <Text style={[styles.text,{ color: "#000", fontWeight: "bold", }]}> {item.type}</Text>
+      <Text style={[baseScreenStylesNew.themeText, styles.text,{ fontWeight: "bold" }]}>Estimated Date: {item.estimatedDate}</Text>
+      </View>
     </View>
     <View style={styles.imageContainer}>
-      <Image source={item.gemImage} style={styles.gemImage} />
-      <Text style={styles.personName}>{item.person}</Text>
+      <Image source={{ uri: item.gemImage }} style={styles.gemImage} />
+      <Text style={[styles.text, { fontWeight: "bold", color: "#000" }]}>{item.id}</Text>
     </View>
   </View>
+  </TouchableOpacity>
 );
+};
 
 const InProgressTrackerScreen = () => {
   const [searchQuery, setSearchQuery] = useState("");
-  const filteredOrders = InProgressTracker.filter((order) =>
+  const [inProgressOrders, setInProgressOrders] = useState([]);
+
+  useEffect(() => {
+    const fetchInProgressOrders = async () => {
+      try {
+        const token = await AsyncStorage.getItem('authToken');
+        const response = await fetch(`${API_URL}${ENDPOINTS.OWNER_IN_PROGRESS_ORDERS}`, { // **Route from ENDPOINTS**
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        });
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        setInProgressOrders(data);
+      } catch (error) {
+        console.error("Error fetching in-progress orders:", error);
+      }
+    };
+
+    fetchInProgressOrders();
+  }, []);
+
+
+  const filteredOrders = inProgressOrders.filter((order) =>
     order.id.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   return (
-    <View style={[baseScreenStyles.container]}>
+    <View style={[baseScreenStylesNew.container]}>
       <Header_2 title="In Progress"/>
       <View style={styles.container}>
-      <TextInput
-        style={styles.searchBar}
-        placeholder="Search Order ID"
-        value={searchQuery}
-        onChangeText={setSearchQuery}
-      />
+        <View style={baseScreenStylesNew.search}>
+          <Ionicons name="search" style={baseScreenStylesNew.searchIcon} />
+          <TextInput
+            style={styles.searchData}
+            placeholder="Search Order ID"
+            placeholderTextColor={baseScreenStylesNew.searchIcon.color}
+            value={searchQuery}
+            onChangeText={setSearchQuery}/>
+        </View>
       <FlatList
         data={filteredOrders}
         renderItem={({ item }) => <NotificationItem item={item} />}
@@ -84,65 +98,58 @@ const InProgressTrackerScreen = () => {
 
 const styles = StyleSheet.create({
   container: {
-    padding: 16,
+    padding: 10,
   },
-  header: {
-    backgroundColor: "#072D44",
-    padding: 16,
-    alignItems: "center",
-    width: "100%", // Extend header width
-    marginBottom: 20,
-  },
-  headerText: {
-    color: "#fff",
-    fontSize: 18,
-    fontWeight: "bold",
-  },
-  searchBar: {
-    height: 40,
-    borderColor: "#ccc",
-    borderWidth: 1,
-    borderRadius: 12,
-    paddingHorizontal: 10,
-    marginBottom: 20,
-    backgroundColor: "rgba(255, 255, 255, 0.8)",
-    width: "95%", // Slightly reduce search bar width
-    alignSelf: "center",
+  searchData: {
+    flex: 1,
+    fontSize: 16
   },
   notificationItem: {
+    marginTop: 8,
     flexDirection: "row",
-    backgroundColor: "#fff",
-    padding: 15,
-    marginBottom: 35,
-    borderRadius: 12,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 5,
-    elevation: 2,
-    width: "95%", // Slightly reduce notification item width
+    padding: 5,
+    backgroundColor: "rgb(255, 255, 255)",
+    marginBottom: 15,
+    borderRadius: 8,
+    borderWidth: 2,
+    borderColor: "rgba(228, 227, 227, 0.61)",
+    width: "100%",
     alignSelf: "center",
+    elevation: 9
   },
+
   textContainer: {
     flex: 1,
+  },
+  miniContainer: {
+    flex: 1,
+    marginTop: 9
   },
   imageContainer: {
     justifyContent: "center",
     alignItems: "center",
   },
   gemImage: {
-    width: 50,
-    height: 50,
-    marginBottom: 10,
+    width: 90,
+    height: 90,
+    marginTop: 8,
+    marginBottom: 6,
+    marginRight: 5,
+    borderRadius: 12,
+    elevation: 9
   },
   personName: {
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: "bold",
+    color: "black",
+    marginLeft: 9
   },
   text: {
     fontSize: 14,
-    marginBottom: 5,
+    marginBottom: 2,
+    marginLeft: 6,
   },
+
 });
 
 export default InProgressTrackerScreen;

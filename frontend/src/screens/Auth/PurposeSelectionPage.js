@@ -1,5 +1,4 @@
 //Screen creator: Thulani
-
 import React, { useEffect, useState, useRef } from "react";
 import {
   View,
@@ -7,16 +6,27 @@ import {
   StyleSheet,
   Image,
   TouchableOpacity,
-  Modal,
+  SafeAreaView,
+  StatusBar,
   Animated,
 } from "react-native";
 import { baseScreenStyles } from "../../styles/baseStyles";
+import { Ionicons } from "@expo/vector-icons";
+
 
 const PurposeSelectionPage = ({ navigation }) => {
-  const [modalVisible, setModalVisible] = useState(false);
+  // visibility of the language modal
+    const [showLanguageModal, setShowLanguageModal] = useState(false);
+  // store the selected language - default is english  
+    const [selectedLanguage, setSelectedLanguage] = useState("English");
+    const [languageOptions] = useState([
+      { label: "English", value: "en" },
+      { label: "සිංහල", value: "si" }
+    ]);
 
   const scaleValue = useRef(new Animated.Value(1)).current;
 
+  //handle logo animation
   useEffect(() => {
     Animated.sequence([
       Animated.timing(scaleValue, {
@@ -33,232 +43,115 @@ const PurposeSelectionPage = ({ navigation }) => {
   }, []);
 
   return (
-    <View style={baseScreenStyles.container}>
-      <Animated.Image
-        source={require("../../assets/logo-gem.png")}
-        style={[styles.logo, { transform: [{ scale: scaleValue }] }]}
-      />
-      <Image
-        source={require("../../assets/logo-letter.png")}
-        style={styles.logoLetter}
-      />
-      <Text style={styles.title}>I'm here to,</Text>
-      <View style={styles.card}>
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => navigation.navigate("SignUpBusiness")}
-        >
-          <Text style={styles.buttonText}>Manage my business</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => navigation.navigate("RegisterSelectionPage")}
-        >
-          <Text style={styles.buttonText}>Look for gems</Text>
-        </TouchableOpacity>
-
-        <View style={styles.dividerContainer}>
-          <View style={styles.divider} />
-          <Text style={styles.orText}>or</Text>
-          <View style={styles.divider} />
-        </View>
-
-        <Text style={styles.loginText}>Already have an account?</Text>
-        <TouchableOpacity
-          style={styles.loginButton}
-          onPress={() => navigation.navigate("Login")}
-        >
-          <Text style={styles.loginButtonText}>Log in</Text>
-        </TouchableOpacity>
-      </View>
-      <View style={styles.footerContainer}>
-        <TouchableOpacity
-          style={styles.languageSelector}
-          onPress={() => setModalVisible(true)}
-        >
-          <Text style={styles.languageText}>ENG ▼</Text>
-          <Image
-            source={require("../../assets/globe.png")}
-            style={styles.globeIcon}
-          />
-        </TouchableOpacity>
-      </View>
-
-      <Modal
-        transparent={true}
-        animationType="fade"
-        visible={modalVisible}
-        onRequestClose={() => setModalVisible(false)}
-      >
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
+    // SafeAreaView to display the content within the safe area of the screen
+        <SafeAreaView style={baseScreenStyles.container}> 
+          <StatusBar barStyle="dark-content" backgroundColor={baseScreenStyles.colors.background} />
+          
+          <View style={baseScreenStyles.headerContainer}>
+            <baseScreenStyles.LanguageSelector
+              selectedLanguage={selectedLanguage}
+              onPress={() => setShowLanguageModal(true)}
+            />
+          </View>
+    
+          <View style={styles.logoContainer}>
+            <Animated.Image
+              source={require("../../assets/logo-gem.png")}
+              style={[styles.logoIcon, { transform: [{ scale: scaleValue }] }]}
+            />
+            <Image
+              source={require("../../assets/logo-letter.png")}
+              style={styles.logoText}
+            />
+          </View>
+    
+          <Text style={styles.welcomeTitle}>Welcome to Maanikya</Text>
+          <Text style={[baseScreenStyles.title,styles.title]}>I'm here to...</Text>
+    
+          <View style={styles.contentContainer}>
             <TouchableOpacity
-              style={styles.languageOption}
-              onPress={() => {
-                console.log("Sinhala selected");
-                setModalVisible(false); // Close modal after selecting
-              }}
+              style={baseScreenStyles.purposeButton}
+              onPress={() => navigation.navigate("SignUpBusiness")}
             >
-              <Text style={styles.languageOptionText}>සිංහල</Text>
+              <View style={[baseScreenStyles.purposeIconContainer, baseScreenStyles.primaryIconBg]}>
+                <Ionicons name="briefcase-outline" size={28} color="#FFFFFF" />
+              </View>
+              <View style={baseScreenStyles.purposeTextContainer}>
+                <Text style={baseScreenStyles.purposeButtonTitle}>Manage My Business</Text>
+                <Text style={baseScreenStyles.purposeButtonSubtitle}>Register as a gem business or worker</Text>
+              </View>
+              <Ionicons name="chevron-forward" size={24} color={baseScreenStyles.colors.text.light} />
             </TouchableOpacity>
+    
             <TouchableOpacity
-              style={styles.languageOption}
-              onPress={() => {
-                console.log("English selected");
-                setModalVisible(false); // Close modal after selecting
-              }}
+              style={baseScreenStyles.purposeButton}
+              onPress={() => navigation.navigate("RegisterSelectionPage")}
             >
-              <Text style={styles.languageOptionText}>English</Text>
+              <View style={[baseScreenStyles.purposeIconContainer, baseScreenStyles.accentIconBg]}>
+                <Ionicons name="search-outline" size={28} color="#FFFFFF" />
+              </View>
+              <View style={baseScreenStyles.purposeTextContainer}>
+                <Text style={baseScreenStyles.purposeButtonTitle}>Look for Gems</Text>
+                <Text style={baseScreenStyles.purposeButtonSubtitle}>Register as a customer to browse gems</Text>
+              </View>
+              <Ionicons name="chevron-forward" size={24} color={baseScreenStyles.colors.text.light} />
+            </TouchableOpacity>
+    
+            <baseScreenStyles.Divider text="OR" />
+    
+            <TouchableOpacity
+              style={baseScreenStyles.outlinedButton}
+              onPress={() => navigation.navigate("Login")}
+            >
+              <Text style={baseScreenStyles.outlinedButtonText}>Login to Your Account</Text>
             </TouchableOpacity>
           </View>
-        </View>
-      </Modal>
-    </View>
-  );
+    
+          <baseScreenStyles.RoleSelectorModal
+            isVisible={showLanguageModal}
+            onClose={() => setShowLanguageModal(false)}
+            title="Select Language"
+            options={languageOptions}
+            selectedValue={languageOptions.find(item => item.label === selectedLanguage)?.value}
+            onSelect={(value) => {
+              setSelectedLanguage(languageOptions.find(item => item.value === value)?.label || "English");
+              setShowLanguageModal(false);
+            }}
+          />
+        </SafeAreaView>
+      );
 };
 
 const styles = StyleSheet.create({
-  logo: {
-    width: 190,
-    height: 90,
-    alignSelf: "center",
-    resizeMode: "contain",
-    marginTop: 100,
-  },
-  logoLetter: {
-    width: "60%",
-    aspectRatio: 2,
-    height: 128,
-    alignSelf: "center",
-    resizeMode: "contain",
-    marginTop: -20,
-    marginBottom: 20,
-  },
-
   title: {
-    fontSize: 28,
-    fontWeight: "bold",
-    color: "#000",
-    marginLeft: 120,
-    marginBottom: 48,
-    marginBlockStart: 30,
-  },
-
-  subtitle: {
-    fontSize: 20,
-    color: "#000",
-    marginBottom: 20,
-  },
-
-  card: {
-    backgroundColor: "#C2E9FF",
-    marginTop: -36,
-    padding: 30,
-    borderRadius: 20,
-    width: "90%",
-    alignItems: "center",
-    marginLeft: 20,
-    elevation: 5,
-    shadowColor: "#000",
-    shadowOpacity: 0.1,
-    shadowOffset: { width: 0, height: 2 },
-  },
-  button: {
-    backgroundColor: "#170969",
-    paddingVertical: 12,
-    borderRadius: 50,
-    width: "100%",
-    marginVertical: 5,
-  },
-
-  buttonText: {
-    color: "#FFF",
-    fontSize: 16,
-    fontWeight: "bold",
     textAlign: "center",
-  },
-  dividerContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginVertical: 10,
-  },
-  divider: {
-    flex: 1,
-    height: 1,
-    backgroundColor: "#A0A0A0",
-  },
-  orText: {
-    marginHorizontal: 10,
-    color: "#000",
-    fontWeight: "bold",
-  },
-  loginText: {
-    fontSize: 14,
-    color: "#000",
-    fontWeight: "bold",
-    marginTop: 2,
-  },
-  loginButton: {
-    backgroundColor: "#02457A",
-    paddingVertical: 8,
-    borderRadius: 70,
-    width: "80%",
-    marginTop: 10,
-  },
-  loginButtonText: {
-    color: "#FFF",
-    fontSize: 15,
-    fontWeight: "",
-    textAlign: "center",
-  },
-  footerContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    marginTop: 88,
-    marginBottom: 60,
-  },
-  languageSelector: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-
-  languageText: {
-    fontSize: 14,
-    color: "#000",
-    marginRight: 8,
-  },
-  globeIcon: {
-    width: 28,
-    height: 28,
-    tintColor: "#000",
   },
   logoContainer: {
-    flex: 1,
-  },
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: "rgba(0, 0, 0, 0.4)",
-    justifyContent: "center",
     alignItems: "center",
+    marginTop: 34,
+    marginBottom: 34,
   },
-  modalContent: {
-    backgroundColor: "#FFF",
-    width: 200,
-    borderRadius: 10,
-    padding: 20,
-    alignItems: "center",
+  logoIcon: {
+    width: 120,
+    height: 80,
+    resizeMode: "contain",
   },
-  languageOption: {
-    paddingVertical: 10,
-    width: "100%",
-    alignItems: "center",
+  logoText: {
+    width: 240,
+    height: 60,
+    resizeMode: "contain",
+    marginTop: -12,
   },
-  languageOptionText: {
-    fontSize: 16,
-    color: "#000",
+  welcomeTitle: {
+    fontSize: 18,
     fontWeight: "500",
+    color: baseScreenStyles.colors.text.medium,
+    textAlign: "center",
+    marginTop: 12,
   },
+  contentContainer: {
+    paddingHorizontal: 24,
+  }
 });
 
 export default PurposeSelectionPage;

@@ -10,31 +10,28 @@ import { StatusBar as ExpoStatusBar } from 'expo-status-bar';
 import * as NavigationBar from 'expo-navigation-bar';
 import { NotificationProvider } from './src/services/NotificationManager';
 
-//import screens
+// Import screens
 import PurposeSelectionPage from "./src/screens/Auth/PurposeSelectionPage";
 import RegisterSelectionPage from "./src/screens/Auth/RegisterSelectionPage";
 import WelcomePage from "./src/screens/WelcomePage";
-import HomePageWorker from "./src/screens/Home/HomePageWorker";
-import HomePageBusiness from "./src/screens/Home/HomePageBusiness";
 import SignUpScreenCustomer from "./src/screens/Auth/SignUpCustomer";
-import GemstoneMarketplace from "./src/screens/Market";
+import GemstoneMarketplace from "./src/screens/Market/Market";
 import OwnerFinancialRecords from "./src/screens/Financial/ownerFinancialRecords";
-import ConnectScreen from "./src/screens/ConnectScreen";
-import GemOnDisplay from "./src/screens/GemOnDisplay";
-import ProfileScreen from "./src/screens/ConnectedUsers";
-import FavoritesScreen from "./src/screens/Favorites";
-import OrderScreen from "./src/screens/Order/Orders";
+import GemOnDisplay from "./src/screens/Market/GemOnDisplay";
+import ContactProfiles from "./src/screens/Contacts/ContactProfiles";
+import Orders from "./src/screens/Order/Orders";
 import Login from "./src/screens/Auth/Login";
 import SignUpBusiness from "./src/screens/Auth/SignUpBusiness";
 import SignUpBusiness2 from "./src/screens/Auth/SignUpBusiness2";
 import HomeMyGems from "./src/screens/GemProfile/HomeMyGems";
+import MyGems from "./src/screens/GemProfile/MyGems";
 import BS_NavBar from "./src/components/BS_NavBar";
 import C_NavBar from "./src/components/C_NavBar";
 import W_NavBar from "./src/components/W_NavBar";
 import GemRegister1 from "./src/screens/GemProfile/GemRegister1";
-import Tracker from "./src/screens/Order/Tracker"
-import BusinessOwnerProfile from "./src/screens/UserProfile/BusinessOwnerProfile";
-import HomePageCustomer from "./src/screens/Home/HomePageCustomer";
+import Tracker from "./src/screens/Order/Tracker";
+import BusinessOwnerProfile from "./src/screens/UserProfile/UserProfile";
+import FavoritesScreen from "./src/screens/Contacts/Favorites";
 import InProgressTrackerScreen from "./src/screens/Order/InProgressTracker";
 import Customeraddseller from "./src/screens/Customeraddseller";
 import SellerProfile from "./src/screens/MySellerFullProfile";

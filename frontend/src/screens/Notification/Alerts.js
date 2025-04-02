@@ -14,7 +14,7 @@ import {
   StatusBar
 } from 'react-native';
 import { baseScreenStylesNew } from '../../styles/baseStylesNew';
-import Header_1 from '../../components/Header_1';
+import HeaderBar from '../../components/HeaderBar';
 import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
@@ -183,22 +183,52 @@ const AlertsScreen = () => {
       console.error("Error marking alert as read:", err);
     }
   };
-
-  // Handle alert click
-  const handleAlertClick = (alert) => {
-    if (isSelectionMode) {
-      handlePress(alert._id);
+// Navigate based on clickAction
+ // Navigate to screens if alert is clicked
+const handleAlertClick = (alert) => {
+  if (isSelectionMode) {
+    handlePress(alert._id);
+  } else {
+    markAsRead(alert._id);
+    
+    // Navigate to chat screen
+    if (alert.clickAction === "openMessage") {
+      navigation.navigate('ChatScreen', {
+        contactId: alert.senderId,
+        contactName: alert.senderName,
+        contactAvatar: alert.senderImage,
+        contactUsername: alert.sender
+      });
+      // Navigate to order requestst screen
+    } else if (alert.clickAction === "openOrderRequests") {
+      navigation.navigate('Orders', {
+        screen: 'OrderRequests',
+        orderId: alert.relatedId // Pass the order ID from the alert
+      });
+      // Navigate to order ongoing screen
+    } else if (alert.clickAction === "openOrderOngoing") {
+      navigation.navigate('Tracker', {
+        initialTab: 'Ongoing',
+        highlightOrderId: alert.relatedId,
+        shouldAnimate: true
+      });
+    } else if (alert.clickAction === "openOrderCompleted") {
+      navigation.navigate('Tracker', {
+        initialTab: 'Completed',
+        highlightOrderId: alert.relatedId,
+        shouldAnimate: true
+      });
+    } else if (alert.clickAction === "openOrderHistory") {
+      navigation.navigate('Tracker', {
+        initialTab: 'History',
+        highlightOrderId: alert.relatedId,
+        shouldAnimate: true
+      });
     } else {
-      markAsRead(alert._id);
-      
-      // Navigate if clickAction is specified
-      if (alert.clickAction) {
-        const [screen, params] = alert.clickAction.split('/');
-        navigation.navigate(screen, { id: params });
-      }
+      console.log("Unhandled click action:", alert.clickAction);
     }
-  };
-
+  }
+};
   // Toggle select all
   const toggleSelectAll = () => {
     if (selectedIds.length === notifications.length) {
@@ -233,7 +263,7 @@ const AlertsScreen = () => {
     const isSelected = selectedIds.includes(item._id);
     const profileImage = item.senderImage 
       ? { uri: item.senderImage }
-      : require('../../assets/gemimg/user1.jpg'); // Default image
+      : require('../../assets/default-images/avatar.png'); // Default image
     
     return (
       <TouchableOpacity
@@ -264,7 +294,9 @@ const AlertsScreen = () => {
     <SafeAreaView style={styles.safeArea}>
       <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
       
-      <Header_1 title="Alerts" />
+      <HeaderBar 
+        title="Notifications" 
+      />
       
       <TouchableWithoutFeedback onPress={handleCloseSelection}>
         <View style={styles.container}>

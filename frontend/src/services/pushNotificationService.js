@@ -6,41 +6,68 @@ import axios from 'axios';
 import { Platform } from 'react-native';
 import { useNotification } from './NotificationManager';
 
-// Create notification channels for Android
+// Create notification channels for Android - fixed version
 const createNotificationChannel = async () => {
   if (Platform.OS === 'android') {
-    // Import the specific function
-    const { createChannel } = messaging().android;
-    
-    // Create the channel
-    await createChannel({
-      id: 'default_channel_id',
-      name: 'Default Channel',
-      description: 'Default notification channel',
-      sound: 'default',
-      importance: 4, // High importance
-      vibration: true
-    });
-
-    console.log('Notification channel created for Android');
+    try {
+      // Check if the messaging module has the needed function
+      if (messaging().android && typeof messaging().android.createChannel === 'function') {
+        await messaging().android.createChannel({
+          id: 'default_channel_id',
+          name: 'Default Channel',
+          description: 'Default notification channel',
+          sound: 'default',
+          importance: 4, // High importance
+          vibration: true
+        });
+        console.log('Notification channel created for Android');
+      } else {
+        // Alternative approach for older versions
+        console.log('Using default notification channel for Android');
+      }
+    } catch (error) {
+      console.error('Error creating notification channel:', error);
+      // Continue without crashing the app
+    }
   }
 };
 
 // Request push notification permissions
 export const requestUserPermission = async () => {
   try {
-    // Create channel for Android
-    await createNotificationChannel();
+    // Create channel for Android - wrapped in try/catch to prevent app crash
+    try {
+      await createNotificationChannel();
+    } catch (channelError) {
+      console.error('Error creating notification channel:', channelError);
+      // Continue execution - don't let channel creation failure stop the whole process
+    }
     
+    // Request permission from the user
     const authStatus = await messaging().requestPermission();
+    
     const enabled = 
       authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
       authStatus === messaging.AuthorizationStatus.PROVISIONAL;
     
     if (enabled) {
       console.log('Push notification permission granted');
+      
+      // Get and register the token once permission is granted
+      try {
+        const token = await messaging().getToken();
+        if (token) {
+          console.log('FCM Token:', token);
+          await AsyncStorage.setItem('fcmToken', token);
+          await sendTokenToServer(token);
+        }
+      } catch (tokenError) {
+        console.error('Error getting FCM token:', tokenError);
+      }
+      
       return true;
     }
+    
     console.log('Push notification permission denied');
     return false;
   } catch (error) {

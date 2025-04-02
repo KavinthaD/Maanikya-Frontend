@@ -27,6 +27,7 @@ import { BarCodeScanner } from "expo-barcode-scanner";
 import { Camera } from "expo-camera";
 import { usePushNotifications } from "../../services/pushNotificationService";
 import { useNotification } from "../../services/NotificationManager";
+import { requestUserPermission, getFCMToken } from '../../services/pushNotificationService';
 
 const HomeScreen = () => {
   const navigation = useNavigation();
@@ -39,6 +40,24 @@ const HomeScreen = () => {
 
   // Get the showNotification function from the context
   const { showNotification } = useNotification();
+
+  // Add this at the top of your component
+  useEffect(() => {
+    const requestPermissions = async () => {
+      try {
+        const permissionGranted = await requestUserPermission();
+        console.log('Notifications permission status:', permissionGranted ? 'Granted' : 'Denied');
+        
+        if (permissionGranted) {
+          await getFCMToken();
+        }
+      } catch (error) {
+        console.error('Error requesting notifications permission:', error);
+      }
+    };
+    
+    requestPermissions();
+  }, []);
 
   // Test notification function
   const testFirebaseNotification = async () => {

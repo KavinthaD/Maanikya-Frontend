@@ -3,7 +3,7 @@ import messaging from '@react-native-firebase/messaging';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { API_URL, ENDPOINTS } from '../config/api';
 import axios from 'axios';
-import { Platform } from 'react-native';
+import { Platform, PermissionsAndroid } from 'react-native';
 import { useNotification } from './NotificationManager';
 
 // Create notification channels for Android - fixed version
@@ -11,67 +11,109 @@ const createNotificationChannel = async () => {
   if (Platform.OS === 'android') {
     try {
       // Check if the messaging module has the needed function
-      if (messaging().android && typeof messaging().android.createChannel === 'function') {
+      if (messaging().android) {
+        const channelId = 'default_channel_id';
         await messaging().android.createChannel({
-          id: 'default_channel_id',
+          id: channelId,
           name: 'Default Channel',
           description: 'Default notification channel',
           sound: 'default',
           importance: 4, // High importance
-          vibration: true
+          vibration: true,
+          lightColor: '#FF231F7C',
         });
-        console.log('Notification channel created for Android');
+        console.log('Notification channel created for Android:', channelId);
+        return channelId;
       } else {
-        // Alternative approach for older versions
         console.log('Using default notification channel for Android');
+        return 'default_channel_id';
       }
     } catch (error) {
       console.error('Error creating notification channel:', error);
-      // Continue without crashing the app
+      return 'default_channel_id'; // Return a default channel ID even if creation fails
     }
   }
+  return null; // Not Android
 };
 
 // Request push notification permissions
 export const requestUserPermission = async () => {
   try {
-    // Create channel for Android - wrapped in try/catch to prevent app crash
-    try {
-      await createNotificationChannel();
-    } catch (channelError) {
-      console.error('Error creating notification channel:', channelError);
-      // Continue execution - don't let channel creation failure stop the whole process
+    // Create channel for Android
+    if (Platform.OS === 'android') {
+      try {
+        await createNotificationChannel();
+      } catch (channelError) {
+        console.error('Error creating notification channel:', channelError);
+      }
+      
+      // For Android 13+ (API level 33+), we need explicit permission
+      if (Platform.Version >= 33) {
+        const androidPermission = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS,
+          {
+            title: "Notification Permission",
+            message: "Allow Maanikya to send you notifications",
+            buttonNeutral: "Ask Me Later",
+            buttonNegative: "Cancel",
+            buttonPositive: "OK"
+          }
+        );
+        
+        console.log('Android notification permission result:', androidPermission);
+        
+        if (androidPermission !== PermissionsAndroid.RESULTS.GRANTED) {
+          console.log('Android notification permission denied');
+          return false;
+        }
+        
+        console.log('Android notification permission explicitly granted');
+      }
     }
     
-    // Request permission from the user
-    const authStatus = await messaging().requestPermission();
+    // Firebase messaging permissions (still needed)
+    const authStatus = await messaging().hasPermission();
+    const enabled = 
+      authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+      authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+      
+    if (enabled) {
+      console.log('Firebase push notification permission granted');
+      return true;
+    }
     
+    // Request Firebase permission
+    const requestStatus = await messaging().requestPermission();
+    const granted = 
+      requestStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+      requestStatus === messaging.AuthorizationStatus.PROVISIONAL;
+    
+    console.log('Firebase push notification permission ' + (granted ? 'granted' : 'denied'));
+    return granted;
+  } catch (error) {
+    console.error('Error requesting notification permission:', error);
+    return false;
+  }
+};
+
+// Add this function to check permission status
+export const checkNotificationPermission = async () => {
+  try {
+    const authStatus = await messaging().hasPermission();
     const enabled = 
       authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
       authStatus === messaging.AuthorizationStatus.PROVISIONAL;
     
-    if (enabled) {
-      console.log('Push notification permission granted');
-      
-      // Get and register the token once permission is granted
-      try {
-        const token = await messaging().getToken();
-        if (token) {
-          console.log('FCM Token:', token);
-          await AsyncStorage.setItem('fcmToken', token);
-          await sendTokenToServer(token);
-        }
-      } catch (tokenError) {
-        console.error('Error getting FCM token:', tokenError);
-      }
-      
-      return true;
+    console.log('Current notification permission status:', enabled ? 'Granted' : 'Not granted');
+    
+    if (!enabled) {
+      // Permission not granted, request it
+      return await requestUserPermission();
     }
     
-    console.log('Push notification permission denied');
-    return false;
+    return enabled;
   } catch (error) {
-    console.error('Error requesting notification permission:', error);
+    console.error('Error checking notification permission:', error);
     return false;
   }
 };
@@ -255,35 +297,63 @@ export const usePushNotifications = (navigation) => {
   // Function to send a test notification
   const sendTestNotification = async () => {
     try {
+      console.log('Starting test notification process...');
+      
       const authToken = await AsyncStorage.getItem('authToken');
       if (!authToken) {
         console.error('Authentication required for testing notifications');
         return false;
       }
-
+      console.log('Auth token found');
+  
       // Get the current FCM token
       const fcmToken = await AsyncStorage.getItem('fcmToken');
       if (!fcmToken) {
         console.error('FCM token not found');
-        return false;
+        
+        // Try to get a fresh token as backup
+        try {
+          const freshToken = await messaging().getToken();
+          if (freshToken) {
+            console.log('Retrieved fresh FCM token');
+            await AsyncStorage.setItem('fcmToken', freshToken);
+            await sendTokenToServer(freshToken);
+          } else {
+            return false;
+          }
+        } catch (tokenError) {
+          console.error('Error getting fresh FCM token:', tokenError);
+          return false;
+        }
       }
-
-      console.log('Sending test notification request...');
+      
+      console.log('Using FCM token:', fcmToken?.substring(0, 10) + '...');
+      console.log('Sending test notification request to:', `${API_URL}${ENDPOINTS.PUSH_TOKEN}/test`);
+      
       const response = await axios.post(
         `${API_URL}${ENDPOINTS.PUSH_TOKEN}/test`,
-        { token: fcmToken }, // Include token in the request
+        { token: fcmToken }, 
         {
           headers: {
             Authorization: `Bearer ${authToken}`,
             'Content-Type': 'application/json'
-          }
+          },
+          timeout: 10000 // Add timeout
         }
       );
       
-      console.log('Test notification response:', response.data);
+      console.log('Test notification API response:', response.status, response.data);
       return true;
     } catch (error) {
-      console.error('Error testing notification:', error.response?.data || error.message);
+      console.error('Error testing notification:', 
+        error.response ? 
+          `Status: ${error.response.status}, Data: ${JSON.stringify(error.response.data)}` : 
+          error.message
+      );
+      
+      if (error.code === 'ECONNABORTED') {
+        console.error('Request timed out - server might be unresponsive');
+      }
       return false;
     }
   };

@@ -6,9 +6,32 @@ import axios from 'axios';
 import { Platform } from 'react-native';
 import { useNotification } from './NotificationManager';
 
+// Create notification channels for Android
+const createNotificationChannel = async () => {
+  if (Platform.OS === 'android') {
+    // Import the specific function
+    const { createChannel } = messaging().android;
+    
+    // Create the channel
+    await createChannel({
+      id: 'default_channel_id',
+      name: 'Default Channel',
+      description: 'Default notification channel',
+      sound: 'default',
+      importance: 4, // High importance
+      vibration: true
+    });
+
+    console.log('Notification channel created for Android');
+  }
+};
+
 // Request push notification permissions
 export const requestUserPermission = async () => {
   try {
+    // Create channel for Android
+    await createNotificationChannel();
+    
     const authStatus = await messaging().requestPermission();
     const enabled = 
       authStatus === messaging.AuthorizationStatus.AUTHORIZED ||

@@ -126,88 +126,104 @@ export default function ChatScreen({ route, navigation }) {
   
   // Send message
 const sendMessage = async () => {
-    if (!inputText.trim()) return;
-    
-    const messageText = inputText.trim();
-    setInputText(''); // Clear input immediately for better UX
-    const tempId = `temp-${Date.now()}`; // Declare tempId here
-    
-    try {
-      setSending(true);
-      const token = await AsyncStorage.getItem('authToken');
-      if (!token) {
-        navigation.navigate('Login');
-        return;
-      }
-      
-      // Optimistically add message to UI
-      const optimisticMessage = {
-        _id: tempId,
-        content: messageText,
-        sender: userId,
-        timestamp: new Date().toISOString(),
-        sending: true
-      };
-      
-      setMessages(prevMessages => [...prevMessages, optimisticMessage]);
-      
-      // Send message, alert, and push notification in parallel
-      const [messageResponse, alertResponse] = await Promise.all([
-        // Send message
-        axios.post(
-          `${API_URL}${ENDPOINTS.SEND_MESSAGE}`,
-          { 
-            recipientId: contactId,
-            content: messageText 
-          },
-          { headers: { Authorization: `Bearer ${token}` } }
-        ),
-        
-        // Send alert with push notification - using complete URL path
-        axios.post(
-          `${API_URL}/api/alerts`, 
-          {
-            recipient: contactUsername,
-            message: messageText.length > 50 ? `${messageText.substring(0, 47)}...` : messageText,
-            relatedTo: "message",
-            relatedId: userId,
-            priority: "medium",
-            clickAction: "ChatScreen", // Updated to navigate to chat screen
-            sendPushNotification: true, // Flag to send push notification
-            notificationTitle: `New message from ${await getMyUsername()}`,
-            notificationBody: messageText.length > 100 ? `${messageText.substring(0, 97)}...` : messageText,
-            additionalData: {
-              contactId: userId, // The sender's ID becomes the recipient's contact
-              contactName: await getMyName(), // Add your name so they can open your chat
-              contactUsername: await getMyUsername(), // Add your username
-            }
-          },
-          { headers: { Authorization: `Bearer ${token}` } }
-        )
-      ]);
-      
-      // Update messages to replace optimistic message with real one
-      setMessages(prevMessages => 
-        prevMessages.map(msg => 
-          msg._id === tempId ? {
-            ...messageResponse.data,
-            _id: messageResponse.data._id || messageResponse.data.id
-          } : msg
-        )
-      );
-      
-    } catch (error) {
-      console.error('Error sending message:', error.response?.data || error.message);
-      // Show error state for the message
-      setMessages(prevMessages => 
-        prevMessages.map(msg => 
-          msg._id === tempId ? { ...msg, sending: false, error: true } : msg
-        )
-      );
-    } finally {
-      setSending(false);
+  if (!inputText.trim()) return;
+  
+  const messageText = inputText.trim();
+  setInputText(''); // Clear input immediately for better UX
+  const tempId = `temp-${Date.now()}`; // Declare tempId here
+  
+  try {
+    setSending(true);
+    const token = await AsyncStorage.getItem('authToken');
+    if (!token) {
+      navigation.navigate('Login');
+      return;
     }
-  };
+    
+    // Optimistically add message to UI
+    const optimisticMessage = {
+      _id: tempId,
+      content: messageText,
+      sender: userId,
+      timestamp: new Date().toISOString(),
+      sending: true
+    };
+    
+    setMessages(prevMessages => [...prevMessages, optimisticMessage]);
+    
+    // Get sender information to pass with notification
+    const myUsername = await getMyUsername();
+    const myName = await getMyName();
+    
+    console.log('Preparing to send message and notification to:', {
+      recipientUsername: contactUsername,
+      recipientId: contactId,
+      senderName: myName,
+      senderUsername: myUsername
+    });
+    
+    // Send message, alert, and push notification in parallel
+    const [messageResponse, alertResponse] = await Promise.all([
+      // Send message
+      axios.post(
+        `${API_URL}${ENDPOINTS.SEND_MESSAGE}`,
+        { 
+          recipientId: contactId,
+          content: messageText 
+        },
+        { headers: { Authorization: `Bearer ${token}` } }
+      ),
+      
+      // Send alert with push notification - using complete URL path
+      axios.post(
+        `${API_URL}/api/alerts`, 
+        {
+          recipient: contactUsername,
+          message: messageText.length > 50 ? `${messageText.substring(0, 47)}...` : messageText,
+          relatedTo: "message",
+          relatedId: userId,
+          priority: "high", // Changed to high for important messages
+          clickAction: "ChatScreen", // Will navigate to chat screen
+          sendPushNotification: true, // Enable push notification
+          notificationTitle: `New message from ${myName}`,
+          notificationBody: messageText.length > 100 ? `${messageText.substring(0, 97)}...` : messageText,
+          additionalData: {
+            contactId: userId,
+            contactName: myName,
+            contactUsername: myUsername,
+            messageId: tempId,
+            timestamp: new Date().toISOString()
+          }
+        },
+        { headers: { Authorization: `Bearer ${token}` } }
+      )
+    ]);
+    
+    console.log('Message sent response:', messageResponse.status);
+    console.log('Alert/notification response:', alertResponse.status);
+    
+    // Update messages to replace optimistic message with real one
+    setMessages(prevMessages => 
+      prevMessages.map(msg => 
+        msg._id === tempId ? {
+          ...messageResponse.data,
+          _id: messageResponse.data._id || messageResponse.data.id
+        } : msg
+      )
+    );
+    
+  } catch (error) {
+    console.error('Error sending message:', error.response?.data || error.message);
+    // Show error state for the message
+    setMessages(prevMessages => 
+      prevMessages.map(msg => 
+        msg._id === tempId ? { ...msg, sending: false, error: true } : msg
+      )
+    );
+  } finally {
+    setSending(false);
+  }
+};
 
 // Helper functions to get current user info
 const getMyUsername = async () => {

@@ -5,7 +5,7 @@
 
  1. eas build -p android --profile production
 
- 2. dwonload aab file generated
+ 2. download aab file generated
 
  3. download bundle tool for local testing https://github.com/google/bundletool/releases (need playstore console for production)
 
